@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
 
@@ -59,6 +59,11 @@ export const hostsListSlice = createSlice({
     },
     setHeartbeatCritical: (state, { payload: { id } }) => {
       state.hosts = updateHostData(state.hosts, id, { heartbeat: 'critical' });
+    },
+    setStaleAt: (state, { payload: { id, stale_at } }) => {
+      state.hosts = updateHostData(state.hosts, id, {
+        stale_at: stale_at ?? null,
+      });
     },
     setHostListDeregisterable: (state, { payload }) => {
       const ids = payload.map((host) => host.id);
@@ -148,6 +153,7 @@ export const {
   setHostListDeregisterable,
   setHostNotDeregisterable,
   setHostDeregistering,
+  setStaleAt,
   unsetHostDeregistering,
   updateSaptuneStatus,
   updateHostHealth,

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.UsersJSON do
   alias TrentoWeb.V1.{AbilityJSON, PersonalAccessTokensJSON}
@@ -36,7 +36,7 @@ defmodule TrentoWeb.V1.UsersJSON do
         personal_access_tokens:
           PersonalAccessTokensJSON.personal_access_tokens(personal_access_tokens),
         enabled: locked_at == nil,
-        idp_user: length(user_identities) > 0,
+        idp_user: user_identities != [],
         password_change_requested_at: password_change_requested_at,
         totp_enabled_at: totp_enabled_at,
         analytics_enabled: analytics_enabled_at != nil,

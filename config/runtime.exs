@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import Config
 
@@ -402,5 +402,21 @@ if config_env() in [:prod, :demo] do
             )
         }
       ]
+  end
+
+  wanda_base_url = System.get_env("CHECKS_SERVICE_BASE_URL", "")
+
+  config :trento, :ai,
+    base_system_prompt: Application.app_dir(:trento, "priv/ai/BASE_SYSTEM_PROMPT.md"),
+    tool_sources: [
+      TrentoWeb.AI.ControllerToolSource,
+      {Trento.AI.RemoteOpenApiToolSource,
+       name: :wanda, spec_url: "#{wanda_base_url}/api/all/openapi"}
+    ]
+
+  # Overrides the installation method set at compile time, e.g. when the
+  # rpm package is installed inside a container image
+  if installation_method = System.get_env("INSTALLATION_METHOD") do
+    config :trento, :analytics, installation_method: installation_method
   end
 end

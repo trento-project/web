@@ -1,13 +1,16 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.AboutController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Hosts
 
   alias TrentoWeb.OpenApi.V1.Schema
+
+  alias Trento.Support.HttpUtils
 
   @version Mix.Project.config()[:version]
 
@@ -22,9 +25,14 @@ defmodule TrentoWeb.V1.AboutController do
          "application/json", Schema.Platform.GeneralInformation}
     ]
 
+  ai_tool :about_info, display_text: "Get platform info"
+
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()
   def info(conn, _) do
-    versions = component_versions().get_versions(request_origin(conn))
+    versions =
+      conn
+      |> HttpUtils.request_origin()
+      |> component_versions().get_versions()
 
     render(conn, :about,
       about_info:
@@ -43,15 +51,4 @@ defmodule TrentoWeb.V1.AboutController do
       Application.fetch_env!(:trento, :component_versions)[
         :adapter
       ]
-
-  defp request_origin(%Plug.Conn{scheme: scheme, host: host, port: port}) do
-    port_part =
-      case {scheme, port} do
-        {:http, 80} -> ""
-        {:https, 443} -> ""
-        {_, port} -> ":#{port}"
-      end
-
-    "#{scheme}://#{host}#{port_part}"
-  end
 end

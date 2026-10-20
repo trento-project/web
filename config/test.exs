@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import Config
 
@@ -145,7 +145,7 @@ config :joken,
   access_token_signer: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",
   refresh_token_signer: "L0wvcZh3ACQpibVhV/nh5jd/NaZWL4ijZxTxGJMGpacuXIBc4In3YCwXeVM98ygp"
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
+config :trento, Trento.Infrastructure.SoftwareUpdates.MockSmlm,
   relevant_patches_system_ids: [
     # 448 matches to "test" fqdn
     448
@@ -165,6 +165,9 @@ config :trento,
        enabled?: System.get_env("WRITE_JUNIT") == "1"
 
 config :trento, :ai,
+  # Avoid the live Wanda fetch during tests. Individual tests opt in by
+  # overriding :tool_sources via ApplicationConfigLoader.Mock.
+  tool_sources: [TrentoWeb.AI.ControllerToolSource],
   providers: [
     provider1: [
       models: [
@@ -173,7 +176,8 @@ config :trento, :ai,
     ],
     provider2: [
       models: [
-        "model1"
+        "model1",
+        "model3"
       ]
     ]
   ]

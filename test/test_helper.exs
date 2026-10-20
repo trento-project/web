@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 Mox.defmock(Trento.Commanded.Mock, for: Commanded.Application)
 
@@ -11,16 +11,14 @@ Application.put_env(:trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.Mock
 )
 
-Mox.defmock(Trento.Infrastructure.Prometheus.Adapter.HttpClient.Mock,
-  for: Trento.Infrastructure.Prometheus.Adapter.HttpClient
+Mox.defmock(Trento.Support.HttpClient.Mock, for: Trento.Support.HttpClient)
+
+Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.Mock,
+  for: Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor
 )
 
-Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock,
-  for: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
-)
-
-Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
-  executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock
+Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.SmlmApi,
+  executor: Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.Mock
 )
 
 Mox.defmock(Trento.SoftwareUpdates.Discovery.Mock, for: Trento.SoftwareUpdates.Discovery.Gen)
@@ -35,7 +33,7 @@ Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Auth.Mock,
 
 Application.put_env(:trento, :correlations, Trento.ActivityLog.Correlations.TestCorrelations)
 
-Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.Suma,
+Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.Smlm,
   auth: Trento.Infrastructure.SoftwareUpdates.Auth.Mock
 )
 
@@ -68,14 +66,37 @@ Mox.defmock(Trento.AI.ApplicationConfigLoader.Mock,
   for: Trento.AI.ApplicationConfigLoader
 )
 
-test_ai_config =
-  Keyword.put(
-    Application.get_env(:trento, :ai),
-    :application_config_loader,
-    Trento.AI.ApplicationConfigLoader.Mock
-  )
+Mox.defmock(Trento.AI.Agent.Server.Mock,
+  for: Trento.AI.Agent.Server
+)
 
-Application.put_env(:trento, :ai, test_ai_config)
+Mox.defmock(Trento.AI.Agent.Supervisor.Mock,
+  for: Trento.AI.Agent.Supervisor
+)
+
+# Deliberately NOT wired into `test_ai_config` below — the real
+# `PubSubConfigurationEvents` stays the default so the config-events tests keep
+# their real PubSub round-trips.
+# Override in tests that need failure
+Mox.defmock(Trento.AI.Configurations.Events.Mock,
+  for: Trento.AI.Configurations.Events
+)
+
+# Also deliberately NOT wired into `test_ai_config` below.
+# Integration tests opt in through `Trento.AI.AICase.fake_llm/1`
+# to get a model that answers in process instead of over the network.
+Mox.defmock(Trento.AI.LLMBuilder.Mock, for: Trento.AI.LLMBuilder)
+
+default_ai_config = Application.get_env(:trento, :ai, [])
+
+test_ai_config = [
+  application_config_loader: Trento.AI.ApplicationConfigLoader.Mock,
+  agent_server_adapter: Trento.AI.Agent.Server.Mock,
+  agent_supervisor_adapter: Trento.AI.Agent.Supervisor.Mock,
+  http_client: Trento.Support.HttpClient.Mock
+]
+
+Application.put_env(:trento, :ai, Keyword.merge(default_ai_config, test_ai_config))
 
 Application.ensure_all_started(:ex_machina, :faker)
 
@@ -83,5 +104,7 @@ if Application.get_env(:trento, :flaky_tests_detection)[:enabled?] == true do
   ExUnit.configure(formatters: [JUnitFormatter, ExUnit.CLIFormatter])
 end
 
-ExUnit.start(capture_log: true)
+# The TLS handshake tests run in their own CI job, on OTP 27.1.3 and on the dev
+# OTP: mix test --only tls_handshake
+ExUnit.start(capture_log: true, exclude: [:tls_handshake])
 Ecto.Adapters.SQL.Sandbox.mode(Trento.Repo, :manual)

@@ -1,21 +1,18 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as alertingPage from '../pageObject/alerting_po';
 
 context('Email Alerting feature', () => {
   before(function () {
-    if (!Cypress.env('ALERTING_TESTS')) {
+    if (!Cypress.expose('ALERTING_TESTS')) {
+      // alerting tests are only run when the alerting env is available
       this.skip();
     }
-    alertingPage.deleteAllEmailsFromMailpit();
+    alertingPage.clearSMLMSettings();
     alertingPage.preloadTestData();
-    alertingPage.getAlertingSettings().then((resp) => {
-      if (resp.status === 404 || resp.body.enforced_from_env === false) {
-        const requestMethod = resp.status === 404 ? 'POST' : 'PATCH';
-        alertingPage.apiSetDevEnvAlertingSettings(requestMethod);
-      }
-    });
+    alertingPage.deleteAllEmailsFromMailpit();
+    alertingPage.setDefaultAlertingSettings();
   });
 
   describe('Receive alerting emails when specific actions trigger them', () => {
@@ -37,6 +34,39 @@ context('Email Alerting feature', () => {
     it('Receive email when Database health goes critical', () => {
       alertingPage.triggerDatabaseAlertingEmail();
       alertingPage.emailIsReceived('database');
+    });
+
+    it('Receive email when the host heartbeat fails', () => {
+      alertingPage.triggerHeartbeatFailedAlertingEmail();
+      alertingPage.heartbeatFailedEmailIsReceived();
+    });
+  });
+
+  describe('Test email', () => {
+    beforeEach(() => {
+      alertingPage.deleteAllEmailsFromMailpit();
+      alertingPage.setDefaultAlertingSettings();
+    });
+
+    it('should not receive an email when alerting settings configuration is wrong and test email is requested', function () {
+      // skipping the test if alerting settings cannot be changed using the API as they are enforced by env variables
+      if (!Cypress.expose('ALERTING_DB_TESTS')) {
+        // alerting settings are enforced by env variables in this environment
+        this.skip();
+      }
+
+      alertingPage.apiSetDevEnvInvalidAlertingSettings();
+      alertingPage.visit('/settings');
+      alertingPage.triggerTestEmail();
+      alertingPage.testEmailFailedToasterIsDisplayed();
+      alertingPage.emailIsNotReceived('Test email');
+    });
+
+    it('should receive an email when alerting settings are properly configured and test email is requested', () => {
+      alertingPage.visit('/settings');
+      alertingPage.triggerTestEmail();
+      alertingPage.testEmailSentToasterIsDisplayed();
+      alertingPage.emailIsReceived('Test email');
     });
   });
 

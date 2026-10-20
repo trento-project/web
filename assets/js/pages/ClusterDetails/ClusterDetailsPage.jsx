@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -124,12 +124,15 @@ export function ClusterDetailsPage() {
       details={cluster.details}
       hasSelectedChecks={hasSelectedChecks}
       hosts={clusterHosts}
+      health={cluster.health}
       state={cluster.state}
+      staleAt={cluster.stale_at}
       lastExecution={lastExecution}
       operationsEnabled={operationsEnabled}
       runningOperation={runningOperation}
       selectedChecks={cluster.selected_checks}
       userAbilities={abilities}
+      userTimezone={timezone}
       onStartExecution={(_, hostList, checks) =>
         dispatch(executionRequested(clusterID, hostList, checks))
       }

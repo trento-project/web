@@ -1,16 +1,20 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link } from 'react-router';
 import { filter } from 'lodash';
+import classNames from 'classnames';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
+import { STALE_ROW } from '@lib/tables';
 
 import HealthIcon from '@common/HealthIcon';
 import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
 import HealthSummary from '@pages/HealthSummary';
@@ -23,11 +27,13 @@ function DatabasesOverview({
   databaseInstances,
   loading,
   userAbilities,
+  userTimezone,
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
 }) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] =
+    usePersistentSearchParams('databases');
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
 
@@ -35,15 +41,23 @@ function DatabasesOverview({
     pagination: true,
     usePadding: false,
     collapsedRowClassName: 'bg-gray-100',
+    rowClassName: ({ staleAt }) =>
+      classNames({
+        [STALE_ROW]: !!staleAt,
+      }),
     columns: [
       {
         title: 'Health',
         key: 'health',
         filter: true,
         filterFromParams: true,
-        render: (content) => (
+        render: (content, { staleAt }) => (
           <div className="ml-4">
-            <HealthIcon health={content} />
+            <HealthIcon
+              health={content}
+              staleAt={staleAt}
+              timezone={userTimezone}
+            />
           </div>
         ),
       },
@@ -123,6 +137,7 @@ function DatabasesOverview({
       <DatabaseItemOverview
         database={database}
         userAbilities={userAbilities}
+        userTimezone={userTimezone}
         onCleanUpClick={(instance, _type) => {
           setCleanUpModalOpen(true);
           setInstanceToDeregister(instance);
@@ -141,6 +156,7 @@ function DatabasesOverview({
       database_id: database.id,
     }),
     tags: (database.tags && database.tags.map((tag) => tag.value)) || [],
+    staleAt: database.stale_at,
   }));
 
   const counters = getCounters(data || []);

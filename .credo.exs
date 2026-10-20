@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # This file contains the configuration for Credo and you are probably reading
 # this after creating it with `mix credo.gen.config`.

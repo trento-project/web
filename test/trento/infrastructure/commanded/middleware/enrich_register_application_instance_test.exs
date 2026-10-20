@@ -1,11 +1,13 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationInstanceTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
+
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Infrastructure.Commanded.Middleware.Enrichable
   alias Trento.SapSystems.Commands.RegisterApplicationInstance
@@ -14,7 +16,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
     [%{name: tenant_name}, _] = tenants = build_list(2, :tenant)
 
     %{id: host_id, ip_addresses: [ip]} = insert(:host)
-    %{id: database_id, health: health} = insert(:database, tenants: tenants)
+    %{id: database_id, health: health, stale_at: stale_at} = insert(:database, tenants: tenants)
     insert(:database_instance, database_id: database_id, host_id: host_id)
 
     command =
@@ -26,7 +28,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         instance_number: "00",
         features: Faker.Pokemon.name(),
         host_id: Faker.UUID.v4(),
-        health: :passing
+        status: Status.green()
       )
 
     expected_sap_system_id = UUID.uuid5(database_id, tenant_name)
@@ -35,7 +37,8 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
             %RegisterApplicationInstance{
               sap_system_id: ^expected_sap_system_id,
               database_id: ^database_id,
-              database_health: ^health
+              database_health: ^health,
+              database_stale_at: ^stale_at
             }} =
              Enrichable.enrich(command, %{})
   end
@@ -66,7 +69,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         instance_number: "00",
         features: Faker.Pokemon.name(),
         host_id: Faker.UUID.v4(),
-        health: :passing
+        status: Status.green()
       )
 
     assert {:error, :associated_database_not_found} = Enrichable.enrich(command, %{})
@@ -83,7 +86,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         instance_number: "00",
         features: Faker.Pokemon.name(),
         host_id: Faker.UUID.v4(),
-        health: :passing
+        status: Status.green()
       )
 
     assert {:error, :associated_database_not_found} = Enrichable.enrich(command, %{})

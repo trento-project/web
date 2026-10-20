@@ -451,33 +451,7 @@
             }
           ],
           "Device": "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b912345",
-          "Status": "unhealthy"
-        },
-        {
-          "Dump": {
-            "Uuid": "a7a18c6b-7c8e-4bda-bb77-45e4b5dc8478",
-            "Slots": 255,
-            "Header": "2.1",
-            "SectorSize": 512,
-            "TimeoutLoop": 1,
-            "TimeoutMsgwait": 10,
-            "TimeoutAllocate": 2,
-            "TimeoutWatchdog": 5
-          },
-          "List": [
-            {
-              "Id": 0,
-              "Name": "vmhdbprd01",
-              "Status": "clear"
-            },
-            {
-              "Id": 1,
-              "Name": "vmhdbprd02",
-              "Status": "clear"
-            }
-          ],
-          "Device": "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b954321",
-          "Status": "unknown"
+          "Status": "healthy"
         }
       ]
     },

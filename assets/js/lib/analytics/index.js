@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import posthog from 'posthog-js';
 import { v5 as uuidv5 } from 'uuid';
@@ -7,6 +7,7 @@ import { get, has, noop } from 'lodash';
 
 import { logError } from '@lib/log';
 import { getFromConfig } from '@lib/config/config';
+import { capture as apiCapture } from '@lib/api/analytics';
 
 const DEFAULT_OPTS = {
   api_host: 'https://eu.posthog.com',
@@ -39,6 +40,7 @@ const DEFAULT_OPTS = {
 
 const analyticsEnabledConfig = getFromConfig('analyticsEnabled');
 const installationID = getFromConfig('installationID');
+const installationMethod = getFromConfig('installationMethod');
 
 // window.posthogConfig is loaded from GTM (Google Tag Manager) snippet
 // The GTM container must have a Tag with Custom HTML type with the next
@@ -57,6 +59,8 @@ const installationID = getFromConfig('installationID');
 */
 }
 const getGtmConfig = () => window.posthogConfig;
+
+const getDistinctUserID = (userID) => uuidv5(userID.toString(), installationID);
 
 // TODO: Remove this when this feature is ready for production
 export const getAnalyticsEnabledConfig = () => analyticsEnabledConfig;
@@ -91,7 +95,7 @@ export const init = (loadedFunc = noop) => {
       },
     });
   } else {
-    setTimeout(init, 100);
+    setTimeout(() => init(loadedFunc), 100);
   }
 };
 
@@ -100,9 +104,10 @@ export const identify = (analyticsEnabled, userID) => {
     return;
   }
 
-  const distinctUserID = uuidv5(userID.toString(), installationID);
+  const distinctUserID = getDistinctUserID(userID);
   posthog.identify(distinctUserID, {
     installationID,
+    installationMethod,
   });
 };
 
@@ -122,6 +127,33 @@ export const capture = (analyticsEnabled, event, payload) => {
     return;
   }
   posthog.capture(event, { ...payload });
+};
+
+export const rawCapture = (userID, event, properties) => {
+  const distinctUserID = getDistinctUserID(userID);
+  const gtmConfig = getGtmConfig();
+  const apiKey = get(gtmConfig, 'apiKey');
+  const apiHost = get(gtmConfig, 'config.api_host', DEFAULT_OPTS.api_host);
+  const webversion = getFromConfig('webversion');
+
+  if (!apiKey) {
+    logError('cannot load apiKey value from GTM');
+    return;
+  }
+
+  apiCapture(apiHost, apiKey, event, distinctUserID, {
+    ...properties,
+    $lib: 'web',
+    webversion,
+    // force creating a person and add set_once properties
+    $process_person_profile: true,
+    $set_once: {
+      installationID,
+      installationMethod,
+    },
+  }).catch((error) => {
+    logError(`error capturing Posthog raw event: ${error.message}`);
+  });
 };
 
 export const reset = () => {

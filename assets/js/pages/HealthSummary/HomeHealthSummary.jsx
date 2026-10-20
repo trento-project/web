@@ -1,20 +1,42 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router';
+import classNames from 'classnames';
+
+import { STALE_ROW } from '@lib/tables';
 
 import Table from '@common/Table';
 import HealthIcon from '@common/HealthIcon';
 import PageHeader from '@common/PageHeader';
 
-import useQueryStringValues from '@hooks/useQueryStringValues';
+import { changeSearchParams } from '@lib/searchParams';
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
 import HealthSummary from '@pages/HealthSummary';
 
 import { getCounters, isMostRelevantPrio } from './summarySelection';
 
+const HEALTH_PARAM = 'health';
+
 const healthSummaryTableConfig = {
   usePadding: false,
+  rowClassName: ({
+    applicationStaleAt,
+    applicationClusterStaleAt,
+    databaseStaleAt,
+    databaseClusterStaleAt,
+    hostsStaleAt,
+  }) =>
+    classNames({
+      [STALE_ROW]: [
+        applicationStaleAt,
+        applicationClusterStaleAt,
+        databaseStaleAt,
+        databaseClusterStaleAt,
+        hostsStaleAt,
+      ].some(Boolean),
+    }),
   columns: [
     {
       title: 'SID',
@@ -35,7 +57,14 @@ const healthSummaryTableConfig = {
       className: 'text-center w-1/6',
       render: (content, item) => (
         <Link to={`/sap_systems/${item.id}`}>
-          <HealthIcon health={content} centered isLink />
+          <HealthIcon
+            health={content}
+            staleAt={item.applicationStaleAt}
+            timezone={item.userTimezone}
+            ariaLabelPrefix={'Application'}
+            centered
+            isLink
+          />
         </Link>
       ),
     },
@@ -48,10 +77,17 @@ const healthSummaryTableConfig = {
 
         return item?.applicationClusterId ? (
           <Link to={linkToCluster}>
-            <HealthIcon health={content} centered isLink />
+            <HealthIcon
+              health={content}
+              staleAt={item.applicationClusterStaleAt}
+              timezone={item.userTimezone}
+              ariaLabelPrefix={'Application Cluster'}
+              centered
+              isLink
+            />
           </Link>
         ) : (
-          <HealthIcon health={content} centered hoverOpacity={false} />
+          <HealthIcon health={'not_available'} centered hoverOpacity={false} />
         );
       },
     },
@@ -63,7 +99,14 @@ const healthSummaryTableConfig = {
         const linkToDatabase = `/databases/${item.databaseId}`;
         return (
           <Link to={linkToDatabase}>
-            <HealthIcon health={content} centered isLink />
+            <HealthIcon
+              health={content}
+              staleAt={item.databaseStaleAt}
+              timezone={item.userTimezone}
+              ariaLabelPrefix={'Database'}
+              centered
+              isLink
+            />
           </Link>
         );
       },
@@ -77,10 +120,17 @@ const healthSummaryTableConfig = {
 
         return item?.databaseClusterId ? (
           <Link to={linkToCluster}>
-            <HealthIcon health={content} centered isLink />
+            <HealthIcon
+              health={content}
+              staleAt={item.databaseClusterStaleAt}
+              timezone={item.userTimezone}
+              ariaLabelPrefix={'Database Cluster'}
+              centered
+              isLink
+            />
           </Link>
         ) : (
-          <HealthIcon health={content} centered hoverOpacity={false} />
+          <HealthIcon health={'not_available'} centered hoverOpacity={false} />
         );
       },
     },
@@ -92,7 +142,14 @@ const healthSummaryTableConfig = {
         const linkToHosts = `/hosts?sid=${item.sid}&sid=${item.databaseSid}`;
         return (
           <Link to={linkToHosts}>
-            <HealthIcon health={content} centered isLink />
+            <HealthIcon
+              health={content}
+              staleAt={item.hostsStaleAt}
+              timezone={item.userTimezone}
+              ariaLabelPrefix={'Hosts'}
+              centered
+              isLink
+            />
           </Link>
         );
       },
@@ -100,65 +157,51 @@ const healthSummaryTableConfig = {
   ],
 };
 
-function HomeHealthSummary({ sapSystemsHealth, loading }) {
-  const {
-    extractedParams: { health: healthFilters = [] },
-    setQueryValues,
-  } = useQueryStringValues(['health']);
+function HomeHealthSummary({ sapSystemsHealth, loading, userTimezone }) {
+  const [searchParams, setSearchParams] =
+    usePersistentSearchParams('dashboard');
 
-  const [counters, setCounters] = useState({
-    warning: 0,
-    critical: 0,
-    passing: 0,
-  });
+  const healthFilters = searchParams.getAll(HEALTH_PARAM);
 
-  const [summaryData, setSummaryData] = useState([]);
-  const [activeFilters, setActiveFilters] = useState({});
+  const counters = getCounters(sapSystemsHealth);
 
-  useEffect(() => {
-    setCounters(getCounters(sapSystemsHealth));
-    setSummaryData(sapSystemsHealth);
-  }, [sapSystemsHealth]);
+  const activeFilters = healthFilters.reduce(
+    (acc, curr) => ({ ...acc, [curr]: true }),
+    {}
+  );
 
-  useEffect(() => {
-    setActiveFilters(
-      healthFilters.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
-    );
-    if (healthFilters.length === 0) {
-      setSummaryData(sapSystemsHealth);
-      return;
-    }
-    setSummaryData(
-      sapSystemsHealth.filter((e) => {
-        let result = false;
-
-        healthFilters.forEach((f) => {
-          result = result || isMostRelevantPrio(e, f);
-        });
-        return result;
-      })
-    );
-  }, [healthFilters]);
+  const summaryData =
+    healthFilters.length === 0
+      ? sapSystemsHealth
+      : sapSystemsHealth.filter((entry) =>
+          healthFilters.some((filter) => isMostRelevantPrio(entry, filter))
+        );
 
   const onFiltersChange = (filterValue) => {
     const newFilters = healthFilters.includes(filterValue)
       ? healthFilters.filter((f) => f !== filterValue)
       : [...healthFilters, filterValue];
-    setQueryValues({ health: newFilters });
+    setSearchParams(changeSearchParams({ [HEALTH_PARAM]: newFilters }));
   };
 
   const normalizedSummaryData = summaryData.map((summaryDataEntry) => ({
     applicationClusterHealth: summaryDataEntry.application_cluster_health,
     applicationClusterId: summaryDataEntry.application_cluster_id,
+    applicationClusterStaleAt: summaryDataEntry.application_cluster_stale_at,
     databaseClusterHealth: summaryDataEntry.database_cluster_health,
     databaseClusterId: summaryDataEntry.database_cluster_id,
+    databaseClusterStaleAt: summaryDataEntry.database_cluster_stale_at,
     databaseHealth: summaryDataEntry.database_health,
     databaseId: summaryDataEntry.database_id,
-    hostsHealth: summaryDataEntry.hosts_health,
-    id: summaryDataEntry.id,
-    applicationHealth: summaryDataEntry.application_health,
-    sid: summaryDataEntry.sid,
     databaseSid: summaryDataEntry.database_sid,
+    databaseStaleAt: summaryDataEntry.database_stale_at,
+    hostsHealth: summaryDataEntry.hosts_health,
+    hostsStaleAt: summaryDataEntry.hosts_stale_at,
+    id: summaryDataEntry.id,
+    sid: summaryDataEntry.sid,
+    applicationHealth: summaryDataEntry.application_health,
+    applicationStaleAt: summaryDataEntry.application_stale_at,
+    userTimezone,
   }));
 
   return loading ? (

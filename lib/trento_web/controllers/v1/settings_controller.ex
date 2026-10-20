@@ -1,11 +1,13 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.SettingsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.ActivityLog
+  alias Trento.Infrastructure.Alerting.Alerting
   alias Trento.Settings
   alias Trento.SoftwareUpdates
   alias TrentoWeb.OpenApi.V1.Schema
@@ -23,21 +25,104 @@ defmodule TrentoWeb.V1.SettingsController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  @update_suse_manager_operation_options [
+  @update_smlm_operation_options [
     summary: "Updates the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
       "Updates the configuration and credentials for SUSE Multi-Linux Manager integration, supporting ongoing software management and updates.",
     request_body:
       {"Request body containing updated SUSE Multi-Linux Manager credentials and configuration for ongoing secure integration and software management.",
-       "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
+       "application/json", Schema.Platform.UpdateSmlmSettingsRequest},
     responses: [
       ok:
         {"SUSE Multi-Linux Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
-         "application/json", Schema.Platform.SuseManagerSettings},
+         "application/json", Schema.Platform.SmlmSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
   ]
+
+  @deprecated_update_smlm_operation_options Keyword.put(
+                                              @update_smlm_operation_options,
+                                              :deprecated,
+                                              true
+                                            )
+
+  @get_smlm_operation_options [
+    summary: "Gets the SUSE Multi-Linux Manager Settings.",
+    tags: ["Settings", "MCP"],
+    description:
+      "Retrieves the saved configuration and credentials for SUSE Multi-Linux Manager integration, supporting automated software management and updates.",
+    responses: [
+      ok:
+        {"A comprehensive set of SUSE Multi-Linux Manager integration credentials and configuration details for automated software management.",
+         "application/json", Schema.Platform.SmlmSettings},
+      not_found: Schema.NotFound.response()
+    ]
+  ]
+
+  @deprecated_get_smlm_operation_options Keyword.merge(
+                                           @get_smlm_operation_options,
+                                           deprecated: true,
+                                           tags: ["Settings"]
+                                         )
+
+  @save_smlm_operation_options [
+    summary: "Saves the SUSE Multi-Linux Manager settings.",
+    tags: ["Settings"],
+    description:
+      "Saves new credentials and configuration for SUSE Multi-Linux Manager integration, enabling secure software management and updates.",
+    request_body:
+      {"Request body containing new SUSE Multi-Linux Manager credentials and configuration for secure integration and software management.",
+       "application/json", Schema.Platform.SaveSmlmSettingsRequest},
+    responses: [
+      created:
+        {"SUSE Multi-Linux Manager settings have been successfully saved, including credentials and configuration for secure integration.",
+         "application/json", Schema.Platform.SmlmSettings},
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+  ]
+
+  @deprecated_save_smlm_operation_options Keyword.put(
+                                            @save_smlm_operation_options,
+                                            :deprecated,
+                                            true
+                                          )
+
+  @delete_smlm_operation_options [
+    summary: "Clears the SUSE Multi-Linux Manager settings.",
+    tags: ["Settings"],
+    description:
+      "Removes all saved credentials and configuration for SUSE Multi-Linux Manager integration, supporting secure decommissioning and access management.",
+    responses: [
+      no_content:
+        "All SUSE Multi-Linux Manager credentials and configuration have been successfully cleared from the system."
+    ]
+  ]
+
+  @deprecated_delete_smlm_operation_options Keyword.put(
+                                              @delete_smlm_operation_options,
+                                              :deprecated,
+                                              true
+                                            )
+
+  @test_smlm_operation_options [
+    summary: "Tests connection with SUSE Multi-Linux Manager.",
+    tags: ["Settings", "MCP"],
+    description:
+      "Tests the connection to SUSE Multi-Linux Manager using the currently saved credentials and configuration, supporting validation and troubleshooting of integration settings.",
+    responses: [
+      ok: "The connection with SUSE Multi-Linux Manager was successful.",
+      unprocessable_entity:
+        {"The connection with SUSE Multi-Linux Manager failed.", "application/json",
+         Schema.UnprocessableEntity}
+    ]
+  ]
+
+  @deprecated_test_smlm_operation_options Keyword.merge(
+                                            @test_smlm_operation_options,
+                                            deprecated: true,
+                                            tags: ["Settings"]
+                                          )
 
   operation :get_api_key_settings,
     summary: "Get API key settings.",
@@ -50,6 +135,8 @@ defmodule TrentoWeb.V1.SettingsController do
          "application/json", Schema.Platform.ApiKeySettings},
       not_found: Schema.NotFound.response()
     ]
+
+  ai_tool :settings_get_api_key, display_text: "Get API key settings"
 
   def get_api_key_settings(conn, _) do
     with {:ok, api_key_settings} <- Settings.get_api_key_settings() do
@@ -144,6 +231,8 @@ defmodule TrentoWeb.V1.SettingsController do
       not_found: Schema.NotFound.response()
     ]
 
+  ai_tool :settings_get_activity_log, display_text: "Get activity log settings"
+
   def get_activity_log_settings(conn, _) do
     case Settings.get_activity_log_settings() do
       {:ok, settings} -> render(conn, :activity_log_settings, %{activity_log_settings: settings})
@@ -151,98 +240,96 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :get_suse_manager_settings,
-    summary: "Gets the SUSE Multi-Linux Manager Settings.",
-    tags: ["Settings", "MCP"],
-    description:
-      "Retrieves the saved configuration and credentials for SUSE Multi-Linux Manager integration, supporting automated software management and updates.",
-    responses: [
-      ok:
-        {"A comprehensive set of SUSE Multi-Linux Manager integration credentials and configuration details for automated software management.",
-         "application/json", Schema.Platform.SuseManagerSettings},
-      not_found: Schema.NotFound.response()
-    ]
+  operation :get_smlm_settings, @get_smlm_operation_options
+
+  ai_tool :settings_get_smlm, display_text: "Get SUSE Multi-Linux Manager settings"
+
+  @spec get_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def get_smlm_settings(conn, _) do
+    with {:ok, settings} <- Settings.get_smlm_settings() do
+      render(conn, :smlm, %{settings: settings})
+    end
+  end
+
+  # Deprecated: This endpoint is deprecated, see get_smlm_settings instead.
+  operation :get_suse_manager_settings, @deprecated_get_smlm_operation_options
 
   @spec get_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def get_suse_manager_settings(conn, _) do
-    with {:ok, settings} <- Settings.get_suse_manager_settings() do
-      render(conn, :suse_manager, %{settings: settings})
-    end
-  end
+  def get_suse_manager_settings(conn, params), do: get_smlm_settings(conn, params)
 
-  operation :save_suse_manager_settings,
-    summary: "Saves the SUSE Multi-Linux Manager settings.",
-    tags: ["Settings"],
-    description:
-      "Saves new credentials and configuration for SUSE Multi-Linux Manager integration, enabling secure software management and updates.",
-    request_body:
-      {"Request body containing new SUSE Multi-Linux Manager credentials and configuration for secure integration and software management.",
-       "application/json", Schema.Platform.SaveSuseManagerSettingsRequest},
-    responses: [
-      created:
-        {"SUSE Multi-Linux Manager settings have been successfully saved, including credentials and configuration for secure integration.",
-         "application/json", Schema.Platform.SuseManagerSettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response()
-    ]
+  operation :save_smlm_settings, @save_smlm_operation_options
 
-  @spec save_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def save_suse_manager_settings(conn, _) do
+  @spec save_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def save_smlm_settings(conn, _) do
     settings_params = OpenApiSpex.body_params(conn)
-    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
+    :ok = propagate_correlation_id(:smlm_settings, @correlation_ttl)
 
-    with {:ok, saved_settings} <- Settings.save_suse_manager_settings(settings_params) do
+    with {:ok, saved_settings} <- Settings.save_smlm_settings(settings_params) do
       conn
       |> put_status(:created)
-      |> render(:suse_manager, %{settings: saved_settings})
+      |> render(:smlm, %{settings: saved_settings})
     end
   end
 
-  operation :patch_suse_manager_settings, @update_suse_manager_operation_options
-  operation :put_suse_manager_settings, @update_suse_manager_operation_options
+  # Deprecated: This endpoint is deprecated, see save_smlm_settings instead.
+  operation :save_suse_manager_settings, @deprecated_save_smlm_operation_options
+
+  @spec save_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def save_suse_manager_settings(conn, params), do: save_smlm_settings(conn, params)
+
+  operation :patch_smlm_settings, @update_smlm_operation_options
+  operation :put_smlm_settings, @update_smlm_operation_options
+
+  # Deprecated: This endpoint is deprecated, see patch_smlm_settings instead.
+  operation :patch_suse_manager_settings, @deprecated_update_smlm_operation_options
+  # Deprecated: This endpoint is deprecated, see put_smlm_settings instead.
+  operation :put_suse_manager_settings, @deprecated_update_smlm_operation_options
+
+  @spec patch_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def patch_smlm_settings(conn, params), do: update_smlm_settings(conn, params)
+
+  @spec put_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def put_smlm_settings(conn, params), do: update_smlm_settings(conn, params)
 
   @spec patch_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def patch_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
+  def patch_suse_manager_settings(conn, params), do: patch_smlm_settings(conn, params)
 
   @spec put_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def put_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
+  def put_suse_manager_settings(conn, params), do: put_smlm_settings(conn, params)
 
-  operation :delete_suse_manager_settings,
-    summary: "Clears the SUSE Multi-Linux Manager settings.",
-    tags: ["Settings"],
-    description:
-      "Removes all saved credentials and configuration for SUSE Multi-Linux Manager integration, supporting secure decommissioning and access management.",
-    responses: [
-      no_content:
-        "All SUSE Multi-Linux Manager credentials and configuration have been successfully cleared from the system."
-    ]
+  operation :delete_smlm_settings, @delete_smlm_operation_options
 
-  @spec delete_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def delete_suse_manager_settings(conn, _) do
-    :ok = Settings.clear_suse_manager_settings()
-    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
+  @spec delete_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def delete_smlm_settings(conn, _) do
+    :ok = Settings.clear_smlm_settings()
+    :ok = propagate_correlation_id(:smlm_settings, @correlation_ttl)
     send_resp(conn, :no_content, "")
   end
 
-  operation :test_suse_manager_settings,
-    summary: "Tests connection with SUSE Multi-Linux Manager.",
-    tags: ["Settings", "MCP"],
-    description:
-      "Tests the connection to SUSE Multi-Linux Manager using the currently saved credentials and configuration, supporting validation and troubleshooting of integration settings.",
-    responses: [
-      ok: "The connection with SUSE Multi-Linux Manager was successful.",
-      unprocessable_entity:
-        {"The connection with SUSE Multi-Linux Manager failed.", "application/json",
-         Schema.UnprocessableEntity}
-    ]
+  # Deprecated: This endpoint is deprecated, see delete_smlm_settings instead.
+  operation :delete_suse_manager_settings, @deprecated_delete_smlm_operation_options
 
-  @spec test_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def test_suse_manager_settings(conn, _) do
+  @spec delete_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def delete_suse_manager_settings(conn, params), do: delete_smlm_settings(conn, params)
+
+  operation :test_smlm_settings, @test_smlm_operation_options
+
+  ai_tool :settings_test_smlm, display_text: "Test SUSE Multi-Linux Manager connection"
+
+  @spec test_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test_smlm_settings(conn, _) do
     with :ok <- SoftwareUpdates.test_connection_settings() do
       conn
       |> put_status(:ok)
       |> json("")
     end
   end
+
+  # Deprecated: This endpoint is deprecated, see test_smlm_settings instead.
+  operation :test_suse_manager_settings, @deprecated_test_smlm_operation_options
+
+  @spec test_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test_suse_manager_settings(conn, params), do: test_smlm_settings(conn, params)
 
   operation :get_public_keys,
     summary: "Get uploaded public keys.",
@@ -254,6 +341,8 @@ defmodule TrentoWeb.V1.SettingsController do
         {"A comprehensive list of all uploaded public keys for secure authentication and integration.",
          "application/json", Schema.Platform.PublicKeys}
     ]
+
+  ai_tool :settings_get_public_keys, display_text: "Get JWT public keys"
 
   @spec get_public_keys(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_public_keys(conn, _) do
@@ -273,6 +362,8 @@ defmodule TrentoWeb.V1.SettingsController do
       unauthorized: Schema.Unauthorized.response(),
       not_found: Schema.NotFound.response()
     ]
+
+  ai_tool :settings_get_alerting, display_text: "Get alerting settings"
 
   def get_alerting_settings(conn, _params) do
     with {:ok, settings} <- Settings.get_alerting_settings() do
@@ -339,12 +430,54 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  operation :test_alerting_settings,
+    summary: "Send a test email.",
+    description:
+      "Sends a test email using the currently saved alerting settings, supporting validation and troubleshooting of the email alerting configuration.",
+    tags: ["Settings", "MCP"],
+    responses: [
+      ok: "The test email was successfully delivered.",
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response(),
+      not_found: Schema.NotFound.response(),
+      unprocessable_entity:
+        {"The test email could not be delivered.", "application/json", Schema.UnprocessableEntity}
+    ]
+
+  ai_tool :settings_test_alerting_settings, display_text: "Test alerting settings"
+
+  @spec test_alerting_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test_alerting_settings(conn, _params) do
+    with :ok <- Alerting.send_test_email() do
+      conn
+      |> put_status(:ok)
+      |> json(%{})
+    end
+  end
+
   def get_action(%{private: %{phoenix_action: action}})
       when action in [
+             :patch_smlm_settings,
+             :put_smlm_settings,
              :patch_suse_manager_settings,
              :put_suse_manager_settings
            ],
-      do: :update_suse_manager_settings
+      do: :update_smlm_settings
+
+  def get_action(%{private: %{phoenix_action: :get_suse_manager_settings}}),
+    do: :get_smlm_settings
+
+  def get_action(%{private: %{phoenix_action: :save_suse_manager_settings}}),
+    do: :save_smlm_settings
+
+  def get_action(%{private: %{phoenix_action: :delete_suse_manager_settings}}),
+    do: :delete_smlm_settings
+
+  def get_action(%{private: %{phoenix_action: :update_suse_manager_settings}}),
+    do: :update_smlm_settings
+
+  def get_action(%{private: %{phoenix_action: :test_suse_manager_settings}}),
+    do: :test_smlm_settings
 
   def get_action(%{private: %{phoenix_action: action}}), do: action
 
@@ -354,19 +487,19 @@ defmodule TrentoWeb.V1.SettingsController do
     |> Trento.Settings.Policy.get_resource()
   end
 
-  defp update_suse_manager_settings(conn, _) do
+  defp update_smlm_settings(conn, _) do
     update_settings_paylod = OpenApiSpex.body_params(conn)
-    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
+    :ok = propagate_correlation_id(:smlm_settings, @correlation_ttl)
 
-    with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
+    with {:ok, saved_settings} <- Settings.change_smlm_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
-      |> render(:suse_manager, %{settings: saved_settings})
+      |> render(:smlm, %{settings: saved_settings})
     end
   end
 
   defp propagate_correlation_id(ctx, correlation_ttl)
-       when ctx in [:api_key, :suse_manager_settings] do
+       when ctx in [:api_key, :smlm_settings] do
     correlation_id = Process.get(:correlation_id)
 
     key = ActivityLog.correlation_key(ctx)
@@ -386,7 +519,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
             :ok
 
-          :suse_manager_settings ->
+          :smlm_settings ->
             # The associated cache key stays until the next save/change operation.
             :ok
         end

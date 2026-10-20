@@ -1,12 +1,19 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 
 context('SAP Systems Overview', () => {
-  before(() => sapSystemsOverviewPage.preloadTestData());
+  before(() => {
+    sapSystemsOverviewPage.stopAgentsHeartbeat();
+    sapSystemsOverviewPage.waitForHeartbeatsExpired();
+    sapSystemsOverviewPage.preloadTestData();
+  });
 
-  beforeEach(() => sapSystemsOverviewPage.visit());
+  beforeEach(() => {
+    cy.clearAllSessionStorage();
+    sapSystemsOverviewPage.visit();
+  });
 
   it('should have expected url', () => {
     sapSystemsOverviewPage.validateUrl();
@@ -69,8 +76,73 @@ context('SAP Systems Overview', () => {
     });
   });
 
+  describe('Persistent filters', () => {
+    const sid = 'NWP';
+    const anotherSid = 'NWQ';
+
+    it('should update the URL with filter params when a filter is selected', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+
+      cy.url().should('contain', `sid=${sid}`);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+    });
+
+    it('should preserve filters when coming back to sap systems view', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+
+      sapSystemsOverviewPage.goNavigationMenuItem('Dashboard');
+      sapSystemsOverviewPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      sapSystemsOverviewPage.goNavigationMenuItem('SAP Systems');
+
+      cy.url().should('contain', `sid=${sid}`);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+    });
+
+    it('should preserve filters when the sap systems sidebar entry is clicked from the sap systems view', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+
+      sapSystemsOverviewPage.goNavigationMenuItem('SAP Systems');
+
+      cy.url().should('contain', `sid=${sid}`);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+    });
+
+    it('should preserve filters when reloading sap systems view', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+
+      sapSystemsOverviewPage.visit();
+
+      cy.url().should('contain', `sid=${sid}`);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+    });
+
+    it('should preserve the selected items per page when reloading sap systems view', () => {
+      sapSystemsOverviewPage.selectItemsPerPage(20);
+      cy.url().should('contain', 'itemsPerPage=20');
+
+      sapSystemsOverviewPage.visit();
+
+      cy.url().should('contain', 'itemsPerPage=20');
+      sapSystemsOverviewPage.selectedItemsPerPageIs(20);
+    });
+
+    it('should render filtered results when visiting a URL with filter params overriding previous filters', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+
+      sapSystemsOverviewPage.visit(`sid=${anotherSid}`);
+
+      cy.url().should('contain', `sid=${anotherSid}`);
+      sapSystemsOverviewPage.nwqSystemIsDisplayed();
+      sapSystemsOverviewPage.nwpSystemIsNotDisplayed();
+    });
+  });
+
   describe('SAP Systems Tagging', () => {
-    before(() => sapSystemsOverviewPage.apiRemoveAllSapSystemsTags());
+    beforeEach(() => sapSystemsOverviewPage.apiRemoveAllSapSystemsTags());
 
     describe('Add tag to SAP System', () => {
       it('should tag SAP System', () => {
@@ -79,20 +151,30 @@ context('SAP Systems Overview', () => {
     });
   });
 
-  describe('Health states are updated', () => {
+  describe('Health and statuses are updated', () => {
     beforeEach(() => sapSystemsOverviewPage.restoreNwdHost());
 
-    it('should have expected health in SAP system and instance when a different state is received', () => {
-      sapSystemsOverviewPage.eachInstanceHasItsHealthStatusCorrectlyUpdated();
+    ['GREEN', 'YELLOW', 'RED', 'GRAY'].forEach((status, index) => {
+      it(`should have expected health in SAP system and instance when a ${status} status is received`, () => {
+        sapSystemsOverviewPage.expandNwdSapSystem();
+        sapSystemsOverviewPage.loadScenario(`sap-systems-overview-${status}`);
+        sapSystemsOverviewPage.instanceHasItsStatusCorrectlyUpdated(
+          status,
+          index
+        );
+      });
     });
 
-    it('should have RED health in SAP system when HANA instance with SAPControl-RED state is received', () => {
+    it('should have RED health in SAP system when HANA instance with RED status is received', () => {
+      sapSystemsOverviewPage.expandNwdSapSystem();
+      sapSystemsOverviewPage.loadScenario('sap-systems-overview-hana-RED');
       sapSystemsOverviewPage.sapSystemHealthChangesToRedAsExpected();
     });
   });
 
   describe('SAP diagnostics agent', () => {
     it('should skip SAP diagnostics agent discovery visualization', () => {
+      sapSystemsOverviewPage.loadScenario('sap-systems-overview-DAA');
       sapSystemsOverviewPage.sapDiagnosticsAgentDiscoveryVisualizationIsSkipped();
     });
   });
@@ -159,6 +241,8 @@ context('SAP Systems Overview', () => {
       sapSystemsOverviewPage.expandNwdSapSystem();
     });
 
+    after(() => sapSystemsOverviewPage.restoreNwdHost());
+
     it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {
       sapSystemsOverviewPage.loadAbsentInstanceScenario();
       sapSystemsOverviewPage.nwdInstance01CleanUpButtonIsVisible();
@@ -180,6 +264,43 @@ context('SAP Systems Overview', () => {
       sapSystemsOverviewPage.clickNwdInstance00CleanUpButton();
       sapSystemsOverviewPage.clickCleanUpModalConfirmationButton();
       sapSystemsOverviewPage.systemNwdIsNotDisplayed();
+    });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      sapSystemsOverviewPage.startAllSapSystemsAgentsHeartbeat();
+      sapSystemsOverviewPage.visit();
+    });
+
+    beforeEach(() => sapSystemsOverviewPage.expandNwdSapSystem());
+
+    after(() => sapSystemsOverviewPage.stopAgentsHeartbeat());
+
+    it('should mark SAP system data as stale when an agent composing the system stops reporting', () => {
+      sapSystemsOverviewPage.stopNwdSystemAgentHeartbeat();
+      sapSystemsOverviewPage.nwdSystemDataIsMarkedAsStale();
+      sapSystemsOverviewPage.nwdSystemInstanceRowIsMarkedAsStale();
+    });
+
+    it('should mark SAP system data as sync when the agent starts reporting data again', () => {
+      sapSystemsOverviewPage.startNwdSystemAgentHeartbeat();
+      sapSystemsOverviewPage.loadPresentInstanceScenario();
+      sapSystemsOverviewPage.nwdSystemDataIsMarkedInSync();
+      sapSystemsOverviewPage.nwdSystemInstanceRowIsMarkedInSync();
+    });
+
+    it('should mark SAP system data as stale when an agent with a database instance composing the system stops reporting', () => {
+      sapSystemsOverviewPage.stopHddDatabaseAgentHeartbeat();
+      sapSystemsOverviewPage.nwdSystemDataIsMarkedAsStale();
+      sapSystemsOverviewPage.hddDatabaseInstanceRowIsMarkedAsStale();
+    });
+
+    it('should mark SAP system data as sync when the agent with a database instance starts reporting data again', () => {
+      sapSystemsOverviewPage.startHddDatabaseAgentHeartbeat();
+      sapSystemsOverviewPage.markHddDatabaseAsPresent();
+      sapSystemsOverviewPage.nwdSystemDataIsMarkedInSync();
+      sapSystemsOverviewPage.hddDatabaseInstanceRowIsMarkedInSync();
     });
   });
 

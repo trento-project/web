@@ -1,13 +1,15 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import databaseReducer, {
   removeDatabase,
   removeDatabaseInstance,
   upsertDatabaseInstances,
-  updateDatabaseInstanceHealth,
+  updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
+  updateDatabaseInstanceStaleAt,
+  updateDatabaseStaleAt,
   setDatabaseInstanceDeregistering,
   unsetDatabaseInstanceDeregistering,
 } from '@state/databases';
@@ -82,7 +84,7 @@ describe('Databases reducer', () => {
 
   it('should update the health of a database instance', () => {
     const instance = databaseInstanceFactory.build();
-    const newHealth = 'newHealth';
+    const newStatus = 'newStatus';
 
     const initialState = {
       databaseInstances: [instance],
@@ -92,12 +94,12 @@ describe('Databases reducer', () => {
       database_id: instance.database_id,
       instance_number: instance.instance_number,
       host_id: instance.host_id,
-      health: newHealth,
+      status: newStatus,
     };
-    const action = updateDatabaseInstanceHealth(instanceToUpdate);
+    const action = updateDatabaseInstanceStatus(instanceToUpdate);
 
     const expectedState = {
-      databaseInstances: [{ ...instance, health: newHealth }],
+      databaseInstances: [{ ...instance, status: newStatus }],
     };
 
     expect(databaseReducer(initialState, action)).toEqual(expectedState);
@@ -169,6 +171,61 @@ describe('Databases reducer', () => {
           ...instance,
           absent_at: absentAt,
         },
+      ],
+    };
+
+    expect(databaseReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the stale_at field of a database instance', () => {
+    const instance = databaseInstanceFactory.build();
+    const staleAt = Date.now();
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const instanceToUpdate = {
+      ...instance,
+      stale_at: staleAt,
+    };
+
+    const action = updateDatabaseInstanceStaleAt(instanceToUpdate);
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          stale_at: staleAt,
+        },
+      ],
+    };
+
+    expect(databaseReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the stale_at field of a database', () => {
+    const [database1, database2] = databaseFactory.buildList(2);
+    const staleAt = Date.now();
+
+    const initialState = {
+      databases: [database1, database2],
+    };
+
+    const databaseToUpdate = {
+      id: database1.id,
+      stale_at: staleAt,
+    };
+
+    const action = updateDatabaseStaleAt(databaseToUpdate);
+
+    const expectedState = {
+      databases: [
+        {
+          ...database1,
+          stale_at: staleAt,
+        },
+        database2,
       ],
     };
 

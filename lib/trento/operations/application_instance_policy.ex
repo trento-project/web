@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Operations.ApplicationInstancePolicy do
   @moduledoc """
@@ -9,6 +9,7 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
   @behaviour Trento.Operations.PolicyBehaviour
 
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Support.OperationsHelper
 
@@ -118,7 +119,7 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
       end)
 
     case message_server_instance do
-      %{health: :passing} ->
+      %{status: Status.green()} ->
         :ok
 
       %{instance_number: msg_instance_number} ->
@@ -184,8 +185,8 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
        }) do
     instances
     |> reject_current_instance(host_id, instance_number)
-    |> Enum.filter(fn %{health: health} ->
-      health != :unknown
+    |> Enum.filter(fn %{status: status} ->
+      status != Status.gray()
     end)
     |> case do
       [] ->

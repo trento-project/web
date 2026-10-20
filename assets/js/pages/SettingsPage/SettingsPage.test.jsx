@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 
@@ -100,7 +100,7 @@ describe('Settings Page', () => {
 
   describe('Software Updates Section', () => {
     it('should render a loading box while fetching settings', async () => {
-      axiosMock.onGet('/api/v1/settings/suse_manager').reply(
+      axiosMock.onGet('/api/v1/settings/smlm').reply(
         (_) =>
           new Promise((resolve) => {
             setTimeout(() => resolve([200, {}]), 5000);
@@ -116,51 +116,51 @@ describe('Settings Page', () => {
       });
 
       expect(
-        screen.getByText('Loading SUSE Manager Settings...')
+        screen.getByText('Loading SUSE Multi-Linux Manager Settings...')
       ).toBeVisible();
     });
 
-    it('should render an empty SUSE Manager Config Section', async () => {
+    it('should render an empty SUSE Multi-Linux Manager Config Section', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
       });
 
-      axiosMock.onGet('/api/v1/settings/suse_manager').reply(404, {});
+      axiosMock.onGet('/api/v1/settings/smlm').reply(404, {});
 
       await act(async () => {
         renderWithRouter(StatefulSettings);
       });
 
-      expect(screen.getByText('SUSE Manager URL')).toBeVisible();
+      expect(screen.getByText('SUSE Multi-Linux Manager URL')).toBeVisible();
       expect(screen.getByText('https://')).toBeVisible();
 
       expect(screen.getByText('CA Certificate')).toBeVisible();
       expect(screen.getByText('-')).toBeVisible();
 
-      const sumaUsername = screen.getByLabelText('suma-username');
-      expect(sumaUsername).toBeVisible();
-      expect(sumaUsername).toHaveTextContent('.....');
+      const smlmUsername = screen.getByLabelText('smlm-username');
+      expect(smlmUsername).toBeVisible();
+      expect(smlmUsername).toHaveTextContent('.....');
 
-      const sumaPassword = screen.getByLabelText('suma-password');
-      expect(sumaPassword).toBeVisible();
-      expect(sumaPassword).toHaveTextContent('.....');
+      const smlmPassword = screen.getByLabelText('smlm-password');
+      expect(smlmPassword).toBeVisible();
+      expect(smlmPassword).toHaveTextContent('.....');
     });
 
-    it('should render SUSE Manager Config Section with configured settings', async () => {
+    it('should render SUSE Multi-Linux Manager Config Section with configured settings', async () => {
       const settings = softwareUpdatesSettingsFactory.build();
 
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
       });
 
-      axiosMock.onGet('/api/v1/settings/suse_manager').reply(200, settings);
+      axiosMock.onGet('/api/v1/settings/smlm').reply(200, settings);
 
       const { url, username, ca_uploaded_at } = settings;
 
       await act(async () => {
         renderWithRouter(StatefulSettings);
       });
-      expect(screen.getByText('SUSE Manager URL')).toBeVisible();
+      expect(screen.getByText('SUSE Multi-Linux Manager URL')).toBeVisible();
       expect(screen.getByText(url)).toBeVisible();
 
       expect(screen.getByText('CA Certificate')).toBeVisible();
@@ -169,13 +169,13 @@ describe('Settings Page', () => {
       const expectedDate = formatDateOnly(ca_uploaded_at);
       expect(screen.getByText(`Uploaded: ${expectedDate}`)).toBeVisible();
 
-      const sumaUsername = screen.getByLabelText('suma-username');
-      expect(sumaUsername).toBeVisible();
-      expect(sumaUsername).toHaveTextContent(username);
+      const smlmUsername = screen.getByLabelText('smlm-username');
+      expect(smlmUsername).toBeVisible();
+      expect(smlmUsername).toHaveTextContent(username);
 
-      const sumaPassword = screen.getByLabelText('suma-password');
-      expect(sumaPassword).toBeVisible();
-      expect(sumaPassword).toHaveTextContent('•••••');
+      const smlmPassword = screen.getByLabelText('smlm-password');
+      expect(smlmPassword).toBeVisible();
+      expect(smlmPassword).toHaveTextContent('•••••');
     });
   });
 

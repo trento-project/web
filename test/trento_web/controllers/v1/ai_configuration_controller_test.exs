@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.AIConfigurationControllerTest do
   use TrentoWeb.ConnCase, async: true
@@ -220,7 +220,7 @@ defmodule TrentoWeb.V1.AIConfigurationControllerTest do
       %{
         name: "model unsupported by the specified provider",
         request_body: %{
-          model: build(:random_ai_model, provider: :googleai),
+          model: build(:random_ai_model, provider: :google),
           provider: :openai,
           api_key: Faker.String.base64()
         },
@@ -573,7 +573,7 @@ defmodule TrentoWeb.V1.AIConfigurationControllerTest do
       %{
         name: "model unsupported by the specified provider",
         request_body: %{
-          provider: :googleai,
+          provider: :google,
           model: "gpt-5.4",
           api_key: Faker.String.base64()
         },
@@ -771,6 +771,31 @@ defmodule TrentoWeb.V1.AIConfigurationControllerTest do
                "provider" => expected_provider,
                "model" => new_model
              } == response
+    end
+  end
+
+  describe "clearing AI configuration" do
+    test "should clear the AI configuration for the user", %{
+      conn: conn,
+      admin_user: %{id: user_id}
+    } do
+      insert(:ai_user_configuration, user_id: user_id)
+
+      conn
+      |> delete("/api/v1/profile/ai_configuration")
+      |> response(:no_content)
+
+      assert nil == Trento.Repo.get_by(UserConfiguration, user_id: user_id)
+    end
+
+    test "should be idempotent", %{conn: conn, admin_user: %{id: user_id}} do
+      insert(:ai_user_configuration, user_id: user_id)
+
+      Enum.each(1..4, fn _ ->
+        conn
+        |> delete("/api/v1/profile/ai_configuration")
+        |> response(:no_content)
+      end)
     end
   end
 end

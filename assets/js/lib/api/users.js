@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { del, get, patch, post } from '@lib/network';
 
@@ -43,3 +43,5 @@ export const createAIConfiguration = (provider, model, apiKey) =>
 
 export const editAIConfiguration = (provider, model, apiKey) =>
   patch('/profile/ai_configuration', { provider, model, api_key: apiKey });
+
+export const clearAIConfiguration = () => del('/profile/ai_configuration');

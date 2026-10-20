@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useEffect, useMemo, useRef } from 'react';
 import { noop } from 'lodash';
@@ -14,23 +14,38 @@ function AssistantChatProvider({
   userID,
   threadID,
   onConnectionChange = noop,
+  onAIConfigurationCleared = noop,
+  onAIConfigurationCreated = noop,
+  onModelChanged = noop,
+  onConversationStatusChange = noop,
   children,
 }) {
   const socket = useSocket();
 
-  const agent = useMemo(() => {
-    if (!socket || !userID) return null;
-    // AG-UI's AgentConfig field is `threadId` (camel) — translate.
-    return new WebSocketAIAgent({
-      socket,
-      userID,
-      threadId: threadID,
-      onConnectionChange,
-    });
-  }, [socket, userID, threadID, onConnectionChange]);
+  const agent = useMemo(
+    () => new WebSocketAIAgent({ socket, userID }),
+    [socket, userID]
+  );
 
   useEffect(() => {
-    if (!agent) return undefined;
+    agent.withCallbacks({
+      onConnectionChange,
+      onAIConfigurationCleared,
+      onAIConfigurationCreated,
+      onModelChanged,
+      onConversationStatusChange,
+    });
+  });
+
+  useEffect(() => {
+    // The AG-UI runtime reads `agent.threadId` when building each run's
+    // payload (defaults to "main" if unset). Mutate the live agent instead
+    // of rebuilding it so the channel + websocket stay alive across thread
+    // changes. Declared before `initialize()` so the first join names this thread.
+    agent.threadId = threadID;
+  }, [agent, threadID]);
+
+  useEffect(() => {
     // Catch rejections (channel-join error / timeout / missing socket)
     // so they don't bubble up as unhandled promise rejections —
     // onConnectionChange handles flipping the UI to DISCONNECTED
@@ -42,15 +57,17 @@ function AssistantChatProvider({
   const aui = useAui();
 
   // useAgUiRuntime keeps its core (and the message store) in a useRef across
-  // agent swaps, so bumping threadID rebuilds the agent + websocket but
-  // leaves the prior thread's messages onscreen. Wipe them explicitly when
-  // the thread id actually changes; the first mount is a no-op.
+  // re-renders. When threadID changes we keep the same agent (above) but the
+  // UI must drop the prior thread's messages explicitly; the first mount is
+  // a no-op.
   const previousThreadIDRef = useRef(threadID);
   useEffect(() => {
     if (previousThreadIDRef.current === threadID) return;
     previousThreadIDRef.current = threadID;
+
     runtime.thread.reset();
-  }, [threadID, runtime]);
+    agent.abandonThread();
+  }, [threadID, runtime, agent]);
 
   return (
     <AssistantRuntimeProvider aui={aui} runtime={runtime}>

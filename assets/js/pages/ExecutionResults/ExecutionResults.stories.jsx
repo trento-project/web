@@ -1,11 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
+import { clusterFactory, hostFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
-import ExecutionResults from '.';
+import ExecutionResults from './ExecutionResults';
 
 const executionID = '9fbcaec6-e65e-4adc-9cac-fc542c66717b';
 const agentID = [
@@ -332,7 +333,7 @@ const fetchCatalog = () =>
 
 export default {
   title: 'Layouts/ExecutionResults',
-  components: ExecutionResults,
+  component: ExecutionResults,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -345,6 +346,97 @@ export default {
       <ExecutionResults {...args} />
     </div>
   ),
+  argTypes: {
+    targetID: {
+      description: 'ID of the target',
+      control: { type: 'text' },
+    },
+    targetHosts: {
+      description: 'List of hosts in the target',
+      control: { type: 'object' },
+    },
+    targetName: {
+      description: 'Name of the target',
+      control: { type: 'text' },
+    },
+    targetType: {
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
+    },
+    target: {
+      description: 'Details of the target',
+      control: { type: 'object' },
+    },
+    onLastExecutionUpdate: {
+      description: 'Function to fetch the last execution update',
+      action: 'fetch',
+    },
+    onCatalogRefresh: {
+      description: 'Function to refresh the catalog',
+      action: 'refresh',
+    },
+    catalog: {
+      description: 'Catalog data',
+      control: { type: 'object' },
+    },
+    executionRunning: {
+      description: 'Indicates if the execution is running',
+      control: { type: 'boolean' },
+    },
+    executionData: {
+      description: 'Data from the completed execution',
+      control: { type: 'object' },
+    },
+    catalogLoading: {
+      description: 'Flag indicating whether the catalog is currently loading',
+      control: { type: 'boolean' },
+    },
+    catalogError: {
+      description: 'Error message returned when loading the catalog fails',
+      control: { type: 'text' },
+    },
+    executionLoading: {
+      description: 'Flag indicating whether execution data is being fetched',
+      control: { type: 'boolean' },
+    },
+    executionStarted: {
+      description: 'Indicates that an execution has started',
+      control: { type: 'boolean' },
+    },
+    executionError: {
+      description: 'Error message returned when fetching execution data fails',
+      control: { type: 'text' },
+    },
+    targetSelectedChecks: {
+      description: 'List/array of selected checks for the current target',
+      control: { type: 'object' },
+    },
+    onStartExecution: {
+      description: 'Callback invoked to start an execution',
+      action: 'onStartExecution',
+    },
+  },
+};
+
+export const Default = {
+  args: {
+    targetID: groupID,
+    targetHosts: clusterHosts,
+    targetName: clusterName,
+    targetType: 'cluster',
+    target: {
+      type: clusterScenario,
+      provider: cloudProvider,
+      details: clusterDetails,
+    },
+    onLastExecutionUpdate: fetchCompleted,
+    onCatalogRefresh: fetchCatalog,
+    catalog: catalogData.data.items,
+    executionRunning: false,
+    executionData: completedExecution.data,
+    onStartExecution: action('onStartExecution'),
+  },
 };
 
 export const Running = {
@@ -362,6 +454,7 @@ export const Running = {
     onCatalogRefresh: fetchCatalog,
     catalog: catalogData.data.items,
     executionRunning: true,
+    onStartExecution: action('onStartExecution'),
   },
 };
 
@@ -381,5 +474,6 @@ export const Completed = {
     catalog: catalogData.data.items,
     executionRunning: false,
     executionData: completedExecution.data,
+    onStartExecution: action('onStartExecution'),
   },
 };

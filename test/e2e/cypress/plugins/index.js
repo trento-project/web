@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 /// <reference types="cypress" />
 // ***********************************************************
@@ -19,22 +19,37 @@
  * @type {Cypress.PluginConfig}
  */
 
-const cypressSplit = require('cypress-split');
-const webpack = require('@cypress/webpack-preprocessor');
-let heartbeatsIntervals = [];
+import { exec } from 'node:child_process';
+import http from 'node:http';
+import https from 'node:https';
+import { promisify } from 'node:util';
+import cypressSplit from 'cypress-split';
+import webpack from '@cypress/webpack-preprocessor';
 
-module.exports = (on, config) => {
+import webpackConfig from '../../webpack.config.js';
+
+const execAsync = promisify(exec);
+let heartbeatsIntervals = {};
+
+const EXEC_DEFAULT_TIMEOUT = 60000;
+
+export default (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
   cypressSplit(on, config);
   on('task', {
-    searchEmailInMailpit,
+    async exec({ command, timeout = EXEC_DEFAULT_TIMEOUT }) {
+      return await execAsync(command, { timeout });
+    },
+    searchEmailInMailpit({ subject, options }) {
+      return searchEmailInMailpit(subject, options);
+    },
     deleteAllEmailsFromMailpit,
     startAgentHeartbeat({ agents, apiKey }) {
       const url = new URL(config.baseUrl);
       const isHttps = url.protocol === 'https:';
-      const transport = isHttps ? require('https') : require('http');
+      const transport = isHttps ? https : http;
 
       const heartbeat = (agentId) => {
         transport
@@ -50,29 +65,33 @@ module.exports = (on, config) => {
 
       agents.forEach((agentId) => {
         heartbeat(agentId);
-        let interval = setInterval(
+        clearInterval(heartbeatsIntervals[agentId]);
+        heartbeatsIntervals[agentId] = setInterval(
           () => heartbeat(agentId),
           config.env.heartbeat_interval
         );
-        heartbeatsIntervals.push(interval);
       });
 
       return null;
     },
-
-    stopAgentsHeartbeat() {
-      heartbeatsIntervals.forEach((interval) => {
-        clearInterval(interval);
+    stopAgentsHeartbeat({ agents = [] }) {
+      const agentIds = agents.length
+        ? agents
+        : Object.keys(heartbeatsIntervals);
+      agentIds.forEach((agentId) => {
+        clearInterval(heartbeatsIntervals[agentId]);
+        delete heartbeatsIntervals[agentId];
       });
+
       return null;
     },
   });
 
-  const webpackOptions = {
-    webpackOptions: require('../../webpack.config'),
+  const preprocessorOptions = {
+    webpackOptions: webpackConfig,
     watchOptions: {},
   };
-  on('file:preprocessor', webpack(webpackOptions));
+  on('file:preprocessor', webpack(preprocessorOptions));
 
   return config;
 };

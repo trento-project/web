@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import { instancesMatch, upsertInstances, updateInstance } from './instances';
@@ -64,6 +64,14 @@ export const databasesListSlice = createSlice({
         return database;
       });
     },
+    updateDatabaseStaleAt: (state, { payload: { id, stale_at } }) => {
+      state.databases = state.databases.map((database) => {
+        if (database.id === id) {
+          database.stale_at = stale_at;
+        }
+        return database;
+      });
+    },
     upsertDatabaseInstances: (state, { payload: instances }) => {
       state.databaseInstances = upsertInstances(
         state.databaseInstances,
@@ -75,11 +83,11 @@ export const databasesListSlice = createSlice({
         (databaseInstance) => !instancesMatch(databaseInstance, instance)
       );
     },
-    updateDatabaseInstanceHealth: (state, { payload: instance }) => {
+    updateDatabaseInstanceStatus: (state, { payload: instance }) => {
       state.databaseInstances = updateInstance(
         state.databaseInstances,
         instance,
-        { health: instance.health }
+        { status: instance.status }
       );
     },
     updateDatabaseInstanceSystemReplication: (state, { payload: instance }) => {
@@ -104,6 +112,13 @@ export const databasesListSlice = createSlice({
         state.databaseInstances,
         instance,
         { absent_at: instance.absent_at }
+      );
+    },
+    updateDatabaseInstanceStaleAt: (state, { payload: instance }) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { stale_at: instance.stale_at }
       );
     },
     setDatabaseInstanceDeregistering: (state, { payload: instance }) => {
@@ -131,12 +146,15 @@ export const DATABASE_REGISTERED = 'DATABASE_REGISTERED';
 export const DATABASE_DEREGISTERED = 'DATABASE_DEREGISTERED';
 export const DATABASE_RESTORED = 'DATABASE_RESTORED';
 export const DATABASE_HEALTH_CHANGED = 'DATABASE_HEALTH_CHANGED';
+export const DATABASE_STALE_CHANGED = 'DATABASE_STALE_CHANGED';
 export const DATABASE_INSTANCE_REGISTERED = 'DATABASE_INSTANCE_REGISTERED';
 export const DATABASE_INSTANCE_ABSENT_AT_CHANGED =
   'DATABASE_INSTANCE_ABSENT_AT_CHANGED';
+export const DATABASE_INSTANCE_STALE_CHANGED =
+  'DATABASE_INSTANCE_STALE_CHANGED';
 export const DATABASE_INSTANCE_DEREGISTERED = 'DATABASE_INSTANCE_DEREGISTERED';
-export const DATABASE_INSTANCE_HEALTH_CHANGED =
-  'DATABASE_INSTANCE_HEALTH_CHANGED';
+export const DATABASE_INSTANCE_STATUS_CHANGED =
+  'DATABASE_INSTANCE_STATUS_CHANGED';
 export const DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED =
   'DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED';
 export const DEREGISTER_DATABASE_INSTANCE = 'DEREGISTER_DATABASE_INSTANCE';
@@ -145,17 +163,21 @@ export const databaseRegistered = createAction(DATABASE_REGISTERED);
 export const databaseDeregistered = createAction(DATABASE_DEREGISTERED);
 export const databaseRestored = createAction(DATABASE_RESTORED);
 export const databaseHealthChanged = createAction(DATABASE_HEALTH_CHANGED);
+export const databaseStaleChanged = createAction(DATABASE_STALE_CHANGED);
 export const databaseInstanceRegistered = createAction(
   DATABASE_INSTANCE_REGISTERED
 );
 export const databaseInstanceAbsentAtChanged = createAction(
   DATABASE_INSTANCE_ABSENT_AT_CHANGED
 );
+export const databaseInstanceStaleChanged = createAction(
+  DATABASE_INSTANCE_STALE_CHANGED
+);
 export const databaseInstanceDeregistered = createAction(
   DATABASE_INSTANCE_DEREGISTERED
 );
-export const databaseInstanceHealthChanged = createAction(
-  DATABASE_INSTANCE_HEALTH_CHANGED
+export const databaseInstanceStatusChanged = createAction(
+  DATABASE_INSTANCE_STATUS_CHANGED
 );
 export const databaseInstanceSystemReplicationChanged = createAction(
   DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED
@@ -173,9 +195,11 @@ export const {
   removeDatabaseInstance,
   upsertDatabaseInstances,
   updateDatabaseHealth,
-  updateDatabaseInstanceHealth,
+  updateDatabaseStaleAt,
+  updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
+  updateDatabaseInstanceStaleAt,
   addTagToDatabase,
   removeTagFromDatabase,
   setDatabaseInstanceDeregistering,

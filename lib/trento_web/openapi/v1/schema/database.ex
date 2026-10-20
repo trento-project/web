@@ -1,11 +1,13 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.OpenApi.V1.Schema.Database do
   @moduledoc false
 
   require OpenApiSpex
   alias OpenApiSpex.Schema
+
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias TrentoWeb.OpenApi.V1.Schema.{ResourceHealth, Tags}
 
@@ -129,12 +131,32 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
             description:
               "The tier number of the system replication site for the database instance, supporting hierarchical management."
           },
-          health: ResourceHealth,
+          health: %Schema{
+            description: "Usage replaced by status field.",
+            deprecated: true,
+            allOf: [
+              ResourceHealth
+            ]
+          },
+          status: %Schema{
+            type: :string,
+            description: "The status of the database instance, supporting status monitoring.",
+            enum: Status.values(),
+            example: "green"
+          },
           absent_at: %Schema{
             type: :string,
             description:
               "The timestamp indicating when the database instance became absent, supporting monitoring and troubleshooting.",
             format: :datetime,
+            nullable: true
+          },
+          stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the database instance data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
             nullable: true
           },
           inserted_at: %Schema{type: :string, format: :datetime},
@@ -161,7 +183,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
           system_replication_source_site: "Site2",
           system_replication_tier: 1,
           health: "passing",
+          status: "green",
           absent_at: "2024-01-15T08:00:00Z",
+          stale_at: "2024-01-15T09:00:00Z",
           inserted_at: "2024-01-15T10:30:00Z",
           updated_at: "2024-01-15T12:45:00Z"
         }
@@ -231,6 +255,14 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
           health: ResourceHealth,
           database_instances: DatabaseInstances,
           tags: Tags,
+          stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the database data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
           updated_at: %Schema{
             type: :string,
@@ -245,6 +277,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
           health: "passing",
           database_instances: [],
           tags: [],
+          stale_at: "2024-01-15T08:00:00Z",
           inserted_at: "2024-01-15T10:30:00Z",
           updated_at: "2024-01-15T12:30:00Z"
         }
@@ -270,6 +303,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
             health: "passing",
             database_instances: [],
             tags: [],
+            stale_at: "2024-01-15T08:00:00Z",
             inserted_at: "2024-01-15T10:30:00Z",
             updated_at: "2024-01-15T12:30:00Z"
           }

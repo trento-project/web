@@ -1,38 +1,77 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { EOS_LENS_FILLED } from 'eos-icons-react';
-import Pill from '@common/Pill';
+import {
+  EOS_LENS_FILLED,
+  EOS_INFO_OUTLINED,
+  EOS_SCHEDULE_OUTLINED,
+} from 'eos-icons-react';
+import { capitalize } from 'lodash';
+import { formatDateTime } from '@lib/timezones';
+import { getIconSize } from '@lib/icon';
+import Tooltip from '@common/Tooltip';
 
-function InstanceStatus({ health }) {
+function InstanceStatus({
+  status,
+  size = 20,
+  absent = false,
+  staleAt = null,
+  timezone,
+}) {
   let cssClass;
-  let instanceStatus;
 
-  switch (health) {
-    case 'passing':
+  switch (status) {
+    case 'green':
       cssClass = 'fill-jungle-green-500';
-      instanceStatus = 'Green';
       break;
-    case 'warning':
+    case 'yellow':
       cssClass = 'fill-yellow-500';
-      instanceStatus = 'Yellow';
       break;
-    case 'critical':
+    case 'red':
       cssClass = 'fill-red-500';
-      instanceStatus = 'Red';
       break;
     default:
       cssClass = 'fill-gray-500';
-      instanceStatus = 'Gray';
       break;
   }
 
+  const IconComponent = absent ? EOS_INFO_OUTLINED : EOS_LENS_FILLED;
+  const iconClass = absent ? 'fill-black' : cssClass;
+
+  const tooltipContent = (
+    <span className="block text-center">
+      {absent ? 'Registered instance not found.' : capitalize(status)}
+      {staleAt && (
+        <>
+          <br />
+          (Stale since {formatDateTime(staleAt, timezone)})
+        </>
+      )}
+    </span>
+  );
+
+  const convertedSize = getIconSize(size);
+
   return (
-    <Pill className="bg-gray-200 text-gray-500 items-center">
-      SAPControl: <EOS_LENS_FILLED size="base" className={`${cssClass} mx-1`} />
-      {instanceStatus}
-    </Pill>
+    <div className="flex items-center mx-1">
+      <Tooltip
+        content={tooltipContent}
+        place="top"
+        isEnabled={true}
+        wrap={false}
+      >
+        <div className="relative">
+          <IconComponent size={convertedSize} className={iconClass} />
+          {staleAt && (
+            <EOS_SCHEDULE_OUTLINED
+              size={convertedSize * 0.7}
+              className={`${iconClass} absolute overflow-visible bottom-0 right-0 translate-x-1/4 translate-y-1/4 bg-white rounded-full`}
+            />
+          )}
+        </div>
+      </Tooltip>
+    </div>
   );
 }
 

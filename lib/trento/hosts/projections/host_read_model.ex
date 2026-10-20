@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Hosts.Projections.HostReadModel do
   @moduledoc """
@@ -40,6 +40,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :arch, Ecto.Enum, values: Architecture.values(), default: Architecture.unknown()
     field :fully_qualified_domain_name, :string
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
+    field :stale_at, :utc_datetime_usec
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :selected_checks, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()

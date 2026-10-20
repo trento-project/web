@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Databases.Projections.DatabaseProjector do
   @moduledoc """
@@ -19,13 +19,17 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   alias TrentoWeb.V1.DatabaseJSON
 
   alias Trento.Databases.Events.{
+    DatabaseDataMarkedInSync,
+    DatabaseDataMarkedStale,
     DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDataMarkedInSync,
+    DatabaseInstanceDataMarkedStale,
     DatabaseInstanceDeregistered,
-    DatabaseInstanceHealthChanged,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
     DatabaseInstanceRegistered,
+    DatabaseInstanceStatusChanged,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
     DatabaseRestored,
@@ -99,7 +103,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       system_replication_operation_mode: system_replication_operation_mode,
       system_replication_source_site: system_replication_source_site,
       system_replication_tier: system_replication_tier,
-      health: health
+      status: status
     },
     fn multi ->
       database_instance_changeset =
@@ -121,7 +125,8 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           system_replication_operation_mode: system_replication_operation_mode,
           system_replication_source_site: system_replication_source_site,
           system_replication_tier: system_replication_tier,
-          health: health
+          status: status,
+          stale_at: nil
         })
 
       Ecto.Multi.insert(multi, :database_instance, database_instance_changeset)
@@ -129,11 +134,11 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   )
 
   project(
-    %DatabaseInstanceHealthChanged{
+    %DatabaseInstanceStatusChanged{
       database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
-      health: health
+      status: status
     },
     fn multi ->
       changeset =
@@ -143,7 +148,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           instance_number: instance_number,
           host_id: host_id
         )
-        |> DatabaseInstanceReadModel.changeset(%{health: health})
+        |> DatabaseInstanceReadModel.changeset(%{status: status})
 
       Ecto.Multi.update(multi, :database_instance, changeset)
     end
@@ -228,6 +233,80 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
         })
 
       Ecto.Multi.update(multi, :database_instance, changeset)
+    end
+  )
+
+  project(
+    %DatabaseInstanceDataMarkedStale{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      stale_at: stale_at
+    },
+    fn multi ->
+      changeset =
+        DatabaseInstanceReadModel
+        |> Repo.get_by(
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+        |> DatabaseInstanceReadModel.changeset(%{
+          stale_at: stale_at
+        })
+
+      Ecto.Multi.update(multi, :database_instance, changeset)
+    end
+  )
+
+  project(
+    %DatabaseInstanceDataMarkedInSync{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    },
+    fn multi ->
+      changeset =
+        DatabaseInstanceReadModel
+        |> Repo.get_by(
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+        |> DatabaseInstanceReadModel.changeset(%{
+          stale_at: nil
+        })
+
+      Ecto.Multi.update(multi, :database_instance, changeset)
+    end
+  )
+
+  project(
+    %DatabaseDataMarkedStale{
+      database_id: database_id,
+      stale_at: stale_at
+    },
+    fn multi ->
+      changeset =
+        DatabaseReadModel
+        |> Repo.get!(database_id)
+        |> DatabaseReadModel.changeset(%{stale_at: stale_at})
+
+      Ecto.Multi.update(multi, :database, changeset)
+    end
+  )
+
+  project(
+    %DatabaseDataMarkedInSync{
+      database_id: database_id
+    },
+    fn multi ->
+      changeset =
+        DatabaseReadModel
+        |> Repo.get!(database_id)
+        |> DatabaseReadModel.changeset(%{stale_at: nil})
+
+      Ecto.Multi.update(multi, :database, changeset)
     end
   )
 
@@ -334,26 +413,26 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
 
   @impl true
   def after_update(
-        %DatabaseInstanceHealthChanged{},
+        %DatabaseInstanceStatusChanged{},
         _,
         %{
           database_instance: %DatabaseInstanceReadModel{
             database_id: database_id,
             host_id: host_id,
             instance_number: instance_number,
-            health: health
+            status: status
           }
         }
       ) do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
-      "database_instance_health_changed",
-      DatabaseJSON.database_instance_health_changed(%{
+      "database_instance_status_changed",
+      DatabaseJSON.database_instance_status_changed(%{
         instance: %{
           database_id: database_id,
           host_id: host_id,
           instance_number: instance_number,
-          health: health
+          status: status
         }
       })
     )
@@ -453,6 +532,55 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
 
   @impl true
   def after_update(
+        %DatabaseInstanceDataMarkedStale{
+          instance_number: instance_number,
+          host_id: host_id,
+          database_id: database_id,
+          stale_at: stale_at
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_instance_stale_changed",
+      DatabaseJSON.database_instance_stale_changed(%{
+        instance: %{
+          instance_number: instance_number,
+          host_id: host_id,
+          database_id: database_id,
+          stale_at: stale_at
+        }
+      })
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseInstanceDataMarkedInSync{
+          instance_number: instance_number,
+          host_id: host_id,
+          database_id: database_id
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_instance_stale_changed",
+      DatabaseJSON.database_instance_stale_changed(%{
+        instance: %{
+          instance_number: instance_number,
+          host_id: host_id,
+          database_id: database_id,
+          stale_at: nil
+        }
+      })
+    )
+  end
+
+  @impl true
+  def after_update(
         %DatabaseRestored{database_id: database_id},
         _,
         _
@@ -533,6 +661,47 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       @databases_topic,
       "database_tenants_updated",
       DatabaseJSON.database_tenants_updated(%{tenants: tenants, database_id: database_id})
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseDataMarkedStale{
+          database_id: database_id,
+          stale_at: stale_at
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_stale_changed",
+      DatabaseJSON.database_stale_changed(%{
+        database: %{
+          id: database_id,
+          stale_at: stale_at
+        }
+      })
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseDataMarkedInSync{
+          database_id: database_id
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_stale_changed",
+      DatabaseJSON.database_stale_changed(%{
+        database: %{
+          id: database_id,
+          stale_at: nil
+        }
+      })
     )
   end
 

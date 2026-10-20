@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as usersPage from '../pageObject/users_po';
 import * as loginPage from '../pageObject/login_po';
 import * as dashboardPage from '../pageObject/dashboard_po';
 
 describe('SSO integration', () => {
-  if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
+  if (!Cypress.expose('SSO_INTEGRATION_TESTS')) {
     return;
   }
 
@@ -82,7 +82,24 @@ describe('SSO integration', () => {
   });
 
   describe('Admin user', () => {
-    beforeEach(() => loginPage.ssoLoginAdminUser());
+    beforeEach(() => {
+      loginPage.ssoLoginAdminUser();
+      usersPage.ifAnalyticsModalIsDisplayed(
+        usersPage.clickContinueWithoutAnalytics,
+        false
+      );
+    });
+
+    it('should be able to accept analytics eula as an admin user', () => {
+      usersPage.visit('/profile');
+      usersPage.adminUserFullNameIsDisplayed();
+      usersPage.ifAnalyticsModalIsDisplayed(() => {
+        usersPage.analyticsModalIsDisplayed();
+        usersPage.clickEnableAnalytics();
+        usersPage.visit('/profile');
+        usersPage.analyticsModalIsNotDisplayed();
+      }, false);
+    });
 
     it('should have access to Users view', () => {
       usersPage.visit();
@@ -95,7 +112,7 @@ describe('SSO integration', () => {
       usersPage.createUserButtonIsNotDisplayed();
     });
 
-    it('should have the ability to update user permissions, status and timezone', () => {
+    it('should have the ability to update other plain user permissions, status and timezone', () => {
       const timezone = 'Europe/Madrid';
 
       usersPage.visit();
@@ -121,6 +138,19 @@ describe('SSO integration', () => {
       usersPage.adminUserEmailIsDisplayed();
       usersPage.adminUserUsernameIsDisplayed();
       usersPage.adminUserPermissionsAreDisplayed();
+    });
+
+    it('should be able to change timezone and analytics opt-in values from the profile view', () => {
+      const timezone = 'Europe/Berlin';
+
+      usersPage.visit('/profile');
+      usersPage.selectTimezone(timezone);
+      usersPage.clickAnalyticsOptInSwitch();
+      usersPage.clickSaveUserButton();
+      usersPage.profileChangesSavedToasterIsDisplayed();
+
+      usersPage.visit('/profile');
+      usersPage.timezoneValueIsDisplayed(timezone);
     });
   });
 });

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.FallbackController do
   use TrentoWeb, :controller
@@ -24,7 +24,7 @@ defmodule TrentoWeb.FallbackController do
     conn
     |> put_status(:not_found)
     |> put_view(json: ErrorJSON)
-    |> render(:"404", reason: "SUSE Manager settings not configured.")
+    |> render(:"404", reason: "SUSE Multi-Linux Manager settings not configured.")
   end
 
   def call(conn, {:error, :alerting_settings_not_configured}) do
@@ -41,11 +41,25 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"409", reason: "Alerting settings can not be set, enforced by ENV.")
   end
 
-  def call(conn, {:error, :suma_authentication_error}) do
+  def call(conn, {:error, :alerting_disabled}) do
     conn
     |> put_status(:unprocessable_entity)
     |> put_view(json: ErrorJSON)
-    |> render(:"422", reason: "SUSE Manager authentication error.")
+    |> render(:"422", reason: "Email alerting is disabled.")
+  end
+
+  def call(conn, {:error, {:test_email_delivery_failed, reason}}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: ErrorJSON)
+    |> render(:"422", reason: "Test email delivery failed: #{reason}")
+  end
+
+  def call(conn, {:error, :smlm_authentication_error}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: ErrorJSON)
+    |> render(:"422", reason: "SUSE Multi-Linux Manager authentication error.")
   end
 
   def call(conn, {:error, :invalid_refresh_token}) do
@@ -158,7 +172,7 @@ defmodule TrentoWeb.FallbackController do
     conn
     |> put_status(:unprocessable_entity)
     |> put_view(json: ErrorJSON)
-    |> render(:"422", reason: "No system ID was found on SUSE Manager for this host.")
+    |> render(:"422", reason: "No system ID was found on SUSE Multi-Linux Manager for this host.")
   end
 
   def call(conn, {:error, :error_getting_patches}) do

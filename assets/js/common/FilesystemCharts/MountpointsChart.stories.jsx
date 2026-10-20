@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
+
 import MountpointsChart from './MountpointsChart';
 
 export default {
@@ -11,6 +12,10 @@ export default {
     mountpoints: {
       description: 'An object containing information about each mountpoint',
       control: { type: 'object' },
+    },
+    className: {
+      description: 'Additional CSS classes applied to the chart container',
+      control: { type: 'text' },
     },
   },
   render: (args) => <MountpointsChart {...args} className="w-full h-[400px]" />,
@@ -63,6 +68,7 @@ export const FullDisk = {
 
 export const NoData = {
   args: {
+    ...Default.args,
     mountpoints: {},
   },
 };

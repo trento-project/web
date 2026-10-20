@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { AgentProgressIndicatorView } from './AgentProgressIndicator';
@@ -12,16 +12,26 @@ export default {
       description: 'Label rendered next to the spinner',
       control: { type: 'text' },
     },
+    spinner: {
+      description: 'Whether the agent is still working on the answer',
+      control: { type: 'boolean' },
+    },
   },
   render: (args) => (
-    <AgentProgressIndicatorView>{args.children}</AgentProgressIndicatorView>
+    <AgentProgressIndicatorView spinner={args.spinner}>
+      {args.children}
+    </AgentProgressIndicatorView>
   ),
 };
 
 export const Thinking = {
-  args: { children: 'Thinking...' },
+  args: { children: 'Thinking...', spinner: true },
 };
 
 export const CallingTool = {
-  args: { children: 'Calling get_hosts...' },
+  args: { children: 'Calling get_hosts...', spinner: true },
+};
+
+export const Stopped = {
+  args: { children: 'Response stopped.', spinner: false },
 };

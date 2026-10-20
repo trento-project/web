@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { getCatalog } from './catalog';
 
@@ -9,7 +9,6 @@ describe('Catalog selector', () => {
       catalog: {
         loading: false,
         data: [1, 2, 3],
-        filteredCatalog: [1, 2],
         error: null,
       },
     };
@@ -17,7 +16,6 @@ describe('Catalog selector', () => {
     const expectedState = {
       loading: false,
       data: [1, 2, 3],
-      filteredCatalog: [1, 2],
       error: null,
     };
 

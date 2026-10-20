@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.UsersController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Infrastructure.SSO
   alias Trento.PersonalAccessTokens
@@ -91,6 +92,8 @@ defmodule TrentoWeb.V1.UsersController do
          "application/json", UserCollection}
     ]
 
+  ai_tool :users_list, display_text: "List users"
+
   def index(conn, _params) do
     users = Users.list_users()
     render(conn, :index, users: users)
@@ -149,6 +152,8 @@ defmodule TrentoWeb.V1.UsersController do
       not_found: Schema.NotFound.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
+
+  ai_tool :users_show, display_text: "Get a user by id"
 
   def show(conn, %{id: id}) do
     with {:ok, user} <- Users.get_user(id),

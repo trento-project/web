@@ -1,16 +1,29 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
+import { action } from 'storybook/actions';
 
-import NotFound from '.';
+import NotFound from './NotFound';
 
 export default {
   title: 'Layouts/NotFound',
   component: NotFound,
-  args: { buttonText: 'Go back home', onNavigate: () => {} },
+  argTypes: {
+    buttonText: {
+      description: 'Text to display on the navigation button',
+      control: { type: 'text' },
+    },
+    onNavigate: {
+      description: 'Function to call when the navigation button is clicked',
+      action: 'navigate',
+    },
+  },
 };
 
-export function Default(args) {
-  return <NotFound {...args} />;
-}
+export const Default = {
+  args: {
+    buttonText: 'Go back home',
+    onNavigate: action('onNavigate'),
+  },
+};

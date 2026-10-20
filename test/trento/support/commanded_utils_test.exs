@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Support.CommandedUtilsTest do
   use ExUnit.Case
@@ -10,7 +10,7 @@ defmodule Trento.Support.CommandedUtilsTest do
   setup :verify_on_exit!
 
   describe "correlated_dispatch/2" do
-    for ctx <- [:api_key, :suse_manager_settings] do
+    for ctx <- [:api_key, :smlm_settings] do
       @ctx ctx
       test "should perform uncorrelated dispatch when called with #{@ctx} ctx parameter but not setup anything on the correlation cache" do
         some_command = %{uuid: Faker.UUID.v4()}

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState } from 'react';
 import { render, screen } from '@testing-library/react';
@@ -331,6 +331,8 @@ describe('ComposedFilter component', () => {
     await user.click(screen.getByText('Filter From date...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
+    await user.click(input);
+    await user.clear(input);
     await user.type(input, datetime);
 
     const expectedDate = parseDateTimeLocalToUtc(datetime, timezone);

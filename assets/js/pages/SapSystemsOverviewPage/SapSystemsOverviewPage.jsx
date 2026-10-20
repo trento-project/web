@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -38,12 +38,13 @@ function SapSystemOverviewPage() {
   const enrichedDatabaseInstances = useSelector((state) =>
     getEnrichedDatabaseInstances(state)
   );
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
   const dispatch = useDispatch();
 
   return (
     <SapSystemsOverview
       userAbilities={abilities}
+      userTimezone={timezone}
       sapSystems={sapSystems}
       applicationInstances={enrichedApplicationInstances}
       databaseInstances={enrichedDatabaseInstances}

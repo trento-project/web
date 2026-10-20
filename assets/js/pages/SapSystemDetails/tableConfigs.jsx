@@ -1,18 +1,17 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 import { OPERATION_NOT_ALLOWED_HOST } from '@lib/operations';
+import { STALE_ROW } from '@lib/tables';
 import { isHeartbeatPassing } from '@lib/model/hosts';
 
 import HostLink from '@common/HostLink';
 import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
-import Tooltip from '@common/Tooltip';
-import HealthIcon from '@common/HealthIcon';
 import OperationsButton from '@common/OperationsButton';
 
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
@@ -20,43 +19,41 @@ import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import Features from './Features';
 import InstanceStatus from './InstanceStatus';
 
-const cellRender = (content, item) => (
-  <span className={classNames({ 'text-gray-600': !!item.absent_at })}>
-    {content}
-  </span>
-);
-
 export const getSystemInstancesTableConfiguration = ({
   userAbilities,
+  userTimezone,
   cleanUpPermittedFor,
   onCleanUpClick,
   operationsEnabled = false,
   getOperations = () => [],
 }) => ({
   usePadding: false,
+  rowClassName: ({ stale_at, absent_at }) =>
+    classNames({
+      [STALE_ROW]: !!stale_at,
+      'text-gray-600': !!absent_at,
+    }),
   columns: [
+    {
+      title: 'Status',
+      key: 'status',
+      className: 'w-10',
+      render: (content, item) => (
+        <InstanceStatus
+          status={content}
+          absent={!!item.absent_at}
+          staleAt={item.stale_at}
+          timezone={userTimezone}
+        />
+      ),
+    },
     {
       title: 'Hostname',
       key: 'instance_hostname',
-      render: (content, item) => (
-        <span className="flex items-center">
-          {item.absent_at && (
-            <Tooltip content="Registered instance not found." place="bottom">
-              <HealthIcon health="absent" />
-            </Tooltip>
-          )}
-          <span
-            className={classNames({ 'text-gray-600': item.absent_at }, 'ml-1')}
-          >
-            {content}
-          </span>
-        </span>
-      ),
     },
     {
       title: 'Instance nr',
       key: 'instance_number',
-      render: cellRender,
     },
     {
       title: 'Features',
@@ -66,27 +63,19 @@ export const getSystemInstancesTableConfiguration = ({
     {
       title: 'Http Port',
       key: 'http_port',
-      render: cellRender,
     },
     {
       title: 'Https Port',
       key: 'https_port',
-      render: cellRender,
     },
     {
       title: 'Start Prio',
       key: 'start_priority',
-      render: cellRender,
-    },
-    {
-      title: 'Status',
-      key: 'health',
-      render: (content) => <InstanceStatus health={content} />,
     },
     {
       title: '',
       key: 'actions',
-      className: 'w-20',
+      className: 'w-32',
       render: (_content, item) => {
         if (item.absent_at) {
           return (
@@ -129,6 +118,7 @@ export const getSystemInstancesTableConfiguration = ({
 
 export const systemHostsTableConfiguration = {
   usePadding: false,
+  rowClassName: (host) => classNames({ [STALE_ROW]: !!host.stale_at }),
   columns: [
     {
       title: 'Hostname',
@@ -140,7 +130,7 @@ export const systemHostsTableConfiguration = {
       key: 'ip_addresses',
       render: (content) =>
         content?.map((ip) => (
-          <div key={ip} className="text-sm text-gray-900">
+          <div key={ip} className="text-sm">
             {ip}
           </div>
         )),

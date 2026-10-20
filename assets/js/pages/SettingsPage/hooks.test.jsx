@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import {
   useAlertingSettings,
   useApiKeySettings,
-  useSuseManagerSettings,
+  useSuseMultiLinuxManagerSettings,
 } from '@pages/SettingsPage/hooks';
 import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
@@ -21,10 +21,10 @@ import {
 
 const axiosMock = new MockAdapter(networkClient);
 
-describe('useSuseManagerSettings', () => {
-  const baseSumaSettings = {
-    username: 'testsuma',
-    ca_upload_at: null,
+describe('useSuseMultiLinuxManagerSettings', () => {
+  const baseSmlmSettings = {
+    username: 'testsmlm',
+    ca_uploaded_at: null,
     url: 'http://localhost:8080',
   };
 
@@ -33,60 +33,37 @@ describe('useSuseManagerSettings', () => {
   });
 
   beforeEach(() => {
-    axiosMock.onGet('/settings/suse_manager').reply(200, baseSumaSettings);
+    axiosMock.onGet('/settings/smlm').reply(200, baseSmlmSettings);
   });
 
-  it('should fetch suse manager on mount and return the settings', async () => {
+  it('should fetch SUSE Multi-Linux Manager on mount and return the settings', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
     });
-    expect(hookResult.current.suseManagerSettingsLoading).toBe(false);
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
-    expect(hookResult.current.suseManagerSettingsfetchError).toEqual(false);
+    expect(hookResult.current.suseMultiLinuxManagerSettingsLoading).toBe(false);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([]);
+    expect(hookResult.current.suseMultiLinuxManagerSettingsFetchError).toEqual(
+      false
+    );
   });
 
-  it('should perform the suse manager settings saving when the hook callback is called', async () => {
+  it('should perform the SUSE Multi-Linux Manager settings saving when the hook callback is called', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
-        wrapper: hookWrapper,
-      });
-      hookResult = result;
-    });
-
-    const newSettings = {
-      url: faker.internet.url(),
-      username: faker.internet.username(),
-      password: faker.internet.password(),
-    };
-
-    axiosMock
-      .onPost('/api/v1/settings/suse_manager', newSettings)
-      .reply(200, newSettings);
-
-    await act(() => {
-      hookResult.current.saveSuseManagerSettings(newSettings);
-    });
-
-    expect(hookResult.current.suseManagerSettings).toEqual(newSettings);
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
-  });
-
-  it('should perform the suse manager settings update when the hook callback is called and no errors are returned', async () => {
-    let hookResult;
-    const [hookWrapper, _] = hookWrapperWithState();
-
-    await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -99,23 +76,27 @@ describe('useSuseManagerSettings', () => {
     };
 
     axiosMock
-      .onPatch('/api/v1/settings/suse_manager', newSettings)
+      .onPost('/api/v1/settings/smlm', newSettings)
       .reply(200, newSettings);
 
     await act(() => {
-      hookResult.current.updateSuseManagerSettings(newSettings);
+      hookResult.current.saveSuseMultiLinuxManagerSettings(newSettings);
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(newSettings);
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      newSettings
+    );
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([]);
   });
 
-  it('should not perform the suse manager settings update when the hook callback is called and errors are returned', async () => {
+  it('should perform the SUSE Multi-Linux Manager settings update when the hook callback is called and no errors are returned', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -127,61 +108,100 @@ describe('useSuseManagerSettings', () => {
       password: faker.internet.password(),
     };
 
-    axiosMock.onPatch('/api/v1/settings/suse_manager', newSettings).reply(422, {
+    axiosMock
+      .onPatch('/api/v1/settings/smlm', newSettings)
+      .reply(200, newSettings);
+
+    await act(() => {
+      hookResult.current.updateSuseMultiLinuxManagerSettings(newSettings);
+    });
+
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      newSettings
+    );
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([]);
+  });
+
+  it('should not perform the SUSE Multi-Linux Manager settings update when the hook callback is called and errors are returned', async () => {
+    let hookResult;
+    const [hookWrapper, _] = hookWrapperWithState();
+
+    await act(() => {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
+        wrapper: hookWrapper,
+      });
+      hookResult = result;
+    });
+
+    const newSettings = {
+      url: faker.internet.url(),
+      username: faker.internet.username(),
+      password: faker.internet.password(),
+    };
+
+    axiosMock.onPatch('/api/v1/settings/smlm', newSettings).reply(422, {
       errors: [{ error: 'error' }],
     });
 
     await act(() => {
-      hookResult.current.updateSuseManagerSettings(newSettings);
+      hookResult.current.updateSuseMultiLinuxManagerSettings(newSettings);
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([
-      { error: 'error' },
-    ]);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([{ error: 'error' }]);
   });
 
-  it('should perform the suse manager settings delete when the hook callback is called and no errors are returned', async () => {
+  it('should perform the SUSE Multi-Linux Manager settings delete when the hook callback is called and no errors are returned', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
     });
 
-    axiosMock.onDelete('/api/v1/settings/suse_manager').reply(204, {});
+    axiosMock.onDelete('/api/v1/settings/smlm').reply(204, {});
 
     await act(() => {
-      hookResult.current.deleteSuseManagerSettings();
+      hookResult.current.deleteSuseMultiLinuxManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual({});
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual({});
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([]);
   });
 
-  it('should not perform the suse manager settings delete when the hook callback is called and errors are returned', async () => {
+  it('should not perform the SUSE Multi-Linux Manager settings delete when the hook callback is called and errors are returned', async () => {
     let hookResult;
     const [hookWrapper, store] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
     });
 
-    axiosMock.onDelete('/api/v1/settings/suse_manager').reply(422, {
+    axiosMock.onDelete('/api/v1/settings/smlm').reply(422, {
       errors: [{ error: 'error' }],
     });
 
     await act(() => {
-      hookResult.current.deleteSuseManagerSettings();
+      hookResult.current.deleteSuseMultiLinuxManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
 
     expect(store.getActions()).toEqual([
       {
@@ -191,25 +211,29 @@ describe('useSuseManagerSettings', () => {
     ]);
   });
 
-  it('should test the suse manager settings and spawn a toast when the connection succeded', async () => {
+  it('should test the SUSE Multi-Linux Manager settings and spawn a toast when the connection succeded', async () => {
     let hookResult;
     const [hookWrapper, store] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
     });
 
-    axiosMock.onPost('/api/v1/settings/suse_manager/test').reply(200);
+    axiosMock.onPost('/api/v1/settings/smlm/test').reply(200);
 
     await act(() => {
-      hookResult.current.testSuseManagerSettings();
+      hookResult.current.testSuseMultiLinuxManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
-    expect(hookResult.current.suseManagerSettingsTesting).toEqual(false);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
+    expect(hookResult.current.suseMultiLinuxManagerSettingsTesting).toEqual(
+      false
+    );
 
     expect(store.getActions()).toEqual([
       {
@@ -219,25 +243,29 @@ describe('useSuseManagerSettings', () => {
     ]);
   });
 
-  it('should test the suse manager settings and spawn a toast when the connection fails', async () => {
+  it('should test the SUSE Multi-Linux Manager settings and spawn a toast when the connection fails', async () => {
     let hookResult;
     const [hookWrapper, store] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
     });
 
-    axiosMock.onPost('/api/v1/settings/suse_manager/test').reply(500);
+    axiosMock.onPost('/api/v1/settings/smlm/test').reply(500);
 
     await act(() => {
-      hookResult.current.testSuseManagerSettings();
+      hookResult.current.testSuseMultiLinuxManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
-    expect(hookResult.current.suseManagerSettingsTesting).toEqual(false);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
+    expect(hookResult.current.suseMultiLinuxManagerSettingsTesting).toEqual(
+      false
+    );
 
     expect(store.getActions()).toEqual([
       {
@@ -370,8 +398,9 @@ describe('useAlertingSettings', () => {
     it('sets empty settings and activates error flag', async () => {
       axiosMock.onGet('/api/v1/settings/alerting').reply(422);
 
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
 
       expect(result.current.settings).toEqual({});
@@ -383,8 +412,9 @@ describe('useAlertingSettings', () => {
     it("sets empty settings but doesn't activate error flag", async () => {
       axiosMock.onGet('/api/v1/settings/alerting').reply(404);
 
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
 
       expect(result.current.settings).toEqual({});
@@ -394,8 +424,9 @@ describe('useAlertingSettings', () => {
     it('sends POST request with correct body when submit callback is called', async () => {
       axiosMock.onGet('/api/v1/settings/alerting').replyOnce(404);
 
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
       const submitFn = result.current.submit;
       axiosMock
@@ -421,16 +452,18 @@ describe('useAlertingSettings', () => {
     });
 
     it('correctly sets alerting settings', async () => {
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
 
       expect(result.current.settings).toEqual(fetchedAlertingSettings);
     });
 
     it('sends PATCH request with correct body when submit callback is called', async () => {
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
       const submitFn = result.current.submit;
       axiosMock
@@ -446,8 +479,9 @@ describe('useAlertingSettings', () => {
     });
 
     it('sets errors on HTTP failure', async () => {
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
       const submitFn = result.current.submit;
       const errors = [
@@ -462,6 +496,75 @@ describe('useAlertingSettings', () => {
       });
 
       expect(result.current.submitErrors).toEqual(errors);
+    });
+
+    it('sends a test email and spawns a toast when the submission succeeds', async () => {
+      const [hookWrapper, store] = hookWrapperWithState();
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
+      );
+
+      axiosMock.onPost('/api/v1/settings/alerting/test').reply(200, {});
+
+      await act(async () => {
+        await result.current.sendTestEmail();
+      });
+
+      expect(result.current.testEmailLoading).toEqual(false);
+      expect(store.getActions()).toEqual([
+        {
+          type: 'NOTIFICATION',
+          payload: { text: 'Test email sent!', icon: '✅' },
+        },
+      ]);
+    });
+
+    it('spawns a toast when the test email submission fails', async () => {
+      const [hookWrapper, store] = hookWrapperWithState();
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
+      );
+
+      axiosMock.onPost('/api/v1/settings/alerting/test').reply(422, {
+        errors: [
+          {
+            title: 'Unprocessable Entity',
+            detail: 'Email alerting is disabled.',
+          },
+        ],
+      });
+
+      await act(async () => {
+        await result.current.sendTestEmail();
+      });
+
+      expect(result.current.testEmailLoading).toEqual(false);
+      expect(store.getActions()).toEqual([
+        {
+          type: 'NOTIFICATION',
+          payload: { text: 'Test email delivery failed!', icon: '❌' },
+        },
+      ]);
+    });
+
+    it('spawns a toast when the test email submission fails with a network error', async () => {
+      const [hookWrapper, store] = hookWrapperWithState();
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
+      );
+
+      axiosMock.onPost('/api/v1/settings/alerting/test').networkError();
+
+      await act(async () => {
+        await result.current.sendTestEmail();
+      });
+
+      expect(store.getActions()).toEqual([
+        {
+          type: 'NOTIFICATION',
+          payload: { text: 'Test email delivery failed!', icon: '❌' },
+        },
+      ]);
     });
   });
 });

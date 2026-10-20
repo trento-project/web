@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.EventHandlersSupervisor do
   @moduledoc false
@@ -13,6 +13,7 @@ defmodule Trento.EventHandlersSupervisor do
     DatabaseRestoreEventHandler,
     RollUpEventHandler,
     SapSystemDatabaseHealthEventHandler,
+    SapSystemDatabaseStaleAtEventHandler,
     SaptuneStatusUpdateEventHandler,
     SoftwareUpdatesDiscoveryEventHandler,
     StreamRollUpEventHandler
@@ -33,6 +34,7 @@ defmodule Trento.EventHandlersSupervisor do
       DatabaseDeregistrationEventHandler,
       DatabaseRestoreEventHandler,
       SapSystemDatabaseHealthEventHandler,
+      SapSystemDatabaseStaleAtEventHandler,
       SaptuneStatusUpdateEventHandler
     ]
 

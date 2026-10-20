@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as hostDetailsPage from '../pageObject/host_details_po';
 
@@ -30,6 +30,10 @@ context('Host Details', () => {
 
     it('should highlight the hosts sidebar entry', () => {
       hostDetailsPage.hostNavigationItemIsHighlighted();
+    });
+
+    it('should show the correct host health', () => {
+      hostDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
     });
 
     it('should show the correct cluster', () => {
@@ -153,21 +157,21 @@ context('Host Details', () => {
     });
   });
 
-  describe("Trento agent status should be 'running'", () => {
+  describe("Trento agent status should be 'Reporting'", () => {
     beforeEach(() => hostDetailsPage.visitSelectedHost());
 
-    it("should show the status as 'running'", () => {
-      hostDetailsPage.agentStatusIsCorrectlyDisplayed();
+    it("should show the status as 'Reporting'", () => {
+      hostDetailsPage.agentStatusIsReporting();
     });
   });
 
-  describe("Node exporter status should be 'running'", () => {
+  describe("Node exporter status should be 'Reporting'", () => {
     beforeEach(() => {
       hostDetailsPage.interceptNodeExporterStatusMockedForProdInstance();
       hostDetailsPage.visitSelectedHost();
     });
 
-    it("should show the status as 'running'", () => {
+    it("should show the status as 'Reporting'", () => {
       hostDetailsPage.nodeExporterStatusIsCorrectlyDisplayed();
     });
   });
@@ -189,6 +193,34 @@ context('Host Details', () => {
       hostDetailsPage.loadSaptuneScenario('compliant');
       hostDetailsPage.visitSelectedHost();
       hostDetailsPage.validateSaptuneStatus('compliant');
+    });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      hostDetailsPage.startAgentHeartbeat();
+      hostDetailsPage.visitSelectedHost();
+    });
+
+    beforeEach(() => hostDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark host data as stale when its agent stops reporting', () => {
+      hostDetailsPage.hostHealthIsMarkedAsStale();
+      hostDetailsPage.hostStaleBannerIsDisplayed();
+      hostDetailsPage.agentStatusIsNotReporting();
+      hostDetailsPage.sapInstanceRowIsMarkedAsStale();
+    });
+
+    it('should mark database data as sync when the agent starts reporting data again', () => {
+      hostDetailsPage.startAgentHeartbeat();
+
+      hostDetailsPage.hostHealthIsMarkedInSync();
+      hostDetailsPage.hostStaleBannerIsNotDisplayed();
+      hostDetailsPage.agentStatusIsReporting();
+
+      hostDetailsPage.markHdpDatabaseAsPresent();
+
+      hostDetailsPage.sapInstanceRowIsMarkedInSync();
     });
   });
 

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 export * from './base_po';
 import * as basePage from './base_po';
@@ -153,6 +153,10 @@ export const selectFromArchitectureDropdown = (choice) => {
 
 export const waitForChecksCatalogRequest = () =>
   basePage.waitForRequest(checksCatalogEndpointAlias);
+
+export const checksCatalogEndpointCalledTimes = (times) =>
+  cy.get(`@${checksCatalogEndpointAlias}.all`).should('have.length', times);
+
 export const networkErrorLabelIsDisplayed = () =>
   cy.get(networkErrorLabel).should('be.visible');
 

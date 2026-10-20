@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import Config
 
@@ -10,9 +10,14 @@ config :trento, TrentoWeb.Endpoint,
 config :swoosh, local: false
 
 config :trento, Trento.SoftwareUpdates.Discovery,
-  adapter: Trento.Infrastructure.SoftwareUpdates.Suma
+  adapter: Trento.Infrastructure.SoftwareUpdates.Smlm
 
 config :trento,
   operations_enabled: true
 
-config :trento, :ai, enabled: false
+config :llm_db,
+  filter: %{
+    deny: %{google: ["*-preview*", "*-image*"]}
+  }
+
+config :trento, :ai, enabled: true

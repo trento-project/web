@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.PageController do
   use TrentoWeb, :controller
 
+  alias Trento.AI.LLMRegistry
   alias Trento.Settings
 
   @version Mix.Project.config()[:version]
@@ -14,6 +15,7 @@ defmodule TrentoWeb.PageController do
     deregistration_debounce = Application.fetch_env!(:trento, :deregistration_debounce)
     admin_username = Application.fetch_env!(:trento, :admin_user)
     installation_id = Settings.get_installation_id()
+    installation_method = Application.fetch_env!(:trento, :analytics)[:installation_method]
     analytics_enabled = Application.fetch_env!(:trento, :analytics)[:enabled]
     operations_enabled = Application.fetch_env!(:trento, :operations_enabled)
     ai_enabled = Trento.AI.enabled?()
@@ -26,6 +28,7 @@ defmodule TrentoWeb.PageController do
       deregistration_debounce: deregistration_debounce,
       admin_username: admin_username,
       installation_id: installation_id,
+      installation_method: installation_method,
       analytics_enabled: analytics_enabled,
       sso_enabled: sso_enabled,
       sso_login_url: login_url,
@@ -85,9 +88,10 @@ defmodule TrentoWeb.PageController do
   end
 
   defp get_normalized_ai_providers do
-    Trento.AI.ApplicationConfigLoader.load()
-    |> Keyword.get(:providers, [])
-    |> Enum.map(fn {provider, config} -> {provider, Keyword.get(config, :models, [])} end)
+    LLMRegistry.providers()
+    |> Enum.map(fn provider ->
+      {provider, LLMRegistry.get_provider_models(provider)}
+    end)
     |> Enum.into(%{})
   end
 end

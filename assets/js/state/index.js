@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
@@ -8,7 +8,6 @@ import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
 import checksSelectionReducer from './checksSelection';
-import checksResultsFiltersReducer from './checksResultsFilters';
 import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
 import catalogReducer from './catalog';
@@ -20,7 +19,7 @@ import activityLogReducer from './activityLog';
 import runningOperationsReducer from './runningOperations';
 import rootSaga from './sagas';
 
-export const createStore = (router) => {
+export const createStore = (router, preloadedState) => {
   const sagaMiddleware = createSagaMiddleware({
     context: {
       router,
@@ -33,7 +32,6 @@ export const createStore = (router) => {
       hostsList: hostsListReducer,
       clustersList: clustersListReducer,
       checksSelection: checksSelectionReducer,
-      checksResultsFilters: checksResultsFiltersReducer,
       sapSystemsList: sapSystemListReducer,
       databasesList: databasesListReducer,
       catalog: catalogReducer,
@@ -46,6 +44,7 @@ export const createStore = (router) => {
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(sagaMiddleware),
+    preloadedState,
   });
 
   sagaMiddleware.run(rootSaga);

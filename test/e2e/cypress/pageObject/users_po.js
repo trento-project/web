@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
+import { random } from 'lodash';
 import { addDays } from 'date-fns';
 
 export * from './base_po.js';
@@ -18,6 +19,7 @@ export const DEFAULT_TOKEN_EXPIRES_AT = addDays(new Date(), 10);
 
 const totpEnrollmentEndpointAlias = 'totpEnrollment';
 const profileEndpointAlias = 'analyticsClosed';
+const clearAIConfigurationEndpointAlias = 'clearAIConfiguration';
 
 // UI Element Selectors
 const createUserButton = 'button:contains("Create User")';
@@ -40,7 +42,8 @@ const passwordConfirmationInputField =
   'input[aria-label^="password"][aria-label*="confirmation"]';
 const saveNewPasswordButton = 'div[id*="panel"] button:contains("Save")';
 const generatePasswordButton = 'div[class*="grid"] button[class*="green"]';
-const submitUserCreationButton = 'button:contains("Create")';
+const submitUserCreationButton =
+  'div[class*="container"] button:contains("Create")';
 const cancelUserCreationButton = 'button:contains("Cancel")';
 const saveChangesButton = 'button:contains("Save")';
 const authenticatorAppSwitch =
@@ -64,6 +67,7 @@ const permissionsInputField =
   'label:contains("Permissions") + div span div div:eq(0)';
 const emptyListAccessTokens = 'p:contains("No keys issued.")';
 const generateTokenButton = 'button:contains("Generate Token")';
+const modalGenerateTokenTitle = 'h2:contains("Generate Personal Access Token")';
 const modalGenerateTokenButton = 'button:contains("Generate Token"):eq(1)';
 const generatedTokenButton = 'button:contains("Close"):visible';
 const deleteTokenButton = 'button:contains("Delete")';
@@ -103,6 +107,15 @@ const aiSelectModelDropdown = basePage.getSelectControlValue(
 const aiApiKeyInputField = 'input[aria-label="ai-api-key-input"]';
 
 const saveAIConfigurationButton = 'button[aria-label="Save AI Configuration"]';
+
+const aiConfigurationClearButton =
+  'button[aria-label="ai-configuration-clear-button"]:contains("Clear Settings")';
+const clearAIConfigurationModal =
+  'div[id*="headlessui-dialog-panel"] h2:contains("Clear AI Configuration")';
+const confirmClearAIConfigurationButton =
+  'button[aria-label="confirm-clear-ai-settings"]';
+const cancelClearAIConfigurationButton =
+  'div[id*="headlessui-dialog-panel"] button:contains("Cancel")';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -305,6 +318,15 @@ export const userAlreadyUpdatedWarningIsNotDisplayed = () =>
 export const userEditedSuccessfullyToasterIsDisplayed = () =>
   cy.get(userEditedSuccessfullyToaster).should('be.visible');
 
+export const fullNameInputIsDisabled = () =>
+  cy.get(fullNameInputField).should('be.disabled');
+
+export const emailInputIsDisabled = () =>
+  cy.get(emailInputField).should('be.disabled');
+
+export const usernameInputIsDisabled = () =>
+  cy.get(userNameInputField).should('be.disabled');
+
 export const changePasswordButtonIsDisabled = () =>
   cy.get(changePasswordButton).should('be.disabled');
 
@@ -325,6 +347,12 @@ export const totpEnrollmentErrorIsDisplayed = () =>
 
 export const authenticatorAppSwitchIsEnabled = () =>
   cy.get(authenticatorAppSwitch).should('be.enabled');
+
+export const authenticatorAppSwitchIsUnchecked = () =>
+  cy
+    .get(authenticatorAppSwitch)
+    .should('have.attr', 'aria-checked', 'false')
+    .and('be.enabled');
 
 export const totpEnabledToasterIsDisplayed = () =>
   cy.get(totpEnabledToaster).should('be.visible');
@@ -478,6 +506,9 @@ export const selectTimezone = (timezone) =>
 export const timezoneValueIsDisplayed = (timezone) =>
   cy.get(timezoneStoredValue).should('have.value', timezone);
 
+export const modalGenerateTokenIsNotDisplayed = () =>
+  cy.get(modalGenerateTokenTitle).should('not.exist');
+
 // API
 export const interceptDeleteUser = () =>
   cy.intercept('DELETE', `${usersEndpoint}/*`).as('deleteUser');
@@ -610,6 +641,14 @@ export const apiCreateAIConfiguration = (provider, model, apiKey) =>
       .then(({ body: aiConfiguration }) => aiConfiguration)
   );
 
+const _aiProviderModels = (provider) =>
+  cy.window().then((win) => win.eval('config.aiProviders')[provider]);
+
+export const apiCreateAIConfigurationWithFirstModel = (provider, apiKey) =>
+  _aiProviderModels(provider).then(([model]) =>
+    apiCreateAIConfiguration(provider, model, apiKey).then(() => model)
+  );
+
 export const aiConfigurationSectionIsDisplayed = () => {
   cy.get(aiConfigurationSection).should('be.visible');
   cy.get(aiConfigurationSectionDescription).should('be.visible');
@@ -635,8 +674,29 @@ export const clickEditAIConfigurationButton = () =>
 export const selectAIProvider = (provider) =>
   basePage.selectFromDropdown(aiSelectModelProviderDropdown, provider);
 
-export const selectAIModel = (model) =>
-  basePage.selectFromDropdown(aiSelectModelDropdown, model);
+const _selectAIModelAtIndex = (index) =>
+  cy
+    .get(basePage.selectOptions)
+    .eq(index)
+    .invoke('text')
+    .then((model) => {
+      cy.get(basePage.selectOptions).eq(index).click();
+      cy.get(aiSelectModelDropdown).should('have.text', model);
+      return cy.wrap(model);
+    });
+
+export const selectFirstAIModel = () => {
+  cy.get(aiSelectModelDropdown).click();
+  return _selectAIModelAtIndex(0);
+};
+
+export const selectAnotherAIModel = () => {
+  cy.get(aiSelectModelDropdown).click();
+  return cy
+    .get(basePage.selectOptions)
+    .should('have.length.at.least', 2)
+    .then(($models) => _selectAIModelAtIndex(random(1, $models.length - 1)));
+};
 
 export const typeAIConfigurationApiKey = (apiKey) =>
   cy.get(aiApiKeyInputField).type(apiKey);
@@ -667,6 +727,34 @@ export const clickModalUpdateAIConfigurationButton = (shouldWait = true) => {
     'updateAIConfiguration',
     shouldWait
   );
+};
+
+export const clearAIConfigurationButtonIsDisabled = () =>
+  cy.get(aiConfigurationClearButton).should('be.disabled');
+
+export const clearAIConfigurationButtonIsEnabled = () =>
+  cy.get(aiConfigurationClearButton).should('not.be.disabled');
+
+export const clickClearAIConfigurationButton = () =>
+  cy.get(aiConfigurationClearButton).click();
+
+export const clearAIConfigurationModalIsDisplayed = () =>
+  cy.get(clearAIConfigurationModal).should('be.visible');
+
+export const clearAIConfigurationModalIsNotDisplayed = () =>
+  cy.get(clearAIConfigurationModal).should('not.exist');
+
+export const clickCancelClearAIConfiguration = () =>
+  cy.get(cancelClearAIConfigurationButton).click();
+
+export const clickConfirmClearAIConfiguration = (shouldWait = true) => {
+  cy.intercept('DELETE', '/api/v1/profile/ai_configuration').as(
+    clearAIConfigurationEndpointAlias
+  );
+  cy.get(confirmClearAIConfigurationButton).click();
+  if (shouldWait) {
+    basePage.waitForRequest(clearAIConfigurationEndpointAlias);
+  }
 };
 
 export const apiModifyUserFullName = () =>

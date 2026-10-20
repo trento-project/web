@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Application do
   # See https://hexdocs.pm/elixir/Application.html
@@ -18,6 +18,7 @@ defmodule Trento.Application do
         TrentoWeb.Telemetry,
         # Start the PubSub system
         {Phoenix.PubSub, name: Trento.PubSub},
+        Trento.AI.Presence,
         {Cachex, [:activity_correlations]},
         {Task.Supervisor, name: Trento.TasksSupervisor},
         # Start the Endpoint (http/https)
@@ -34,8 +35,9 @@ defmodule Trento.Application do
         Trento.Infrastructure.Catalog.AMQP.Consumer,
         Trento.Infrastructure.Discovery.AMQP.Publisher,
         Trento.Vault,
-        Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth,
-        {Samly.Provider, []}
+        Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth,
+        {Samly.Provider, []},
+        {Sagents.Supervisor, []}
         # Start a worker by calling: Trento.Worker.start_link(arg)
         # {Trento.Worker, arg}
       ] ++

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.MixProject do
   use Mix.Project
@@ -21,16 +21,21 @@ defmodule Trento.MixProject do
       name: "Trento Web",
       docs: docs(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.github": :test
-      ],
       dialyzer: [
-        plt_add_apps: [:ex_unit, :mix]
+        plt_add_apps: [:ex_unit, :mix, :llm_db]
         # check_plt: true,
         # ignore_warnings: "dialyzer_ignore.exs"
+      ],
+      releases: [
+        trento: [
+          applications: [llm_db: :load]
+        ]
       ]
     ]
+  end
+
+  def cli do
+    [preferred_envs: [coveralls: :test, "coveralls.github": :test]]
   end
 
   # Configuration for the OTP application.
@@ -57,27 +62,35 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:llm_db, "~> 2026.7", runtime: false},
+      {:sagents, "~> 0.16.1"},
+      # fork carrying the streamed Gemini tool call status fix https://github.com/brainlid/langchain/pull/671
+      {:langchain,
+       github: "nelsonkopliku/langchain",
+       ref: "cf2b8be9dd89c8dfe1fbef938c488fe599fb3f7c",
+       override: true},
+      # used for the event  envelopes
+      {:ag_ui_ex, "~> 0.1.0"},
       {:cachex, "~> 4.1"},
       {:commanded, "~> 1.4"},
-      {:commanded_ecto_projections, "~> 1.3"},
+      {:commanded_ecto_projections, "~> 1.4"},
       {:commanded_eventstore_adapter, "~> 1.4"},
       {:cloak, "~> 1.1.2"},
       {:cloak_ecto, "~> 1.3.0"},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ecto_sql, "~> 3.13"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4.7", only: [:dev, :test], runtime: false},
+      {:ecto_sql, "~> 3.14"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:eventstore, "~> 1.1",
-       [env: :prod, git: "https://github.com/commanded/eventstore.git", override: true]},
+      {:eventstore, "~> 1.4"},
       # {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
       {:ex_doc, "~> 0.29", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.17", only: [:dev, :test]},
-      {:flop, "~> 0.26.5"},
+      {:flop, "~> 0.29.0"},
       {:floki, ">= 0.36.2", only: :test},
       {:gettext, "~> 0.26"},
-      {:gen_smtp, "~> 1.2.0"},
+      {:gen_smtp, "~> 1.3.0"},
       {:gen_rmq, github: "trento-project/trnt_gen_rmq", ref: "v5.0.1"},
       {:hackney, "~> 4.0", override: true},
       {:httpoison, "~> 3.0", override: true},
@@ -85,45 +98,48 @@ defmodule Trento.MixProject do
       {:junit_formatter, "~> 3.4", only: [:test]},
       {:mox, "~> 1.0", only: :test},
       {:nimble_parsec, "~> 1.4"},
-      {:open_api_spex, "~> 3.19.1"},
+      {:open_api_spex, "~> 3.21"},
       {:pegasus, "~> 1.0.0"},
       {:phoenix, "~> 1.7.23"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.7"},
-      {:phoenix_live_reload, "~> 1.6.2", only: [:dev, :wanda]},
-      {:phoenix_live_view, "~> 1.1.28"},
+      {:phoenix_live_reload, "~> 1.7.0", only: [:dev, :wanda]},
+      {:phoenix_live_view, "~> 1.2.9"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
       {:pow, "~> 1.0.39"},
       {:process_tree, "~> 0.3.0", only: [:dev, :test]},
       {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.24"},
-      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:timex, "~> 3.7.7"},
-      {:tzdata, "~> 1.1.4"},
+      {:tzdata, "~> 1.2.1"},
       {:trento_contracts,
        github: "trento-project/contracts",
-       ref: "c5530804a09a2e50381c9298bb9fb6c1a82957e9",
+       ref: "6c64b180d0c1e4c97655a5043d714e5661c7fafc",
        sparse: "elixir"},
-      {:unplug, "~> 1.0.0"},
+      {:unplug, "~> 1.1.0"},
       {:proper_case, "~> 1.3.1"},
       {:polymorphic_embed, "~> 5.0"},
-      {:joken, "~> 2.6.2"},
-      # required overrides to upgrade to elixir 1.15.7 and erlang otp 26
-      # https://stackoverflow.com/questions/76562092/hi-i-had-created-elixir-project-with-phoenix-framework-there-is-yaml-file-when
-      {:ecto, "~> 3.13"},
+      {:joken, "~> 2.7.0"},
+      {:ecto, "~> 3.14"},
       # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
       {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
       {:parallel_stream, "~> 1.1.0"},
-      {:x509, "~> 0.8.8"},
+      {:x509, "~> 0.9.0"},
       {:argon2_elixir, "~> 4.0"},
       {:ecto_commons, "~> 0.3.4"},
       {:bodyguard, "~> 2.4"},
       {:nimble_totp, "~> 1.0"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:pow_assent, "~> 0.4.18"},
+      # Pin assent: 0.2.13 strictly dereferences session_params.state and
+      # crashes the SSO callback because session_params is never persisted
+      # server-side. Re-bump only after page_controller/session_controller
+      # are reworked to thread session_params through Plug.Session.
+      {:assent, "== 0.2.10", override: true},
       {:samly, "~> 1.0"}
     ]
   end
@@ -229,6 +245,12 @@ defmodule Trento.MixProject do
     end
   end
 
+  # Dependabot's hex file fetcher only pulls mix.exs, mix.lock, subapp mixfiles and paths
+  # referenced by Code.eval_file/Code.require_file.
+  # get_version_from_file/0 reads VERSION, so the reference below is what makes Dependabot fetch it.
+  # Do not delete.
+  #
+  # Code.eval_file("VERSION")
   defp get_version_from_file do
     __DIR__ |> Path.join("VERSION") |> File.read!() |> String.trim()
   end

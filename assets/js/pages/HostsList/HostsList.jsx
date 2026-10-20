@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState } from 'react';
 
-import { useSearchParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 import { uniqBy } from 'lodash';
+import classNames from 'classnames';
 import semver from 'semver';
 
 import CleanUpButton from '@common/CleanUpButton';
@@ -22,6 +22,19 @@ import Tooltip from '@common/Tooltip';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
+import { STALE_ROW } from '@lib/tables';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
+
+import ClusterLink from '@pages/ClusterDetails/ClusterLink';
+import DeregistrationModal from '@pages/DeregistrationModal';
+import HealthSummary from '@pages/HealthSummary';
+import { getCounters } from '@pages/HealthSummary/summarySelection';
+
+import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
+import { getUserProfile } from '@state/selectors/user';
+import { hostsListSelector } from '@state/selectors/host';
+import { getInstanceID } from '@state/instances';
 
 const compareAgentVersions = (a, b) => {
   const coercedA = semver.coerce(a);
@@ -31,20 +44,6 @@ const compareAgentVersions = (a, b) => {
   }
   return String(a).localeCompare(String(b));
 };
-
-import ClusterLink from '@pages/ClusterDetails/ClusterLink';
-import DeregistrationModal from '@pages/DeregistrationModal';
-import HealthSummary from '@pages/HealthSummary';
-import { getCounters } from '@pages/HealthSummary/summarySelection';
-import { buildCidrNotation } from '@pages/HostDetailsPage/HostDetails';
-
-import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
-import { getAllSAPInstances } from '@state/selectors/sapSystem';
-import { getUserProfile } from '@state/selectors/user';
-import { getInstanceID } from '@state/instances';
-
-const getInstancesByHost = (instances, hostId) =>
-  instances.filter((instance) => instance.host_id === hostId);
 
 const addTag = (tag, hostId) => {
   post(`/hosts/${hostId}/tags`, {
@@ -57,12 +56,10 @@ const removeTag = (tag, hostId) => {
 };
 
 function HostsList() {
-  const hosts = useSelector((state) => state.hostsList.hosts);
-  const clusters = useSelector((state) => state.clustersList.clusters);
-  const allInstances = useSelector(getAllSAPInstances);
-  const { abilities } = useSelector(getUserProfile);
+  const hostsData = useSelector(hostsListSelector);
+  const { abilities, timezone } = useSelector(getUserProfile);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = usePersistentSearchParams('hosts');
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [hostToDeregister, setHostToDeregister] = useState(undefined);
 
@@ -78,17 +75,28 @@ function HostsList() {
     dispatch(deregisterHost({ id, hostname }));
   };
 
+  const counters = getCounters(hostsData || []);
+
   const config = {
     pagination: true,
     usePadding: false,
+    rowClassName: ({ staleAt }) =>
+      classNames({
+        [STALE_ROW]: !!staleAt,
+      }),
     columns: [
       {
         title: 'Health',
         key: 'health',
         filter: true,
         filterFromParams: true,
-        render: (_content, { health }) => (
-          <HealthIcon health={health} centered />
+        render: (health, { staleAt }) => (
+          <HealthIcon
+            health={health}
+            staleAt={staleAt}
+            timezone={timezone}
+            centered
+          />
         ),
       },
       {
@@ -104,7 +112,7 @@ function HostsList() {
         key: 'ip',
         render: (content) =>
           content.map((ip) => (
-            <div key={ip} className="text-sm text-gray-900">
+            <div key={ip} className="text-sm">
               {ip}
             </div>
           )),
@@ -220,6 +228,7 @@ function HostsList() {
             <CleanUpButton
               cleaning={item.deregistering}
               size="fit"
+              type="transparent"
               className="border-none shadow-none"
               userAbilities={abilities}
               permittedFor={['cleanup:host']}
@@ -232,27 +241,6 @@ function HostsList() {
     ],
   };
 
-  const data = hosts.map((host) => {
-    const cluster = clusters.find((c) => c.id === host.cluster_id);
-    const sapSystemList = getInstancesByHost(allInstances, host.id);
-
-    return {
-      health: host.health,
-      hostname: host.hostname,
-      ip: buildCidrNotation(host.ip_addresses, host.netmasks),
-      provider: host.provider,
-      sid: sapSystemList.map((sapSystem) => sapSystem.sid),
-      cluster,
-      agent_version: host.agent_version,
-      id: host.id,
-      tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
-      sap_systems: sapSystemList,
-      deregisterable: host.deregisterable,
-      deregistering: host.deregistering,
-    };
-  });
-
-  const counters = getCounters(data || []);
   return (
     <>
       <PageHeader className="font-bold">Hosts</PageHeader>
@@ -270,7 +258,7 @@ function HostsList() {
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
           config={config}
-          data={data}
+          data={hostsData}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
         />

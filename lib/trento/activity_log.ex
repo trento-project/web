@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.ActivityLog do
   @moduledoc """
@@ -25,7 +25,10 @@ defmodule Trento.ActivityLog do
     "profile_update",
     "personal_access_token_creation",
     "personal_access_token_deletion",
-    "personal_access_token_admin_deletion"
+    "personal_access_token_admin_deletion",
+    "ai_configuration_creation",
+    "ai_configuration_modification",
+    "ai_configuration_deletion"
   ]
 
   @spec list_activity_log(map()) ::

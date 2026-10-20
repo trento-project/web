@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as hanaDbDetailsPage from '../pageObject/hana_database_details_po';
 
@@ -18,6 +18,7 @@ context('HANA database details', () => {
 
     it('should display the expected SID in database details page', () => {
       hanaDbDetailsPage.pageTitleIsCorrectlyDisplayed('HANA Database Details');
+      hanaDbDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
       hanaDbDetailsPage.databaseHasExpectedName();
       hanaDbDetailsPage.databaseHasExpectedType();
     });
@@ -47,25 +48,25 @@ context('HANA database details', () => {
       hanaDbDetailsPage.eachHostNameHasExpectedValues();
     });
 
-    it('should show Green badge in instance when SAPControl-GREEN state is received', () => {
+    it('should show Green badge in instance when GREEN status is received', () => {
       hanaDbDetailsPage.loadScenario('hana-database-detail-GREEN');
       hanaDbDetailsPage.hostHasStatus('Green');
       hanaDbDetailsPage.hostHasClass('Green');
     });
 
-    it('should show Red badge in instance when SAPControl-RED state is received', () => {
+    it('should show Red badge in instance when RED status is received', () => {
       hanaDbDetailsPage.loadScenario('hana-database-detail-RED');
       hanaDbDetailsPage.hostHasStatus('Red');
       hanaDbDetailsPage.hostHasClass('Red');
     });
 
-    it('should show Yellow badge in instance when SAPControl-YELLOW state is received', () => {
+    it('should show Yellow badge in instance when YELLOW status is received', () => {
       hanaDbDetailsPage.loadScenario('hana-database-detail-YELLOW');
       hanaDbDetailsPage.hostHasStatus('Yellow');
       hanaDbDetailsPage.hostHasClass('Yellow');
     });
 
-    it('should show Gray badge in instance when SAPControl-GRAY state is received', () => {
+    it('should show Gray badge in instance when GRAY status is received', () => {
       hanaDbDetailsPage.loadScenario('hana-database-detail-GRAY');
       hanaDbDetailsPage.hostHasStatus('Gray');
       hanaDbDetailsPage.hostHasClass('Gray');
@@ -73,7 +74,6 @@ context('HANA database details', () => {
 
     /* This test is skipped because there is not any option to remove added database instances or
     resetting the database afterwards, and it affects the rest of the test suite.*/
-    // eslint-disable-next-line mocha/no-pending-tests
     it.skip(`should show a new instance when an event with a new SAP instance is received`, () => {
       hanaDbDetailsPage.tableHasExpectedAmountOfRows(2);
       hanaDbDetailsPage.loadNewSapInstance();
@@ -134,6 +134,34 @@ context('HANA database details', () => {
     it('should include restored host again in the list of hosts after restoring it', () => {
       hanaDbDetailsPage.restoreFirstAttachedHost();
       hanaDbDetailsPage.deregisteredHostIsDisplayed();
+    });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      hanaDbDetailsPage.startDatabaseAgentsHeartbeat();
+      hanaDbDetailsPage.visitDatabase();
+    });
+
+    after(() => hanaDbDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark database data as stale when an agent composing the database stops reporting', () => {
+      hanaDbDetailsPage.stopDatabaseAgentHeartbeat();
+      hanaDbDetailsPage.databaseHealthIsMarkedAsStale();
+      hanaDbDetailsPage.databaseStaleBannerIsDisplayed();
+      hanaDbDetailsPage.databaseSiteIsMarkedAsStale();
+      hanaDbDetailsPage.databaseInstanceRowIsMarkedAsStale();
+      hanaDbDetailsPage.hostRowIsMarkedAsStale();
+    });
+
+    it('should mark database data as sync when the agent starts reporting data again', () => {
+      hanaDbDetailsPage.startDatabaseAgentHeartbeat();
+      hanaDbDetailsPage.markDatabaseAsPresent();
+      hanaDbDetailsPage.databaseHealthIsMarkedInSync();
+      hanaDbDetailsPage.databaseStaleBannerIsNotDisplayed();
+      hanaDbDetailsPage.databaseSiteIsMarkedInSync();
+      hanaDbDetailsPage.databaseInstanceRowIsMarkedInSync();
+      hanaDbDetailsPage.hostRowIsMarkedInSync();
     });
   });
 });

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Users.User do
   @moduledoc false
@@ -116,6 +116,12 @@ defmodule Trento.Users.User do
   end
 
   def profile_update_sso_enabled_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:analytics_enabled_at, :analytics_eula_accepted_at, :timezone])
+    |> validate_timezone()
+  end
+
+  def profile_update_admin_changeset(user, attrs) do
     user
     |> cast(attrs, [:analytics_enabled_at, :analytics_eula_accepted_at, :timezone])
     |> validate_timezone()

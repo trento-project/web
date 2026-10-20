@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { del } from '@lib/network';
@@ -9,18 +9,22 @@ import {
   DATABASE_DEREGISTERED,
   DATABASE_RESTORED,
   DATABASE_HEALTH_CHANGED,
+  DATABASE_STALE_CHANGED,
   DATABASE_INSTANCE_REGISTERED,
   DATABASE_INSTANCE_ABSENT_AT_CHANGED,
+  DATABASE_INSTANCE_STALE_CHANGED,
   DATABASE_INSTANCE_DEREGISTERED,
-  DATABASE_INSTANCE_HEALTH_CHANGED,
+  DATABASE_INSTANCE_STATUS_CHANGED,
   DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,
   DEREGISTER_DATABASE_INSTANCE,
   appendDatabase,
   upsertDatabaseInstances,
   updateDatabaseHealth,
-  updateDatabaseInstanceHealth,
+  updateDatabaseStaleAt,
+  updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
+  updateDatabaseInstanceStaleAt,
   removeDatabase,
   removeDatabaseInstance,
   setDatabaseInstanceDeregistering,
@@ -51,6 +55,10 @@ function* databaseHealthChanged({ payload }) {
       icon: 'ℹ️',
     })
   );
+}
+
+export function* databaseStaleChanged({ payload }) {
+  yield put(updateDatabaseStaleAt(payload));
 }
 
 function* databaseInstanceRegistered({ payload }) {
@@ -94,8 +102,8 @@ export function* databaseInstanceDeregistered({ payload }) {
   );
 }
 
-function* databaseInstanceHealthChanged({ payload }) {
-  yield put(updateDatabaseInstanceHealth(payload));
+function* databaseInstanceStatusChanged({ payload }) {
+  yield put(updateDatabaseInstanceStatus(payload));
 }
 
 function* databaseInstanceSystemReplicationChanged({ payload }) {
@@ -113,6 +121,10 @@ export function* databaseInstanceAbsentAtChanged({ payload }) {
       icon: 'ℹ️',
     })
   );
+}
+
+export function* databaseInstanceStaleChanged({ payload }) {
+  yield put(updateDatabaseInstanceStaleAt(payload));
 }
 
 export function* deregisterDatabaseInstance({
@@ -142,15 +154,20 @@ export function* watchDatabaseEvents() {
   yield takeEvery(DATABASE_DEREGISTERED, databaseDeregistered);
   yield takeEvery(DATABASE_RESTORED, databaseRestored);
   yield takeEvery(DATABASE_HEALTH_CHANGED, databaseHealthChanged);
+  yield takeEvery(DATABASE_STALE_CHANGED, databaseStaleChanged);
   yield takeEvery(DATABASE_INSTANCE_REGISTERED, databaseInstanceRegistered);
   yield takeEvery(
     DATABASE_INSTANCE_ABSENT_AT_CHANGED,
     databaseInstanceAbsentAtChanged
   );
+  yield takeEvery(
+    DATABASE_INSTANCE_STALE_CHANGED,
+    databaseInstanceStaleChanged
+  );
   yield takeEvery(DATABASE_INSTANCE_DEREGISTERED, databaseInstanceDeregistered);
   yield takeEvery(
-    DATABASE_INSTANCE_HEALTH_CHANGED,
-    databaseInstanceHealthChanged
+    DATABASE_INSTANCE_STATUS_CHANGED,
+    databaseInstanceStatusChanged
   );
   yield takeEvery(
     DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,

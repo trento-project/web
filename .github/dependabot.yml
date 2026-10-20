@@ -24,11 +24,25 @@ updates:
       interval: "weekly"
     cooldown:
       default-days: 14
+    open-pull-requests-limit: 10
     groups:
+      assistant-ui:
+        patterns:
+          - "@assistant-ui/*"
+          - "assistant-cloud"
+          - "assistant-stream"
+      babel:
+        patterns:
+          - "@babel/*"
+          - "babel-jest"
       eslint:
         patterns:
           - "eslint*"
           - "@eslint*"
+      react-core:
+        patterns:
+          - "react"
+          - "react-dom"
   - package-ecosystem: "npm"
     directory: "/test/e2e"
     schedule:

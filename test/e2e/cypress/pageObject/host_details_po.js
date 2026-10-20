@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 export * from './base_po';
 import * as basePage from './base_po';
@@ -7,7 +7,7 @@ import * as basePage from './base_po';
 import { capitalize } from 'lodash';
 
 // Test Data
-import * as sumaMocks from '../fixtures/suma-software-updates/software_updates.js';
+import * as smlmMocks from '../fixtures/smlm-software-updates/software_updates.js';
 import {
   selectedHost,
   attachedSapInstance,
@@ -29,9 +29,7 @@ const architectureLabel =
   'div[class="font-bold"]:contains("Architecture") + div';
 const ipAddressesLabel =
   'div[class="font-bold"]:contains("IP Addresses") + div';
-const agentRunningLabel = 'span:contains("Agent:running")';
-const agentRunningBadge = `${agentRunningLabel} svg`;
-const nodeExporterLabel = 'span:contains("Node Exporter:running")';
+const nodeExporterLabel = 'span:contains("Node Exporter:Reporting")';
 const nodeExporterBadge = `${nodeExporterLabel} svg`;
 const providerDetailsBox = 'div[class="mt-16"]:contains("Provider details")';
 const notRecognizedProviderLabel = 'div:contains("Provider not recognized")';
@@ -75,6 +73,11 @@ const advisoryDetailsCVEs = 'h2:contains("CVEs") + div a';
 const advisoryDetailsAffectedPackages =
   'h2:contains("Affected Packages") + div li:eq(0)';
 const advisoryDetailsAffectedSystems = 'h2:contains("Affected Systems") + div';
+const hostHealthIconName = /host health/i;
+const stalenessBannerName = /The agent in this host is not responding since/;
+const agentStatusReportingLabel = 'span:contains("Agent:Reporting")';
+const agentStatusNotReportingLabel = 'span:contains("Agent:Not reporting")';
+const instancesTableName = /SAP instances/i;
 
 const providerDetails = {
   provider: `${providerDetailsBox} div[class*="flow-row"]:contains("Provider") span`,
@@ -107,6 +110,15 @@ export const visit = (selectedHost = '') =>
 export const visitVmdrbddev01Host = () =>
   basePage.visit('/hosts/240f96b1-8d26-53b7-9e99-ffb0f2e735bf');
 
+export const visitVmdrbddev01HostPatchList = (params) =>
+  basePage.visit('/hosts/240f96b1-8d26-53b7-9e99-ffb0f2e735bf/patches', params);
+
+export const visitVmdrbddev01HostUpgradablePackages = (params) =>
+  basePage.visit(
+    '/hosts/240f96b1-8d26-53b7-9e99-ffb0f2e735bf/packages',
+    params
+  );
+
 export const visitVmdrbddev02Host = () =>
   basePage.visit('/hosts/21de186a-e38f-5804-b643-7f4ef22fecfd');
 
@@ -136,6 +148,14 @@ export const clickUpgradablePackagesCard = () =>
 
 export const clickFirstRelatedPackage = () =>
   cy.get(firstRelatedPackage).click();
+
+export const selectPatchTypeFilter = (patchType) => {
+  const filterButton = basePage.getSelectControlValue(
+    '[aria-label="advisories"]'
+  );
+
+  return basePage.selectFromDropdown(filterButton, patchType);
+};
 
 //Validations
 export const restoredHostIsDisplayed = () =>
@@ -198,6 +218,9 @@ export const expectedSynopsisText2IsDisplayed = () =>
     .get(synopsisCell2)
     .should('have.text', 'important: Security update for java-1_8_0-ibm');
 
+export const expectedPatchNumberIs = (patchCount) =>
+  cy.get('tbody tr').should('have.length', patchCount);
+
 export const expectedHostIsDisplayedInTitle = () =>
   cy.get(hostPatchesViewTitle).should('have.text', 'vmdrbddev01');
 
@@ -206,6 +229,13 @@ export const expectedRelevantPatchesAreDisplayed = (expectedValue) =>
 
 export const validateSelectedHostUrl = () =>
   basePage.validateUrl(`${url}/${selectedHost.agentId}`);
+
+export const pageTitleHealthIsCorrectlyDisplayed = (
+  health = selectedHost.health
+) => {
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', health);
+};
 
 export const clusterNameHasExpectedValue = () =>
   cy.get(clusterNameLabel).should('have.text', selectedHost.clusterName);
@@ -392,14 +422,24 @@ const _getTableHeaders = (tableName) =>
     return cy.wrap(headerTexts);
   });
 
-export const agentStatusIsCorrectlyDisplayed = () => {
-  cy.get(agentRunningLabel).should('be.visible');
+export const agentStatusIsReporting = () => {
+  cy.get(agentStatusReportingLabel).as('agentLabel').should('be.visible');
   return cy
-    .get(agentRunningBadge)
+    .get('@agentLabel')
+    .find('svg')
     .invoke('attr', 'class')
-    .then((classAttr) => {
-      expect(classAttr).to.contain('jungle-green');
-    });
+    .should('match', /jungle-green/);
+};
+
+export const agentStatusIsNotReporting = () => {
+  cy.get(agentStatusNotReportingLabel, { timeout: 20000 })
+    .as('agentLabel')
+    .should('be.visible');
+  return cy
+    .get('@agentLabel')
+    .find('svg')
+    .invoke('attr', 'class')
+    .should('match', /red/);
 };
 
 export const nodeExporterStatusIsCorrectlyDisplayed = () => {
@@ -470,6 +510,46 @@ export const saveChecksSelectionButtonIsDisabled = () =>
 export const saveChecksSelectionButtonIsEnabled = () =>
   cy.get(saveChecksSelectionButton).should('be.enabled');
 
+export const hostHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
+  return basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
+
+export const hostHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
+  return basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+};
+
+export const hostStaleBannerIsDisplayed = () =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout: 20000 })
+    .should('be.visible');
+
+export const hostStaleBannerIsNotDisplayed = () =>
+  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
+
+export const sapInstanceRowIsMarkedAsStale = () =>
+  cy.findByRole('table', { name: instancesTableName }).within(() => {
+    cy.findAllByRole('row')
+      .filter(':not(:has(th))')
+      .should(($rows) =>
+        $rows.each((index, $row) => {
+          expect($row).to.have.class('bg-gray-100');
+        })
+      );
+  });
+
+export const sapInstanceRowIsMarkedInSync = () =>
+  cy.findByRole('table', { name: instancesTableName }).within(() => {
+    cy.findAllByRole('row')
+      .filter(':not(:has(th))')
+      .should(($rows) =>
+        $rows.each((index, $row) => {
+          expect($row).not.to.have.class('bg-gray-100');
+        })
+      );
+  });
+
 const _getExpectedValuesObjectName = (tableName) => {
   if (tableName === 'SAP instances') return 'sapInstance';
   else if (tableName === 'SLES subscription details')
@@ -533,45 +613,45 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 
 // API
 export const interceptSoftwareUpdatesRequestsMockedForProdInstance = () => {
-  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
     return cy
       .intercept('GET', '/api/v1/hosts/*/software_updates', {
         statusCode: 422,
-        body: sumaMocks.getHostNotFoundError(),
+        body: smlmMocks.getHostNotFoundError(),
       })
       .as('getSoftwareUpdatesNotFound');
   }
 };
 
-export const interceptSumaRequestsMockedForProdInstance = () => {
-  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+export const interceptSmlmRequestsMockedForProdInstance = () => {
+  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
-      body: sumaMocks.getSoftwareUpdatesList(),
+      body: smlmMocks.getSoftwareUpdatesList(),
     });
 
     cy.intercept('GET', '/api/v1/software_updates/errata_details/*', {
-      body: sumaMocks.getErrataDetails(),
+      body: smlmMocks.getErrataDetails(),
     });
 
     cy.intercept('GET', '/api/v1/software_updates/packages*', {
-      body: sumaMocks.getPackagesPatches(),
+      body: smlmMocks.getPackagesPatches(),
     }).as('getPackagesPatches');
 
-    cy.intercept('POST', '/api/v1/settings/suse_manager', {
+    cy.intercept('POST', '/api/v1/settings/smlm', {
       statusCode: 201,
     });
-    return cy.intercept('DELETE', '/api/v1/settings/suse_manager', {
+    return cy.intercept('DELETE', '/api/v1/settings/smlm', {
       statusCode: 204,
     });
   }
 };
 
 export const interceptNodeExporterStatusMockedForProdInstance = () => {
-  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
     return cy.intercept('/api/v1/hosts/*/exporters_status', {
@@ -580,16 +660,18 @@ export const interceptNodeExporterStatusMockedForProdInstance = () => {
   }
 };
 
+export const startAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([selectedHost.agentId]);
+
 export const loadSaptuneScenario = (state) => {
   const { hostName } = selectedHost;
   return basePage.loadScenario(`host-${hostName}-saptune-${state}`);
 };
 
-export const loadAwsHostDetails = () =>
-  basePage.loadScenario('host-details-aws');
-
-export const startAgentHeartbeat = () =>
-  basePage.startAgentsHeartbeat([selectedHost.agentId]);
+export const markHdpDatabaseAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedHost.sapInstance.sid}-${selectedHost.sapInstance.instanceNumber}-present`
+  );
 
 export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);
@@ -632,9 +714,9 @@ export const apiCreateUserWithHostCleanupAbilities = () =>
     },
   ]);
 
-export const saveSUMASettingsForAdmin = () =>
-  basePage.saveSUMASettings({
+export const saveSMLMSettingsForAdmin = () =>
+  basePage.saveSMLMSettings({
     url: 'https://trento.io',
-    username: 'suseManagerAdmin',
-    password: 'suseManagerPw',
+    username: 'suseMultiLinuxManagerAdmin',
+    password: 'suseMultiLinuxManagerPw',
   });

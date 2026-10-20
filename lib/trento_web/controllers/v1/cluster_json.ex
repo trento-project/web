@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.ClusterJSON do
   alias TrentoWeb.V2
@@ -14,6 +14,7 @@ defmodule TrentoWeb.V1.ClusterJSON do
     |> adapt_v1()
     |> Map.delete(:sap_instances)
     |> Map.delete(:state)
+    |> Map.delete(:stale_at)
   end
 
   def cluster_registered(%{cluster: cluster}) do

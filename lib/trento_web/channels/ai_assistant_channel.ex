@@ -1,0 +1,484 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+defmodule TrentoWeb.AIAssistantChannel do
+  @moduledoc """
+  Phoenix Channel for the AI Assistant.
+
+  Bridges the React assistant-ui client (AG-UI protocol over WebSocket) to a
+  `Sagents.AgentServer` keyed on the JS-supplied `thread_id`. State lives in
+  the AgentServer until inactivity timeout.
+
+  AG-UI wire emission lives in `TrentoWeb.AIAssistant.AgUi`.
+
+  ## Socket assigns
+
+  The channel keeps a small set of process-local assigns to track the
+  current run. All are scoped to one channel process — no DB persistence.
+
+  | Assign | Type | Lifetime | Why |
+  |---|---|---|---|
+  | `:current_user_id` | integer | from `UserSocket.connect` | auth + identifies the authenticated user |
+  | `:access_token` | string | from `UserSocket.connect` | raw JWT, forwarded to remote AI tools via `tool_context.access_token` so wanda etc. can authenticate the user on outbound calls |
+  | `:request_origin` | string \| nil | from `UserSocket.connect` | scheme + host + port of the websocket request, forwarded via `tool_context.request_origin` so `Trento.AI.RemoteHttpTool` can resolve partial `:checks_service` base URLs (e.g. `/wanda`) against the same origin the browser used |
+  | `:current_scope` | `%Trento.Users.User{id: id}` | from `join/3` | passed to `Sagents.Agent.new!` as `:scope` so tool callbacks see `context.scope.id` |
+  | `:loading` | boolean | toggled per run | double-send guard — prevents race conditions |
+  | `:current_run_id` | UUID string | set at each `send_message` | echoed in `RUN_STARTED` + `RUN_FINISHED` AG-UI events for client-side correlation |
+  | `:current_thread_id` | UUID string | set at join, and at each `send_message` | used as the sagents `agent_id` + echoed in run events |
+  | `:message_id` | UUID string | set per run | identifies the assistant text-message lifecycle (`TEXT_MESSAGE_*`); also used as `parent_message_id` for `TOOL_CALL_START`. Currently equals `:current_run_id` but kept separate so future multi-message-per-run flows |
+  | `:message_started` | boolean | per run | tracks whether `TEXT_MESSAGE_START` has been emitted — drives "skip duplicate START on subsequent deltas" + "skip orphan END at :idle when no text streamed" |
+  | `:agent_monitor_ref` | reference \| nil | from `join/3`, replaced per run | monitor on the `Sagents.AgentServer`. The event stream does not survive a server crash, so its `:DOWN` is what surfaces one: `conversation_expired`, after a `RUN_ERROR` when a run was in flight |
+  | `:agent_server_pid` | pid \| nil | nil at join and after leaving a thread, set once a run starts on it | the agent server holding the conversation on screen: a prompt must reach that very process, never a fresh agent (none running, or another one in its place), which would answer without the conversation |
+  | `:run_has_started` | boolean | per run | stale-status guard. `subscribe/1` sends a new subscriber a status snapshot, so the first `run/3` against a server delivers the status from before the prompt (`:idle`, or `:error` after a failed run); this flag is only set on the `:running` event for THIS run, so we ignore it |
+
+  ### Mutation surfaces
+
+  All run-state mutations happen in these places:
+
+  - `stash_run_id/2` — on each prompt, once the model is built; sets `:current_run_id`.
+  - `activate_run/2` — once the agent is alive + subscribed + first message added; marks `:loading: true` and zeros per-run booleans.
+  - `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
+  - `monitor_agent_server/2` — alongside `activate_run/2`; swaps `:agent_monitor_ref` for a monitor on the pid `Trento.AI.Agent.run/3` returned. Survives `reset_run/1`: the subscription spans runs.
+  - `track_viewer/2` — at `join/3`, and on each prompt through `maybe_switch_thread/2`; tracks the viewer and sets `:current_thread_id`. A prompt on another thread first goes through `leave_current_thread/1` (untracks the viewer, stops the agent).
+  - `leave_current_thread/1` — our own stop (`abandon_thread`, AI-configuration clear, thread change): drops the monitor, so the agent going down is not reported as an expired conversation, then untracks the viewer and stops the agent.
+  - `handle_in("send_message", ...)` — replaces `:access_token` with the token the prompt carries, once it validates.
+  - `run_agent/3` — sets `:agent_server_pid` once a run starts; `leave_current_thread/1` clears it.
+  - the `{:DOWN, ...}` handler — clears `:agent_monitor_ref` once the monitored agent server is gone.
+
+  The `:running` status flips `run_has_started` inline, and `AgUi.maybe_text_message_start/1`
+  flips `message_started` on the run's first `:llm_deltas` event.
+  """
+
+  use TrentoWeb, :channel
+  require Logger
+
+  alias Trento.AI
+  alias Trento.AI.Agent, as: TrentoAIAgent
+  alias Trento.AI.{LLMBuilder, Presence}
+  alias Trento.Users.User
+  alias TrentoWeb.AIAssistant.AgUi
+  alias TrentoWeb.Auth.AccessToken
+
+  @impl true
+  def join(
+        "ai_assistant:" <> user_id,
+        %{"access_token" => token, "thread_id" => thread_id},
+        %{assigns: %{current_user_id: current_user_id}} = socket
+      )
+      when is_binary(thread_id) do
+    with :ok <- check_ai_enabled(),
+         :ok <- check_socket_and_channel_user_match(user_id, current_user_id),
+         :ok <- validate_access_token(token, current_user_id),
+         :ok <- subscribe_to_configuration_events(current_user_id) do
+      {:ok,
+       socket
+       |> assign(:access_token, token)
+       |> assign(:current_scope, %User{id: current_user_id})
+       |> assign(:agent_monitor_ref, nil)
+       |> assign(:agent_server_pid, nil)
+       |> assign(:loading, false)
+       |> track_viewer(thread_id)}
+    end
+  end
+
+  def join("ai_assistant:" <> _user_id, %{"access_token" => _token}, _socket),
+    do: {:error, :missing_thread_id}
+
+  def join("ai_assistant:" <> _user_id, _payload, _socket), do: {:error, :user_not_logged}
+
+  @impl true
+  def handle_in(
+        "send_message",
+        %{
+          "message" => prompt,
+          "run_id" => run_id,
+          "thread_id" => thread_id,
+          "access_token" => token
+        },
+        %{assigns: %{current_user_id: current_user_id}} = socket
+      )
+      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id) do
+    case validate_access_token(token, current_user_id) do
+      :ok ->
+        socket
+        |> assign(:access_token, token)
+        |> handle_incoming_prompt(String.trim(prompt), run_id, thread_id)
+
+      {:error, _} = error ->
+        {:reply, error, socket}
+    end
+  end
+
+  @impl true
+  def handle_in("send_message", payload, socket) do
+    payload
+    |> redact_payload()
+    |> then(&Logger.warning("Received invalid send_message payload: #{inspect(&1)}"))
+
+    {:reply, {:error, :invalid_payload}, socket}
+  end
+
+  @impl true
+  def handle_in("cancel_run", _payload, socket),
+    do:
+      {:reply, :ok,
+       socket
+       |> cancel_run()
+       |> reset_run()}
+
+  def handle_in("abandon_thread", _payload, socket),
+    do:
+      {:reply, :ok,
+       socket
+       |> leave_current_thread()
+       |> reset_run()}
+
+  defp check_ai_enabled do
+    case AI.enabled?() do
+      true -> :ok
+      false -> {:error, :ai_assistant_disabled}
+    end
+  end
+
+  defp check_socket_and_channel_user_match(user_id, current_user_id) do
+    case allowed?(user_id, current_user_id) do
+      true -> :ok
+      false -> {:error, :unauthorized}
+    end
+  end
+
+  defp allowed?(user_id, current_user_id) do
+    case Integer.parse(user_id) do
+      {id, ""} ->
+        id == current_user_id
+
+      _ ->
+        Logger.warning("Invalid user_id in AI Assistant Channel topic: #{user_id}")
+        false
+    end
+  end
+
+  defp validate_access_token(token, current_user_id) do
+    case AccessToken.verify_and_validate(token) do
+      {:ok, %{"sub" => ^current_user_id}} -> :ok
+      _ -> {:error, :unauthorized}
+    end
+  end
+
+  defp subscribe_to_configuration_events(user_id) do
+    case AI.subscribe_to_configuration_events(user_id) do
+      :ok ->
+        :ok
+
+      error ->
+        Logger.warning("Cannot subscribe to AI configuration events: #{inspect(error)}")
+
+        {:error, :unable_to_subscribe_to_ai_configuration_events}
+    end
+  end
+
+  defp handle_incoming_prompt(
+         %{assigns: %{loading: true}} = socket,
+         _prompt,
+         _run_id,
+         _thread_id
+       ),
+       do: {:noreply, socket}
+
+  defp handle_incoming_prompt(socket, "", _run_id, _thread_id), do: {:noreply, socket}
+
+  defp handle_incoming_prompt(
+         %{assigns: %{current_scope: %{id: current_user_id}}} = socket,
+         prompt,
+         run_id,
+         thread_id
+       ) do
+    case LLMBuilder.build(current_user_id) do
+      {:ok, model_config} ->
+        socket
+        |> maybe_switch_thread(thread_id)
+        |> stash_run_id(run_id)
+        |> run_agent(model_config, prompt)
+
+      {:error, reason} ->
+        {:noreply, AgUi.run_error(socket, reason)}
+    end
+  end
+
+  defp run_agent(
+         %{
+           assigns: %{
+             current_run_id: run_id,
+             current_thread_id: thread_id,
+             current_scope: scope,
+             agent_server_pid: agent_server_pid,
+             access_token: access_token,
+             request_origin: request_origin
+           }
+         } = socket,
+         model_config,
+         prompt
+       ) do
+    [
+      agent_id: thread_id,
+      model: model_config,
+      scope: scope,
+      tool_context: %{
+        access_token: access_token,
+        request_origin: request_origin
+      }
+    ]
+    |> TrentoAIAgent.new!()
+    |> TrentoAIAgent.run(prompt,
+      agent_pid: agent_server_pid,
+      refresh_when: &agent_config_changed/2
+    )
+    |> case do
+      {:ok, server_pid} ->
+        socket
+        |> assign(:agent_server_pid, server_pid)
+        |> monitor_agent_server(server_pid)
+        |> activate_run(run_id)
+        |> AgUi.run_started(run_id, thread_id)
+
+      {:error, :conversation_expired} ->
+        socket
+        |> reset_run()
+        |> AgUi.run_error(:conversation_expired)
+        |> tap(&push(&1, "conversation_expired", %{thread_id: thread_id}))
+
+      {:error, reason} ->
+        Logger.error("Failed to start agent: #{inspect(reason)}")
+
+        socket
+        |> reset_run()
+        |> AgUi.run_error(reason)
+    end
+    |> then(&{:noreply, &1})
+  end
+
+  # Hot-swap the running agent when either the access_token OR the effective model config changed.
+  defp agent_config_changed(
+         %{model: model, tool_context: %{access_token: token}} = _current_agent,
+         %{model: model, tool_context: %{access_token: token}} = _new_agent
+       ),
+       do: :noop
+
+  defp agent_config_changed(_current_agent, new_agent), do: {:ok, new_agent}
+
+  @impl true
+  def handle_info({:agent, {:status_changed, :running, nil}}, socket),
+    do: {:noreply, assign(socket, :run_has_started, true)}
+
+  @impl true
+  def handle_info(
+        {:agent, {:status_changed, :idle, _data}},
+        %{
+          assigns: %{
+            run_has_started: true,
+            message_started: message_started,
+            message_id: message_id,
+            current_thread_id: thread_id,
+            current_run_id: run_id
+          }
+        } = socket
+      ),
+      do:
+        {:noreply,
+         socket
+         |> AgUi.maybe_text_message_end(message_started, message_id)
+         |> reset_run()
+         |> AgUi.run_finished(run_id, thread_id)}
+
+  def handle_info(
+        {:agent, {:status_changed, :idle, _data}},
+        %{assigns: %{run_has_started: false}} = socket
+      ) do
+    Logger.warning("Ignoring stale :idle event - run hasn't started yet")
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(
+        {:agent, {:status_changed, :error, reason}},
+        %{assigns: %{run_has_started: true}} = socket
+      ) do
+    Logger.error("Agent execution failed: #{inspect(reason)}")
+
+    {:noreply,
+     socket
+     |> reset_run()
+     |> AgUi.run_error(reason)}
+  end
+
+  def handle_info(
+        {:agent, {:status_changed, :error, _reason}},
+        %{assigns: %{run_has_started: false}} = socket
+      ) do
+    Logger.warning("Ignoring stale :error event - run hasn't started yet")
+    {:noreply, socket}
+  end
+
+  # The agent server is gone, and its conversation context with it.
+  # Our own stop clears `:agent_monitor_ref` first, so its `:DOWN` never matches here.
+  @impl true
+  def handle_info(
+        {:DOWN, ref, :process, _pid, reason},
+        %{assigns: %{agent_monitor_ref: ref, current_thread_id: thread_id}} = socket
+      ),
+      do:
+        {:noreply,
+         socket
+         |> assign(:agent_monitor_ref, nil)
+         |> fail_run_in_flight(reason)
+         |> tap(&push(&1, "conversation_expired", %{thread_id: thread_id}))}
+
+  @impl true
+  def handle_info(
+        {:agent, {:llm_deltas, deltas}},
+        %{assigns: %{message_id: message_id}} = socket
+      ),
+      do:
+        deltas
+        |> Enum.map_join("", &delta_text/1)
+        |> then(
+          &{:noreply,
+           socket
+           |> AgUi.maybe_text_message_start()
+           |> AgUi.maybe_text_message_content(message_id, &1)}
+        )
+
+  @impl true
+  def handle_info(
+        {:agent, {:tool_call_identified, tool_info}},
+        %{assigns: %{message_id: message_id}} = socket
+      ),
+      do: {:noreply, AgUi.tool_call_lifecycle(socket, tool_info, message_id)}
+
+  @impl true
+  def handle_info(
+        {:agent, {:tool_execution_update, :completed, %{call_id: call_id} = tool_info}},
+        socket
+      ),
+      do: {:noreply, AgUi.tool_call_result(socket, call_id, tool_info[:result] || %{})}
+
+  @impl true
+  def handle_info({:ai_configuration, :created}, socket) do
+    # The user's AI configuration was (re)created.
+    # Tell the client so it can re-enable the assistant.
+    push(socket, "ai_configuration_created", %{})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:ai_configuration, :cleared}, socket) do
+    # The user's AI configuration was cleared.
+    # Stop any in-flight agent for this thread and notify the client
+
+    {:noreply,
+     socket
+     |> leave_current_thread()
+     |> tap(&push(&1, "ai_configuration_cleared", %{}))
+     |> reset_run()}
+  end
+
+  @impl true
+  def handle_info({:ai_configuration, :updated, payload}, socket) do
+    # The user's AI provider/model changed.
+    # Tell the client so it can notify the user.
+    push(socket, "model_changed", payload)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_msg, socket), do: {:noreply, socket}
+
+  defp delta_text(%{content: %{type: :text, content: text}}), do: text
+  defp delta_text(%{content: text}) when is_binary(text), do: text
+  defp delta_text(text) when is_binary(text), do: text
+  defp delta_text(_), do: ""
+
+  # See "Mutation surfaces" in the moduledoc.
+  defp stash_run_id(socket, run_id), do: assign(socket, :current_run_id, run_id)
+
+  # Ends the run in flight but keeps the thread's agent and its conversation.
+  defp cancel_run(%{assigns: %{current_thread_id: thread_id}} = socket),
+    do: tap(socket, fn _ -> TrentoAIAgent.cancel(thread_id) end)
+
+  # A prompt keeps its thread tracked; another thread (after a New chat) leaves the current one first.
+  defp maybe_switch_thread(%{assigns: %{current_thread_id: thread_id}} = socket, thread_id),
+    do: track_viewer(socket, thread_id)
+
+  defp maybe_switch_thread(socket, thread_id),
+    do:
+      socket
+      |> leave_current_thread()
+      |> track_viewer(thread_id)
+
+  # Tracks the channel as a viewer of the thread and makes it the current one.
+  defp track_viewer(socket, thread_id) do
+    with {:error, reason} <- Presence.track_viewer(thread_id, viewer_id(socket)) do
+      Logger.warning("Cannot track the AI agent viewer: #{inspect(reason)}")
+    end
+
+    assign(socket, :current_thread_id, thread_id)
+  end
+
+  # Our own stop: drops the monitor first, so the agent going down is not reported as expired.
+  defp leave_current_thread(%{assigns: %{current_thread_id: thread_id}} = socket),
+    do:
+      socket
+      |> drop_agent_monitor()
+      |> assign(:agent_server_pid, nil)
+      |> tap(&Presence.untrack_viewer(thread_id, viewer_id(&1)))
+      |> tap(fn _ -> TrentoAIAgent.stop(thread_id) end)
+
+  defp viewer_id(%{assigns: %{current_user_id: user_id}}), do: to_string(user_id)
+
+  defp drop_agent_monitor(%{assigns: %{agent_monitor_ref: ref}} = socket)
+       when is_reference(ref) do
+    Process.demonitor(ref, [:flush])
+    assign(socket, :agent_monitor_ref, nil)
+  end
+
+  defp drop_agent_monitor(socket), do: socket
+
+  defp fail_run_in_flight(%{assigns: %{loading: true}} = socket, reason) do
+    Logger.error("Agent stopped unexpectedly: #{inspect(reason)}")
+
+    socket
+    |> reset_run()
+    |> AgUi.run_error(:agent_down)
+  end
+
+  defp fail_run_in_flight(socket, _reason), do: socket
+
+  # Consecutive runs resolve to the same server: replace the monitor, don't stack it.
+  defp monitor_agent_server(socket, server_pid),
+    do:
+      socket
+      |> drop_agent_monitor()
+      |> assign(:agent_monitor_ref, Process.monitor(server_pid))
+
+  defp activate_run(socket, run_id),
+    do:
+      socket
+      |> assign(:loading, true)
+      |> assign(:message_id, run_id)
+      |> assign(:message_started, false)
+      |> assign(:run_has_started, false)
+
+  defp reset_run(socket),
+    do:
+      socket
+      |> assign(:loading, false)
+      |> assign(:message_started, false)
+      |> assign(:run_has_started, false)
+
+  defp redact_payload(payload) when is_map(payload),
+    do: Map.replace(payload, "access_token", "<REDACTED>")
+
+  defp redact_payload(payload), do: payload
+end

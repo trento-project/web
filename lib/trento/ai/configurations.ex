@@ -1,13 +1,16 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.AI.Configurations do
   @moduledoc """
   This module is responsible for managing user AI configurations.
   """
 
+  import Ecto.Query
+
   alias Trento.Users.User
 
+  alias Trento.AI.Configurations.Events
   alias Trento.AI.UserConfiguration
 
   alias Trento.Repo
@@ -26,6 +29,10 @@ defmodule Trento.AI.Configurations do
     %UserConfiguration{}
     |> UserConfiguration.changeset(Map.put(attrs, :user_id, user_id))
     |> Repo.insert()
+    |> tap(fn
+      {:ok, _} -> Events.broadcast_created(user_id)
+      _ -> :ok
+    end)
   end
 
   def create_user_configuration(%User{}, _), do: {:error, :forbidden}
@@ -54,8 +61,42 @@ defmodule Trento.AI.Configurations do
         user_configuration
         |> UserConfiguration.changeset(attrs)
         |> Repo.update()
+        |> tap(fn
+          {:ok, updated} -> maybe_broadcast_update(user_configuration, updated)
+          _ -> :ok
+        end)
     end
   end
 
   def update_user_configuration(%User{}, _), do: {:error, :forbidden}
+
+  @doc """
+  Clears a user's AI configuration.
+
+  Only eligible users (not deleted or locked) can clear their AI configuration.
+  """
+  @spec clear_user_configuration(User.t()) :: :ok | {:error, :forbidden}
+  def clear_user_configuration(%User{id: user_id, deleted_at: nil, locked_at: nil})
+      when not is_nil(user_id) do
+    Repo.delete_all(from u in UserConfiguration, where: u.user_id == ^user_id)
+
+    Events.broadcast_cleared(user_id)
+
+    :ok
+  end
+
+  def clear_user_configuration(%User{}), do: {:error, :forbidden}
+
+  defp maybe_broadcast_update(
+         %UserConfiguration{provider: provider, model: model},
+         %UserConfiguration{provider: provider, model: model}
+       ),
+       do: :ok
+
+  defp maybe_broadcast_update(%UserConfiguration{}, %UserConfiguration{
+         user_id: user_id,
+         provider: provider,
+         model: model
+       }),
+       do: Events.broadcast_updated(user_id, %{provider: provider, model: model})
 end

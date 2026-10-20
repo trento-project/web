@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
   @moduledoc false
@@ -113,7 +113,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
               %{
                 id: "rsc_SAPHana_PRD_HDB00",
                 type: "ocf::suse:SAPHana",
-                role: "Master",
+                role: "Promoted",
                 status: "running",
                 fail_count: 0
               }
@@ -137,7 +137,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             %{
               id: "rsc_SAPHana_PRD_HDB00",
               type: "ocf::suse:SAPHana",
-              role: "Master",
+              role: "Promoted",
               status: "running",
               fail_count: 0
             }
@@ -299,7 +299,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
               %{
                 id: "rsc_SAPHana_PRD_HDB00",
                 type: "ocf::suse:SAPHana",
-                role: "Master",
+                role: "Promoted",
                 status: "running",
                 fail_count: 0
               }
@@ -344,7 +344,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             %{
               id: "rsc_SAPHana_PRD_HDB00",
               type: "ocf::suse:SAPHana",
-              role: "Master",
+              role: "Promoted",
               status: "running",
               fail_count: 0
             }
@@ -777,6 +777,14 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           },
           details: Details,
           tags: Tags,
+          stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the cluster data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           inserted_at: %Schema{
             type: :string,
             format: :datetime,
@@ -821,6 +829,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             }
           ],
           state: "S_IDLE",
+          stale_at: "2024-01-15T08:00:00Z",
           inserted_at: "2024-01-15T09:00:00Z",
           updated_at: "2024-01-15T10:30:00Z"
         }
@@ -853,6 +862,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             hosts_number: 2,
             cib_last_written: "2024-01-15T10:30:00Z",
             state: "S_IDLE",
+            stale_at: "2024-01-15T08:00:00Z",
             inserted_at: "2024-01-15T09:00:00Z",
             updated_at: "2024-01-15T10:30:00Z"
           }

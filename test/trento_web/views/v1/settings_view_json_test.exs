@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.SettingsJSONTest do
   use TrentoWeb.ConnCase, async: true
@@ -8,7 +8,7 @@ defmodule TrentoWeb.V1.SettingsJSONTest do
 
   alias TrentoWeb.V1.SettingsJSON
 
-  describe "renders suse_manager.json" do
+  describe "renders smlm.json" do
     test "should render relevant fields" do
       %{url: url, username: username, ca_uploaded_at: ca_uploaded_at} =
         settings = %{
@@ -20,7 +20,7 @@ defmodule TrentoWeb.V1.SettingsJSONTest do
         }
 
       assert %{url: url, username: username, ca_uploaded_at: ca_uploaded_at} ==
-               SettingsJSON.suse_manager(%{settings: settings})
+               SettingsJSON.smlm(%{settings: settings})
     end
   end
 

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Hosts.Host do
   @moduledoc """
@@ -21,13 +21,14 @@ defmodule Trento.Hosts.Host do
   ## Host health
 
   Holds the information about whether the host is in an expected state or not, and if not,
-  what is the roout cause helping identifying possible remediation.
+  what is the root cause helping identifying possible remediation.
   It is composed by sub-health elements:
 
-  - Heartbeat status
   - Checks health
+  - Saptune health
+  - Software Updates Discovery health
 
-  The main host health is computed using these values, meaning the host health is the worst of the two.
+  The main host health is computed using these values, meaning the host health is the worst-case of the the individual values.
 
   ### Heartbeat
 
@@ -74,6 +75,7 @@ defmodule Trento.Hosts.Host do
     AwsProvider,
     AzureProvider,
     GcpProvider,
+    HealthDetails,
     SaptuneStatus,
     SlesSubscription,
     SystemdUnit
@@ -137,15 +139,11 @@ defmodule Trento.Hosts.Host do
     field :last_boot_timestamp, :utc_datetime
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
-    field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
-    field :saptune_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :arch, Ecto.Enum, values: Architecture.values(), default: Architecture.unknown()
-
-    field :software_updates_discovery_health, Ecto.Enum,
-      values: SoftwareUpdatesHealth.values(),
-      default: SoftwareUpdatesHealth.not_set()
-
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+
+    embeds_one :health_details, HealthDetails, on_replace: :update, defaults_to_struct: true
+
     field :rolling_up, :boolean, default: false
     field :selected_checks, {:array, :string}, default: []
     field :deregistered_at, :utc_datetime_usec, default: nil
@@ -208,7 +206,12 @@ defmodule Trento.Hosts.Host do
         systemd_units: systemd_units,
         last_boot_timestamp: last_boot_timestamp
       }
-    ] ++ maybe_emit_software_updates_discovery_events(host_id, nil, fully_qualified_domain_name)
+    ] ++
+      maybe_emit_software_updates_discovery_lifecycle_events(
+        host_id,
+        nil,
+        fully_qualified_domain_name
+      )
   end
 
   # Reject all the commands, except for the registration ones when the host_id does not exists
@@ -257,7 +260,12 @@ defmodule Trento.Hosts.Host do
       when not is_nil(deregistered_at) do
     [
       %HostRestored{host_id: host_id}
-    ] ++ maybe_emit_software_updates_discovery_events(host_id, nil, fully_qualified_domain_name)
+    ] ++
+      maybe_emit_software_updates_discovery_lifecycle_events(
+        host_id,
+        nil,
+        fully_qualified_domain_name
+      )
   end
 
   def execute(
@@ -303,7 +311,11 @@ defmodule Trento.Hosts.Host do
         last_boot_timestamp: last_boot_timestamp
       }
     ] ++
-      maybe_emit_software_updates_discovery_events(host_id, nil, new_fully_qualified_domain_name)
+      maybe_emit_software_updates_discovery_lifecycle_events(
+        host_id,
+        nil,
+        new_fully_qualified_domain_name
+      )
   end
 
   def execute(
@@ -403,7 +415,7 @@ defmodule Trento.Hosts.Host do
         last_boot_timestamp: last_boot_timestamp
       }
     ] ++
-      maybe_emit_software_updates_discovery_events(
+      maybe_emit_software_updates_discovery_lifecycle_events(
         host_id,
         current_fully_qualified_domain_name,
         new_fully_qualified_domain_name
@@ -411,33 +423,28 @@ defmodule Trento.Hosts.Host do
   end
 
   def execute(
-        %Host{heartbeat: heartbeat} = host,
-        %UpdateHeartbeat{heartbeat: :passing}
-      )
-      when heartbeat != :passing do
-    host
-    |> Multi.new()
-    |> Multi.execute(&%HeartbeatSucceeded{host_id: &1.host_id})
-    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
-  end
+        %Host{heartbeat: heartbeat},
+        %UpdateHeartbeat{heartbeat: heartbeat}
+      ),
+      do: nil
 
   def execute(
-        %Host{heartbeat: heartbeat} = host,
+        %Host{host_id: host_id},
+        %UpdateHeartbeat{heartbeat: :passing}
+      ),
+      do: %HeartbeatSucceeded{host_id: host_id}
+
+  def execute(
+        %Host{host_id: host_id},
         %UpdateHeartbeat{heartbeat: :critical}
-      )
-      when heartbeat != :critical do
-    host
-    |> Multi.new()
-    |> Multi.execute(&%HeartbeatFailed{host_id: &1.host_id})
-    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
-  end
+      ),
+      do: %HeartbeatFailed{host_id: host_id}
 
   def execute(
         %Host{},
         %UpdateHeartbeat{}
-      ) do
-    []
-  end
+      ),
+      do: nil
 
   def execute(
         %Host{provider: provider, provider_data: provider_data},
@@ -610,8 +617,7 @@ defmodule Trento.Hosts.Host do
 
   def execute(
         %Host{
-          host_id: host_id,
-          software_updates_discovery_health: current_software_updates_discovery_health
+          host_id: host_id
         } = host,
         %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id,
@@ -620,21 +626,16 @@ defmodule Trento.Hosts.Host do
       ) do
     host
     |> Multi.new()
-    |> Multi.execute(fn _ ->
-      if current_software_updates_discovery_health != health do
-        %SoftwareUpdatesHealthChanged{
-          host_id: host_id,
-          health: health
-        }
-      end
-    end)
+    |> Multi.execute(&maybe_emit_host_software_updates_discovery_health_changed_event(&1, health))
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
         %Host{
           host_id: host_id,
-          software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
+          health_details: %HealthDetails{
+            software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
+          }
         },
         %ClearSoftwareUpdatesDiscovery{host_id: host_id}
       ) do
@@ -797,18 +798,12 @@ defmodule Trento.Hosts.Host do
   def apply(%Host{} = host, %HostChecksHealthChanged{
         checks_health: checks_health
       }),
-      do: %Host{
-        host
-        | checks_health: checks_health
-      }
+      do: put_in(host.health_details.checks_health, checks_health)
 
   def apply(%Host{} = host, %HostSaptuneHealthChanged{
-        saptune_health: checks_health
+        saptune_health: saptune_health
       }),
-      do: %Host{
-        host
-        | saptune_health: checks_health
-      }
+      do: put_in(host.health_details.saptune_health, saptune_health)
 
   def apply(
         %Host{} = host,
@@ -829,22 +824,18 @@ defmodule Trento.Hosts.Host do
         %SoftwareUpdatesHealthChanged{
           health: health
         }
-      ) do
-    %Host{
-      host
-      | software_updates_discovery_health: health
-    }
-  end
+      ),
+      do: put_in(host.health_details.software_updates_discovery_health, health)
 
   def apply(
         %Host{} = host,
         %SoftwareUpdatesDiscoveryCleared{}
-      ) do
-    %Host{
-      host
-      | software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
-    }
-  end
+      ),
+      do:
+        put_in(
+          host.health_details.software_updates_discovery_health,
+          SoftwareUpdatesHealth.not_set()
+        )
 
   def apply(%Host{} = host, %HostHealthChanged{health: health}) do
     %Host{host | health: health}
@@ -867,7 +858,7 @@ defmodule Trento.Hosts.Host do
   end
 
   defp maybe_emit_host_checks_health_changed_event(
-         %Host{checks_health: checks_health},
+         %Host{health_details: %HealthDetails{checks_health: checks_health}},
          checks_health
        ),
        do: nil
@@ -882,7 +873,7 @@ defmodule Trento.Hosts.Host do
        }
 
   defp maybe_emit_host_saptune_health_changed_event(
-         %Host{host_id: host_id, saptune_health: saptune_health},
+         %Host{host_id: host_id, health_details: %HealthDetails{saptune_health: saptune_health}},
          false
        )
        when saptune_health != Health.passing(),
@@ -898,7 +889,11 @@ defmodule Trento.Hosts.Host do
        do: nil
 
   defp maybe_emit_host_saptune_health_changed_event(
-         %Host{host_id: host_id, saptune_status: saptune_status, saptune_health: saptune_health},
+         %Host{
+           host_id: host_id,
+           saptune_status: saptune_status,
+           health_details: %HealthDetails{saptune_health: saptune_health}
+         },
          true
        ) do
     new_saptune_health = compute_saptune_health(saptune_status)
@@ -911,23 +906,37 @@ defmodule Trento.Hosts.Host do
     end
   end
 
-  def maybe_emit_software_updates_discovery_events(_host_id, nil, nil), do: []
-  def maybe_emit_software_updates_discovery_events(_host_id, fqdn, fqdn), do: []
+  def maybe_emit_software_updates_discovery_lifecycle_events(_host_id, nil, nil), do: []
+  def maybe_emit_software_updates_discovery_lifecycle_events(_host_id, fqdn, fqdn), do: []
 
-  def maybe_emit_software_updates_discovery_events(host_id, _old_fqdn, nil),
+  def maybe_emit_software_updates_discovery_lifecycle_events(host_id, _old_fqdn, nil),
     do: [
       %SoftwareUpdatesDiscoveryCleared{
         host_id: host_id
       }
     ]
 
-  def maybe_emit_software_updates_discovery_events(host_id, _old_fqdn, new_fqdn),
+  def maybe_emit_software_updates_discovery_lifecycle_events(host_id, _old_fqdn, new_fqdn),
     do: [
       %SoftwareUpdatesDiscoveryRequested{
         host_id: host_id,
         fully_qualified_domain_name: new_fqdn
       }
     ]
+
+  def maybe_emit_host_software_updates_discovery_health_changed_event(
+        %Host{
+          health_details: %HealthDetails{software_updates_discovery_health: health}
+        },
+        health
+      ),
+      do: nil
+
+  def maybe_emit_host_software_updates_discovery_health_changed_event(
+        %Host{host_id: host_id},
+        health
+      ),
+      do: %SoftwareUpdatesHealthChanged{host_id: host_id, health: health}
 
   defp compute_saptune_health(nil), do: Health.warning()
 
@@ -946,14 +955,15 @@ defmodule Trento.Hosts.Host do
 
   defp maybe_emit_host_health_changed_event(%Host{
          host_id: host_id,
-         heartbeat: heartbeat,
-         checks_health: checks_health,
-         saptune_health: saptune_health,
-         software_updates_discovery_health: software_updates_discovery_health,
+         health_details: %HealthDetails{
+           checks_health: checks_health,
+           saptune_health: saptune_health,
+           software_updates_discovery_health: software_updates_discovery_health
+         },
          health: current_health
        }) do
     new_health =
-      [heartbeat]
+      []
       |> maybe_add_checks_health(checks_health)
       |> maybe_add_saptune_health(saptune_health)
       |> maybe_add_software_updates_discovery_health(software_updates_discovery_health)

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Settings.PolicyTest do
   use ExUnit.Case
@@ -8,7 +8,7 @@ defmodule Trento.Settings.PolicyTest do
   alias Trento.Settings.ActivityLogSettings
   alias Trento.Settings.AlertingSettings
   alias Trento.Settings.ApiKeySettings
-  alias Trento.Settings.SuseManagerSettings
+  alias Trento.Settings.SmlmSettings
 
   alias Trento.Settings.Policy
   alias Trento.Users.User
@@ -72,40 +72,40 @@ defmodule Trento.Settings.PolicyTest do
     end
   end
 
-  describe "suse manager settings authorization" do
-    test "should allow suma settings actions if the user has all:all ability" do
+  describe "SUSE Multi-Linux Manager settings authorization" do
+    test "should allow SUSE Multi-Linux Manager settings actions if the user has all:all ability" do
       user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:test_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:get_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:save_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:update_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:delete_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:test_smlm_settings, user, SmlmSettings)
     end
 
-    test "should allow suma settings actions if the user has all:suma_settings ability" do
-      user = %User{abilities: [%Ability{name: "all", resource: "suma_settings"}]}
+    test "should allow SUSE Multi-Linux Manager settings actions if the user has all:smlm_settings ability" do
+      user = %User{abilities: [%Ability{name: "all", resource: "smlm_settings"}]}
 
-      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:test_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:get_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:save_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:update_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:delete_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:test_smlm_settings, user, SmlmSettings)
     end
 
-    test "should allow suma settings actions if the user has no abilities" do
+    test "should allow SUSE Multi-Linux Manager settings actions if the user has no abilities" do
       user = %User{abilities: []}
 
-      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:test_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:get_smlm_settings, user, SmlmSettings)
+      assert Policy.authorize(:test_smlm_settings, user, SmlmSettings)
     end
 
-    test "should disallow creating, updating or changing suma settings if the user has no abilities" do
+    test "should disallow creating, updating or changing SUSE Multi-Linux Manager settings if the user has no abilities" do
       user = %User{abilities: []}
 
-      refute Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
-      refute Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
-      refute Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
+      refute Policy.authorize(:save_smlm_settings, user, SmlmSettings)
+      refute Policy.authorize(:update_smlm_settings, user, SmlmSettings)
+      refute Policy.authorize(:delete_smlm_settings, user, SmlmSettings)
     end
   end
 
@@ -116,6 +116,7 @@ defmodule Trento.Settings.PolicyTest do
       assert Policy.authorize(:get_alerting_settings, user, AlertingSettings)
       assert Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       assert Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+      assert Policy.authorize(:test_alerting_settings, user, AlertingSettings)
     end
 
     test "allows alerting settings actions if user has all:alerting_settings abilities" do
@@ -124,6 +125,7 @@ defmodule Trento.Settings.PolicyTest do
       assert Policy.authorize(:get_alerting_settings, user, AlertingSettings)
       assert Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       assert Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+      assert Policy.authorize(:test_alerting_settings, user, AlertingSettings)
     end
 
     test "allows safe alerting settings actions if user has no abilities" do
@@ -135,12 +137,14 @@ defmodule Trento.Settings.PolicyTest do
       user = %User{abilities: []}
       refute Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+      refute Policy.authorize(:test_alerting_settings, user, AlertingSettings)
     end
 
     test "disallows setting/updating alerting settings if user has only not applicable abilities" do
       user = %User{abilities: [%Ability{name: "all", resource: "api_key_settings"}]}
       refute Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+      refute Policy.authorize(:test_alerting_settings, user, AlertingSettings)
     end
   end
 

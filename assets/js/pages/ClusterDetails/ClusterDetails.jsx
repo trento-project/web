@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState } from 'react';
 
@@ -28,11 +28,14 @@ import {
   getOperationLabel,
 } from '@lib/operations';
 
+import { formatDateTime } from '@lib/timezones';
+
 import BackButton from '@common/BackButton';
+import Banner from '@common/Banners';
 import Button from '@common/Button';
 import DisabledGuard from '@common/DisabledGuard';
 import OperationsButton from '@common/OperationsButton';
-import PageHeader from '@common/PageHeader';
+import { DetailsViewHeader } from '@common/PageHeader';
 import Tooltip from '@common/Tooltip';
 import {
   OperationForbiddenModal,
@@ -56,12 +59,15 @@ function ClusterDetails({
   details,
   hasSelectedChecks,
   hosts,
+  health,
   state,
+  staleAt,
   lastExecution = {},
   operationsEnabled = false,
   runningOperation,
   selectedChecks,
   userAbilities,
+  userTimezone,
   onStartExecution = noop,
   onRequestOperation = noop,
   onCleanForbiddenOperation = noop,
@@ -187,10 +193,16 @@ function ClusterDetails({
       <BackButton url="/clusters">Back to Clusters</BackButton>
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-          <PageHeader className="whitespace-normal">
+          <DetailsViewHeader
+            className="whitespace-normal"
+            health={health}
+            staleAt={staleAt}
+            timezone={userTimezone}
+            healthAriaLabelPrefix="Cluster"
+          >
             Pacemaker Cluster Details:{' '}
             <span className="font-bold">{clusterName}</span>
-          </PageHeader>
+          </DetailsViewHeader>
         </div>
         <div className="flex w-1/2 justify-end">
           <div className="flex w-fit whitespace-nowrap">
@@ -257,6 +269,13 @@ function ClusterDetails({
           <ClusterStatePill state={clusterState} />
         </div>
       </div>
+      {staleAt && (
+        <Banner type="warning" truncate={false}>
+          An agent in one of the cluster hosts is not reporting since{' '}
+          {formatDateTime(staleAt, userTimezone)}. Some information in this view
+          might be stale.
+        </Banner>
+      )}
       {detailComponent}
       <Resources
         resources={details?.resources}

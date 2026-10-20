@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
+
 import { computedIconCssClass } from '@lib/icon';
 
 import {
@@ -10,14 +11,22 @@ import {
   EOS_ERROR_OUTLINED,
   EOS_WARNING_OUTLINED,
   EOS_LENS_FILLED,
-  EOS_INFO_OUTLINED,
   EOS_ERROR_FILLED,
   EOS_WARNING_FILLED,
-  EOS_INFO_FILLED,
+  EOS_REMOVE_FILLED,
 } from 'eos-icons-react';
 
-import Spinner from '@common/Spinner';
 import classNames from 'classnames';
+import Spinner from '@common/Spinner';
+import StaleIconWrapper from '@common/StaleIconWrapper';
+
+const PassingIconBlank = StaleIconWrapper(EOS_CHECK_CIRCLE_OUTLINED);
+const PassingIconLink = StaleIconWrapper(EOS_CHECK_CIRCLE_FILLED);
+const WarningIconBlank = StaleIconWrapper(EOS_WARNING_OUTLINED);
+const WarningIconLink = StaleIconWrapper(EOS_WARNING_FILLED);
+const CriticalIconBlank = StaleIconWrapper(EOS_ERROR_OUTLINED);
+const CriticalIconLink = StaleIconWrapper(EOS_ERROR_FILLED);
+const UnknownIcon = StaleIconWrapper(EOS_LENS_FILLED);
 
 function HealthIcon({
   health = undefined,
@@ -25,79 +34,75 @@ function HealthIcon({
   hoverOpacity = true,
   size = 'l',
   isLink = false,
+  staleAt = null,
+  timezone = 'Etc/UTC',
+  ariaLabelPrefix = '',
 }) {
-  const passingIcon = () =>
-    isLink ? EOS_CHECK_CIRCLE_FILLED : EOS_CHECK_CIRCLE_OUTLINED;
-  // eslint-disable-next-line @eslint-react/static-components
-  const PassingIcon = passingIcon();
-
-  const warningIcon = () =>
-    isLink ? EOS_WARNING_FILLED : EOS_WARNING_OUTLINED;
-  // eslint-disable-next-line @eslint-react/static-components
-  const WarningIcon = warningIcon();
-
-  const criticalIcon = () => (isLink ? EOS_ERROR_FILLED : EOS_ERROR_OUTLINED);
-  // eslint-disable-next-line @eslint-react/static-components
-  const CriticalIcon = criticalIcon();
-
-  const absentIcon = () => (isLink ? EOS_INFO_FILLED : EOS_INFO_OUTLINED);
-  // eslint-disable-next-line @eslint-react/static-components
-  const AbsentIcon = absentIcon();
-
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
   };
+  const ariaLabelPre = `${ariaLabelPrefix ? `${ariaLabelPrefix} ` : ''}Health:`;
+
   switch (health) {
-    case 'passing':
+    case 'passing': {
+      const PassingIcon = isLink ? PassingIconLink : PassingIconBlank;
       return (
         // eslint-disable-next-line @eslint-react/static-components
         <PassingIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-jungle-green-500')}
           size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-jungle-green-500', centered)
-          )}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Passing`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
-    case 'warning':
+    }
+
+    case 'warning': {
+      const WarningIcon = isLink ? WarningIconLink : WarningIconBlank;
       return (
         // eslint-disable-next-line @eslint-react/static-components
         <WarningIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-yellow-500')}
           size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-yellow-500', centered)
-          )}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Warning`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
-    case 'critical':
+    }
+
+    case 'critical': {
+      const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank;
       return (
         // eslint-disable-next-line @eslint-react/static-components
         <CriticalIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-red-500')}
           size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-red-500', centered)
-          )}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Critical`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
-    case 'absent':
-      return (
-        // eslint-disable-next-line @eslint-react/static-components
-        <AbsentIcon
-          size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-black', centered)
-          )}
-        />
-      );
-    case 'pending':
+    }
+
+    case 'pending': {
       return <Spinner />;
-    default:
+    }
+
+    case 'not_available': {
       return (
-        <EOS_LENS_FILLED
+        <EOS_REMOVE_FILLED
           size={size}
           className={classNames(
             hoverOpacityClass,
@@ -105,6 +110,22 @@ function HealthIcon({
           )}
         />
       );
+    }
+
+    default: {
+      return (
+        <UnknownIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-gray-500')}
+          size={size}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Unknown`}
+          containerProps={{ 'data-health-state': 'unknown' }}
+        />
+      );
+    }
   }
 }
 

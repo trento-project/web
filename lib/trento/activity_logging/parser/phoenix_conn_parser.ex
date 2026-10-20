@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   @moduledoc """
@@ -132,8 +132,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         }
       )
       when action in [
-             :saving_suma_settings,
-             :changing_suma_settings
+             :saving_smlm_settings,
+             :changing_smlm_settings
            ] do
     request_body
     |> redact(:password)
@@ -149,9 +149,22 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       )
       when action in [
              :saving_alerting_settings,
-             :changing_alerting_setting
+             :changing_alerting_settings
            ] do
     redact(request_body, :smtp_password)
+  end
+
+  def get_activity_metadata(:testing_alerting_settings, %Plug.Conn{status: 200}),
+    do: %{result: :success}
+
+  def get_activity_metadata(:testing_alerting_settings, %Plug.Conn{resp_body: resp_body}) do
+    reason =
+      case Jason.decode(resp_body) do
+        {:ok, %{"errors" => [%{"detail" => detail} | _]}} -> detail
+        _ -> "Unknown error"
+      end
+
+    %{result: :failure, reason: reason}
   end
 
   def get_activity_metadata(
@@ -265,6 +278,16 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     }
     |> Map.put(get_operation_resource_id_field(activity), Map.get(params, :id))
     |> maybe_add_additional_fields(activity, conn)
+  end
+
+  def get_activity_metadata(
+        action,
+        %Plug.Conn{
+          body_params: request_body
+        }
+      )
+      when action in [:ai_configuration_creation, :ai_configuration_modification] do
+    redact(request_body, :api_key)
   end
 
   def get_activity_metadata(_, _), do: %{}

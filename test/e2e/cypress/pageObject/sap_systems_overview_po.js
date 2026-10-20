@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 export * from './base_po.js';
 import * as basePage from './base_po.js';
@@ -20,6 +20,18 @@ const sapSystemNwd = {
   hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
   instanceNumber: '02',
   hostname: 'vmnwdev01',
+  agentId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
+  applicationInstance: {
+    row: 1,
+  },
+  attachedDatabase: {
+    sid: 'HDD',
+    agentId: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+    instance: {
+      instanceNumber: '10',
+      row: 0,
+    },
+  },
   messageserverInstance: {
     instanceNumber: '00',
   },
@@ -57,7 +69,8 @@ const sapSystemNwq = {
 const instancesData = availableSAPSystems.flatMap((system) => system.instances);
 
 // Selectors
-const sapSystemsTableRows = 'tbody tr[class=""]';
+const sapSystemsTableRows =
+  'tbody > tr:has(> td[aria-label="collapsible-icon-cell"])';
 const firstSystemApplicationLayerRows =
   'tbody tr:nth-child(odd):eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'button:contains("Clean up")';
@@ -72,15 +85,33 @@ const instancesRowsSelector =
 const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
 const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
 const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td:first-child`;
+const nwdSystemCell = `tr:contains("${sapSystemNwd.sid}")`;
 const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(0)`;
 const pageTitle = 'h1:contains("SAP Systems")';
+const sidLinks = `tbody a[href*="${url}/"]`;
+
+const getNwdApplicationInstanceRow = (index) =>
+  `${nwdSystemCell} + tr div[class="table-row-group"]:eq(0) div[class*="table-row border-b"]:nth-child(${
+    index + 1
+  })`;
+
+const getNwdDatabaseInstanceRow = (index) =>
+  `${nwdSystemCell} + tr div[class="table-row-group"]:eq(1) div[class*="table-row border-b"]:nth-child(${
+    index + 1
+  })`;
 
 // UI Interactions
-export const visit = () => {
+export const visit = (params) => {
+  // wait for both SAP systems and databases as the view needs information
+  // from both endpoints
+  cy.intercept('/api/v1/sap_systems').as('sapSystemsRequest');
   cy.intercept('/api/v1/databases').as('databasesRequest');
-  basePage.visit(url);
-  return basePage.waitForRequest('databasesRequest', 10000);
+  basePage.visit(url, params);
+  basePage.waitForRequest('sapSystemsRequest', { timeout: 10000 });
+  return basePage.waitForRequest('databasesRequest', { timeout: 10000 });
 };
+
+export const selectSidFilter = (sid) => basePage.selectFilter('SID', sid);
 
 export const tagSapSystems = () =>
   cy
@@ -125,6 +156,9 @@ export const nwdInstance01CleanUpButtonIsNotVisible = () =>
   cy.get(nwdInstance01CleanUpButton).should('not.exist');
 
 export const validateUrl = (_url = url) => basePage.validateUrl(_url);
+
+export const sapSystemsListedAre = (amount) =>
+  cy.get(sidLinks).should('have.length', amount);
 
 export const systemApplicationLayerRowsAreTheExpected = (amount) =>
   cy.get(firstSystemApplicationLayerRows).should('have.length', amount);
@@ -221,7 +255,7 @@ const validateInstanceRowData = (instance, rowIndex) => {
 
   const columnIndexOffset = isHana ? 1 : 0;
 
-  const healthBadgeSelector = `${currentRow} div[class*="cell"]:eq(0) svg`;
+  const statusBadgeSelector = `${currentRow} div[class*="cell"]:eq(0) svg`;
   const instanceNumberSelector = `${currentRow} div[class*="cell"]:eq(1)`;
   const featuresSelector = `${currentRow} div[class*="cell"]:eq(2)`;
   const hanaInstanceSelector = `${currentRow} div[class*="cell"]:eq(3)`;
@@ -232,8 +266,8 @@ const validateInstanceRowData = (instance, rowIndex) => {
     4 + columnIndexOffset
   })`;
 
-  const healthBadgeExpectedClass = healthMap[instance.health];
-  cy.get(healthBadgeSelector).should('have.class', healthBadgeExpectedClass);
+  const statusBadgeExpectedClass = healthMap[instance.status];
+  cy.get(statusBadgeSelector).should('have.class', statusBadgeExpectedClass);
 
   const expectedInstanceNumber = instance.instanceNumber;
   cy.get(instanceNumberSelector).should('have.text', expectedInstanceNumber);
@@ -301,45 +335,24 @@ export const javaSystemIsDiscoveredCorrectly = () => {
 export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
   cy.get(sapSystemsTableRows).should('have.length', systemsAmount);
 
-export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
+export const instanceHasItsStatusCorrectlyUpdated = (status, rowIndex) => {
+  const healthClass = healthMap[status];
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
-  cy.get(collapsibleCell).click();
+  const sapSystemInstanceStatusBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
+  cy.get(sapSystemInstanceStatusBadge).should('have.class', healthClass);
 
-  return cy.wrap(Object.entries(healthMap)).each(([state, health], index) => {
-    basePage.loadScenario(`sap-systems-overview-${state}`);
-
-    const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
-    cy.get(sapSystemInstanceHealthBadge).should('have.class', health);
-
-    const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
-      index + 1
-    }) div[class*="cell"]:eq(0) svg`;
-    return cy.get(appLayerInstanceHealthBadge).should('have.class', health);
-  });
-};
-
-export const sapSystemHealthChangesToRedAsExpected = () => {
-  basePage.loadScenario('sap-systems-overview-hana-RED');
-
-  const healthClass = healthMap['RED'];
-
-  const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
-  cy.get(collapsibleCell).click();
-
-  const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
-  cy.get(sapSystemInstanceHealthBadge).should('have.class', healthClass);
-
-  const appLayerInstanceHealthBadge =
-    'tr td div[class*="flex bg-white"] div[class*="row"] div[class*="cell"] svg:eq(4)';
+  const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
+    rowIndex + 1
+  }) div[class*="cell"]:eq(0) svg`;
   return cy.get(appLayerInstanceHealthBadge).should('have.class', healthClass);
 };
 
-export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () => {
-  basePage.loadScenario('sap-systems-overview-DAA');
-  return cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
-};
+export const sapSystemHealthChangesToRedAsExpected = () =>
+  // 5th row, 4 app instances + 1st db instance
+  instanceHasItsStatusCorrectlyUpdated('RED', 5);
+
+export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () =>
+  cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
 
 export const systemNwdIsVisible = () =>
   cy.get(`td:contains('${sapSystemNwd.sid}')`).should('be.visible');
@@ -358,6 +371,32 @@ export const cleanUpButonIsDisabled = () =>
 
 export const cleanUpButonIsEnabled = () =>
   cy.get(cleanUpButton).should('be.enabled');
+
+export const nwdSystemDataIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(nwdSystemCell);
+
+export const nwdSystemDataIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(nwdSystemCell);
+
+export const nwdSystemInstanceRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(
+    getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row)
+  );
+
+export const nwdSystemInstanceRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(
+    getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row)
+  );
+
+export const hddDatabaseInstanceRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(
+    getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row)
+  );
+
+export const hddDatabaseInstanceRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(
+    getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row)
+  );
 
 export const existentTagCannotBeModified = () =>
   cy.get(existentEnv3Tag).should('have.class', 'opacity-50');
@@ -496,6 +535,11 @@ export const loadAbsentMessageServerInstance = () =>
     `sap-systems-overview-${sapSystemNwd.sid}-${sapSystemNwd.messageserverInstance.instanceNumber}-absent`
   );
 
+export const markHddDatabaseAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${sapSystemNwd.attachedDatabase.sid}-${sapSystemNwd.attachedDatabase.instance.instanceNumber}-present`
+  );
+
 export const apiSetTagNwdSystem = () => apiSetTag(sapSystemNwd.sid, 'env3');
 
 const apiSetTag = (systemSid, tag) => {
@@ -509,6 +553,33 @@ const systemIdBySid = (systemName) =>
 export const apiCreateUserWithSapSystemTagsAbility = () =>
   basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'sap_system_tags' },
+  ]);
+
+export const startNwdSystemAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([sapSystemNwd.agentId]);
+
+export const stopNwdSystemAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([sapSystemNwd.agentId]);
+
+export const startHddDatabaseAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([sapSystemNwd.attachedDatabase.agentId]);
+
+export const stopHddDatabaseAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([sapSystemNwd.attachedDatabase.agentId]);
+
+export const startAllSapSystemsAgentsHeartbeat = () =>
+  apiGetSapSystemAgentIds().then((agentIds) =>
+    basePage.startAgentsHeartbeat(agentIds)
+  );
+
+const apiGetSapSystemAgentIds = () =>
+  apiGetSapSystems().then(({ body }) => [
+    ...new Set(
+      body.flatMap((sapSystem) => [
+        ...sapSystem.application_instances.map((instance) => instance.host_id),
+        ...sapSystem.database_instances.map((instance) => instance.host_id),
+      ])
+    ),
   ]);
 
 export const loadAppCleanUpPermissionsScenario = () => {

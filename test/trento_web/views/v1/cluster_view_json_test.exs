@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.ClusterJSONTest do
   use TrentoWeb.ConnCase, async: true
@@ -44,6 +44,7 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
 
       refute Access.get(cluster_json, :sap_instances)
       refute Access.get(cluster_json, :state)
+      refute Access.get(cluster_json, :stale_at)
       refute Access.get(updated_details, :sites)
       refute Access.get(updated_details, :maintenance_mode)
       refute Access.get(updated_details, :architecture_type)

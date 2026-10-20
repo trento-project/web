@@ -1,46 +1,53 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
-import { extractMessageText, WebSocketAIAgent } from './WebSocketAIAgent';
+import { aguiEvents } from '@lib/test-utils/aguiEvents';
 
-// Wrap socket.channel + each channel.leave with jest.fn so the existing
-// `toHaveBeenCalled` / `mockClear` assertions still apply. The shared
-// makeMockSocket stays jest-free so stories can use it too.
-function makeJestSocket() {
-  const socket = makeMockSocket();
-  const original = socket.channel;
-  socket.channel = jest.fn((topic) => {
-    const channel = original(topic);
-    if (!jest.isMockFunction(channel.leave)) {
-      channel.leave = jest.fn(channel.leave);
-    }
-    return channel;
-  });
-  return socket;
-}
+import { extractMessageText, WebSocketAIAgent } from './WebSocketAIAgent';
+import { CONNECTING, CONNECTED, DISCONNECTED } from './connectionStatus';
+import { ACTIVE, EXPIRED } from './conversationStatus';
 
 const flushMicrotasks = async () => {
   for (let i = 0; i < 5; i += 1) await Promise.resolve();
 };
 
+const flushDeferredWork = async () => {
+  await flushMicrotasks();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+};
+
 const userMessage = (content = 'hi') => ({ role: 'user', content });
+
+function makeAuthDoubles() {
+  let storedToken = 'TEST_TOKEN';
+  return {
+    getAccessToken: jest.fn(() => storedToken),
+    refreshToken: jest.fn(async () => {
+      storedToken = 'NEW_TOKEN';
+    }),
+    onUnrecoverableAuthError: jest.fn(),
+  };
+}
 
 // Standard test setup: a fresh agent + socket + channel + onConnectionChange spy.
 // `overrides` is spread after the defaults so callers can pass `userId: undefined`
-// or `socket: undefined` to exercise the missing-prerequisite branches.
+// or `socket: undefined` to exercise the missing-prerequisite branches. The auth
+// doubles come last and are returned as handles: a test that needs a failing
+// refresh does `refreshToken.mockRejectedValueOnce(...)` on the returned spy.
 function makeAgent(overrides = {}) {
-  const socket = makeJestSocket();
-  const onConnectionChange = jest.fn();
+  const socket = makeMockSocket();
+  const auth = makeAuthDoubles();
   const agent = new WebSocketAIAgent({
     socket,
     userID: 'u',
-    onConnectionChange,
     ...overrides,
-  });
+    ...auth,
+  }).withCallbacks({ ...overrides });
+
   const getChannel = () =>
     agent.socket?.channels.get(`ai_assistant:${agent.userID}`);
-  return { agent, socket: agent.socket, onConnectionChange, getChannel };
+  return { agent, socket: agent.socket, getChannel, ...auth };
 }
 
 // Setup that resolves agent.initialize() by firing 'ok' on the join push.
@@ -64,45 +71,45 @@ function runAgent(agent, input = { threadId: 't', messages: [userMessage()] }) {
 describe('WebSocketAIAgent', () => {
   describe('initialize', () => {
     it('joins ai_assistant:{userID} and reports connecting → connected', async () => {
-      const { agent, socket, onConnectionChange, getChannel } = makeAgent({
+      const onConnectionChange = jest.fn();
+      const { agent, socket, getChannel } = makeAgent({
         userID: 'u42',
+        onConnectionChange,
       });
 
       const initPromise = agent.initialize();
 
-      expect(socket.channel).toHaveBeenCalledWith('ai_assistant:u42', {});
-      expect(onConnectionChange).toHaveBeenNthCalledWith(1, 'connecting');
+      expect(socket.channels.has('ai_assistant:u42')).toBe(true);
+      expect(getChannel().joinPayload).toMatchObject({
+        access_token: 'TEST_TOKEN',
+      });
+      expect(onConnectionChange).toHaveBeenNthCalledWith(1, CONNECTING);
 
       getChannel().joinPush.fire('ok');
       await initPromise;
 
-      expect(onConnectionChange).toHaveBeenNthCalledWith(2, 'connected');
+      expect(onConnectionChange).toHaveBeenNthCalledWith(2, CONNECTED);
     });
 
-    it.each([
-      {
-        scenario: 'join error',
-        receive: 'error',
-        payload: { reason: 'boom' },
-        rejectsWith: /Failed to join channel/,
-      },
-      {
-        scenario: 'join timeout',
-        receive: 'timeout',
-        payload: undefined,
-        rejectsWith: /Channel join timeout/,
-      },
-    ])(
-      'rejects on $scenario and reports disconnected',
-      async ({ receive, payload, rejectsWith }) => {
-        const { agent, onConnectionChange, getChannel } = makeAgent();
-        const initPromise = agent.initialize();
-        getChannel().joinPush.fire(receive, payload);
+    it('rejects on join error and reports disconnected', async () => {
+      const onConnectionChange = jest.fn();
+      const { agent, getChannel } = makeAgent({ onConnectionChange });
+      const initPromise = agent.initialize();
+      getChannel().joinPush.fire('error', { reason: 'boom' });
 
-        await expect(initPromise).rejects.toThrow(rejectsWith);
-        expect(onConnectionChange).toHaveBeenLastCalledWith('disconnected');
-      }
-    );
+      await expect(initPromise).rejects.toEqual({ reason: 'boom' });
+      expect(onConnectionChange).toHaveBeenLastCalledWith(DISCONNECTED);
+    });
+
+    it('rejects on join timeout and reports disconnected', async () => {
+      const onConnectionChange = jest.fn();
+      const { agent, getChannel } = makeAgent({ onConnectionChange });
+      const initPromise = agent.initialize();
+      getChannel().joinPush.fire('timeout');
+
+      await expect(initPromise).rejects.toThrow(/Channel join timeout/);
+      expect(onConnectionChange).toHaveBeenLastCalledWith(DISCONNECTED);
+    });
 
     it.each([
       {
@@ -118,19 +125,84 @@ describe('WebSocketAIAgent', () => {
     ])(
       'throws when no $missing is provided and never reports a status change',
       async ({ overrides, error }) => {
-        const { agent, onConnectionChange } = makeAgent(overrides);
+        const onConnectionChange = jest.fn();
+        const { agent } = makeAgent({ ...overrides, onConnectionChange });
         await expect(agent.initialize()).rejects.toThrow(error);
         expect(onConnectionChange).not.toHaveBeenCalled();
       }
     );
 
+    it('uses the most up to date threadId on join and rejoin', async () => {
+      const { agent, channel } = await connectedAgent({ threadId: 'thread-1' });
+      expect(channel.joinPayload).toMatchObject({ thread_id: 'thread-1' });
+
+      agent.threadId = 'thread-2';
+      channel.rejoin();
+
+      expect(channel.joinPayload).toMatchObject({ thread_id: 'thread-2' });
+    });
+
     it('is idempotent when channel is already initialized', async () => {
-      const { agent, socket } = await connectedAgent();
+      const { agent, channel } = await connectedAgent();
+      const join = jest.spyOn(channel, 'join');
 
-      socket.channel.mockClear();
-      await agent.initialize();
+      const again = agent.initialize();
 
-      expect(socket.channel).not.toHaveBeenCalled();
+      expect(join).not.toHaveBeenCalled();
+      await again;
+    });
+
+    it('refreshes and rejoins on join error with reason "unauthorized"', async () => {
+      const onConnectionChange = jest.fn();
+      const { agent, socket, getChannel, refreshToken } = makeAgent({
+        userID: 'u9',
+        onConnectionChange,
+      });
+      const buildChannel = jest.spyOn(socket, 'channel');
+
+      const initPromise = agent.initialize();
+      const firstChannel = getChannel();
+
+      // First join attempt fails with unauthorized.
+      firstChannel.joinPush.fire('error', 'unauthorized');
+      await flushMicrotasks();
+
+      // The agent should have requested a refresh and asked for a fresh channel.
+      expect(refreshToken).toHaveBeenCalledTimes(1);
+      // Second channel created (initialize re-entered after channel was nulled),
+      // and its params callback reads the token refreshed in between.
+      expect(buildChannel).toHaveBeenCalledTimes(2);
+      expect(getChannel().joinPayload).toMatchObject({
+        access_token: 'NEW_TOKEN',
+      });
+
+      // Second join succeeds — initPromise resolves.
+      const secondChannel = getChannel();
+      secondChannel.joinPush.fire('ok');
+      await initPromise;
+
+      expect(onConnectionChange).toHaveBeenLastCalledWith(CONNECTED);
+    });
+
+    it('fails initialize when unauthorized refresh itself errors', async () => {
+      const onConnectionChange = jest.fn();
+      const { agent, getChannel, refreshToken, onUnrecoverableAuthError } =
+        makeAgent({
+          userID: 'u10',
+          onConnectionChange,
+        });
+      refreshToken.mockRejectedValueOnce(
+        new Error('no refresh token available')
+      );
+      const initPromise = agent.initialize();
+
+      getChannel().joinPush.fire('error', 'unauthorized');
+
+      await expect(initPromise).rejects.toThrow(
+        'Session expired — please log in again'
+      );
+      expect(onConnectionChange).toHaveBeenLastCalledWith(DISCONNECTED);
+      expect(onUnrecoverableAuthError).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -139,22 +211,25 @@ describe('WebSocketAIAgent', () => {
       { trigger: 'channel error', method: 'triggerError' },
       { trigger: 'channel close', method: 'triggerClose' },
     ])('reports disconnected on $trigger', async ({ method }) => {
-      const { channel, onConnectionChange } = await connectedAgent();
+      const onConnectionChange = jest.fn();
+      const { channel } = await connectedAgent({ onConnectionChange });
+
       onConnectionChange.mockClear();
 
       channel[method]();
 
-      expect(onConnectionChange).toHaveBeenCalledWith('disconnected');
+      expect(onConnectionChange).toHaveBeenCalledWith(DISCONNECTED);
     });
 
     it('only invokes onConnectionChange when the status actually changes', () => {
-      const { agent, onConnectionChange } = makeAgent();
+      const onConnectionChange = jest.fn();
+      const { agent } = makeAgent({ onConnectionChange });
 
-      agent._setConnectionStatus('disconnected'); // already disconnected
-      agent._setConnectionStatus('connecting');
-      agent._setConnectionStatus('connecting'); // no change
+      agent._setConnectionStatus(DISCONNECTED); // already disconnected
+      agent._setConnectionStatus(CONNECTING);
+      agent._setConnectionStatus(CONNECTING); // no change
 
-      expect(onConnectionChange.mock.calls).toEqual([['connecting']]);
+      expect(onConnectionChange.mock.calls).toEqual([[CONNECTING]]);
     });
   });
 
@@ -167,6 +242,7 @@ describe('WebSocketAIAgent', () => {
         messages: [userMessage('hello there')],
       });
 
+      await flushMicrotasks();
       expect(channel.pushed).toHaveLength(1);
       expect(channel.pushed[0]).toMatchObject({
         event: 'send_message',
@@ -174,9 +250,97 @@ describe('WebSocketAIAgent', () => {
           message: 'hello there',
           thread_id: 'thread-1',
           run_id: agent._activeRunId,
+          access_token: 'TEST_TOKEN',
         },
       });
       expect(typeof agent._activeRunId).toBe('string');
+    });
+
+    it('mints a fresh run_id per run while forwarding the same thread_id', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      runAgent(agent, {
+        threadId: 'thread-1',
+        messages: [userMessage('first')],
+      });
+      await flushMicrotasks();
+      runAgent(agent, {
+        threadId: 'thread-1',
+        messages: [userMessage('second')],
+      });
+      await flushMicrotasks();
+
+      const [first, second] = channel.pushed;
+      // run_id becomes the server's `message_id`, so a repeat would make the
+      // second turn's TEXT_MESSAGE_* deltas land on the first turn's message.
+      expect(second.payload.run_id).not.toBe(first.payload.run_id);
+      expect(second.payload.thread_id).toBe(first.payload.thread_id);
+    });
+
+    it('refreshes the token and retries send_message once on unauthorized error', async () => {
+      const { agent, channel, refreshToken } = await connectedAgent();
+      const { error, next } = runAgent(agent);
+
+      await flushMicrotasks();
+      // First push fails with unauthorized.
+      channel.pushed[0].push.fire('error', 'unauthorized');
+      await flushMicrotasks();
+
+      // The agent refreshed and re-pushed with the new token.
+      expect(refreshToken).toHaveBeenCalledTimes(1);
+      expect(channel.pushed).toHaveLength(2);
+      expect(channel.pushed[1].payload.access_token).toBe('NEW_TOKEN');
+
+      // The retried push then succeeds (no error fired on it). Simulate an
+      // upstream event to confirm the subscriber is still alive.
+      channel.emit('ag_ui_event', {
+        type: 'TEXT_MESSAGE_CONTENT',
+        delta: 'ok',
+      });
+
+      expect(error).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith({
+        type: 'TEXT_MESSAGE_CONTENT',
+        delta: 'ok',
+      });
+    });
+
+    it('errors the subscriber when the refresh itself fails', async () => {
+      const { agent, channel, refreshToken, onUnrecoverableAuthError } =
+        await connectedAgent();
+      refreshToken.mockRejectedValueOnce(
+        new Error('no refresh token available')
+      );
+      const { error } = runAgent(agent);
+
+      await flushMicrotasks();
+      channel.pushed[0].push.fire('error', 'unauthorized');
+      await flushMicrotasks();
+      await flushMicrotasks();
+
+      expect(error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Session expired — please log in again',
+        })
+      );
+      expect(agent._activeSubscriber).toBeNull();
+      expect(onUnrecoverableAuthError).toHaveBeenCalledTimes(1);
+    });
+
+    it('errors the subscriber when the retried push also fails', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { error } = runAgent(agent);
+
+      await flushMicrotasks();
+      channel.pushed[0].push.fire('error', 'unauthorized');
+      await flushMicrotasks();
+
+      // Retried push fails for some other reason.
+      channel.pushed[1].push.fire('error', { reason: 'still broken' });
+      await flushMicrotasks();
+
+      expect(error).toHaveBeenCalledWith({ reason: 'still broken' });
+      expect(agent._activeSubscriber).toBeNull();
     });
 
     it('forwards ag_ui_event payloads to the active subscriber', async () => {
@@ -193,31 +357,95 @@ describe('WebSocketAIAgent', () => {
       const { agent, channel } = await connectedAgent();
       const { complete } = runAgent(agent);
 
-      channel.emit('ag_ui_event', { type: 'RUN_FINISHED' });
+      channel.emit(
+        'ag_ui_event',
+        aguiEvents.runFinished({ threadId: 't', runId: agent._activeRunId })
+      );
 
       expect(complete).toHaveBeenCalledTimes(1);
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
     });
 
+    it('does not settle the active run on a RUN_FINISHED that names no run', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { complete } = runAgent(agent);
+
+      // The server stamps run_id on every RUN_FINISHED, so an unstamped one
+      // cannot be attributed to the run in flight.
+      channel.emit('ag_ui_event', { type: 'RUN_FINISHED' });
+
+      expect(complete).not.toHaveBeenCalled();
+      expect(agent._activeRunId).not.toBeNull();
+    });
+
+    it('does not settle the active run on a terminal event from a superseded run', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      runAgent(agent, { threadId: 't', messages: [userMessage('first')] });
+      await flushMicrotasks();
+      const staleRunId = channel.pushed[0].payload.run_id;
+
+      const { complete, next } = runAgent(agent, {
+        threadId: 't',
+        messages: [userMessage('second')],
+      });
+      await flushMicrotasks();
+
+      // The first run was abandoned when the second replaced it; its late
+      // RUN_FINISHED must not close the run now in flight.
+      channel.emit(
+        'ag_ui_event',
+        aguiEvents.runFinished({ threadId: 't', runId: staleRunId })
+      );
+
+      expect(next).not.toHaveBeenCalled();
+      expect(complete).not.toHaveBeenCalled();
+      expect(agent._activeRunId).not.toBeNull();
+    });
+
+    it('does not forward a RUN_STARTED from a superseded run', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      runAgent(agent, { threadId: 't', messages: [userMessage('first')] });
+      await flushMicrotasks();
+      const staleRunId = channel.pushed[0].payload.run_id;
+
+      const { next } = runAgent(agent, {
+        threadId: 't',
+        messages: [userMessage('second')],
+      });
+      await flushMicrotasks();
+
+      channel.emit(
+        'ag_ui_event',
+        aguiEvents.runStarted({ threadId: 't', runId: staleRunId })
+      );
+
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    // RunError has no run_id field (deps/ag_ui_ex/lib/ag_ui/core/events.ex:138),
+    // so these events reach the client unstamped and must never be filtered as
+    // stale the way an unstamped RUN_FINISHED is.
     it.each([
       {
         scenario: 'with explicit message',
-        event: { type: 'RUN_ERROR', message: 'oops' },
+        sent: 'oops',
         message: 'oops',
       },
       {
         scenario: 'with default message when none is given',
-        event: { type: 'RUN_ERROR' },
+        sent: undefined,
         message: 'Agent execution failed',
       },
     ])(
       'errors the observable on RUN_ERROR $scenario',
-      async ({ event, message }) => {
+      async ({ sent, message }) => {
         const { agent, channel } = await connectedAgent();
         const { error } = runAgent(agent);
 
-        channel.emit('ag_ui_event', event);
+        channel.emit('ag_ui_event', aguiEvents.runError({ message: sent }));
 
         expect(error).toHaveBeenCalledWith(
           expect.objectContaining({ message })
@@ -244,21 +472,26 @@ describe('WebSocketAIAgent', () => {
       const { agent, channel } = await connectedAgent();
       const { error } = runAgent(agent);
 
+      await flushMicrotasks();
       channel.pushed[0].push.fire('error', { reason: 'rejected' });
+      await flushMicrotasks();
+      await flushMicrotasks();
 
       expect(error).toHaveBeenCalledWith({ reason: 'rejected' });
       expect(agent._activeSubscriber).toBeNull();
     });
 
     it('initializes the channel lazily when run() is called before initialize()', async () => {
-      const { agent, getChannel, onConnectionChange } = makeAgent({
+      const onConnectionChange = jest.fn();
+      const { agent, getChannel } = makeAgent({
         userID: 'u2',
+        onConnectionChange,
       });
 
       runAgent(agent);
 
       expect(getChannel()).toBeDefined();
-      expect(onConnectionChange).toHaveBeenCalledWith('connecting');
+      expect(onConnectionChange).toHaveBeenCalledWith(CONNECTING);
 
       getChannel().joinPush.fire('ok');
       await flushMicrotasks();
@@ -280,6 +513,68 @@ describe('WebSocketAIAgent', () => {
     });
   });
 
+  describe('abortRun', () => {
+    it('tells the server to stop and settles the run as aborted', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { complete, error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+
+      agent.abortRun();
+      await flushDeferredWork();
+
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({ event: 'cancel_run', payload: {} })
+      );
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(error.mock.calls[0][0]).toMatchObject({ name: 'AbortError' });
+      expect(complete).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
+    });
+
+    it('does nothing when no run is in flight', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      agent.abortRun();
+
+      expect(channel.pushed).not.toContainEqual(
+        expect.objectContaining({ event: 'cancel_run' })
+      );
+    });
+  });
+
+  describe('abandonThread', () => {
+    it('tells the server to let the thread go', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      agent.abandonThread();
+
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({ event: 'abandon_thread', payload: {} })
+      );
+    });
+
+    it('settles an in-flight run instead of leaving it hanging', async () => {
+      const { agent } = await connectedAgent();
+      const { complete, error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+
+      agent.abandonThread();
+
+      // The server terminates the agent and no RUN_FINISHED/RUN_ERROR will ever come back.
+      // The client has to settle it locally.
+      expect(complete).toHaveBeenCalledTimes(1);
+      expect(error).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).toBeNull();
+    });
+  });
+
   describe('connection drops during an active run', () => {
     it.each([
       { trigger: 'channel error', method: 'triggerError' },
@@ -298,15 +593,17 @@ describe('WebSocketAIAgent', () => {
     });
 
     it('keeps the channel reference after a drop so a later push does not throw', async () => {
-      const { agent, channel } = await connectedAgent();
+      const onConnectionChange = jest.fn();
+      const { agent, channel } = await connectedAgent({ onConnectionChange });
       channel.triggerClose();
       expect(agent.channel).toBe(channel);
 
       // Simulate Phoenix's auto-rejoin: same channel, same joinPush, fires 'ok' again.
       channel.joinPush.fire('ok');
-      expect(agent._connectionStatus).toBe('connected');
+      expect(onConnectionChange).toHaveBeenLastCalledWith(CONNECTED);
 
       runAgent(agent);
+      await flushMicrotasks();
       expect(channel.pushed).toContainEqual(
         expect.objectContaining({ event: 'send_message' })
       );
@@ -315,34 +612,33 @@ describe('WebSocketAIAgent', () => {
 
   describe('disconnect', () => {
     it('leaves the channel and reports disconnected', async () => {
-      const { agent, channel, onConnectionChange } = await connectedAgent();
+      const onConnectionChange = jest.fn();
+      const { agent, channel } = await connectedAgent({ onConnectionChange });
       onConnectionChange.mockClear();
+      const leave = jest.spyOn(channel, 'leave');
 
       agent.disconnect();
 
-      expect(channel.leave).toHaveBeenCalled();
+      expect(leave).toHaveBeenCalled();
       expect(agent.channel).toBeNull();
-      expect(onConnectionChange).toHaveBeenCalledWith('disconnected');
+      expect(onConnectionChange).toHaveBeenCalledWith(DISCONNECTED);
     });
 
-    it('errors the active subscriber when disconnected mid-run', async () => {
+    it('completes the active subscriber when disconnected mid-run', async () => {
       const { agent } = await connectedAgent();
-      const { error } = runAgent(agent);
+      const { error, complete } = runAgent(agent);
 
       agent.disconnect();
 
-      expect(error).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'AbortError',
-          message: 'AI assistant disconnected',
-        })
-      );
+      expect(complete).toHaveBeenCalledTimes(1);
+      expect(error).not.toHaveBeenCalled();
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
     });
 
     it('is a no-op when never connected', () => {
-      const { agent, onConnectionChange } = makeAgent();
+      const onConnectionChange = jest.fn();
+      const { agent } = makeAgent({ onConnectionChange });
 
       expect(() => agent.disconnect()).not.toThrow();
       expect(onConnectionChange).not.toHaveBeenCalled();
@@ -373,6 +669,131 @@ describe('WebSocketAIAgent', () => {
       ['number content', { content: 42 }],
     ])('returns an empty string for %s', (_label, message) => {
       expect(extractMessageText(message)).toBe('');
+    });
+  });
+
+  describe('configuration changes callbacks', () => {
+    const modelPayload = { provider: 'google', model: 'gemini-2.5-pro' };
+
+    const forwardedEvents = [
+      {
+        event: 'ai_configuration_cleared',
+        callback: 'onAIConfigurationCleared',
+        args: [],
+      },
+      {
+        event: 'ai_configuration_created',
+        callback: 'onAIConfigurationCreated',
+        args: [],
+      },
+      {
+        event: 'model_changed',
+        callback: 'onModelChanged',
+        args: [modelPayload],
+      },
+    ];
+
+    it.each(forwardedEvents)(
+      'forwards $event to the attached $callback',
+      async ({ event, callback, args }) => {
+        const spy = jest.fn();
+        const { channel } = await connectedAgent({ [callback]: spy });
+
+        channel.emit(event, ...args);
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith(...args);
+      }
+    );
+
+    it('settles the active run as stopped on ai_configuration_cleared', async () => {
+      const { channel, agent } = await connectedAgent();
+      const { error, complete } = runAgent(agent);
+      await flushMicrotasks();
+
+      channel.emit('ai_configuration_cleared');
+
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(error.mock.calls[0][0]).toMatchObject({ name: 'AbortError' });
+      expect(complete).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
+    });
+
+    it("reports the current thread's conversation as expired, and active again once abandoned", async () => {
+      const onConversationStatusChange = jest.fn();
+      const { agent, channel } = await connectedAgent({
+        onConversationStatusChange,
+      });
+      agent.threadId = 'thread-1';
+
+      channel.emit('conversation_expired', { thread_id: 'thread-1' });
+      expect(onConversationStatusChange).toHaveBeenLastCalledWith(EXPIRED);
+
+      agent.abandonThread();
+      expect(onConversationStatusChange).toHaveBeenLastCalledWith(ACTIVE);
+      expect(onConversationStatusChange).toHaveBeenCalledTimes(2);
+    });
+
+    it('ignores conversation_expired for a thread it has already left', async () => {
+      const onConversationStatusChange = jest.fn();
+      const { agent, channel } = await connectedAgent({
+        onConversationStatusChange,
+      });
+      agent.threadId = 'thread-2';
+
+      channel.emit('conversation_expired', { thread_id: 'thread-1' });
+
+      expect(onConversationStatusChange).not.toHaveBeenCalled();
+    });
+
+    it('does not report an already active conversation when the thread is abandoned', async () => {
+      const onConversationStatusChange = jest.fn();
+      const { agent } = await connectedAgent({ onConversationStatusChange });
+
+      agent.abandonThread();
+
+      expect(onConversationStatusChange).not.toHaveBeenCalled();
+    });
+
+    it('resets omitted callback to a noop', async () => {
+      const spies = {
+        onConnectionChange: jest.fn(),
+        onAIConfigurationCleared: jest.fn(),
+        onModelChanged: jest.fn(),
+      };
+      const { agent, channel } = await connectedAgent(spies);
+
+      const calledOnAIConfigurationCreated = jest.fn();
+
+      Object.values(spies).forEach((spy) => spy.mockClear());
+
+      agent.withCallbacks({
+        onAIConfigurationCreated: calledOnAIConfigurationCreated,
+      });
+
+      expect(() => {
+        forwardedEvents.forEach(({ event, args }) =>
+          channel.emit(event, ...args)
+        );
+        channel.triggerClose();
+      }).not.toThrow();
+
+      Object.values(spies).forEach((spy) => expect(spy).not.toHaveBeenCalled());
+      expect(calledOnAIConfigurationCreated).toHaveBeenCalled();
+    });
+
+    it('correctly overrides a callback', async () => {
+      const initialCallback = jest.fn();
+      const overridingCallback = jest.fn();
+      const { agent, channel } = await connectedAgent();
+
+      agent.withCallbacks({ onModelChanged: initialCallback });
+      agent.withCallbacks({ onModelChanged: overridingCallback });
+      channel.emit('model_changed', modelPayload);
+
+      expect(initialCallback).not.toHaveBeenCalled();
+      expect(overridingCallback).toHaveBeenCalledWith(modelPayload);
     });
   });
 });

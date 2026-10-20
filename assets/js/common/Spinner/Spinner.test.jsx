@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
@@ -22,5 +22,15 @@ describe('Spinner', () => {
     expect(spinnerElement).toHaveAttribute('aria-label', 'Loading');
     expect(spinnerElement).toHaveClass('pt-12');
     expect(spinnerElement.firstChild).toHaveAttribute('width', '32');
+  });
+
+  it('lets the caller hide the spinner from assistive technology', () => {
+    render(<Spinner aria-hidden="true" />);
+
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.getByRole('alert', { hidden: true })).toHaveAttribute(
+      'aria-hidden',
+      'true'
+    );
   });
 });

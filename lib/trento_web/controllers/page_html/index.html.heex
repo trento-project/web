@@ -1,6 +1,6 @@
 <!--
   ~ SPDX-FileCopyrightText: SUSE LLC
-  ~ SPDX-License-Identifier: Apache-2.0
+  ~ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 <div id="trento" data-ph-capture-attribute-webversion={@version} />
 
@@ -11,6 +11,7 @@
       chartsEnabled: <%= @charts_enabled %>,
       adminUsername: '<%= @admin_username %>',
       installationID: '<%= @installation_id %>',
+      installationMethod: '<%= @installation_method %>',
       analyticsEnabled: <%= @analytics_enabled %>,
       ssoEnabled: <%= @sso_enabled %>,
       ssoLoginUrl: '<%= raw @sso_login_url %>',

@@ -1,7 +1,6 @@
-# SPDX-License-Identifier: Apache-2.0
 #!BuildTag: trento/trento-web:latest
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 #!BuildTag: trento/trento-web:%%VERSION%%
 #!BuildTag: trento/trento-web:%%VERSION_SHORT%%
@@ -15,6 +14,7 @@ FROM registry.suse.com/bci/bci-base:15.7
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
+ENV INSTALLATION_METHOD=container
 # Define labels according to https://en.opensuse.org/Building_derived_containers
 # labelprefix=com.suse.trento
 LABEL org.opencontainers.image.authors="https://github.com/trento-project/web/graphs/contributors"

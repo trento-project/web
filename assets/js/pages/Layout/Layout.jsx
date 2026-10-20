@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -7,8 +7,9 @@ import { NavLink, Outlet } from 'react-router';
 
 import { getFromConfig } from '@lib/config';
 import { clearCredentialsFromStore } from '@lib/auth';
-import { getUserProfile } from '@state/selectors/user';
-import { optinCapturing, reset } from '@lib/analytics';
+import { clearViewSettings } from '@lib/viewSettings';
+import { getUserProfile, hasAIConfiguration } from '@state/selectors/user';
+import { optinCapturing, reset, isLoaded, rawCapture } from '@lib/analytics';
 
 import {
   EOS_HOME_OUTLINED,
@@ -70,7 +71,7 @@ const navigation = [
   },
   {
     name: 'Activity Log',
-    href: '/activity_log?severity=info&severity=warning&severity=critical',
+    href: '/activity_log',
     icon: EOS_ASSIGNMENT,
   },
   {
@@ -85,6 +86,7 @@ const logout = (e) => {
   e.preventDefault();
 
   clearCredentialsFromStore();
+  clearViewSettings();
   optinCapturing(false);
   reset();
   window.location.href = '/session/new';
@@ -103,6 +105,7 @@ function Layout() {
   }, [isCollapsed]);
 
   const { id, username, email } = useSelector(getUserProfile);
+  const aiConfigured = useSelector(hasAIConfiguration);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -110,7 +113,11 @@ function Layout() {
 
   return (
     <main className="bg-gray-100 dark:bg-gray-800 relative">
-      <AnalyticsEula />
+      <AnalyticsEula
+        analyticsConfigEnabled={getFromConfig('analyticsEnabled')}
+        analyticsCapture={rawCapture}
+        isAnalyticsLoadedFunc={isLoaded}
+      />
       <div className="flex flex-col h-screen items-start justify-between">
         <div
           className={classNames(
@@ -243,14 +250,14 @@ function Layout() {
             © 2020-2026 SUSE LLC
           </span>
           <span className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
-            This tool is free software released under the Apache License,
-            Version 2.0
+            This tool is free software released under the GNU General Public
+            License, version 3 or later
           </span>
         </footer>
       </div>
       {getFromConfig('aiEnabled') && (
         <SocketProvider>
-          <AIAssistant userID={id} />
+          <AIAssistant userID={id} aiConfigured={aiConfigured} />
         </SocketProvider>
       )}
     </main>

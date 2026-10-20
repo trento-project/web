@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
@@ -175,6 +175,7 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     provider: cloudProviderEnum(),
     cib_last_written: formatDateTime(faker.date.recent()),
     state: stateEnum(),
+    stale_at: null,
     details,
   };
 });

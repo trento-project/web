@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { faker } from '@faker-js/faker';
+import { action } from 'storybook/actions';
 
 import NewTokenModal from './NewTokenModal';
 
@@ -11,15 +12,15 @@ export default {
   argTypes: {
     accessToken: {
       description: 'New personal access token',
-      control: 'text',
+      control: { type: 'text' },
     },
     isOpen: {
       description: 'Opens the modal',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onClose: {
-      type: 'function',
       description: 'Closes the modal',
+      action: 'onClose',
     },
   },
 };
@@ -28,5 +29,6 @@ export const Default = {
   args: {
     accessToken: faker.internet.jwt(),
     isOpen: true,
+    onClose: action('onClose'),
   },
 };

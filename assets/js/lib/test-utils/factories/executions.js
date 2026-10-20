@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
@@ -102,6 +102,7 @@ export const agentCheckResultFactory = Factory.define(() => {
 
   return {
     agent_id: faker.string.uuid(),
+    status: 'executed',
     expectation_evaluations: executionExpectationEvaluationFactory.buildList(2),
     facts: executionFactFactory.buildList(2),
     values: executionValueFactory.buildList(2),
@@ -113,6 +114,15 @@ export const agentCheckErrorFactory = Factory.define(() => ({
   facts: executionFactFactory.buildList(2),
   type: faker.color.human(),
   message: faker.hacker.phrase(),
+}));
+
+export const agentCheckExcludedFactory = Factory.define(() => ({
+  agent_id: faker.string.uuid(),
+  status: 'excluded',
+  exclude_expression: 'host.is_majority_maker == true',
+  facts: [],
+  values: [],
+  expectation_evaluations: [],
 }));
 
 export const targetFactory = Factory.define(() => ({

@@ -1,17 +1,16 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import Filter from '.';
+import Filter from './Filter';
 
 export default {
   title: 'Components/Filter',
   component: Filter,
   argTypes: {
     options: {
-      type: { name: 'array', required: true },
       description: 'List of options available',
       control: { type: 'object' },
     },
@@ -27,9 +26,13 @@ export default {
       control: { type: 'object' },
     },
     onChange: {
-      type: { name: 'function', required: false },
       description: 'Function to call when the selected options change',
-      control: { type: null },
+      action: 'onChange',
+    },
+    className: {
+      description:
+        'Additional CSS classes to apply to the root filter container',
+      control: { type: 'text' },
     },
   },
   render: (args) => {
@@ -51,6 +54,7 @@ export default {
 export const Default = {
   args: {
     title: 'Title',
+    type: 'select',
     options: [
       'Tony Kekw',
       'Chad Carbonara',

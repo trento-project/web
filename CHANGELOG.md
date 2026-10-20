@@ -1,5 +1,433 @@
 # Changelog
 
+## [3.2.0](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.6...3.2.0) - 2026-10-20
+
+### What's Changed
+
+* Use run start date for flaky tests analysis dashboard data (#4943) @vicenteqa
+* Fix sap systems overview flaky tests (#4925) @vicenteqa
+* Wait for Generate Token modal removal in Cypress (#4921) @anmazzotti
+* Handle undefined response in Cypress tests (#4922) @anmazzotti
+* Bump contracts version (#4923) @nelsonkopliku
+* Adjustments to have alerting test suites targeting a prod env (#4913) @vicenteqa, @Copilot
+* Fix e2e test in SAP systems overview cleaning session storage properly (#4815) @arbulu89
+* Remove unused workflow (#4793) @nelsonkopliku
+* Add e2e tests for Test email feature (#4766) @arbulu89
+* Add Test email button in the frontend (#4763) @arbulu89
+* Auto-retry failed CI jobs (#4466) @antgamdia
+* Add auto-merge dependabot PRs workflow (#4467) @antgamdia
+* Switch to pull_request_target for backport action (#4668) @skrech
+* Rename additional SUMA filepaths (#4644) @antgamdia
+* Rename additional SUMA references (#4643) @antgamdia
+* Rename remaining occurrences to Multi-Linux Manager (#4564) @antgamdia
+* Fixes on test suite when targeting a remote instance (#4537) @vicenteqa
+* Update storybook (#4239) @antgamdia
+* Mark cluster as stale - frontend part (#4554) @arbulu89
+* E2E tests for SAP systems and databases stale feature (#4529) @arbulu89
+* Fix flaky test for checks execution & increase timeout for restored links availability in UI (#4533) @vicenteqa
+* Fix Activity Log date filter pagination flake (#4531) @vicenteqa
+* Fix package lock (#4514) @balanza, Emanuele De Cupis
+* Trigger release 3.1.5 (#4510) @balanza, Emanuele De Cupis
+* Regenerate package lock (#4509) @balanza, Emanuele De Cupis
+* Create SIDs list properly using filtered array IDs (#4508) @balanza, @arbulu89, Emanuele De Cupis
+* Update /assets npm lockfile to remediate transitive vulnerabilities (#4507) @balanza, Emanuele De Cupis, @vicenteqa
+* Bump `fast-uri` to 3.1.3 (#4487) @balanza, Emanuele De Cupis
+* Bump redux-saga from 1.4.2 to 1.5.0 in /assets (#4488) @balanza, Emanuele De Cupis, [@dependabot[bot]](https://github.com/apps/dependabot)
+* Relax gcp image metadata requirement (#4489) @balanza, Emanuele De Cupis, @nelsonkopliku
+* Make only SAPSYSTEM and SAPLOCALHOST properties mandatory (#4490) @balanza, @arbulu89, Emanuele De Cupis
+* Bump brace-expansion to 2.1.2 and 1.1.16 (#4492) @balanza, Emanuele De Cupis
+* Handle exclude predicate (#4439) @balanza, @claude, Emanuele De Cupis
+* fix: Firefox datetime-local calendar picker not applying date filter (#4445) @balanza, Emanuele De Cupis
+* Bump `fast-uri` to 3.1.3 (#4475) @balanza, Emanuele De Cupis
+* Bump brace-expansion to 2.1.2 and 1.1.16 (#4476) @balanza, Emanuele De Cupis
+* Refine agent status pill (#4468) @arbulu89
+* Fix flaky E2E test: TOTP login cases (#4454) @vicenteqa
+* Relax server version validation to allow build metadata (#4453) @vicenteqa
+* Replace missing health by status in instances (#4447) @arbulu89
+* Fix flaky DatabaseDeregistration tenant-removed test (#4444) @balanza, Emanuele De Cupis
+* Fix E2E flaky test: Stabilize SAP system details link checks  (#4440) @vicenteqa
+* Fix E2E flaky test: should fail if required fields are missing (#4438) @vicenteqa
+* Table style row with content (#4428) @arbulu89
+* Fix loading checks execution detail when catalog is still loading (#4377) @balanza, Emanuele De Cupis, @nelsonkopliku
+* Enforce using erlang26 on SLES15 (#4411) @balanza, Emanuele De Cupis
+* Health summary - Application instances health (#4382) @balanza, @arbulu89, Emanuele De Cupis
+* Fix version 3.1.0 changelog typos (#4415) @balanza, @arbulu89, Emanuele De Cupis
+* Remove repo template to use project-wide template instead. (#4400) @eromanova97
+* Enforce using erlang26 on SLES15 (#4391) @balanza, Emanuele De Cupis
+* Update analytics docs link profile form (#4376) @balanza, @arbulu89, Emanuele De Cupis
+* Flip activity log `from_date` and `to_date` logic (#4378) @balanza, @arbulu89, Emanuele De Cupis
+* Fix cluster registered broadcast (#4379) @balanza, @arbulu89, Emanuele De Cupis
+* Updated License in spec file (#4380) @balanza, Emanuele De Cupis, @skrech
+* Export version in rpm packages to use same value during compilation (#4381) @balanza, @arbulu89, Emanuele De Cupis
+* Normalize query string to list (#4383) @balanza, @arbulu89, Emanuele De Cupis
+* Revert "PR 1" (#4367) @balanza, Emanuele De Cupis
+* PR 1 (#4366) @balanza, Emanuele De Cupis
+* Fix flaky tests bundled artifacts (#4356) @vicenteqa
+* Bundle flaky test evidence artifacts (#4347) @vicenteqa
+* Restore cluster health after checks customization suite (#4351) @arbulu89
+* Fix flaky test on clusters overview suite (#4345) @vicenteqa
+* E2E Test: validate component versions with semver (#4340) @vicenteqa
+* Fix version 3.1.0 changelog typos (#4325) @arbulu89
+
+#### Features
+
+* Improve assistant error messages and handle expired conversations (#4907) @nelsonkopliku
+* Presence based AI Agent clean up (#4912) @nelsonkopliku
+* Send installationMethod to posthog (#4915) @arbulu89
+* Handle an unavailable sagents registry as a failed run (#4717) @nelsonkopliku
+* Capture EULA modal actions for analytics (#4848) @arbulu89
+* Bump build to otp27 elixir119 (#4745) @nelsonkopliku
+* Enable updating default Admin user analytics acceptance and timezone (#4832) @arbulu89
+* Add persistent filters to checks catalog view (#4811) @arbulu89
+* Add persistent filters to activity log view (#4812) @arbulu89
+* Add persistent filters in patch list and upgradable packages views (#4813) @arbulu89
+* Add persistent filters in databases, SAP systems and home overviews (#4808) @arbulu89
+* Add persistent filters to clusters and checks execution results views (#4806) @arbulu89
+* Implement persistent filters usage in frontend (#4775) @arbulu89
+* Adapt web to Pacemaker 3.0.2 (#4474) @antgamdia
+* Add yaml to devDependencies (#4776) @nelsonkopliku
+* Test email alerting setttings configuration with a test email (#4758) @arbulu89
+* Use transparent type for hosts list cleanup button (#4755) @arbulu89
+* Add retry last prompt capability (#4688) @nelsonkopliku
+* Copy Liz reply (#4667) @nelsonkopliku
+* Make tables scrollable in Liz (#4669) @nelsonkopliku
+* Liz dynamic sizing (#4665) @nelsonkopliku
+* Stop a running answer from the composer (#4651) @nelsonkopliku
+* Abandon the server-side thread when a new chat starts (#4650) @nelsonkopliku
+* Handle cancellation and thread abandonment in channel (#4649) @nelsonkopliku
+* AI cancel run core (#4648) @nelsonkopliku
+* Rename s/googleai/google (#4599) @gagandeepb
+* See all available and usable models for a given provider (#4598) @gagandeepb
+* Modified health and status changed events in activity log (#4653) @skrech
+* Adjust z-index for AI Assistant vs profile action menu (#4646) @nelsonkopliku
+* Alert heartbeat failed event with an email (#4569) @arbulu89
+* Show stale healths in dashboard (#4561) @arbulu89
+* Detect stale data for Hosts (#4498) @skrech
+* Improve AI Assistant rendering (#4582) @nelsonkopliku
+* Disable `New Chat` during a run (#4581) @nelsonkopliku
+* Improve websocket ai agent (#4570) @nelsonkopliku
+* Improve ai assistant tests (#4560) @nelsonkopliku
+* React on AI model changes (#4536) @nelsonkopliku
+* React on AI configuration creation and clean up (#4556) @nelsonkopliku
+* Cluster stale e2e (#4555) @arbulu89
+* Change stale and in sync events severity to debug (#4559) @arbulu89
+* Mark cluster as stale - backend part (#4553) @arbulu89
+* Add debug severity filter to related events link (#4558) @arbulu89
+* Broadcast AI configuration creation and clean up (#4535) @nelsonkopliku, @Copilot
+* Disable AI chatbox launcher when AI is not configured (#4534) @nelsonkopliku, @Copilot
+* Handle deregistration process manager old state enriching application stale commands (#4530) @arbulu89
+* Display stale SAP system and database in frontend (#4500) @arbulu89
+* Improve icon centering (#4524) @nelsonkopliku
+* Update redux with sap system database stale events (#4499) @arbulu89
+* Mark SAP system as stale (#4496) @arbulu89
+* Gray out SR data header in database details view (#4471) @arbulu89
+* Mark database as stale (#4470) @arbulu89
+* Augmented HealthIcon with stale indications (#4472) @skrech
+* Remove absent value usage from HealthIcon (#4473) @arbulu89
+* Improve stale icon positioning in instance status icon (#4469) @arbulu89
+* Use stale value instance status (#4448) @arbulu89
+* Update instances stale state redux (#4446) @arbulu89
+* Add e2e tests for AI settings clean up (#4452) @nelsonkopliku, @Copilot
+* Clear AI settings UI (#4451) @nelsonkopliku
+* Log AI settings clearup into activity log (#4449) @nelsonkopliku, @Copilot
+* Add clear AI configuration endpoint (#4443) @nelsonkopliku, @Copilot
+* Add clear AI settings capability (#4442) @nelsonkopliku
+* Add stale information to instance status icon (#4441) @arbulu89
+* Health Details for Host Aggregate (#4450) @skrech
+* Stale database instances when host hearbeat fails (#4437) @arbulu89
+* Stale application instances when host hearbeat fails (#4399) @arbulu89
+* Remove Prompt Suggestions (#4434) @nelsonkopliku, @Copilot
+* Open new tab on AI Assistant `learn more` link (#4433) @nelsonkopliku
+* Log AI settings changes (#4426) @nelsonkopliku
+* Update SAP instance status frontend design (#4394) @arbulu89
+* Handle token refresh in AI conversation (#4390) @nelsonkopliku
+* Ai access token management (#4389) @nelsonkopliku
+* AI socket: thread access_token + request_origin into tool_context (#4375) @nelsonkopliku
+* Add remote OpenAPI tool source (wanda) (#4374) @nelsonkopliku, @Copilot
+* Extract openapi tool builder (#4373) @nelsonkopliku, @Copilot
+* HTTP client refactor: consolidate into Trento.Support (#4372) @nelsonkopliku
+* AI Agent tools (#4330) @nelsonkopliku, @Copilot
+* AI agent (#4320) @nelsonkopliku, @Copilot
+* Consider SBD health in aggregated cluster health (#4362) @skrech
+* Replace SAP and DB instances health by status (#4365) @arbulu89
+* Update analytics docs link profile form (#4371) @arbulu89
+* Home dashboard cluster not available icon (#4369) @arbulu89
+* Add database details sap system details view (#4355) @arbulu89
+* Split cluster discovered health events (#4352) @arbulu89
+* Upgrade elixir/OTP stack to 1.19.5/27.3.4.11 (#4342) @nelsonkopliku, @Copilot
+* Enable AI features (#4323) @nelsonkopliku
+* [TRNT-4419] Update installation process for demo environment (#4328) @antgamdia
+* Add health icon in details views (#4339) @arbulu89
+* Health summary - Application instances health (#4324) @arbulu89
+
+#### Bug Fixes
+
+* Work around the OTP 27.1.3 key usage check in HttpClient (#4926) @nelsonkopliku
+* Fix leaving ghost esbuild process on Trento startup (#4924) @skrech
+* Create SIDs list properly using filtered array IDs (#4497) @arbulu89
+* Make only SAPSYSTEM and SAPLOCALHOST properties mandatory (#4409) @arbulu89
+* Relax gcp image metadata requirement (#4429) @nelsonkopliku
+* Fix loading checks execution detail when catalog is still loading (#4363) @nelsonkopliku
+* Flip activity log `from_date` and `to_date` logic (#4346) @arbulu89
+* Normalize query string to list (#4299) @arbulu89
+* Fix cluster registered broadcast (#4343) @arbulu89
+
+#### Maintenance
+
+* Relicense under GPL-3.0-or-later (#4920) @nelsonkopliku
+* Rename ability to checks_customization (#4914) @antgamdia
+* Rename old SUMA instances in backend (8) (#4837) @antgamdia
+* Rename old SUMA instances in backend (7) (#4836) @antgamdia
+* Rename old SUMA instances in backend (6) (#4835) @antgamdia
+* Rename old SUMA instances in backend (5) (#4834) @antgamdia
+* Increase PR number limit for npm ecosystem for dependabot (#4886) @arbulu89
+* Rename old SUMA instances in backend (4) (#4833) @antgamdia
+* Rename old SUMA instances in backend (3) (#4830) @antgamdia
+* Rename old SUMA instances in backend (2) (#4828) @antgamdia
+* Rename old SUMA instances in backend (1) (#4827) @antgamdia, @nelsonkopliku
+* Use shared OTP toolchain matrix (#4850) @nelsonkopliku
+* Update saml certificates (#4797) @nelsonkopliku
+* Drop the stale tailwindcss yaml override (#4796) @nelsonkopliku
+* pin packageManager to npm@10.8.2 (#4794) @nelsonkopliku
+* Convert e2e lockfile to version 3 (#4795) @nelsonkopliku
+* Use automerge reusable workflow (#4779) @antgamdia
+* Revert backport workflow back to normal (#4752) @skrech
+* Remove 'env: :prod' from top level eventstore dep (#4711) @skrech
+* Enable backport action (#4666) @skrech
+* Ensure AI configuration changes in relevant test (#4664) @nelsonkopliku
+* Use uuid instead of crypto.randomUUID (#4655) @nelsonkopliku
+* Improve ai e2e tests (#4654) @nelsonkopliku
+* Use "trento-checks" img (#4583) @antgamdia
+* Fix flaky test in home deregistration suite (#4602) @arbulu89
+* Fix Liz z-index (#4594) @nelsonkopliku
+* Add default version for dependabot (#4574) @antgamdia
+* Remove unnecessary strong consistency dispatch (#4573) @arbulu89
+* Remove GCP scenario from demo (#4557) @arbulu89
+* Remove GCP scenario from demo (#4436) @nelsonkopliku
+* Let :public_key.cacerts_get() raise (#4427) @nelsonkopliku
+* Enable MCP server in demo (#4338) @antgamdia
+* [TRNT-4419] Fix cert manager install command in demo (#4353) @antgamdia
+* [TRNT-4419] Update installation process for demo environment (#4328) @antgamdia
+* Updated License in spec file (#4341) @skrech
+* Migrate Cypress.env to Cypress.expose for public config (#4319) @vicenteqa
+* Export version in rpm packages to use same value during compilation (#4326) @arbulu89
+
+#### Dependencies
+
+<details>
+<summary>208 changes</summary>
+* Bump eventstore from 1.4.8 to 1.4.10 (#4927) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress-io/github-action from 7.4.4 to 7.4.6 (#4933) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 4 updates (#4934) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react from 10.6.0 to 10.6.1 in /assets (#4937) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump llm_db from 2026.9.7 to 2026.9.8 (#4935) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 18.9.5 to 18.10.2 (#4936) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromatic from 18.9.5 to 18.10.2 in /assets (#4938) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/addon-docs from 10.6.0 to 10.6.1 in /assets (#4939) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump tzdata from 1.2.1 to 1.2.2 (#4931) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump globals from 17.12.0 to 17.13.0 in /test/e2e (#4930) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress from 16.1.0 to 16.1.1 in /test/e2e in the cypress group (#4928) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint from 10.11.0 to 10.12.0 in /test/e2e in the eslint group (#4929) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump llm_db from 2026.9.5 to 2026.9.7 (#4916) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump vite from 8.3.0 to 8.3.1 in /assets (#4919) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.434.12 to 1.434.14 in /assets (#4918) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the assistant-ui group in /assets with 4 updates (#4917) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.434.11 to 1.434.12 in /assets (#4911) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group in /assets with 2 updates (#4910) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.434.10 to 1.434.11 in /assets (#4909) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group in /assets with 2 updates (#4908) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump sagents from 0.7.0 to 0.16.1 (#4631) [@dependabot[bot]](https://github.com/apps/dependabot), @nelsonkopliku
+* Bump contracts version (#4906) @arbulu89
+* Bump uuid from 11.1.1 to 14.0.2 in /assets (#4878) [@dependabot[bot]](https://github.com/apps/dependabot), @arbulu89
+* Bump copy-to-clipboard from 3.3.3 to 4.0.2 in /assets (#4879) [@dependabot[bot]](https://github.com/apps/dependabot), @arbulu89
+* Bump posthog-js from 1.434.8 to 1.434.10 in /assets (#4905) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump llm_db from 2026.9.4 to 2026.9.5 (#4902) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromatic from 18.9.4 to 18.9.5 in /assets (#4901) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.9.8 to 3.9.9 in /assets (#4903) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.9.8 to 3.9.9 in /test/e2e (#4900) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.434.7 to 1.434.8 in /assets (#4899) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/addon-docs from 10.3.4 to 10.6.0 in /assets (#4898) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump date-fns from 4.1.0 to 4.4.0 in /assets (#4897) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump tzdata from 1.0.49 to 1.0.51 in /assets (#4896) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump papaparse from 5.5.3 to 5.7.0 in /assets (#4893) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump redux-saga from 1.5.0 to 1.5.1 in /assets (#4894) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @date-fns/tz from 1.4.1 to 1.5.0 in /assets (#4895) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 18.9.4 to 18.9.5 (#4892) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-hot-toast from 2.6.0 to 2.6.1 in /assets (#4891) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump autoprefixer from 10.5.0 to 10.6.1 in /assets (#4888) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.379.2 to 1.434.7 in /assets (#4890) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump source-map-js from 1.2.1 to 1.2.2 in /assets (#4881) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump source-map-js from 1.2.1 to 1.2.2 in /test/e2e (#4882) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump jest from 30.3.0 to 30.5.2 in /assets (#4880) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-error-boundary from 6.1.1 to 6.1.6 in /assets (#4877) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromatic from 16.0.0 to 18.9.4 in /assets (#4876) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the common-workflows group with 5 updates (#4874) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.9.6 to 3.9.8 in /assets (#4875) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @testing-library/dom from 10.4.1 to 10.4.2 in /assets (#4872) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react from 19.2.4 to 19.3.0 in /assets (#4870) [@dependabot[bot]](https://github.com/apps/dependabot), @arbulu89
+* Bump vite from 8.2.1 to 8.3.0 in /assets (#4871) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump jest-environment-jsdom from 30.3.0 to 30.5.2 in /assets (#4869) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump flop from 0.28.0 to 0.29.0 (#4800) [@dependabot[bot]](https://github.com/apps/dependabot), @arbulu89
+* Group babel dependencies for dependabot updates (#4867) @arbulu89
+* Bump globals from 17.11.0 to 17.12.0 in /assets (#4866) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group in /assets with 3 updates (#4862) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the assistant-ui group in /assets with 4 updates (#4861) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @assistant-ui/react from 0.15.13 to 0.15.20 in /assets (#4841) [@dependabot[bot]](https://github.com/apps/dependabot), @arbulu89
+* Bump isbang/compose-action from 3.1.0 to 3.2.0 (#4856) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress-io/github-action from 7.4.3 to 7.4.4 (#4854) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump llm_db from 2026.9.3 to 2026.9.4 (#4860) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint from 10.10.0 to 10.11.0 in /test/e2e in the eslint group (#4859) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 18.8.1 to 18.9.4 (#4855) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump llm_db from 2026.9.2 to 2026.9.3 (#4858) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/setup-buildx-action from 4.3.0 to 4.4.1 (#4857) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.9.6 to 3.9.8 in /test/e2e (#4852) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress from 16.0.0 to 16.1.0 in /test/e2e in the cypress group (#4851) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump brace-expansion in /assets (#4847) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump tzdata from 1.1.5 to 1.2.1 (#4838) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump undici from 6.28.0 to 6.29.0 in /test/e2e (#4843) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dompurify from 3.4.13 to 3.4.16 in /assets (#4846) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump axios from 1.19.0 to 1.20.0 in /assets (#4844) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump endorama/asdf-parse-tool-versions from 1.6.0 to 1.7.0 (#4819) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump brace-expansion from 5.0.9 to 5.0.12 in /test/e2e (#4845) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump mox from 1.3.1 to 1.3.2 (#4840) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group in /assets with 2 updates (#4839) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump llm_db from 2026.8.3 to 2026.9.2 (#4802) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dialyxir from 1.4.7 to 1.4.8 (#4809) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump postcss from 8.5.26 to 8.5.28 in /assets (#4823) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 18.7.2 to 18.8.1 (#4820) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @ag-ui/core from 0.0.57 to 0.0.59 in /assets (#4817) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint-plugin-cypress from 7.0.1 to 7.0.2 in /test/e2e in the eslint group (#4818) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 3 updates (#4595) [@dependabot[bot]](https://github.com/apps/dependabot), @nelsonkopliku
+* Bump the eslint group in /assets with 2 updates (#4810) [@dependabot[bot]](https://github.com/apps/dependabot)
+* bump tzdata to 1.1.5 (#4799) @nelsonkopliku
+* Bump @storybook/react-vite from 10.5.7 to 10.6.0 in /assets (#4804) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 18.7.1 to 18.7.2 (#4801) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 4 updates (#4798) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress from 15.21.1 to 16.0.0 in /test/e2e in the cypress group across 1 directory (#4780) [@dependabot[bot]](https://github.com/apps/dependabot), @nelsonkopliku
+* Bump @testing-library/react from 16.3.2 to 16.3.3 in /assets (#4786) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Drop the stale tailwindcss yaml override (#4796) @nelsonkopliku
+* pin packageManager to npm@10.8.2 (#4794) @nelsonkopliku
+* Convert e2e lockfile to version 3 (#4795) @nelsonkopliku
+* Bump esbuild from 0.28.1 to 0.28.2 in /assets (#4788) [@dependabot[bot]](https://github.com/apps/dependabot), @nelsonkopliku
+* Bump mox from 1.2.0 to 1.3.1 (#4792) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump ex_doc from 0.40.3 to 0.40.4 (#4785) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dflook/terraform-output from 3.0.0 to 3.0.1 (#4787) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the common-workflows group with 4 updates (#4783) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump globals from 17.11.0 to 17.12.0 in /test/e2e (#4781) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump open_api_spex from 3.22.3 to 3.22.4 (#4782) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump phoenix_live_view from 1.1.31 to 1.2.9 (#4677) [@dependabot[bot]](https://github.com/apps/dependabot), @gagandeepb
+* Bump globals from 17.9.0 to 17.11.0 in /test/e2e (#4672) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump apache/skywalking-eyes/header from 0.8.0 to 0.9.0 (#4773) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @testing-library/jest-dom from 6.9.1 to 7.0.1 in /assets (#4678) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @cypress/webpack-preprocessor from 7.1.2 to 8.0.0 in /test/e2e in the cypress group across 1 directory (#4769) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump flop from 0.26.6 to 0.28.0 (#4762) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/setup-buildx-action from 4.2.0 to 4.3.0 (#4739) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 4 updates (#4772) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 18.6.0 to 18.7.1 (#4770) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump postcss-selector-parser from 6.1.2 to 6.1.4 in /assets (#4774) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @humanfs/node from 0.16.7 to 0.16.8 in /assets (#4724) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump fast-uri from 3.1.5 to 3.1.7 in /test/e2e (#4722) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump joken from 2.6.2 to 2.7.0 (#4771) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the common-workflows group across 1 directory with 3 updates (#4673) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump js-yaml in /assets (#4765) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 18.1.0 to 18.6.0 (#4760) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump telemetry_metrics from 1.1.0 to 1.2.0 (#4761) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress from 15.21.0 to 15.21.1 in /test/e2e in the cypress group (#4759) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump fflate from 0.4.8 to 0.4.9 in /assets (#4743) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump llm_db from 2026.8.2 to 2026.8.3 (#4742) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the cypress group across 1 directory with 2 updates (#4671) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @faker-js/faker from 10.4.0 to 10.6.0 in /assets (#4741) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress-io/github-action from 7.4.1 to 7.4.3 (#4738) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump browserslist from 4.28.2 to 4.28.8 in /test/e2e (#4709) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump llm_db from 2026.7.5 to 2026.8.2 (#4674) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @headlessui/react from 2.2.9 to 2.2.10 in /assets (#4661) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dorny/paths-filter from 4.0.2 to 4.0.3 (#4662) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress from 15.19.0 to 15.20.0 in /test/e2e in the cypress group (#4660) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump flop from 0.26.5 to 0.26.6 (#4659) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump isbang/compose-action from 3.0.0 to 3.1.0 (#4663) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump globals from 17.8.0 to 17.9.0 in /test/e2e (#4637) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/setup-node from 6.4.0 to 7.0.0 (#4640) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/login-action from 4.4.0 to 4.6.0 (#4641) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump npm from 12.0.1 to 12.0.2 in /test/e2e (#4627) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dflook/terraform-destroy-workspace from 2.2.3 to 3.0.0 (#4632) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dflook/terraform-apply from 2.2.3 to 3.0.0 (#4634) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump coverallsapp/github-action from 2.3.6 to 2.3.8 (#4633) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dflook/terraform-new-workspace from 2.2.3 to 3.0.0 (#4630) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/checkout from 7.0.0 to 7.0.1 (#4628) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump globals from 17.7.0 to 17.8.0 in /test/e2e (#4623) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump phoenix_live_reload from 1.6.2 to 1.7.0 (#4619) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump credo from 1.7.18 to 1.7.19 (#4610) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump npm from 11.18.0 to 12.0.1 in /test/e2e (#4543) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump systeminformation from 5.31.6 to 5.33.1 in /test/e2e (#4511) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress-io/github-action from 7.4.0 to 7.4.1 (#4546) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress from 15.18.0 to 15.19.0 in /test/e2e in the cypress group across 1 directory (#4539) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.9.4 to 3.9.6 in /test/e2e (#4542) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 17.7.2 to 18.1.0 (#4545) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dflook/terraform-output from 2.2.3 to 3.0.0 (#4566) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump brace-expansion from 2.1.2 to 2.1.4 in /test/e2e (#4565) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump slackapi/slack-github-action from 3.0.3 to 4.0.0 (#4568) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump undici from 6.25.0 to 6.28.0 in /test/e2e (#4576) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump js-yaml from 4.3.0 to 4.3.1 in /test/e2e (#4593) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the assistant-ui and AG-UI packages (#4596) @nelsonkopliku
+* Bump langchain ref (#4585) @nelsonkopliku
+* Bump postcss from 8.5.12 to 8.5.23 in /test/e2e (#4551) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump js-yaml from 4.2.0 to 4.3.0 in /test/e2e (#4527) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/cache from 5.0.5 to 6.1.0 (#4483) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump stefanzweifel/git-auto-commit-action from 7.1.0 to 7.2.0 (#4520) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/login-action from 4.2.0 to 4.4.0 (#4519) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/setup-buildx-action from 4.1.0 to 4.2.0 (#4521) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 2 updates (#4501) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react-webpack5 from 10.3.6 to 10.4.6 in /assets (#4480) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress from 15.17.0 to 15.18.0 in /test/e2e in the cypress group across 1 directory (#4477) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.8.3 to 3.8.5 in /assets (#4482) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.8.4 to 3.9.4 in /test/e2e (#4481) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 17.5.0 to 17.7.2 (#4484) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump globals from 17.6.0 to 17.7.0 in /test/e2e (#4479) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress-split from 1.24.31 to 1.25.0 in /test/e2e in the cypress group across 1 directory (#4455) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump redux-saga from 1.4.2 to 1.5.0 in /assets (#4456) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint from 10.4.1 to 10.5.0 in /test/e2e in the eslint group (#4457) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.8.3 to 3.8.4 in /test/e2e (#4458) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump semver from 7.8.4 to 7.8.5 in /test/e2e (#4459) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/checkout from 6.0.3 to 7.0.0 (#4461) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 17.4.1 to 17.5.0 (#4462) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Update /assets npm lockfile to remediate transitive vulnerabilities (#4435) @vicenteqa
+* Bump chromaui/action from 17.3.0 to 17.4.1 (#4432) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/checkout from 6.0.2 to 6.0.3 (#4431) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/login-action from 4.1.0 to 4.2.0 (#4430) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @ag-ui/client from 0.0.52 to 0.0.57 in /assets (#4419) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/setup-node from 6.3.0 to 6.4.0 (#4317) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the cypress group across 1 directory with 2 updates (#4418) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump semver from 7.8.1 to 7.8.4 in /test/e2e (#4420) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/plugin-transform-modules-commonjs from 7.28.6 to 7.29.7 in /assets (#4416) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump tar and npm in /test/e2e (#4406) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump isbang/compose-action from 2.6.0 to 3.0.0 (#4417) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 17.2.0 to 17.3.0 (#4422) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump endorama/asdf-parse-tool-versions from 1.5.1 to 1.6.0 (#4423) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress-io/github-action from 7.1.10 to 7.4.0 (#4424) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump esbuild and storybook in /assets (#4410) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump form-data from 4.0.5 to 4.0.6 in /assets (#4408) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/core from 7.29.0 to 7.29.6 in /assets (#4407) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump js-yaml from 4.1.1 to 4.2.0 in /test/e2e (#4405) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump form-data from 4.0.5 to 4.0.6 in /test/e2e (#4402) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-router from 7.15.0 to 7.15.1 in /assets (#4398) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 2 updates (#4388) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump esbuild and tsx in /test/e2e (#4386) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 16.6.3 to 17.2.0 (#4361) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/setup-buildx-action from 4.0.0 to 4.1.0 (#4360) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump date-fns from 4.1.0 to 4.4.0 in /test/e2e (#4359) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump peaceiris/actions-gh-pages from 4.0.0 to 4.1.0 (#4349) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump tmp from 0.2.4 to 0.2.7 in /test/e2e (#4344) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.369.3 to 1.379.2 in /assets (#4337) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dompurify from 3.4.0 to 3.4.11 in /assets (#4403) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump tzdata from 1.0.48 to 1.0.49 in /assets (#4332) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress from 15.13.1 to 15.15.0 in /test/e2e in the cypress group across 1 directory (#4312) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump npm from 11.13.0 to 11.14.1 in /test/e2e (#4333) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 2 updates (#4348) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-router from 7.13.2 to 7.15.0 in /assets (#4354) [@dependabot[bot]](https://github.com/apps/dependabot)
+
+</details>
+**Full Changelog**: https://github.com/trento-project/web/compare/3.1.0...3.2.0
+
 ## [3.1.6](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.5...3.1.6) - 2026-09-10
 
 ### What's Changed
@@ -63,10 +491,8 @@
 * Bump axios from 1.16.1 to 1.18.1 in /assets (#4683) @trentobot
 * Bump brace-expansion from 5.0.5 to 5.0.7 in /test/e2e (#4682) @trentobot
 * Bump erlef/setup-beam from 1.24.0 to 1.24.1 (#4680) @trentobot
-
 </details>
 **Full Changelog**: https://github.com/trento-project/web/compare/3.1.5...3.1.6
-
 ## [3.1.5](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.4...3.1.5) - 2026-07-15
 
 ### What's Changed
@@ -637,7 +1063,6 @@
 * Add the ability to request a saptune solution change (#3488) @nelsonkopliku
 * Expose cluster resource parent api (#3482) @arbulu89
 #### Bug Fixes
-
 * Add AUTH_SERVER_URL to wanda container (#3858) @nelsonkopliku
 * Updated HTTPoison to 2.2.3 (#3783) @skrech
 * Handle host_not_registered error in saptune event handler (#3773) @arbulu89
@@ -953,7 +1378,6 @@
 * Upgrade tzdata to 1.1.2 to avoid error log (#3216) @arbulu89
 * Handle ApplicationInstanceMoved event in deregistration (#3125) @arbulu89
 * Allow the scheduled execution to check also ascs/ers clusters (#3156) @nelsonkopliku
-
 #### Maintenance
 
 * Version bump automation (#3509) @stefanotorresi
@@ -1411,7 +1835,6 @@
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.1...2.3.2)
 **Fixed bugs:**
 - Fix process manager rename [#2814](https://github.com/trento-project/web/pull/2814) ([arbulu89](https://github.com/arbulu89))
-
 ## [2.3.1](https://github.com/trento-project/web/tree/2.3.1) (2024-06-10)
 
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.0...2.3.1)

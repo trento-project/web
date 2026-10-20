@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.ActivityLog.PhoenixConnParserTest do
   @moduledoc false
@@ -76,17 +76,17 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
             expected_metadata: %{"foo" => "bar"}
           },
           %{
-            action: :saving_suma_settings,
+            action: :saving_smlm_settings,
             expected_metadata: %{"foo" => "bar", correlation_id: @correlation_id}
           },
           %{
-            action: :changing_suma_settings,
+            action: :changing_smlm_settings,
             expected_metadata: %{"foo" => "bar", correlation_id: @correlation_id}
           }
         ] do
       @scenario scenario
       test "should extract the request body as metadata for activity #{@scenario.action}", %{
-        conn: conn
+        conn: %Plug.Conn{} = conn
       } do
         request_body = %{"foo" => "bar"}
 
@@ -101,7 +101,9 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       end
     end
 
-    test "should extract component id when requesting checks execution", %{conn: conn} do
+    test "should extract component id when requesting checks execution", %{
+      conn: %Plug.Conn{} = conn
+    } do
       host_id = Faker.UUID.v4()
       cluster_id = Faker.UUID.v4()
 
@@ -142,7 +144,9 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       end
     end
 
-    test "should extract component id when applying a checks selection", %{conn: conn} do
+    test "should extract component id when applying a checks selection", %{
+      conn: %Plug.Conn{} = conn
+    } do
       host_id = Faker.UUID.v4()
       cluster_id = Faker.UUID.v4()
 
@@ -231,7 +235,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         ] do
       @scenario scenario
       test "should extract correlation_id from #{@scenario.action} action", %{
-        conn: conn
+        conn: %Plug.Conn{} = conn
       } do
         assert Map.equal?(
                  @scenario.expected_metadata,
@@ -244,7 +248,9 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       end
     end
 
-    test "should extract operation metadata from requested operation", %{conn: conn} do
+    test "should extract operation metadata from requested operation", %{
+      conn: %Plug.Conn{} = conn
+    } do
       resource_id = Faker.UUID.v4()
       operation_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
@@ -351,7 +357,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       end
     end
 
-    test "should extract personal access token data during creation", %{conn: conn} do
+    test "should extract personal access token data during creation", %{conn: %Plug.Conn{} = conn} do
       token_name = Faker.StarWars.character()
       pat_id = Faker.UUID.v4()
 
@@ -368,7 +374,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                )
     end
 
-    test "should extract personal access token data during deletion", %{conn: conn} do
+    test "should extract personal access token data during deletion", %{conn: %Plug.Conn{} = conn} do
       token_name = Faker.StarWars.character()
       jti = Faker.UUID.v4()
 
@@ -389,7 +395,9 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                )
     end
 
-    test "should extract personal access token data during deletion by admin", %{conn: conn} do
+    test "should extract personal access token data during deletion by admin", %{
+      conn: %Plug.Conn{} = conn
+    } do
       user_id = 1
       token_name = Faker.StarWars.character()
       pat_id = Faker.UUID.v4()
@@ -410,6 +418,43 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                      }
                  }
                )
+    end
+
+    test "should mark a successfully sent test email as successful", %{conn: %Plug.Conn{} = conn} do
+      assert %{result: :success} ==
+               PhoenixConnParser.get_activity_metadata(:testing_alerting_settings, %Plug.Conn{
+                 conn
+                 | status: 200
+               })
+    end
+
+    test "should extract the failure reason of a test email that could not be sent", %{
+      conn: %Plug.Conn{} = conn
+    } do
+      detail =
+        "Test email delivery failed: " <>
+          inspect({:retries_exceeded, {:network_failure, ~c"localhost", {:error, :nxdomain}}})
+
+      errors = %{
+        errors: [
+          %{
+            title: "Unprocessable Entity",
+            detail: detail
+          }
+        ]
+      }
+
+      for resp_body <- [Jason.encode!(errors), Jason.encode_to_iodata!(errors)] do
+        assert %{
+                 result: :failure,
+                 reason: detail
+               } ==
+                 PhoenixConnParser.get_activity_metadata(:testing_alerting_settings, %Plug.Conn{
+                   conn
+                   | status: 422,
+                     resp_body: resp_body
+                 })
+      end
     end
   end
 

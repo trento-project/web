@@ -1,13 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { createSelector } from '@reduxjs/toolkit';
 
 export const getCatalog = createSelector(
   [({ catalog }) => catalog],
-  ({ data, filteredCatalog, error, loading }) => ({
+  ({ data, error, loading }) => ({
     data,
-    filteredCatalog,
     error,
     loading,
   })

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import MockAdapter from 'axios-mock-adapter';
 
@@ -184,12 +184,12 @@ describe('Hosts sagas', () => {
     ]);
   });
 
-  it('should fetch SUMA settings and software updates when host software updates discovery is completed', async () => {
+  it('should fetch SUSE Multi-Linux Manager settings and software updates when host software updates discovery is completed', async () => {
     const { id } = hostFactory.build();
 
     const settingsResponse = softwareUpdatesSettingsFactory.build();
 
-    axiosMock.onGet('/settings/suse_manager').reply(200, settingsResponse);
+    axiosMock.onGet('/settings/smlm').reply(200, settingsResponse);
 
     const softwareUpdatesResponse = {
       relevant_patches: [

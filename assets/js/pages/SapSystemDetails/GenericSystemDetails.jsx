@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState } from 'react';
 
@@ -17,6 +17,7 @@ import {
   overSome,
   isEmpty,
   every,
+  maxBy,
 } from 'lodash';
 
 import classNames from 'classnames';
@@ -42,22 +43,28 @@ import {
   APPLICATION_TYPE,
   DATABASE_TYPE,
   getEnsaVersionLabel,
+  getSapSystemType,
 } from '@lib/model/sapSystems';
 import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
+import { STALE_ROW } from '@lib/tables';
+import { formatDateTime } from '@lib/timezones';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
-import PageHeader from '@common/PageHeader';
+import { DetailsViewHeader } from '@common/PageHeader';
 import {
   OperationForbiddenModal,
   SimpleAcceptanceOperationModal,
   SapStartStopOperationModal,
 } from '@common/OperationModals';
 import OperationsButton from '@common/OperationsButton';
+import HealthIcon from '@common/HealthIcon';
+import SapSystemLink from '@common/SapSystemLink';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
 
 import Pill from '@common/Pill';
+import Banner from '@common/Banners';
 import { getReplicationStatusClasses } from '@pages/InstanceOverview/InstanceOverview';
 
 import {
@@ -66,9 +73,6 @@ import {
 } from './tableConfigs';
 
 const SR_INACTIVE = 'INACTIVE';
-
-const renderType = (t) =>
-  t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
 
 const getUniqueHosts = (hosts) =>
   Array.from(
@@ -81,6 +85,11 @@ const getUniqueHosts = (hosts) =>
   );
 
 const mapInstancesHosts = (instances) => map(instances, ({ host }) => host);
+
+// Returns an active instance (stale_at === null) if available,
+// otherwise returns the most recently stale instance (highest stale_at)
+const getActiveInstance = (instances) =>
+  find(instances, ['stale_at', null]) || maxBy(instances, 'stale_at');
 
 // it includes SAP and HANA operations
 const instanceStartStopOperations = [SAP_INSTANCE_START, SAP_INSTANCE_STOP];
@@ -113,6 +122,7 @@ export function GenericSystemDetails({
   type,
   system,
   userAbilities,
+  userTimezone,
   cleanUpPermittedFor,
   operationsEnabled = false,
   runningOperations = [],
@@ -285,7 +295,15 @@ export function GenericSystemDetails({
       />
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-          <PageHeader className="font-bold">{title}</PageHeader>
+          <DetailsViewHeader
+            className="font-bold"
+            health={system.health}
+            staleAt={system.stale_at}
+            timezone={userTimezone}
+            healthAriaLabelPrefix="System"
+          >
+            {title}
+          </DetailsViewHeader>
         </div>
         {operationsEnabled && (
           <div className="flex w-1/2 justify-end">
@@ -301,68 +319,131 @@ export function GenericSystemDetails({
           </div>
         )}
       </div>
+      {system.stale_at && (
+        <Banner type="warning" truncate={false}>
+          An agent in one of the{' '}
+          {type === APPLICATION_TYPE ? 'SAP system' : 'database'} hosts is not
+          reporting since {formatDateTime(system.stale_at, userTimezone)}. Some
+          information in this view might be stale.
+        </Banner>
+      )}
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
-        <ListView
-          orientation="vertical"
-          data={[
-            { title: 'Name', content: system.sid },
-            {
-              title: 'Type',
-              content: renderType(type),
-            },
-            ...(type === APPLICATION_TYPE
-              ? [
-                  {
-                    title: 'ENSA version',
-                    content: system.ensa_version || '-',
-                    render: (content) => getEnsaVersionLabel(content),
-                  },
-                ]
-              : []),
-            ...(type === DATABASE_TYPE
-              ? [
-                  {
-                    title: 'System Replication',
-                    content: hasSystemReplication,
-                    render: (content) => capitalize(content),
-                  },
-                ]
-              : []),
-            {
-              title: '',
-              content: type,
-              render: (content) => (
-                <div className="justify-end float-right">
-                  {content === APPLICATION_TYPE ? (
+        {type === APPLICATION_TYPE ? (
+          <ListView
+            orientation="vertical"
+            className="grid-rows-2"
+            data={[
+              { title: 'Name', content: system.sid },
+              {
+                title: 'Database',
+                content: system.database_sid,
+                render: (content) => (
+                  <SapSystemLink
+                    systemType={DATABASE_TYPE}
+                    sapSystemId={system.database_id}
+                  >
+                    {content}
+                  </SapSystemLink>
+                ),
+              },
+              {
+                title: 'Type',
+                content: system.instances,
+                render: (content) => getSapSystemType(content),
+              },
+              {
+                title: 'Database health',
+                content: system.database_health,
+                render: (content) => (
+                  <HealthIcon
+                    health={content}
+                    size="l"
+                    staleAt={system.database_stale_at}
+                    timezone={userTimezone}
+                    ariaLabelPrefix="Database"
+                  />
+                ),
+              },
+              {
+                title: 'ENSA version',
+                content: system.ensa_version || '-',
+                render: (content) => getEnsaVersionLabel(content),
+              },
+              {
+                title: 'Tenant',
+                content: system.tenant,
+                render: (content) => content,
+              },
+              {
+                key: 'application_icon',
+                render: (_) => (
+                  <div className="justify-end float-right">
                     <EOS_APPLICATION_OUTLINED
                       size={25}
                       className="fill-blue-500"
                     />
-                  ) : (
+                  </div>
+                ),
+              },
+              {
+                key: 'database_icon',
+                render: (_) => (
+                  <div className="justify-end float-right">
                     <EOS_DATABASE_OUTLINED
                       size={25}
                       className="fill-blue-500"
                     />
-                  )}
-                </div>
-              ),
-            },
-          ]}
-        />
+                  </div>
+                ),
+              },
+            ]}
+          />
+        ) : (
+          <ListView
+            orientation="vertical"
+            data={[
+              { title: 'Name', content: system.sid },
+              {
+                title: 'Type',
+                content: 'HANA Database',
+              },
+              {
+                title: 'System Replication',
+                content: hasSystemReplication,
+                render: (content) => capitalize(content),
+              },
+              {
+                key: 'database_icon',
+                render: (_) => (
+                  <div className="justify-end float-right">
+                    <EOS_DATABASE_OUTLINED
+                      size={25}
+                      className="fill-blue-500"
+                    />
+                  </div>
+                ),
+              },
+            ]}
+          />
+        )}
       </div>
-
       <div className="mt-16">
         <div className="flex flex-direction-row">
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
         {map(sitedInstances, (instances, site) => {
-          const instance = instances[0];
+          const activeInstance = getActiveInstance(instances);
+          const isSiteStale = every(
+            instances,
+            ({ stale_at: staleAt }) => staleAt !== null
+          );
           return (
-            <div key={site} className="mt-4 bg-white rounded-lg">
+            <div key={site} className="mt-4 rounded-lg">
               <Table
                 config={getSystemInstancesTableConfiguration({
                   type,
                   userAbilities,
+                  userTimezone,
                   cleanUpPermittedFor,
                   onCleanUpClick,
                   operationsEnabled,
@@ -371,46 +452,58 @@ export function GenericSystemDetails({
                 data={instances}
                 header={
                   hasSystemReplication && (
-                    <div className="flex py-4 px-5">
+                    <div
+                      className={classNames(
+                        'flex py-4 px-5 border-b border-gray-200 ',
+                        {
+                          [STALE_ROW]: isSiteStale,
+                          'bg-white': !isSiteStale,
+                        }
+                      )}
+                    >
                       <div className="flex w-11/12 space-x-3">
                         <div className="flex space-x-2 mr-3">
                           <h3 className="text-l font-bold">{site}</h3>
                           <Pill className="bg-green-100 text-green-800 !py-0 items-center">
-                            {upperCase(instance.system_replication)}
+                            {upperCase(activeInstance.system_replication)}
                           </Pill>
                         </div>
                         <SystemReplicationDataPill
                           label="Tier"
-                          data={instance.system_replication_tier || '-'}
+                          data={activeInstance.system_replication_tier || '-'}
                         />
 
-                        {instance.system_replication === 'Primary' && (
+                        {activeInstance.system_replication === 'Primary' && (
                           <SystemReplicationDataPill
                             label="Status"
                             data={
-                              instance.system_replication_status || SR_INACTIVE
+                              activeInstance.system_replication_status ||
+                              SR_INACTIVE
                             }
                             className={getReplicationStatusClasses(
-                              instance.system_replication_status
+                              activeInstance.system_replication_status
                             )}
                           />
                         )}
-                        {instance.system_replication === 'Secondary' && (
+                        {activeInstance.system_replication === 'Secondary' && (
                           <>
                             <SystemReplicationDataPill
                               label="Replicating"
                               data={
-                                instance.system_replication_source_site || '-'
+                                activeInstance.system_replication_source_site ||
+                                '-'
                               }
                               className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
                             />
                             <SystemReplicationDataPill
                               label="Replication Mode"
-                              data={instance.system_replication_mode}
+                              data={activeInstance.system_replication_mode}
                             />
                             <SystemReplicationDataPill
                               label="Operation Mode"
-                              data={instance.system_replication_operation_mode}
+                              data={
+                                activeInstance.system_replication_operation_mode
+                              }
                             />
                           </>
                         )}

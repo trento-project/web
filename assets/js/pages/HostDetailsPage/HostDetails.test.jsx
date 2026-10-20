@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
@@ -11,6 +11,7 @@ import MockAdapter from 'axios-mock-adapter';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { TUNING_VALUES } from '@lib/test-utils/saptune';
+import { formatDateTime } from '@lib/timezones';
 import {
   hostFactory,
   saptuneStatusFactory,
@@ -35,6 +36,64 @@ describe('HostDetails component', () => {
   beforeEach(() => {
     axiosMock.reset();
     axiosMock.onGet(/\/api\/v1\/charts.*/gm).reply(200, {});
+  });
+
+  describe('Header', () => {
+    it('should display host name and health', () => {
+      const { hostname, health } = hostFactory.build();
+
+      renderWithRouter(
+        <HostDetails
+          hostname={hostname}
+          health={health}
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+        />
+      );
+
+      expect(
+        screen.getByRole('heading', {
+          name: `Host Details: ${hostname}`,
+        })
+      ).toBeVisible();
+      expect(screen.getByRole('img', { name: /host health/i })).toBeVisible();
+    });
+  });
+
+  describe('When stale', () => {
+    it('should render stale icon and warning banner', () => {
+      const timezone = 'Etc/UTC';
+      const { hostname, health, heartbeat, staleAt } = hostFactory.build({
+        heartbeat: 'critical',
+        staleAt: faker.date.past(),
+      });
+
+      renderWithRouter(
+        <HostDetails
+          hostname={hostname}
+          health={health}
+          heartbeat={heartbeat}
+          staleAt={staleAt}
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          timezone={timezone}
+        />
+      );
+
+      expect(
+        screen.getByRole('heading', {
+          name: `Host Details: ${hostname}`,
+        })
+      ).toBeVisible();
+      expect(screen.getByRole('img', { name: /host health/i })).toHaveAttribute(
+        'data-stale'
+      );
+      expect(
+        screen.getByRole('alert', {
+          name: /^The agent in this host is not responding/i,
+        })
+      ).toHaveTextContent(formatDateTime(staleAt, timezone));
+    });
   });
 
   describe('Checks execution', () => {
@@ -363,8 +422,8 @@ describe('HostDetails component', () => {
     });
   });
 
-  describe('SUSE Manager', () => {
-    it('should show the summary of SUMA software updates', () => {
+  describe('SUSE Multi-Linux Manager', () => {
+    it('should show the summary of SUSE Multi-Linux Manager software updates', () => {
       const relevantPatches = faker.number.int(100);
       const upgradablePackages = faker.number.int(100);
 
@@ -393,7 +452,7 @@ describe('HostDetails component', () => {
       );
     });
 
-    it('should display software updates showing an error message when no SUMA updates data is available', () => {
+    it('should display software updates showing an error message when no SUSE Multi-Linux Manager updates data is available', () => {
       const relevantPatches = undefined;
       const upgradablePackages = undefined;
 
@@ -419,7 +478,7 @@ describe('HostDetails component', () => {
       expect(upgradablePackagesElement).toHaveTextContent('An error message');
     });
 
-    it('should show the summary of SUMA software updates in a loading state', () => {
+    it('should show the summary of SUSE Multi-Linux Manager software updates in a loading state', () => {
       const relevantPatches = faker.number.int(100);
       const upgradablePackages = faker.number.int(100);
 
@@ -478,13 +537,14 @@ describe('HostDetails component', () => {
   });
 
   describe('operations', () => {
-    it('should disable operations button if host heartbeat is not passing', async () => {
+    it('should disable operations button if host data is stale', async () => {
       const user = userEvent.setup();
 
       renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
           heartbeat="critical"
+          staleAt={faker.date.past()}
           userAbilities={userAbilities}
           operationsEnabled
         />
@@ -702,7 +762,7 @@ describe('HostDetails component', () => {
       const sapInstances = databaseInstanceFactory
         .buildList(1)
         .map((instance) => ({ ...instance, type: DATABASE_TYPE }))
-        .map((instance) => ({ ...instance, health: 'unknown' }));
+        .map((instance) => ({ ...instance, status: 'gray' }));
 
       renderWithRouter(
         <HostDetails
@@ -732,11 +792,11 @@ describe('HostDetails component', () => {
     it.each([
       {
         state: 'passing',
-        label: 'running',
+        label: 'Reporting',
       },
       {
         state: 'critical',
-        label: 'not running',
+        label: 'Not reporting',
       },
     ])('should show exporters state as $state', ({ state, label }) => {
       renderWithRouter(

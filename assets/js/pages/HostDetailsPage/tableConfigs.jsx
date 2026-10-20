@@ -1,12 +1,13 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { capitalize } from 'lodash';
+import classNames from 'classnames';
 
+import { STALE_ROW } from '@lib/tables';
 import SapSystemLink from '@common/SapSystemLink';
-import HealthIcon from '@common/HealthIcon';
-import { Features } from '@pages/SapSystemDetails';
+import { Features, InstanceStatus } from '@pages/SapSystemDetails';
 
 import { getInstanceID } from '@state/instances';
 
@@ -49,16 +50,24 @@ export const subscriptionsTableConfiguration = {
   ],
 };
 
-export const sapInstancesTableConfiguration = {
+export const getSapInstancesTableConfiguration = ({ userTimezone }) => ({
   usePadding: false,
+  rowClassName: ({ stale_at, absent_at }) =>
+    classNames({
+      [STALE_ROW]: !!stale_at,
+      'text-gray-600': !!absent_at,
+    }),
   columns: [
     {
-      title: 'Health',
-      key: 'health',
-      render: (content) => (
-        <div className="ml-3">
-          <HealthIcon health={content} />
-        </div>
+      title: 'Status',
+      key: 'status',
+      render: (content, item) => (
+        <InstanceStatus
+          status={content}
+          absent={!!item.absent_at}
+          staleAt={item.stale_at}
+          timezone={userTimezone}
+        />
       ),
     },
     {
@@ -81,4 +90,4 @@ export const sapInstancesTableConfiguration = {
     },
     { title: 'Instance Number', key: 'instance_number' },
   ],
-};
+});

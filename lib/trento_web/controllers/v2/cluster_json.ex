@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V2.ClusterJSON do
   alias Trento.Clusters.ValueObjects.SapInstance
@@ -30,6 +30,9 @@ defmodule TrentoWeb.V2.ClusterJSON do
 
   def cluster_health_changed(%{cluster: %{id: id, name: name, health: health}}),
     do: %{cluster_id: id, name: name, health: health}
+
+  def cluster_stale_changed(%{cluster: %{id: id, stale_at: stale_at}}),
+    do: %{id: id, stale_at: stale_at}
 
   defp adapt_sids(%{sap_instances: sap_instances} = cluster) do
     adapted_sap_instances =

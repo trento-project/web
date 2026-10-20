@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { difference } from 'lodash';
 import { abilityFactory } from '@lib/test-utils/factories/users';
@@ -14,7 +14,11 @@ import {
   PERSONAL_ACCESS_TOKEN_CREATION,
   PERSONAL_ACCESS_TOKEN_DELETION,
   PERSONAL_ACCESS_TOKEN_ADMIN_DELETION,
+  AI_CONFIGURATION_CREATION,
+  AI_CONFIGURATION_MODIFICATION,
+  AI_CONFIGURATION_DELETION,
   OPERATION_COMPLETED,
+  TESTING_ALERTING_SETTINGS,
   availableResourceNameKeys,
   resourceNameFromMetadata,
   resourceTypes,
@@ -37,6 +41,9 @@ const nonUserManagementActivities = difference(ACTIVITY_TYPES, [
   PERSONAL_ACCESS_TOKEN_CREATION,
   PERSONAL_ACCESS_TOKEN_DELETION,
   PERSONAL_ACCESS_TOKEN_ADMIN_DELETION,
+  AI_CONFIGURATION_CREATION,
+  AI_CONFIGURATION_MODIFICATION,
+  AI_CONFIGURATION_DELETION,
 ]);
 
 describe('activityLog', () => {
@@ -247,5 +254,18 @@ describe('activityLog', () => {
         );
       });
     });
+
+    it.each`
+      metadata                                                        | expectedMessage
+      ${{ result: 'success' }}                                        | ${'Test email delivery succeeded'}
+      ${{ result: 'failure', reason: 'Email alerting is disabled.' }} | ${'Test email delivery failed'}
+    `(
+      'should resolve alerting test email message',
+      ({ metadata, expectedMessage }) => {
+        expect(toMessage({ type: TESTING_ALERTING_SETTINGS, metadata })).toBe(
+          expectedMessage
+        );
+      }
+    );
   });
 });

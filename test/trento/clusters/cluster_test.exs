@@ -1,11 +1,14 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.ClusterTest do
   use Trento.AggregateCase, aggregate: Trento.Clusters.Cluster, async: true
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.ClusterState, as: ClusterState
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
+  require Trento.Enums.Health, as: Health
 
   import Trento.Factory
 
@@ -14,6 +17,7 @@ defmodule Trento.ClusterTest do
   alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
+    MarkClusterHostStale,
     RegisterOfflineClusterHost,
     RegisterOnlineClusterHost,
     RollUpCluster,
@@ -30,23 +34,33 @@ defmodule Trento.ClusterTest do
   alias Trento.Clusters.Events.{
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterDataMarkedInSync,
+    ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
+    ClusterDistributedHealthChanged,
     ClusterHealthChanged,
+    ClusterHostDataMarkedInSync,
+    ClusterHostDataMarkedStale,
     ClusterHostStatusChanged,
     ClusterRegistered,
+    ClusterReplicationHealthChanged,
     ClusterRestored,
     ClusterRolledUp,
     ClusterRollUpRequested,
+    ClusterSbdHealthChanged,
     ClusterTombstoned,
     HostAddedToCluster,
     HostRemovedFromCluster
   }
 
-  alias Trento.Clusters.Cluster
+  alias Trento.Clusters.ValueObjects.{
+    AscsErsClusterHealthDetails,
+    HanaClusterHealthDetails
+  }
 
-  require Trento.Enums.Health, as: Health
+  alias Trento.Clusters.Cluster
 
   describe "cluster registration" do
     test "should register a cluster with full details and add the node host to the cluster if the node is a DC" do
@@ -67,7 +81,6 @@ defmodule Trento.ClusterTest do
           provider: :azure,
           type: type,
           details: nil,
-          discovered_health: :passing,
           designated_controller: true,
           state: state
         }),
@@ -78,7 +91,8 @@ defmodule Trento.ClusterTest do
             sap_instances: sap_instances,
             provider: :azure,
             type: type,
-            health: :passing,
+            health: Health.unknown(),
+            health_details: nil,
             details: nil,
             state: state
           },
@@ -95,11 +109,280 @@ defmodule Trento.ClusterTest do
           type: type,
           provider: :azure,
           hosts: [host_id],
-          discovered_health: :passing,
-          health: :passing,
+          health: Health.unknown(),
+          health_details: nil,
           state: state
         }
       )
+    end
+
+    @scenarios [
+      %{
+        sr_health_state: "4",
+        secondary_sync_state: "SOK",
+        expected_health: Health.passing()
+      },
+      %{
+        sr_health_state: "1",
+        secondary_sync_state: "SFAIL",
+        expected_health: Health.critical()
+      },
+      %{
+        sr_health_state: "1",
+        secondary_sync_state: "SOK",
+        expected_health: Health.critical()
+      },
+      %{
+        sr_health_state: "4",
+        secondary_sync_state: "SFAIL",
+        expected_health: Health.critical()
+      }
+    ]
+    for %{
+          sr_health_state: sr_health_state,
+          secondary_sync_state: secondary_sync_state,
+          expected_health: expected_health
+        } <- @scenarios do
+      test "should register a cluster with #{expected_health} health for HANA type clusters (sr_health: #{sr_health_state}, sync: #{secondary_sync_state}), no optional healths" do
+        cluster_id = Faker.UUID.v4()
+        host_id = Faker.UUID.v4()
+        name = Faker.StarWars.character()
+        sap_instances = build_list(2, :clustered_sap_instance)
+
+        details =
+          build(:hana_cluster_details,
+            sr_health_state: unquote(sr_health_state),
+            secondary_sync_state: unquote(secondary_sync_state),
+            sbd_devices: []
+          )
+
+        assert_events_and_state(
+          [],
+          RegisterOnlineClusterHost.new!(%{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            name: name,
+            sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
+            provider: :azure,
+            type: :hana_scale_up,
+            details: StructHelper.to_map(details),
+            designated_controller: true,
+            state: :S_IDLE
+          }),
+          [
+            %ClusterRegistered{
+              cluster_id: cluster_id,
+              name: name,
+              sap_instances: sap_instances,
+              provider: :azure,
+              type: :hana_scale_up,
+              details: details,
+              health: unquote(expected_health),
+              health_details:
+                HanaClusterHealthDetails.new!(%{
+                  replication_health: unquote(expected_health)
+                }),
+              state: :S_IDLE
+            },
+            %HostAddedToCluster{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.online()
+            }
+          ],
+          %Cluster{
+            cluster_id: cluster_id,
+            name: name,
+            sap_instances: sap_instances,
+            type: :hana_scale_up,
+            provider: :azure,
+            hosts: [host_id],
+            details: details,
+            health: unquote(expected_health),
+            health_details:
+              HanaClusterHealthDetails.new!(%{
+                replication_health: unquote(expected_health)
+              }),
+            state: :S_IDLE
+          }
+        )
+      end
+    end
+
+    @scenarios [
+      %{
+        distributed: true,
+        expected_health: Health.passing()
+      },
+      %{
+        distributed: false,
+        expected_health: Health.critical()
+      }
+    ]
+    for scenario <- @scenarios do
+      test "should register a cluster with #{scenario.expected_health} health for ASCS/ERS type clusters, no optional healths" do
+        cluster_id = Faker.UUID.v4()
+        host_id = Faker.UUID.v4()
+        name = Faker.StarWars.character()
+        sap_instances = build_list(2, :clustered_sap_instance)
+
+        details =
+          build(:ascs_ers_cluster_details,
+            sap_systems:
+              build_list(2, :ascs_ers_cluster_sap_system,
+                distributed: unquote(scenario.distributed)
+              ),
+            sbd_devices: []
+          )
+
+        assert_events_and_state(
+          [],
+          RegisterOnlineClusterHost.new!(%{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            name: name,
+            sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
+            provider: :azure,
+            type: :ascs_ers,
+            details: StructHelper.to_map(details),
+            designated_controller: true,
+            state: :S_IDLE
+          }),
+          [
+            %ClusterRegistered{
+              cluster_id: cluster_id,
+              name: name,
+              sap_instances: sap_instances,
+              provider: :azure,
+              type: :ascs_ers,
+              details: details,
+              health: unquote(scenario.expected_health),
+              health_details:
+                AscsErsClusterHealthDetails.new!(%{
+                  distributed_health: unquote(scenario.expected_health)
+                }),
+              state: :S_IDLE
+            },
+            %HostAddedToCluster{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.online()
+            }
+          ],
+          %Cluster{
+            cluster_id: cluster_id,
+            name: name,
+            sap_instances: sap_instances,
+            type: :ascs_ers,
+            provider: :azure,
+            hosts: [host_id],
+            details: details,
+            health: unquote(scenario.expected_health),
+            health_details:
+              AscsErsClusterHealthDetails.new!(%{
+                distributed_health: unquote(scenario.expected_health)
+              }),
+            state: :S_IDLE
+          }
+        )
+      end
+    end
+
+    @cluster_confs [
+      %{
+        type: ClusterType.ascs_ers(),
+        details_factory: :ascs_ers_cluster_details,
+        health_details_key: :distributed_health
+      },
+      %{
+        type: ClusterType.hana_scale_up(),
+        details_factory: :hana_cluster_details,
+        health_details_key: :replication_health
+      }
+    ]
+    @health_confs [
+      %{
+        sbd_status: SbdDeviceStatus.healthy(),
+        expected_health: Health.passing()
+      },
+      %{
+        sbd_status: SbdDeviceStatus.unhealthy(),
+        expected_health: Health.critical()
+      }
+    ]
+    for cluster_conf <- @cluster_confs,
+        health_conf <- @health_confs do
+      test "should register a cluster of type #{cluster_conf.type} with #{health_conf.expected_health} health when SBD if #{health_conf.sbd_status}" do
+        cluster_details =
+          params_for(unquote(cluster_conf.details_factory),
+            sbd_devices: [
+              build(:sbd_device),
+              build(:sbd_device, status: unquote(health_conf.sbd_status))
+            ]
+          )
+
+        %RegisterOnlineClusterHost{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          sap_instances: sap_instances,
+          provider: provider,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
+          type: cluster_type,
+          state: state
+        } =
+          register_command =
+          build(:register_online_cluster_host,
+            type: unquote(cluster_conf.type),
+            details: cluster_details
+          )
+
+        assert_events_and_state(
+          [],
+          register_command,
+          [
+            ClusterRegistered.new!(%{
+              cluster_id: cluster_id,
+              name: name,
+              sap_instances: StructHelper.to_map(sap_instances),
+              provider: provider,
+              resources_number: resources_number,
+              hosts_number: hosts_number,
+              type: cluster_type,
+              details: cluster_details,
+              health: unquote(health_conf.expected_health),
+              health_details: %{
+                :sbd_health => unquote(health_conf.expected_health),
+                unquote(cluster_conf.health_details_key) => Health.passing()
+              },
+              state: state
+            }),
+            HostAddedToCluster.new!(%{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.online()
+            })
+          ],
+          Cluster.new!(%{
+            cluster_id: cluster_id,
+            name: name,
+            sap_instances: StructHelper.to_map(sap_instances),
+            type: cluster_type,
+            provider: provider,
+            resources_number: resources_number,
+            hosts: [host_id],
+            hosts_number: hosts_number,
+            details: cluster_details,
+            health: unquote(health_conf.expected_health),
+            health_details: %{
+              :sbd_health => unquote(health_conf.expected_health),
+              unquote(cluster_conf.health_details_key) => Health.passing()
+            },
+            state: state
+          })
+        )
+      end
     end
 
     test "should register a cluster with unknown details when the cluster was not registered yet and a message from a non-DC is received" do
@@ -114,7 +397,6 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
-          discovered_health: :unknown,
           provider: :unknown,
           type: :unknown,
           designated_controller: false,
@@ -127,7 +409,8 @@ defmodule Trento.ClusterTest do
             sap_instances: [],
             provider: :unknown,
             type: :unknown,
-            health: :unknown,
+            health: Health.unknown(),
+            health_details: nil,
             details: nil,
             state: ClusterState.unknown()
           },
@@ -145,8 +428,8 @@ defmodule Trento.ClusterTest do
           provider: :unknown,
           hosts: [host_id],
           offline_hosts: [],
-          discovered_health: :unknown,
-          health: :unknown,
+          health: Health.unknown(),
+          health_details: nil,
           state: ClusterState.unknown()
         }
       )
@@ -171,7 +454,8 @@ defmodule Trento.ClusterTest do
             sap_instances: [],
             provider: :unknown,
             type: :unknown,
-            health: :unknown,
+            health: Health.unknown(),
+            health_details: nil,
             details: nil,
             state: ClusterState.unknown()
           },
@@ -189,8 +473,8 @@ defmodule Trento.ClusterTest do
           provider: :unknown,
           hosts: [host_id],
           offline_hosts: [host_id],
-          discovered_health: :unknown,
-          health: :unknown,
+          health: Health.unknown(),
+          health_details: nil,
           state: ClusterState.unknown()
         }
       )
@@ -213,7 +497,6 @@ defmodule Trento.ClusterTest do
           name: name,
           sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           type: :hana_scale_up,
-          discovered_health: :unknown,
           designated_controller: false,
           provider: :azure
         }),
@@ -276,60 +559,237 @@ defmodule Trento.ClusterTest do
     test "should set a the cluster state to stopped and health to unknown when all nodes go offline" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
-      name = Faker.StarWars.character()
-      registered_cluster = build(:cluster_registered_event, cluster_id: cluster_id)
 
-      assert_events_and_state(
-        [
-          registered_cluster,
-          build(:host_added_to_cluster_event,
+      scenarios = [
+        %{
+          type: :hana_scale_up,
+          health: Health.passing(),
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          health_change_events: [
+            %ClusterReplicationHealthChanged{
+              cluster_id: cluster_id,
+              replication_health: Health.unknown()
+            },
+            %ClusterHealthChanged{
+              cluster_id: cluster_id,
+              health: :unknown
+            }
+          ]
+        },
+        %{
+          type: :hana_scale_out,
+          health: Health.passing(),
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          health_change_events: [
+            %ClusterReplicationHealthChanged{
+              cluster_id: cluster_id,
+              replication_health: Health.unknown()
+            },
+            %ClusterHealthChanged{
+              cluster_id: cluster_id,
+              health: :unknown
+            }
+          ]
+        },
+        %{
+          type: :ascs_ers,
+          health: Health.passing(),
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.unknown()
+          },
+          health_change_events: [
+            %ClusterDistributedHealthChanged{
+              cluster_id: cluster_id,
+              distributed_health: Health.unknown()
+            },
+            %ClusterHealthChanged{
+              cluster_id: cluster_id,
+              health: :unknown
+            }
+          ]
+        },
+        # Scenarios to check health is not updated if it was unknown already
+        %{
+          type: :hana_scale_up,
+          health: Health.unknown(),
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          health_change_events: []
+        },
+        %{
+          type: :hana_scale_out,
+          health: Health.unknown(),
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          health_change_events: []
+        },
+        %{
+          type: :ascs_ers,
+          health: Health.unknown(),
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.unknown()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.unknown()
+          },
+          health_change_events: []
+        }
+      ]
+
+      for %{
+            type: type,
+            health: health,
+            health_details: health_details,
+            expected_health_details: expected_health_details,
+            health_change_events: health_change_events
+          } <-
+            scenarios do
+        registered_cluster =
+          build(:cluster_registered_event,
             cluster_id: cluster_id,
-            host_id: host_id,
-            cluster_host_status: ClusterHostStatus.online()
-          ),
-          build(:host_added_to_cluster_event,
-            cluster_id: cluster_id,
-            host_id: Faker.UUID.v4(),
-            cluster_host_status: ClusterHostStatus.offline()
+            type: type,
+            health: health,
+            health_details: health_details
           )
-        ],
-        RegisterOfflineClusterHost.new!(%{
-          cluster_id: cluster_id,
-          host_id: host_id,
-          name: name
-        }),
-        [
-          %ClusterHostStatusChanged{
+
+        assert_events_and_state(
+          [
+            registered_cluster,
+            build(:host_added_to_cluster_event,
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.online()
+            ),
+            build(:host_added_to_cluster_event,
+              cluster_id: cluster_id,
+              host_id: Faker.UUID.v4(),
+              cluster_host_status: ClusterHostStatus.offline()
+            )
+          ],
+          build_list(
+            2,
+            :register_offline_cluster_host,
             cluster_id: cluster_id,
-            host_id: host_id,
-            cluster_host_status: ClusterHostStatus.offline()
-          },
-          %ClusterDetailsUpdated{
-            cluster_id: cluster_id,
-            name: registered_cluster.name,
-            type: registered_cluster.type,
-            sap_instances: registered_cluster.sap_instances,
-            provider: registered_cluster.provider,
-            resources_number: registered_cluster.resources_number,
-            hosts_number: registered_cluster.hosts_number,
-            details: registered_cluster.details,
-            state: ClusterState.stopped()
-          },
-          %ClusterDiscoveredHealthChanged{
-            cluster_id: cluster_id,
-            discovered_health: :unknown
-          },
-          %ClusterHealthChanged{
-            cluster_id: cluster_id,
-            health: :unknown
+            host_id: host_id
+          ),
+          [
+            %ClusterHostStatusChanged{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.offline()
+            },
+            %ClusterDetailsUpdated{
+              cluster_id: cluster_id,
+              name: registered_cluster.name,
+              type: registered_cluster.type,
+              sap_instances: registered_cluster.sap_instances,
+              provider: registered_cluster.provider,
+              resources_number: registered_cluster.resources_number,
+              hosts_number: registered_cluster.hosts_number,
+              details: registered_cluster.details,
+              state: ClusterState.stopped()
+            }
+          ] ++ health_change_events,
+          fn cluster ->
+            assert %Cluster{
+                     state: ClusterState.stopped(),
+                     health: Health.unknown(),
+                     health_details: ^expected_health_details
+                   } = cluster
+          end
+        )
+      end
+    end
+
+    test "should not change cluster health when first node goes offline" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+
+      scenarios = [
+        %{
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
           }
-        ],
-        fn cluster ->
-          assert %Cluster{
-                   state: ClusterState.stopped()
-                 } = cluster
-        end
-      )
+        },
+        %{
+          type: :hana_scale_out,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
+          }
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing()
+          }
+        }
+      ]
+
+      for %{type: type, health_details: health_details} <- scenarios do
+        registered_cluster =
+          build(:cluster_registered_event,
+            cluster_id: cluster_id,
+            type: type,
+            health: Health.passing(),
+            health_details: health_details
+          )
+
+        assert_events_and_state(
+          [
+            registered_cluster,
+            build(:host_added_to_cluster_event,
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.online()
+            ),
+            build(:host_added_to_cluster_event,
+              cluster_id: cluster_id,
+              host_id: Faker.UUID.v4(),
+              cluster_host_status: ClusterHostStatus.online()
+            )
+          ],
+          build_list(
+            2,
+            :register_offline_cluster_host,
+            cluster_id: cluster_id,
+            host_id: host_id
+          ),
+          [
+            %ClusterHostStatusChanged{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.offline()
+            }
+          ],
+          fn cluster ->
+            assert %Cluster{
+                     health: Health.passing()
+                   } = cluster
+          end
+        )
+      end
     end
 
     test "should not update cluster state when all hosts are already offline" do
@@ -339,7 +799,14 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id, state: ClusterState.stopped()),
+          build(:cluster_registered_event,
+            cluster_id: cluster_id,
+            state: ClusterState.stopped(),
+            health: Health.unknown(),
+            health_details: %HanaClusterHealthDetails{
+              replication_health: Health.unknown()
+            }
+          ),
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: host_id,
@@ -380,7 +847,6 @@ defmodule Trento.ClusterTest do
           name: name,
           sap_instances: [],
           type: :hana_scale_up,
-          discovered_health: :passing,
           resources_number: 8,
           hosts_number: 2,
           designated_controller: false,
@@ -411,7 +877,11 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:cluster_registered_event,
+            cluster_id: cluster_id,
+            health: Health.unknown(),
+            health_details: nil
+          ),
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: host_id,
@@ -435,7 +905,6 @@ defmodule Trento.ClusterTest do
             name: another_name,
             sap_instances: [],
             type: :hana_scale_up,
-            discovered_health: :passing,
             resources_number: 8,
             hosts_number: 2,
             designated_controller: false,
@@ -468,6 +937,8 @@ defmodule Trento.ClusterTest do
             sap_instances: sap_instances,
             name: name,
             details: nil,
+            health: Health.unknown(),
+            health_details: nil,
             state: state
           ),
           build(:host_added_to_cluster_event, cluster_id: cluster_id)
@@ -478,7 +949,7 @@ defmodule Trento.ClusterTest do
           name: name,
           sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           type: :hana_scale_up,
-          discovered_health: :passing,
+          details: nil,
           resources_number: 8,
           hosts_number: 2,
           designated_controller: true,
@@ -510,7 +981,13 @@ defmodule Trento.ClusterTest do
       state = :S_IDLE
 
       initial_events = [
-        build(:cluster_registered_event, cluster_id: cluster_id),
+        build(:cluster_registered_event,
+          cluster_id: cluster_id,
+          health: Health.passing(),
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
+          }
+        ),
         %HostAddedToCluster{
           cluster_id: cluster_id,
           host_id: host_id,
@@ -518,7 +995,7 @@ defmodule Trento.ClusterTest do
         }
       ]
 
-      details = build(:hana_cluster_details)
+      details = build(:hana_cluster_details, sbd_devices: [])
 
       assert_events_and_state(
         initial_events,
@@ -531,7 +1008,6 @@ defmodule Trento.ClusterTest do
           type: :hana_scale_up,
           resources_number: 2,
           hosts_number: 1,
-          discovered_health: :passing,
           details: StructHelper.to_map(details),
           designated_controller: true,
           state: state
@@ -576,7 +1052,9 @@ defmodule Trento.ClusterTest do
           sap_instances: sap_instances,
           details: nil,
           provider: :azure,
-          state: state
+          state: state,
+          health: Health.unknown(),
+          health_details: nil
         ),
         build(:host_added_to_cluster_event,
           cluster_id: cluster_id,
@@ -597,7 +1075,6 @@ defmodule Trento.ClusterTest do
           hosts_number: 2,
           details: nil,
           type: :hana_scale_up,
-          discovered_health: :passing,
           designated_controller: true,
           state: state
         }),
@@ -641,37 +1118,20 @@ defmodule Trento.ClusterTest do
 
     test "should use discovered cluster health when no checks are selected" do
       cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      name = Faker.StarWars.character()
-      sap_instances = build_list(2, :clustered_sap_instance)
 
       assert_events_and_state(
         [
           build(
             :cluster_registered_event,
             cluster_id: cluster_id,
-            name: name,
-            sap_instances: sap_instances,
-            details: nil,
-            provider: :azure
-          ),
-          build(
-            :host_added_to_cluster_event,
-            cluster_id: cluster_id,
-            host_id: host_id
+            health: Health.passing(),
+            health_details: %HanaClusterHealthDetails{
+              checks_health: Health.passing(),
+              replication_health: Health.passing()
+            }
           )
         ],
         [
-          build(
-            :register_online_cluster_host,
-            host_id: host_id,
-            cluster_id: cluster_id,
-            name: name,
-            sap_instances: sap_instances,
-            details: nil,
-            discovered_health: :passing,
-            provider: :azure
-          ),
           SelectChecks.new!(%{
             cluster_id: cluster_id,
             checks: []
@@ -696,72 +1156,131 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
 
-      assert_events_and_state(
-        [
-          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.passing()),
-          %ChecksSelected{
-            cluster_id: cluster_id,
-            checks: selected_checks
+      scenarios = [
+        %{
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
           }
-        ],
-        CompleteChecksExecution.new!(%{
-          cluster_id: cluster_id,
-          health: Health.critical()
-        }),
-        [
-          %ClusterChecksHealthChanged{
-            cluster_id: cluster_id,
-            checks_health: Health.critical()
-          },
-          %ClusterHealthChanged{
+        },
+        %{
+          type: :hana_scale_out,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
+          }
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing()
+          }
+        }
+      ]
+
+      for %{type: type, health_details: health_details} <- scenarios do
+        assert_events_and_state(
+          [
+            build(:cluster_registered_event,
+              cluster_id: cluster_id,
+              type: type,
+              health: Health.passing(),
+              health_details: health_details
+            ),
+            %ChecksSelected{
+              cluster_id: cluster_id,
+              checks: selected_checks
+            }
+          ],
+          CompleteChecksExecution.new!(%{
             cluster_id: cluster_id,
             health: Health.critical()
-          }
-        ],
-        fn cluster ->
-          assert %Cluster{
-                   cluster_id: ^cluster_id,
-                   health: Health.critical(),
-                   checks_health: Health.critical()
-                 } = cluster
-        end
-      )
+          }),
+          [
+            %ClusterChecksHealthChanged{
+              cluster_id: cluster_id,
+              checks_health: Health.critical()
+            },
+            %ClusterHealthChanged{
+              cluster_id: cluster_id,
+              health: Health.critical()
+            }
+          ],
+          fn cluster ->
+            assert %Cluster{
+                     cluster_id: ^cluster_id,
+                     health: Health.critical(),
+                     health_details: %{
+                       checks_health: Health.critical()
+                     }
+                   } = cluster
+          end
+        )
+      end
     end
 
     test "should not change the the cluster aggregated health if discovery health is worse" do
       cluster_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
 
-      assert_events_and_state(
-        [
-          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.critical()),
-          %ChecksSelected{
-            cluster_id: cluster_id,
-            checks: selected_checks
-          },
-          %ClusterDiscoveredHealthChanged{
-            cluster_id: cluster_id,
-            discovered_health: Health.critical()
+      scenarios = [
+        %{
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
+            checks_health: Health.passing(),
+            replication_health: Health.critical()
           }
-        ],
-        CompleteChecksExecution.new!(%{
-          cluster_id: cluster_id,
-          health: Health.warning()
-        }),
-        [
-          %ClusterChecksHealthChanged{
-            cluster_id: cluster_id,
-            checks_health: Health.warning()
+        },
+        %{
+          type: :hana_scale_out,
+          health_details: %HanaClusterHealthDetails{
+            checks_health: Health.passing(),
+            replication_health: Health.critical()
           }
-        ],
-        fn cluster ->
-          assert %Cluster{
-                   cluster_id: ^cluster_id,
-                   health: Health.critical(),
-                   checks_health: Health.warning()
-                 } = cluster
-        end
-      )
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            checks_health: Health.passing(),
+            distributed_health: Health.critical()
+          }
+        }
+      ]
+
+      for %{type: type, health_details: health_details} <- scenarios do
+        assert_events_and_state(
+          [
+            build(:cluster_registered_event,
+              cluster_id: cluster_id,
+              type: type,
+              health: Health.critical(),
+              health_details: health_details
+            ),
+            %ChecksSelected{
+              cluster_id: cluster_id,
+              checks: selected_checks
+            }
+          ],
+          CompleteChecksExecution.new!(%{
+            cluster_id: cluster_id,
+            health: Health.warning()
+          }),
+          [
+            %ClusterChecksHealthChanged{
+              cluster_id: cluster_id,
+              checks_health: Health.warning()
+            }
+          ],
+          fn cluster ->
+            assert %Cluster{
+                     cluster_id: ^cluster_id,
+                     health: Health.critical(),
+                     health_details: %{
+                       checks_health: Health.warning()
+                     }
+                   } = cluster
+          end
+        )
+      end
     end
 
     test "unknown checks health should not affect aggregated cluster's health" do
@@ -770,27 +1289,31 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.passing()),
-          %ClusterDiscoveredHealthChanged{
+          build(:cluster_registered_event,
             cluster_id: cluster_id,
-            discovered_health: Health.passing()
-          }
-        ],
-        SelectChecks.new!(%{
-          cluster_id: cluster_id,
-          checks: selected_checks
-        }),
-        [
+            health: Health.passing(),
+            health_details: %HanaClusterHealthDetails{
+              replication_health: Health.passing()
+            }
+          ),
           %ChecksSelected{
             cluster_id: cluster_id,
             checks: selected_checks
           }
         ],
+        CompleteChecksExecution.new!(%{
+          cluster_id: cluster_id,
+          health: Health.unknown()
+        }),
+        [],
         fn cluster ->
           assert %Cluster{
                    cluster_id: ^cluster_id,
                    health: Health.passing(),
-                   checks_health: Health.unknown()
+                   health_details: %HanaClusterHealthDetails{
+                     replication_health: Health.passing(),
+                     checks_health: Health.unknown()
+                   }
                  } = cluster
         end
       )
@@ -802,18 +1325,16 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.critical()),
+          build(:cluster_registered_event,
+            cluster_id: cluster_id,
+            health: Health.critical(),
+            health_details: %HanaClusterHealthDetails{
+              replication_health: Health.critical()
+            }
+          ),
           %ChecksSelected{
             cluster_id: cluster_id,
             checks: selected_checks
-          },
-          %ClusterChecksHealthChanged{
-            cluster_id: cluster_id,
-            checks_health: Health.warning()
-          },
-          %ClusterDiscoveredHealthChanged{
-            cluster_id: cluster_id,
-            discovered_health: Health.critical()
           }
         ],
         SelectChecks.new!(%{
@@ -829,8 +1350,7 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           assert %Cluster{
                    cluster_id: ^cluster_id,
-                   health: Health.critical(),
-                   checks_health: Health.warning()
+                   health: Health.critical()
                  } = cluster
         end
       )
@@ -842,18 +1362,17 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.critical()),
+          build(:cluster_registered_event,
+            cluster_id: cluster_id,
+            health: Health.critical(),
+            health_details: %HanaClusterHealthDetails{
+              checks_health: Health.critical(),
+              replication_health: Health.critical()
+            }
+          ),
           %ChecksSelected{
             cluster_id: cluster_id,
             checks: selected_checks
-          },
-          %ClusterChecksHealthChanged{
-            cluster_id: cluster_id,
-            checks_health: Health.critical()
-          },
-          %ClusterDiscoveredHealthChanged{
-            cluster_id: cluster_id,
-            discovered_health: Health.critical()
           }
         ],
         CompleteChecksExecution.new!(%{
@@ -865,7 +1384,9 @@ defmodule Trento.ClusterTest do
           assert %Cluster{
                    cluster_id: ^cluster_id,
                    health: Health.critical(),
-                   checks_health: Health.critical()
+                   health_details: %HanaClusterHealthDetails{
+                     checks_health: Health.critical()
+                   }
                  } = cluster
         end
       )
@@ -874,100 +1395,292 @@ defmodule Trento.ClusterTest do
 
   describe "discovered health" do
     test "should change the discovered health and the cluster aggregated health" do
-      cluster_registered_event = build(:cluster_registered_event, health: :passing)
+      cluster_id = Faker.UUID.v4()
 
-      host_added_to_cluster_event =
-        build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
-
-      assert_events_and_state(
-        [
-          cluster_registered_event,
-          host_added_to_cluster_event,
-          %ClusterChecksHealthChanged{
-            cluster_id: cluster_registered_event.cluster_id,
-            checks_health: Health.unknown()
-          },
-          %ChecksSelected{
-            cluster_id: cluster_registered_event.cluster_id,
-            checks: []
-          }
-        ],
-        RegisterOnlineClusterHost.new!(%{
-          cluster_id: cluster_registered_event.cluster_id,
-          host_id: host_added_to_cluster_event.host_id,
-          name: cluster_registered_event.name,
-          sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
-          provider: cluster_registered_event.provider,
-          type: cluster_registered_event.type,
-          resources_number: cluster_registered_event.resources_number,
-          hosts_number: cluster_registered_event.hosts_number,
-          details: StructHelper.to_map(cluster_registered_event.details),
-          designated_controller: true,
-          discovered_health: :warning,
-          state: cluster_registered_event.state
-        }),
-        [
-          %ClusterDiscoveredHealthChanged{
-            cluster_id: cluster_registered_event.cluster_id,
-            discovered_health: :warning
-          },
-          %ClusterHealthChanged{
-            cluster_id: cluster_registered_event.cluster_id,
-            health: :warning
-          }
-        ],
-        fn cluster ->
-          %Cluster{
-            discovered_health: :warning,
+      scenarios = [
+        %{
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
             checks_health: Health.unknown(),
-            health: :warning
-          } = cluster
-        end
-      )
+            replication_health: Health.passing()
+          },
+          details: build(:hana_cluster_details),
+          updated_details: build(:hana_cluster_details, sr_health_state: "1", sbd_devices: []),
+          expected_event: %ClusterReplicationHealthChanged{
+            cluster_id: cluster_id,
+            replication_health: Health.critical()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            checks_health: Health.unknown(),
+            replication_health: Health.critical()
+          }
+        },
+        %{
+          type: :hana_scale_out,
+          health_details: %HanaClusterHealthDetails{
+            checks_health: Health.unknown(),
+            replication_health: Health.passing()
+          },
+          details: build(:hana_cluster_details),
+          updated_details: build(:hana_cluster_details, sr_health_state: "1", sbd_devices: []),
+          expected_event: %ClusterReplicationHealthChanged{
+            cluster_id: cluster_id,
+            replication_health: Health.critical()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            checks_health: Health.unknown(),
+            replication_health: Health.critical()
+          }
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            checks_health: Health.unknown(),
+            distributed_health: Health.passing()
+          },
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: true)
+            ),
+          updated_details:
+            build(:ascs_ers_cluster_details,
+              sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: false),
+              sbd_devices: []
+            ),
+          expected_event: %ClusterDistributedHealthChanged{
+            cluster_id: cluster_id,
+            distributed_health: Health.critical()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
+            checks_health: Health.unknown(),
+            distributed_health: Health.critical()
+          }
+        },
+        %{
+          type: ClusterType.hana_scale_up(),
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
+          details:
+            build(
+              :hana_cluster_details,
+              sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.healthy())]
+            ),
+          updated_details:
+            build(:hana_cluster_details,
+              sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.unhealthy())]
+            ),
+          expected_event: %ClusterSbdHealthChanged{
+            cluster_id: cluster_id,
+            sbd_health: Health.critical()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing(),
+            sbd_health: Health.critical()
+          }
+        },
+        %{
+          type: ClusterType.ascs_ers(),
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
+          details:
+            build(:ascs_ers_cluster_details,
+              sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.healthy())]
+            ),
+          updated_details:
+            build(:ascs_ers_cluster_details,
+              sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.unhealthy())]
+            ),
+          expected_event: %ClusterSbdHealthChanged{
+            cluster_id: cluster_id,
+            sbd_health: Health.critical()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing(),
+            sbd_health: Health.critical()
+          }
+        }
+      ]
+
+      for %{
+            type: type,
+            health_details: health_details,
+            details: details,
+            updated_details: updated_details,
+            expected_event: expected_event,
+            expected_health_details: expected_health_details
+          } <-
+            scenarios do
+        cluster_registered_event =
+          build(:cluster_registered_event,
+            cluster_id: cluster_id,
+            health: :passing,
+            type: type,
+            health_details: health_details,
+            details: details,
+            provider: :azure
+          )
+
+        host_added_to_cluster_event =
+          build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
+
+        assert_events_and_state(
+          [
+            cluster_registered_event,
+            host_added_to_cluster_event
+          ],
+          RegisterOnlineClusterHost.new!(%{
+            cluster_id: cluster_registered_event.cluster_id,
+            host_id: host_added_to_cluster_event.host_id,
+            name: cluster_registered_event.name,
+            sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
+            provider: cluster_registered_event.provider,
+            type: cluster_registered_event.type,
+            resources_number: cluster_registered_event.resources_number,
+            hosts_number: cluster_registered_event.hosts_number,
+            details: StructHelper.to_map(updated_details),
+            designated_controller: true,
+            state: cluster_registered_event.state
+          }),
+          [
+            %ClusterDetailsUpdated{
+              cluster_id: cluster_registered_event.cluster_id,
+              name: cluster_registered_event.name,
+              sap_instances: cluster_registered_event.sap_instances,
+              provider: :azure,
+              type: cluster_registered_event.type,
+              resources_number: cluster_registered_event.resources_number,
+              hosts_number: cluster_registered_event.hosts_number,
+              details: updated_details,
+              state: cluster_registered_event.state
+            },
+            expected_event,
+            %ClusterHealthChanged{
+              cluster_id: cluster_registered_event.cluster_id,
+              health: Health.critical()
+            }
+          ],
+          fn cluster ->
+            %Cluster{
+              health: Health.critical(),
+              health_details: ^expected_health_details
+            } = cluster
+          end
+        )
+      end
     end
 
     test "should not change the discovered health" do
-      cluster_registered_event =
-        build(:cluster_registered_event, health: :passing, provider: :azure)
+      scenarios = [
+        %{
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
+          },
+          details: build(:hana_cluster_details, sbd_devices: [])
+        },
+        %{
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
+          details: build(:hana_cluster_details)
+        },
+        %{
+          type: :hana_scale_out,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing()
+          },
+          details: build(:hana_cluster_details, sbd_devices: [])
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing()
+          },
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: true),
+              sbd_devices: []
+            )
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: true)
+            )
+        }
+      ]
 
-      host_added_to_cluster_event =
-        build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
+      for %{type: type, health_details: health_details, details: details} <-
+            scenarios do
+        cluster_registered_event =
+          build(:cluster_registered_event,
+            health: :passing,
+            type: type,
+            health_details: health_details,
+            details: details,
+            provider: :azure
+          )
 
-      assert_events_and_state(
-        [
-          cluster_registered_event,
-          %HostAddedToCluster{
+        host_added_to_cluster_event =
+          build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
+
+        assert_events_and_state(
+          [
+            cluster_registered_event,
+            %HostAddedToCluster{
+              cluster_id: cluster_registered_event.cluster_id,
+              host_id: host_added_to_cluster_event.host_id,
+              cluster_host_status: host_added_to_cluster_event.cluster_host_status
+            }
+          ],
+          RegisterOnlineClusterHost.new!(%{
             cluster_id: cluster_registered_event.cluster_id,
             host_id: host_added_to_cluster_event.host_id,
-            cluster_host_status: host_added_to_cluster_event.cluster_host_status
-          }
-        ],
-        RegisterOnlineClusterHost.new!(%{
-          cluster_id: cluster_registered_event.cluster_id,
-          host_id: host_added_to_cluster_event.host_id,
-          name: cluster_registered_event.name,
-          sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
-          type: cluster_registered_event.type,
-          resources_number: cluster_registered_event.resources_number,
-          hosts_number: cluster_registered_event.hosts_number,
-          discovered_health: :passing,
-          details: StructHelper.to_map(cluster_registered_event.details),
-          designated_controller: true,
-          provider: :azure,
-          state: cluster_registered_event.state
-        }),
-        [],
-        fn cluster ->
-          %Cluster{
-            discovered_health: :passing
-          } = cluster
-        end
-      )
+            name: cluster_registered_event.name,
+            sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
+            type: cluster_registered_event.type,
+            resources_number: cluster_registered_event.resources_number,
+            hosts_number: cluster_registered_event.hosts_number,
+            details: StructHelper.to_map(details),
+            designated_controller: true,
+            provider: :azure,
+            state: cluster_registered_event.state
+          }),
+          [],
+          fn cluster ->
+            %Cluster{
+              health_details: ^health_details
+            } = cluster
+          end
+        )
+      end
     end
 
     test "should not change the the cluster aggregated health if checks health is worse" do
       cluster_registered_event =
-        build(:cluster_registered_event, health: :passing, provider: :azure)
+        build(:cluster_registered_event,
+          health: :passing,
+          provider: :azure,
+          health: Health.critical(),
+          health_details: %HanaClusterHealthDetails{
+            checks_health: Health.critical(),
+            replication_health: Health.passing()
+          },
+          details: build(:hana_cluster_details, sbd_devices: [])
+        )
+
+      command_details = build(:hana_cluster_details, sr_health_state: "1", sbd_devices: [])
 
       host_added_to_cluster_event =
         build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
@@ -979,14 +1692,6 @@ defmodule Trento.ClusterTest do
           %ChecksSelected{
             cluster_id: cluster_registered_event.cluster_id,
             checks: [Faker.Cat.name()]
-          },
-          %ClusterChecksHealthChanged{
-            cluster_id: cluster_registered_event.cluster_id,
-            checks_health: :critical
-          },
-          %ClusterHealthChanged{
-            cluster_id: cluster_registered_event.cluster_id,
-            health: :critical
           }
         ],
         RegisterOnlineClusterHost.new!(%{
@@ -998,23 +1703,35 @@ defmodule Trento.ClusterTest do
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
           hosts_number: cluster_registered_event.hosts_number,
-          details: StructHelper.to_map(cluster_registered_event.details),
+          details: StructHelper.to_map(command_details),
           designated_controller: true,
-          discovered_health: :warning,
           state: cluster_registered_event.state
         }),
         [
-          %ClusterDiscoveredHealthChanged{
+          %ClusterDetailsUpdated{
             cluster_id: cluster_registered_event.cluster_id,
-            discovered_health: :warning
+            name: cluster_registered_event.name,
+            sap_instances: cluster_registered_event.sap_instances,
+            provider: :azure,
+            type: cluster_registered_event.type,
+            resources_number: cluster_registered_event.resources_number,
+            hosts_number: cluster_registered_event.hosts_number,
+            details: command_details,
+            state: cluster_registered_event.state
+          },
+          %ClusterReplicationHealthChanged{
+            cluster_id: cluster_registered_event.cluster_id,
+            replication_health: Health.critical()
           }
         ],
         fn cluster ->
-          %Cluster{
-            discovered_health: :warning,
-            checks_health: :critical,
-            health: :critical
-          } = cluster
+          assert %Cluster{
+                   health: :critical,
+                   health_details: %HanaClusterHealthDetails{
+                     checks_health: Health.critical(),
+                     replication_health: Health.critical()
+                   }
+                 } = cluster
         end
       )
     end
@@ -1047,11 +1764,15 @@ defmodule Trento.ClusterTest do
             hosts_number: cluster_registered_event.hosts_number,
             details: cluster_registered_event.details,
             health: cluster_registered_event.health,
+            health_details:
+              HanaClusterHealthDetails.new!(%{
+                checks_health: Health.unknown(),
+                sbd_health: Health.passing(),
+                replication_health: Health.passing()
+              }),
             state: cluster_registered_event.state,
             hosts: [],
-            selected_checks: [],
-            discovered_health: Health.passing(),
-            checks_health: Health.unknown()
+            selected_checks: []
           }
         },
         fn %Cluster{rolling_up: rolling_up} ->
@@ -1078,10 +1799,12 @@ defmodule Trento.ClusterTest do
               hosts_number: cluster_registered_event.hosts_number,
               details: cluster_registered_event.details,
               health: cluster_registered_event.health,
+              health_details: %HanaClusterHealthDetails{
+                checks_health: Health.unknown(),
+                replication_health: Health.passing()
+              },
               hosts: [],
-              selected_checks: [],
-              discovered_health: Health.passing(),
-              checks_health: Health.unknown()
+              selected_checks: []
             }
           }
         ],
@@ -1096,9 +1819,13 @@ defmodule Trento.ClusterTest do
           assert cluster.hosts_number == cluster_registered_event.hosts_number
           assert cluster.details == cluster_registered_event.details
           assert cluster.health == cluster_registered_event.health
-          assert cluster.hosts == []
           assert cluster.selected_checks == []
-          assert cluster.discovered_health == Health.passing()
+          assert cluster.hosts == []
+
+          assert cluster.health_details == %HanaClusterHealthDetails{
+                   checks_health: Health.unknown(),
+                   replication_health: Health.passing()
+                 }
         end
       )
     end
@@ -1121,7 +1848,6 @@ defmodule Trento.ClusterTest do
           host_id: Faker.UUID.v4(),
           name: Faker.StarWars.character(),
           sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
-          discovered_health: :unknown,
           type: :hana_scale_up,
           designated_controller: false,
           provider: :azure
@@ -1265,7 +1991,7 @@ defmodule Trento.ClusterTest do
           :register_online_cluster_host,
           cluster_id: cluster_id,
           host_id: new_host_id,
-          discovered_health: :critical,
+          details: params_for(:hana_cluster_details, sr_health_state: "1"),
           designated_controller: true
         )
 
@@ -1292,9 +2018,9 @@ defmodule Trento.ClusterTest do
             details: restoration_command.details,
             state: restoration_command.state
           },
-          %ClusterDiscoveredHealthChanged{
+          %ClusterReplicationHealthChanged{
             cluster_id: cluster_id,
-            discovered_health: :critical
+            replication_health: Health.critical()
           },
           %ClusterHealthChanged{
             cluster_id: cluster_id,
@@ -1466,6 +2192,249 @@ defmodule Trento.ClusterTest do
     end
   end
 
+  describe "cluster marked stale/in sync" do
+    test "should mark the cluster and its hosts stale" do
+      cluster_id = UUID.uuid4()
+      host_1_id = UUID.uuid4()
+      host_2_id = UUID.uuid4()
+      stale_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_2_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          # first stale host marks both the host and the cluster as stale
+          %MarkClusterHostStale{
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            stale_at: stale_at
+          },
+          # a second stale host only marks the host, the cluster is already stale
+          %MarkClusterHostStale{
+            cluster_id: cluster_id,
+            host_id: host_2_id,
+            stale_at: stale_at
+          }
+        ],
+        [
+          %ClusterHostDataMarkedStale{
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            stale_at: stale_at
+          },
+          %ClusterDataMarkedStale{
+            cluster_id: cluster_id,
+            stale_at: stale_at
+          },
+          %ClusterHostDataMarkedStale{
+            cluster_id: cluster_id,
+            host_id: host_2_id,
+            stale_at: stale_at
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: [^host_2_id, ^host_1_id]} = cluster
+        end
+      )
+    end
+
+    test "should mark the cluster as in sync only when all its stale hosts send fresh data again" do
+      cluster_id = UUID.uuid4()
+      host_1_id = UUID.uuid4()
+      host_2_id = UUID.uuid4()
+      host_3_id = UUID.uuid4()
+
+      initial_events = [
+        registered_event =
+          build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 3),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_2_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_3_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_2_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          # a host that was never stale sending data does not emit any event
+          build(:register_online_cluster_host,
+            cluster_id: cluster_id,
+            host_id: host_3_id,
+            designated_controller: false
+          ),
+          # a stale host recovering only syncs the host, the cluster is still stale
+          build(:register_online_cluster_host,
+            cluster_id: cluster_id,
+            host_id: host_2_id,
+            designated_controller: false
+          ),
+          # the last stale host recovering syncs both the host and the cluster
+          build(:register_online_cluster_host,
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            designated_controller: true,
+            name: registered_event.name,
+            type: registered_event.type,
+            sap_instances: Enum.map(registered_event.sap_instances, &Map.from_struct/1),
+            provider: registered_event.provider,
+            resources_number: registered_event.resources_number,
+            hosts_number: registered_event.hosts_number,
+            state: registered_event.state,
+            details: StructHelper.to_map(registered_event.details)
+          )
+        ],
+        [
+          %ClusterHostDataMarkedInSync{
+            cluster_id: cluster_id,
+            host_id: host_2_id
+          },
+          %ClusterHostDataMarkedInSync{
+            cluster_id: cluster_id,
+            host_id: host_1_id
+          },
+          %ClusterDataMarkedInSync{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: []} = cluster
+        end
+      )
+    end
+
+    test "should mark the cluster host and cluster in sync when a stale host is registered as offline" do
+      cluster_id = UUID.uuid4()
+      host_1_id = UUID.uuid4()
+      host_2_id = UUID.uuid4()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_2_id),
+        build(:cluster_host_status_changed_event,
+          cluster_id: cluster_id,
+          host_id: host_1_id,
+          cluster_host_status: ClusterHostStatus.offline()
+        ),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_1_id)
+      ]
+
+      register_command =
+        build(:register_offline_cluster_host, cluster_id: cluster_id, host_id: host_1_id)
+
+      assert_events_and_state(
+        initial_events,
+        register_command,
+        [
+          %ClusterHostDataMarkedInSync{
+            cluster_id: cluster_id,
+            host_id: host_1_id
+          },
+          %ClusterDataMarkedInSync{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: []} = cluster
+        end
+      )
+    end
+
+    test "should mark the cluster in sync only when the last stale host is removed from the cluster" do
+      cluster_id = UUID.uuid4()
+      host_1_id = UUID.uuid4()
+      host_2_id = UUID.uuid4()
+      host_3_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 3),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_2_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_3_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_2_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          # removing a stale host while other stale hosts remain keeps the cluster stale
+          %DeregisterClusterHost{
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            deregistered_at: deregistered_at
+          },
+          # removing the last stale host marks the cluster in sync
+          %DeregisterClusterHost{
+            cluster_id: cluster_id,
+            host_id: host_2_id,
+            deregistered_at: deregistered_at
+          }
+        ],
+        [
+          %HostRemovedFromCluster{
+            cluster_id: cluster_id,
+            host_id: host_1_id
+          },
+          %HostRemovedFromCluster{
+            cluster_id: cluster_id,
+            host_id: host_2_id
+          },
+          %ClusterDataMarkedInSync{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: [], hosts: [^host_3_id]} = cluster
+        end
+      )
+    end
+
+    test "should not mark the cluster in sync when removing the last stale host also deregisters the cluster" do
+      cluster_id = UUID.uuid4()
+      host_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 1),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %DeregisterClusterHost{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          deregistered_at: deregistered_at
+        },
+        [
+          %HostRemovedFromCluster{
+            cluster_id: cluster_id,
+            host_id: host_id
+          },
+          %ClusterDeregistered{
+            cluster_id: cluster_id,
+            deregistered_at: deregistered_at
+          },
+          %ClusterTombstoned{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: [], deregistered_at: ^deregistered_at} = cluster
+        end
+      )
+    end
+  end
+
   describe "legacy events" do
     test "should ignore legacy events and not update the aggregate" do
       cluster_id = Faker.UUID.v4()
@@ -1496,9 +2465,81 @@ defmodule Trento.ClusterTest do
           assert cluster.health == cluster_registered_event.health
           assert cluster.hosts == []
           assert cluster.selected_checks == []
-          assert cluster.discovered_health == :passing
         end
       )
+    end
+
+    test "should apply new health with legacy ClusterDiscoveredHealthChanged event" do
+      cluster_id = Faker.UUID.v4()
+
+      scenarios = [
+        %{
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            checks_health: Health.warning(),
+            replication_health: Health.passing()
+          }
+        },
+        %{
+          type: :hana_scale_out,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            checks_health: Health.warning(),
+            replication_health: Health.passing()
+          }
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.unknown()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
+            checks_health: Health.warning(),
+            distributed_health: Health.passing()
+          }
+        },
+        %{
+          type: :unknown,
+          expected_health_details: nil
+        }
+      ]
+
+      for %{
+            type: type,
+            health_details: health_details,
+            expected_health_details: expected_health_details
+          } <- scenarios do
+        cluster_registered_event =
+          build(
+            :cluster_registered_event,
+            cluster_id: cluster_id,
+            type: type,
+            health_details: health_details
+          )
+
+        assert_state(
+          [
+            cluster_registered_event,
+            %ClusterChecksHealthChanged{
+              cluster_id: cluster_id,
+              checks_health: Health.warning()
+            },
+            %ClusterDiscoveredHealthChanged{
+              cluster_id: cluster_id,
+              discovered_health: Health.passing()
+            }
+          ],
+          [],
+          fn cluster ->
+            assert %Cluster{health_details: ^expected_health_details} = cluster
+          end
+        )
+      end
     end
   end
 end

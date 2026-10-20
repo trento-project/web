@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest do
   use Trento.DataCase
@@ -69,7 +69,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
           :with_correlation ->
             correlation_id = UUID.uuid4()
             Process.put(:correlation_key, correlation_id)
-            key = ActivityLog.correlation_key(:suse_manager_settings)
+            key = ActivityLog.correlation_key(:smlm_settings)
             _ = ActivityLog.put_correlation_id(key, correlation_id)
 
             expect(
@@ -92,7 +92,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
         assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
       end
 
-      test "should discover data about hosts just when SUSE Manager's settings are set" do
+      test "should discover data about hosts just when SUSE Multi-Linux Manager's settings are set" do
         event = build(:software_updates_discovery_requested_event)
 
         expect(

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.ActivityLogTest do
   @moduledoc false
@@ -293,6 +293,44 @@ defmodule Trento.ActivityLogTest do
     test "malformed query yields empty result" do
       insert_list(50, :activity_log_entry)
       {:ok, [], _meta} = ActivityLog.list_activity_log(%{search: "@!$%"})
+    end
+  end
+
+  describe "Activity Log types inclusion" do
+    setup do
+      for user_management_activity_type <- [
+            "login_attempt",
+            "user_creation",
+            "user_modification",
+            "user_deletion",
+            "profile_update",
+            "personal_access_token_creation",
+            "personal_access_token_deletion",
+            "personal_access_token_admin_deletion",
+            "ai_configuration_creation",
+            "ai_configuration_modification",
+            "ai_configuration_deletion"
+          ] do
+        insert(:activity_log_entry, type: user_management_activity_type)
+      end
+
+      :ok
+    end
+
+    test "should exclude user management activities by default" do
+      insert(:activity_log_entry, type: "request_checks_execution")
+
+      {:ok, returned_results, _meta} = ActivityLog.list_activity_log(%{})
+
+      assert length(returned_results) == 1
+    end
+
+    test "should include user management activity" do
+      insert(:activity_log_entry, type: "request_checks_execution")
+
+      {:ok, returned_results, _meta} = ActivityLog.list_activity_log(%{}, true)
+
+      assert length(returned_results) == 12
     end
   end
 end

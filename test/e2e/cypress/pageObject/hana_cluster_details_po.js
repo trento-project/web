@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 export * from './base_po.js';
 import * as basePage from './base_po.js';
@@ -43,7 +43,7 @@ const clusterStates = {
 //Attributes
 
 const url = '/clusters';
-const wandaUrl = Cypress.env('wandaUrl');
+const wandaUrl = Cypress.expose('wandaUrl');
 const catalogEndpointAlias = 'catalog';
 const lastExecutionEndpointAlias = 'lastExecution';
 const getChecksEndpointAlias = 'getChecks';
@@ -100,6 +100,9 @@ const resourcesTable = 'tbody:eq(2)';
 const resourcesRowCollapsibleCell = `${resourcesTable} td:nth-child(1)`;
 const clusterStateLabel = 'span:contains("State:")';
 const clusterStateBadge = `${clusterStateLabel} svg`;
+
+const stalenessBannerName =
+  /An agent in one of the cluster hosts is not reporting since/;
 
 // UI Interactions
 
@@ -209,6 +212,19 @@ export const validateAvailableHanaClusterCostOptUrl = () =>
 
 export const expectedClusterNameIsDisplayedInHeader = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
+
+export const expectedClusterHealthIsDisplayedInHeader = () => {
+  cy.findByRole('img', { name: /cluster health/i }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed(
+    '@pageHealthIcon',
+    availableHanaCluster.health
+  );
+};
+
+export const criticalClusterHealthIsDisplayedInHeader = () => {
+  cy.findByRole('img', { name: /cluster health/i }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', 'critical');
+};
 
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
@@ -433,16 +449,19 @@ export const expectedClusterStateIsDisplayed = (state) => {
     });
 };
 
-export const sbdClusterHasExpectedNameAndStatus = () =>
-  cy
-    .wrap(availableHanaCluster.sbd)
-    .each((item) =>
-      cy
-        .get('.tn-sbd-details')
-        .contains(item.deviceName)
-        .children()
-        .contains(item.status)
-    );
+export const sbdClusterHasExpectedNameAndStatus = (overrides = []) => {
+  const sbd = availableHanaCluster.sbd.map((sbd_item, i) => ({
+    ...sbd_item,
+    ...overrides[i],
+  }));
+  cy.wrap(sbd).each((item) =>
+    cy
+      .get('.tn-sbd-details')
+      .contains(item.deviceName)
+      .children()
+      .contains(item.status)
+  );
+};
 
 export const passingChecksUrlIsTheExpected = () =>
   validateUrl(`/${availableHanaCluster.id}/executions/last?health=passing`);
@@ -505,7 +524,8 @@ export const linkToDeregisteredHostIsNotAvailable = () =>
 export const linkToDeregisteredHostIsAvailable = () =>
   cy
     .get(
-      `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`
+      `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`,
+      { timeout: 20000 }
     )
     .should('have.attr', 'href');
 
@@ -517,6 +537,24 @@ export const notAuthorizedTooltipIsDisplayed = () =>
 
 export const notAuthorizedTooltipIsNotDisplayed = () =>
   cy.get(actionNotAuthorizedTooltip).should('not.exist');
+
+export const hanaClusterHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: /cluster health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
+
+export const hanaClusterHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: /cluster health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+};
+
+export const hanaClusterStaleBannerIsDisplayed = (timeout = 20000) =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout })
+    .should('be.visible');
+
+export const hanaClusterStaleBannerIsNotDisplayed = () =>
+  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
 
 // API
 
@@ -580,6 +618,15 @@ export const deregisterAngiClusterCostOptHosts = () =>
   cy
     .wrap(availableAngiCluster.hosts)
     .each(({ id }) => basePage.apiDeregisterHost(id));
+
+export const startHanaClusterAgentsHeartbeat = () =>
+  basePage.startAgentsHeartbeat(availableHanaCluster.hosts.map(({ id }) => id));
+
+export const startHanaClusterAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([availableHanaCluster.hosts[1].id]);
+
+export const stopHanaClusterAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([availableHanaCluster.hosts[1].id]);
 
 // Helpers
 

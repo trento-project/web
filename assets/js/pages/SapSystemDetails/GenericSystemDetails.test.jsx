@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { faker } from '@faker-js/faker';
@@ -109,9 +109,9 @@ describe('GenericSystemDetails', () => {
     const sapSystem = sapSystemFactory.build({
       ensa_version: 'ensa1',
       instances: sapSystemApplicationInstanceFactory.buildList(5),
+      hosts: hostFactory.buildList(5),
+      database_health: 'passing',
     });
-
-    sapSystem.hosts = hostFactory.buildList(5);
 
     const { sid, application_instances: applicationInstances } = sapSystem;
     const { features } = applicationInstances[0];
@@ -124,14 +124,33 @@ describe('GenericSystemDetails', () => {
       />
     );
 
-    expect(screen.getByText(title)).toBeTruthy();
-    expect(screen.getByText('Application server')).toBeTruthy();
+    expect(
+      screen.getByRole('heading', {
+        name: title,
+      })
+    ).toBeVisible();
+    expect(screen.getByRole('img', { name: /system health/i })).toBeVisible();
+
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
     expect(screen.queryByText('System Replication')).not.toBeInTheDocument();
     features.split('|').forEach((role) => {
       expect(screen.queryAllByText(role)).toBeTruthy();
     });
+    const databaseLink = screen.getByText('Database').nextSibling.firstChild;
+    expect(databaseLink).toHaveTextContent(sapSystem.database_sid);
+    expect(databaseLink).toHaveAttribute(
+      'href',
+      `/databases/${sapSystem.database_id}`
+    );
+    expect(
+      within(screen.getByText('Database health').nextSibling).getByTestId(
+        'eos-svg-component'
+      )
+    ).toHaveClass('fill-jungle-green-500');
+    expect(screen.getByText('Tenant').nextSibling).toHaveTextContent(
+      sapSystem.tenant
+    );
   });
 
   it('should render a not found label if system is not there', () => {
@@ -160,6 +179,66 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent('-');
+  });
+
+  it.each([
+    {
+      type: 'ABAP',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'ABAP' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+    {
+      type: 'JAVA',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'J2EE' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+    {
+      type: 'ABAP+JAVA',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'ABAP' }),
+          sapSystemApplicationInstanceFactory.build({ features: 'J2EE' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+  ])('should render proper $type SAP system type', ({ type, system }) => {
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={system}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    expect(screen.getByText('Type').nextSibling).toHaveTextContent(type);
+  });
+
+  it('should render proper HANA database type', () => {
+    const database = databaseFactory.build({
+      instances: databaseInstanceFactory.buildList(5),
+      hosts: hostFactory.buildList(5),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+      />
+    );
+
+    expect(screen.getByText('Type').nextSibling).toHaveTextContent(
+      'HANA Database'
+    );
   });
 
   it.each([
@@ -265,6 +344,85 @@ describe('GenericSystemDetails', () => {
     );
   });
 
+  it('should render System Replication data with active instance data', () => {
+    const database = databaseFactory.build({
+      hosts: hostFactory.buildList(2),
+      instances: [
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 999,
+          system_replication_status: 'STALE_STATUS',
+          stale_at: faker.date.past().toISOString(),
+        }),
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 1,
+          system_replication_status: 'ACTIVE',
+          stale_at: null,
+        }),
+      ],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        getSiteOperations={getDatabaseSiteOperations}
+      />
+    );
+
+    const siteTables = screen.getAllByRole('table');
+    const { getByText } = within(siteTables[0].previousSibling);
+
+    expect(siteTables[0].previousSibling).toHaveClass('bg-white');
+    expect(getByText('Tier').nextSibling).toHaveTextContent('1');
+    expect(getByText('Status').nextSibling).toHaveTextContent('ACTIVE');
+  });
+
+  it('should render System Replication data with newest stale instance data if all instances are stale', () => {
+    const olderDate = new Date('2024-01-01T10:00:00Z');
+    const newerDate = new Date('2024-01-02T10:00:00Z');
+
+    const database = databaseFactory.build({
+      hosts: hostFactory.buildList(2),
+      instances: [
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 1,
+          system_replication_status: 'OLD_STATUS',
+          stale_at: olderDate.toISOString(),
+        }),
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 2,
+          system_replication_status: 'RECENT_STATUS',
+          stale_at: newerDate.toISOString(),
+        }),
+      ],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        getSiteOperations={getDatabaseSiteOperations}
+      />
+    );
+
+    const siteTables = screen.getAllByRole('table');
+    const { getByText } = within(siteTables[0].previousSibling);
+
+    expect(siteTables[0].previousSibling).toHaveClass('bg-gray-100');
+    expect(getByText('Tier').nextSibling).toHaveTextContent('2');
+    expect(getByText('Status').nextSibling).toHaveTextContent('RECENT_STATUS');
+  });
+
   it('should render hosts table', () => {
     const cluster = clusterFactory.build({ type: 'hana_scale_up' });
     const host = hostFactory.build({ cluster });
@@ -315,9 +473,81 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
-    const [_sapSystemIcon, health, _cleanUpIcon] =
-      screen.getAllByTestId('eos-svg-component');
+    const [
+      _mainHealth,
+      _sapSystemIcon,
+      _databaseHealth,
+      _databaseIcon,
+      health,
+      _cleanUpIcon,
+    ] = screen.getAllByTestId('eos-svg-component');
     expect(health).toHaveClass('fill-black');
+  });
+
+  it('should render stale system and instances', () => {
+    const staleAt = '2026-06-15T10:30:00Z';
+    const userTimezone = 'America/New_York';
+    const sapSystem = sapSystemFactory.build({
+      stale_at: staleAt,
+      instances: [
+        sapSystemApplicationInstanceFactory.build(),
+        sapSystemApplicationInstanceFactory.build({
+          stale_at: faker.date.past().toISOString(),
+        }),
+        sapSystemApplicationInstanceFactory.build(),
+      ],
+      hosts: hostFactory.buildList(3),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title="SAP System Details"
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+        userTimezone={userTimezone}
+      />
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'SAP System Details' })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('alert', {
+        name: /An agent in one of the SAP system hosts is not reporting since 15 Jun 2026, 06:30:00/,
+      })
+    ).toBeVisible();
+    expect(screen.getByRole('img', { name: /system health/i })).toHaveAttribute(
+      'data-stale'
+    );
+
+    const [layoutTable, _] = screen.getAllByRole('table');
+    const rows = layoutTable.querySelectorAll('tbody > tr');
+
+    expect(rows[0]).not.toHaveClass('bg-gray-100');
+    expect(rows[1]).toHaveClass('bg-gray-100');
+    expect(rows[2]).not.toHaveClass('bg-gray-100');
+  });
+
+  it('should render stale database in a SAP system details view', () => {
+    const sapSystem = sapSystemFactory.build({
+      database_stale_at: '2026-06-15T10:30:00Z',
+      instances: [],
+      hosts: [],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    expect(
+      within(screen.getByText('Database health').nextSibling).getAllByTestId(
+        'eos-svg-component'
+      ).length
+    ).toBe(2);
   });
 
   it.each([
@@ -376,11 +606,11 @@ describe('GenericSystemDetails', () => {
       hosts,
       instances: [
         sapSystemApplicationInstanceFactory.build({
-          health: 'passing',
+          status: 'green',
           host: hosts[0],
         }),
         sapSystemApplicationInstanceFactory.build({
-          health: 'unknown',
+          status: 'gray',
           host: hosts[0],
         }),
       ],
@@ -435,33 +665,33 @@ describe('GenericSystemDetails', () => {
     {
       operation: 'Start system',
       enabled: true,
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: 'Start system',
       enabled: false,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop system',
       enabled: true,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop system',
       enabled: false,
-      health: 'unknown',
+      status: 'gray',
     },
   ])(
     'should show SAP system operation $operation with enabled state as $enabled',
-    async ({ operation, enabled, health }) => {
+    async ({ operation, enabled, status }) => {
       const user = userEvent.setup();
 
       const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
       const system = sapSystemFactory.build({
         hosts,
         instances: sapSystemApplicationInstanceFactory.buildList(1, {
-          health,
+          status,
           host: hosts[0],
         }),
       });
@@ -487,33 +717,33 @@ describe('GenericSystemDetails', () => {
     {
       operation: 'Start database',
       enabled: true,
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: 'Start database',
       enabled: false,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop database',
       enabled: true,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop database',
       enabled: false,
-      health: 'unknown',
+      status: 'gray',
     },
   ])(
     'should show database operation $operation with enabled state as $enabled',
-    async ({ operation, enabled, health }) => {
+    async ({ operation, enabled, status }) => {
       const user = userEvent.setup();
 
       const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
       const database = databaseFactory.build({
         hosts,
         instances: databaseInstanceFactory.buildList(1, {
-          health,
+          status,
           host: hosts[0],
         }),
       });
@@ -540,26 +770,26 @@ describe('GenericSystemDetails', () => {
     {
       operation: 'Start database',
       enabled: true,
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: 'Start database',
       enabled: false,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop database',
       enabled: true,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop database',
       enabled: false,
-      health: 'unknown',
+      status: 'gray',
     },
   ])(
     'should show database site operation $operation with enabled state as $enabled',
-    async ({ operation, enabled, health }) => {
+    async ({ operation, enabled, status }) => {
       const user = userEvent.setup();
 
       const host1 = hostFactory.build({ heartbeat: 'passing' });
@@ -570,7 +800,7 @@ describe('GenericSystemDetails', () => {
         hosts: [host1, host2, host3],
         instances: [
           databaseInstanceFactory.build({
-            health,
+            status,
             system_replication: 'Primary',
             system_replication_site: 'Site1',
             system_replication_tier: 1,
@@ -633,16 +863,16 @@ describe('GenericSystemDetails', () => {
     {
       operation: SAP_INSTANCE_START,
       menuItemText: 'Start instance',
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: SAP_INSTANCE_STOP,
       menuItemText: 'Stop instance',
-      health: 'passing',
+      status: 'green',
     },
   ])(
     'should show instance operation $operation in running state',
-    async ({ operation, menuItemText, health }) => {
+    async ({ operation, menuItemText, status }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
       const hostID = hosts[0].id;
@@ -652,7 +882,7 @@ describe('GenericSystemDetails', () => {
         hosts,
         instances: [
           sapSystemApplicationInstanceFactory.build({
-            health,
+            status,
             host_id: hostID,
             host: hosts[0],
             instance_number: instanceNumber,
@@ -691,34 +921,34 @@ describe('GenericSystemDetails', () => {
     {
       operation: SAP_SYSTEM_START,
       menuItemText: 'Start system',
-      health: 'unknown',
+      status: 'gray',
       type: APPLICATION_TYPE,
       getOperations: getSapSystemOperations,
     },
     {
       operation: SAP_SYSTEM_STOP,
       menuItemText: 'Stop system',
-      health: 'passing',
+      status: 'green',
       type: APPLICATION_TYPE,
       getOperations: getSapSystemOperations,
     },
     {
       operation: DATABASE_START,
       menuItemText: 'Start database',
-      health: 'unknown',
+      status: 'gray',
       type: DATABASE_TYPE,
       getOperations: getDatabaseOperations,
     },
     {
       operation: DATABASE_STOP,
       menuItemText: 'Stop database',
-      health: 'passing',
+      status: 'green',
       type: DATABASE_TYPE,
       getOperations: getDatabaseOperations,
     },
   ])(
     'should show system/database operation $operation in running state',
-    async ({ operation, menuItemText, health, type, getOperations }) => {
+    async ({ operation, menuItemText, status, type, getOperations }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
 
@@ -726,7 +956,7 @@ describe('GenericSystemDetails', () => {
         hosts,
         instances: [
           sapSystemApplicationInstanceFactory.build({
-            health,
+            status,
             host: hosts[0],
           }),
         ],
@@ -757,16 +987,16 @@ describe('GenericSystemDetails', () => {
     {
       operation: DATABASE_START,
       menuItemText: 'Start database',
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: DATABASE_STOP,
       menuItemText: 'Stop database',
-      health: 'passing',
+      status: 'green',
     },
   ])(
     'should show database site operation $operation in running state',
-    async ({ operation, menuItemText, health }) => {
+    async ({ operation, menuItemText, status }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
       const site = 'Site1';
@@ -775,13 +1005,13 @@ describe('GenericSystemDetails', () => {
         hosts,
         instances: [
           databaseInstanceFactory.build({
-            health,
+            status,
             system_replication: 'Primary',
             system_replication_site: site,
             host: hosts[0],
           }),
           databaseInstanceFactory.build({
-            health,
+            status,
             system_replication: 'Secondary',
             system_replication_site: 'Site2',
             host: hosts[1],
@@ -848,7 +1078,7 @@ describe('GenericSystemDetails', () => {
           sapSystemApplicationInstanceFactory.build({
             host_id: hostID,
             sap_system_id: sapSystemID,
-            health: 'passing',
+            status: 'green',
             host: hosts[0],
           }),
         ],
@@ -892,7 +1122,7 @@ describe('GenericSystemDetails', () => {
       hosts,
       instances: [
         sapSystemApplicationInstanceFactory.build({
-          health: 'unknown',
+          status: 'gray',
           host_id: hostID,
           host: hosts[0],
         }),
@@ -1167,39 +1397,39 @@ describe('GenericSystemDetails', () => {
         operation: SAP_INSTANCE_START,
         label: 'Start instance',
         abilities: [],
-        health: 'unknown',
+        status: 'gray',
       },
       {
         forbidden: false,
         operation: SAP_INSTANCE_START,
         label: 'Start instance',
         abilities: [{ name: 'start', resource: 'application_instance' }],
-        health: 'unknown',
+        status: 'gray',
       },
       {
         forbidden: true,
         operation: SAP_INSTANCE_STOP,
         label: 'Stop instance',
         abilities: [],
-        health: 'passing',
+        status: 'green',
       },
       {
         forbidden: false,
         operation: SAP_INSTANCE_STOP,
         label: 'Stop instance',
         abilities: [{ name: 'stop', resource: 'application_instance' }],
-        health: 'passing',
+        status: 'green',
       },
     ])(
       'should forbid/authorize instance operation $operation',
-      async ({ forbidden, label, abilities, health }) => {
+      async ({ forbidden, label, abilities, status }) => {
         const user = userEvent.setup();
 
         const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
         const sapSystem = sapSystemFactory.build({
           hosts,
           instances: sapSystemApplicationInstanceFactory.buildList(1, {
-            health,
+            status,
             host: hosts[0],
           }),
         });
@@ -1232,7 +1462,7 @@ describe('GenericSystemDetails', () => {
         operation: SAP_SYSTEM_START,
         label: 'Start system',
         abilities: [],
-        health: 'unknown',
+        status: 'gray',
         type: APPLICATION_TYPE,
         getOperations: getSapSystemOperations,
       },
@@ -1241,7 +1471,7 @@ describe('GenericSystemDetails', () => {
         operation: SAP_SYSTEM_START,
         label: 'Start system',
         abilities: [{ name: 'start', resource: 'sap_system' }],
-        health: 'unknown',
+        status: 'gray',
         type: APPLICATION_TYPE,
         getOperations: getSapSystemOperations,
       },
@@ -1250,7 +1480,7 @@ describe('GenericSystemDetails', () => {
         operation: SAP_SYSTEM_STOP,
         label: 'Stop system',
         abilities: [],
-        health: 'passing',
+        status: 'green',
         type: APPLICATION_TYPE,
         getOperations: getSapSystemOperations,
       },
@@ -1259,7 +1489,7 @@ describe('GenericSystemDetails', () => {
         operation: SAP_SYSTEM_STOP,
         label: 'Stop system',
         abilities: [{ name: 'stop', resource: 'sap_system' }],
-        health: 'passing',
+        status: 'green',
         type: APPLICATION_TYPE,
         getOperations: getSapSystemOperations,
       },
@@ -1268,7 +1498,7 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_START,
         label: 'Start database',
         abilities: [],
-        health: 'unknown',
+        status: 'gray',
         type: DATABASE_TYPE,
         getOperations: getDatabaseOperations,
       },
@@ -1277,7 +1507,7 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_START,
         label: 'Start database',
         abilities: [{ name: 'start', resource: 'database' }],
-        health: 'unknown',
+        status: 'gray',
         type: DATABASE_TYPE,
         getOperations: getDatabaseOperations,
       },
@@ -1286,7 +1516,7 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_STOP,
         label: 'Stop database',
         abilities: [],
-        health: 'passing',
+        status: 'green',
         type: DATABASE_TYPE,
         getOperations: getDatabaseOperations,
       },
@@ -1295,13 +1525,13 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_STOP,
         label: 'Stop database',
         abilities: [{ name: 'stop', resource: 'database' }],
-        health: 'passing',
+        status: 'green',
         type: DATABASE_TYPE,
         getOperations: getDatabaseOperations,
       },
     ])(
       'should forbid/authorize system/database operation $operation',
-      async ({ forbidden, label, abilities, health, type, getOperations }) => {
+      async ({ forbidden, label, abilities, status, type, getOperations }) => {
         const user = userEvent.setup();
 
         const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
@@ -1309,7 +1539,7 @@ describe('GenericSystemDetails', () => {
         const sapSystem = sapSystemFactory.build({
           hosts,
           instances: sapSystemApplicationInstanceFactory.buildList(1, {
-            health,
+            status,
             host: hosts[0],
           }),
         });
@@ -1338,39 +1568,39 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_START,
         label: 'Start database',
         abilities: [],
-        health: 'unknown',
+        status: 'gray',
       },
       {
         forbidden: false,
         operation: DATABASE_START,
         label: 'Start database',
         abilities: [{ name: 'start', resource: 'database' }],
-        health: 'unknown',
+        status: 'gray',
       },
       {
         forbidden: true,
         operation: DATABASE_STOP,
         label: 'Stop database',
         abilities: [],
-        health: 'passing',
+        status: 'green',
       },
       {
         forbidden: false,
         operation: DATABASE_STOP,
         label: 'Stop database',
         abilities: [{ name: 'stop', resource: 'database' }],
-        health: 'passing',
+        status: 'green',
       },
     ])(
       'should forbid/authorize database site operation $operation',
-      async ({ forbidden, label, abilities, health }) => {
+      async ({ forbidden, label, abilities, status }) => {
         const user = userEvent.setup();
 
         const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
         const database = databaseFactory.build({
           hosts,
           instances: databaseInstanceFactory.buildList(1, {
-            health,
+            status,
             system_replication: 'Primary',
             system_replication_site: 'Site1',
             host: hosts[0],

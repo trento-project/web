@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
 
@@ -9,7 +9,6 @@ export const updateCatalog = createAction(UPDATE_CATALOG);
 const initialState = {
   loading: true,
   data: [],
-  filteredCatalog: [],
   error: null,
 };
 
@@ -22,29 +21,18 @@ export const catalogSlice = createSlice({
     },
     setCatalogData: (state, action) => {
       state.data = action.payload.data;
-      state.filteredCatalog = action.payload.data;
-      state.error = null;
-      state.loading = false;
-    },
-    setFilteredCatalog: (state, action) => {
-      state.filteredCatalog = action.payload.data;
       state.error = null;
       state.loading = false;
     },
     setCatalogError: (state, action) => {
       state.data = [];
-      state.filteredCatalog = [];
       state.error = action.payload.error;
       state.loading = false;
     },
   },
 });
 
-export const {
-  setCatalogLoading,
-  setFilteredCatalog,
-  setCatalogData,
-  setCatalogError,
-} = catalogSlice.actions;
+export const { setCatalogLoading, setCatalogData, setCatalogError } =
+  catalogSlice.actions;
 
 export default catalogSlice.reducer;

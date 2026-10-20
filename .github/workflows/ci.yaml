@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 name: Continuous Integration
 
@@ -25,13 +25,12 @@ concurrency:
 
 env:
   MIX_ENV: test
-  ELIXIR_BC: "1.15.7-otp-26"
-  ERLANG_BC: "26.2.1"
   NODEJS_BC: "20.20.0"
   OPENAPI_DIFF_VERSION: "2.1.7" # https://github.com/OpenAPITools/openapi-diff/releases
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
-  K3S_VERSION: "v1.31.2+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
-  CERT_MANAGER_VERSION: "v1.14.5" # https://github.com/cert-manager/cert-manager/releases
+  K3S_VERSION: "v1.36.1+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
+  CERT_MANAGER_VERSION: "v1.20.2" # https://github.com/cert-manager/cert-manager/releases
+  HELM_VERSION: "v4.2.0" # https://github.com/helm/helm/releases
   POSTGRESQL_VERSION: "17" # (major version) https://registry.suse.com/repositories/suse-postgres17?tag=17.5
 
 jobs:
@@ -45,7 +44,7 @@ jobs:
       assets-changed: ${{ steps.set-outputs.outputs.assets-changed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -59,7 +58,7 @@ jobs:
           fi
 
       - name: Detect file changes
-        uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4
         id: filter
         if: steps.check-pr.outputs.running-on-pr == 'true'
         with:
@@ -101,90 +100,67 @@ jobs:
             echo "assets-changed=${{ steps.filter.outputs.assets || 'false' }}" >> $GITHUB_OUTPUT
           fi
 
+  elixir-toolchain:
+    name: Elixir toolchain
+    needs: [detect-changes]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      ELIXIR_DEV: ${{ steps.toolchain.outputs.ELIXIR_DEV }}
+      ERLANG_DEV: ${{ steps.toolchain.outputs.ERLANG_DEV }}
+      TOOLCHAINS: ${{ steps.toolchain.outputs.TOOLCHAINS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compute OTP/Elixir toolchain
+        id: toolchain
+        uses: trento-project/.github/actions/elixir-toolchain@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
+
   setup-matrix-env:
     runs-on: ubuntu-24.04
     needs: [detect-changes]
     outputs:
-      ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
-      ERLANG_DEV: ${{ env.ERLANG_VERSION }}
       NODEJS_DEV: ${{ env.NODEJS_VERSION }}
-      ELIXIR_BC: ${{ env.ELIXIR_BC }}
-      ERLANG_BC: ${{ env.ERLANG_BC }}
       NODEJS_BC: ${{ env.NODEJS_BC }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: gather versions
-        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
+        uses: endorama/asdf-parse-tool-versions@115a5df5884438dfd08a3a21e9c9efdf06dd907e # v1.7.0
       - name: Compute matrix
+        id: compute-matrix
         run: |
-          echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
-          echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
           echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
-          echo "ELIXIR_BC=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
-          echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
           echo "NODEJS_BC=${{ env.NODEJS_BC }}" >> $GITHUB_OUTPUT
 
   elixir-deps:
-    name: Elixir ${{ matrix.mix_env }} dependencies
-    needs: [setup-matrix-env, detect-changes]
+    name: Elixir ${{ matrix.mix_env }} dependencies (Elixir ${{ matrix.toolchain.elixir }})
+    needs: [elixir-toolchain, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - mix_env: dev
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - mix_env: dev
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          - mix_env: test
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - mix_env: test
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          - mix_env: prod
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - mix_env: prod
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        mix_env: ["dev", "test", "prod"]
+        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
+          persist-credentials: false
+      - name: Set up Elixir and build dependencies
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
-      - name: Install Dependencies
-        if: steps.mix-cache.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p priv/plts
-          mix local.rebar --force
-          mix local.hex --force
-          mix deps.get
-          mix deps.compile --warnings-as-errors
-      - name: Build Dialyzer PLT
-        if: steps.mix-cache.outputs.cache-hit != 'true' && matrix.mix_env != 'prod'
-        run: mix dialyzer --plt
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
+          build-deps: "true"
 
   npm-deps:
     name: Npm dependencies
@@ -199,16 +175,16 @@ jobs:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
@@ -227,7 +203,7 @@ jobs:
         shell: bash
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Install codespell
@@ -243,34 +219,25 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Check license Headers
-        uses: apache/skywalking-eyes/header@61275cc80d0798a405cb070f7d3a8aaf7cf2c2c1 # v0.8.0
+        uses: apache/skywalking-eyes/header@a196742f472feaffafea537ce5a2a4c3c53a8de4 # v0.9.0
 
   generate-docs:
     name: Generate project documentation
-    needs: [detect-changes]
+    needs: [elixir-toolchain, detect-changes]
     runs-on: ubuntu-24.04
     if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - name: Set up Elixir
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
-        with:
-          version-file: .tool-versions
-          version-type: strict
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Elixir and restore cached dependencies
         id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@a745603eef443621976df401f45aaff4d849056b # v1
       - name: Generate openapi.json
@@ -282,7 +249,7 @@ jobs:
           spec-file: openapi.json
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to Pages
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc
@@ -300,16 +267,16 @@ jobs:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
@@ -321,37 +288,24 @@ jobs:
         run: cd assets && npm run format:check
 
   static-code-analysis-elixir:
-    name: Static Code Analysis Elixir
-    needs: [setup-matrix-env, elixir-deps, detect-changes]
+    name: Static Code Analysis Elixir (Elixir ${{ matrix.toolchain.elixir }})
+    needs: [elixir-toolchain, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
-        with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+      - name: Set up Elixir and restore cached dependencies
         id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
       - name: Check for unused dependencies
         run: mix deps.unlock --check-unused
       - name: Check Code Format
@@ -374,16 +328,16 @@ jobs:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
@@ -393,105 +347,138 @@ jobs:
         run: cd assets && npm test
 
   test-elixir:
-    name: Elixir tests
-    needs: [setup-matrix-env, elixir-deps, detect-changes]
+    name: Elixir tests (Elixir ${{ matrix.toolchain.elixir }})
+    needs: [elixir-toolchain, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
-        with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+      - name: Set up Elixir and restore cached dependencies
         id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@d2bee4f07e8ca410d6b196d00f90c12e7d48c33a # v2.6.0
+        uses: isbang/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
       - name: Run test
         env:
           MIX_ENV: test
-        run: mix coveralls.json --warnings-as-errors --trace
+        run: |
+          mix coveralls.json --warnings-as-errors --trace || \
+            if [[ $? = 2 ]]; then
+              echo "::warning::Backend tests failed, retrying previously failed tests..."
+              mix test --trace --failed
+            else
+              false
+            fi
       - name: Upload coverage to Coveralls
         continue-on-error: true
-        uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
         with:
           file: cover/excoveralls.json
           format: coveralls
           parallel: true
-          flag-name: Elixir-${{ matrix.elixir }}
+          flag-name: Elixir-${{ matrix.toolchain.elixir }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  coveralls-finish:
-    needs: [test-elixir]
-    if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2
-        with:
-          parallel-finished: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  test-release:
-    name: Test release build
-    needs: [setup-matrix-env, elixir-deps, detect-changes]
+  test-elixir-tls-handshake:
+    name: TLS handshake tests (OTP ${{ matrix.otp }})
+    needs: [elixir-toolchain, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        otp:
+          # SUSE's erlang27 (SLE 15) and erlang (SLE 16): has the key usage bug
+          # that Trento.Support.HttpClient works around (OTP-19240)
+          - "27.1.3"
+          # The dev toolchain, with the upstream fix
+          - ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Erlang/OTP and Elixir
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
+          version-type: strict
+          # mix local.hex and mix local.rebar download from builds.hex.pm over
+          # OTP's TLS, which OTP 27.1.3 rejects with key_usage_mismatch
+          install-hex: false
+          install-rebar: false
+      - name: Install Hex and rebar3 without OTP's TLS
+        run: |
+          mix archive.install github hexpm/hex tag v2.5.3 --force
+          curl -fsSL -o "$RUNNER_TEMP/rebar3" https://github.com/erlang/rebar3/releases/download/3.27.3/rebar3
+          mix local.rebar rebar3 "$RUNNER_TEMP/rebar3" --force
+      - name: Restore cached dependencies
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
+          setup-beam: "false"
+      - name: Fetch and compile dependencies
+        run: |
+          mix deps.get
+          mix compile --warnings-as-errors
+      - name: "Docker compose dependencies"
+        uses: isbang/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          down-flags: "--volumes"
+      - name: Wait for PostgreSQL
+        run: timeout 120 bash -c 'until docker compose exec -T postgres pg_isready -h 127.0.0.1 -U postgres; do sleep 2; done'
+      - name: Run TLS handshake tests
+        run: mix test --only tls_handshake
+
+  coveralls-finish:
+    needs: [test-elixir]
+    if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
+        with:
+          parallel-finished: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  test-release:
+    name: Test release build (Elixir ${{ matrix.toolchain.elixir }})
+    needs: [elixir-toolchain, elixir-deps, detect-changes]
+    if: needs.detect-changes.outputs.elixir-changed == 'true'
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
     env:
       MIX_ENV: prod
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
-        with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+      - name: Set up Elixir and restore cached dependencies
         id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
       - name: Build release
         run: mix release
       - name: Start release
@@ -522,36 +509,34 @@ jobs:
 
   chromatic:
     name: Chromatic deployment
-    needs: [setup-matrix-env, elixir-deps, npm-deps, detect-changes]
+    needs:
+      [
+        elixir-toolchain,
+        setup-matrix-env,
+        elixir-deps,
+        npm-deps,
+        detect-changes,
+      ]
     runs-on: ubuntu-24.04
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true' && needs.detect-changes.outputs.assets-changed == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
+      - name: Set up Elixir and restore cached dependencies
+        id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
@@ -564,7 +549,7 @@ jobs:
         run: npm run build
         working-directory: assets
       - name: Publish to Chromatic
-        uses: chromaui/action@42839e8c28caf61a16433fa96a03b312bbc47ab5 # v16.6.3
+        uses: chromaui/action@a18e9f57b71eb05f941848c0b927aab2ee644e3e # v18.10.2
         with:
           workingDir: assets
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -577,16 +562,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-e2e-cache
         with:
           path: |
@@ -599,51 +584,46 @@ jobs:
   test-e2e:
     name: E2E Tests
     needs:
-      [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
+      [
+        elixir-toolchain,
+        setup-matrix-env,
+        elixir-deps,
+        npm-deps,
+        npm-e2e-deps,
+        detect-changes,
+      ]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         containers: [1, 2, 3, 4, 5, 6, 7, 8]
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: dev
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
+      - name: Set up Elixir and restore cached dependencies
+        id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-e2e-cache
         with:
           path: |
@@ -652,7 +632,7 @@ jobs:
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@d2bee4f07e8ca410d6b196d00f90c12e7d48c33a # v2.6.0
+        uses: isbang/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile wanda"
@@ -670,18 +650,24 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
-        uses: cypress-io/github-action@c495c3ddffba403ba11be95fffb67e25203b3799 # v7.1.10
+        uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: cypress-split-timings.json
           cypress_video: false
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
+          config: baseUrl=http://localhost:4000,retries=1
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -692,8 +678,15 @@ jobs:
   test-regression:
     name: Regression tests
     needs:
-      [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
-    runs-on: ubuntu-22.04
+      [
+        elixir-toolchain,
+        setup-matrix-env,
+        elixir-deps,
+        npm-deps,
+        npm-e2e-deps,
+        detect-changes,
+      ]
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -709,45 +702,36 @@ jobs:
       MIX_ENV: dev
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
+      - name: Set up Elixir and restore cached dependencies
+        id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@d2bee4f07e8ca410d6b196d00f90c12e7d48c33a # v2.6.0
+        uses: isbang/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -778,16 +762,22 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
-        uses: cypress-io/github-action@c495c3ddffba403ba11be95fffb67e25203b3799 # v7.1.10
+        uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
           cypress_video: false
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
+          config: baseUrl=http://localhost:4000,retries=1
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -798,8 +788,15 @@ jobs:
   test-integration:
     name: Integration tests
     needs:
-      [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
-    runs-on: ubuntu-22.04
+      [
+        elixir-toolchain,
+        setup-matrix-env,
+        elixir-deps,
+        npm-deps,
+        npm-e2e-deps,
+        detect-changes,
+      ]
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -807,43 +804,41 @@ jobs:
           - test: oidc
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
+            cypress_expose: SSO_INTEGRATION_TESTS=true,SSO_TYPE=oidc
             config_file_content: |
               import Config
 
               config :trento, :oidc, enabled: true
             env:
               MIX_ENV: dev
-              CYPRESS_SSO_INTEGRATION_TESTS: true
-              CYPRESS_SSO_TYPE: oidc
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: oauth2
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
+            cypress_expose: SSO_INTEGRATION_TESTS=true,SSO_TYPE=oauth2
             config_file_content: |
               import Config
 
               config :trento, :oauth2, enabled: true
             env:
               MIX_ENV: dev
-              CYPRESS_SSO_INTEGRATION_TESTS: true
-              CYPRESS_SSO_TYPE: oauth2
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: saml
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
+            cypress_expose: SSO_INTEGRATION_TESTS=true,SSO_TYPE=saml
             config_file_content: |
               import Config
 
               config :trento, :saml, enabled: true
             env:
               MIX_ENV: dev
-              CYPRESS_SSO_INTEGRATION_TESTS: true
-              CYPRESS_SSO_TYPE: saml
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: alerting_db
             cypress_spec: |
               cypress/e2e/settings_integration.cy.js
               cypress/e2e/alerting.cy.js
+            cypress_expose: ALERTING_DB_TESTS=true,ALERTING_TESTS=true
             config_file_content: |
               import Config
 
@@ -855,51 +850,40 @@ jobs:
                 smtp_password: nil
             env:
               MIX_ENV: dev
-              CYPRESS_ALERTING_DB_TESTS: true
-              CYPRESS_ALERTING_TESTS: true
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: alerting_from_env
             cypress_spec: |
               cypress/e2e/alerting.cy.js
+            cypress_expose: ALERTING_TESTS=true
             env:
               MIX_ENV: dev
-              CYPRESS_ALERTING_TESTS: true
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     env: ${{ matrix.env }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
+      - name: Set up Elixir and restore cached dependencies
+        id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ env.NODEJS_VERSION }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-e2e-cache
         with:
           path: |
@@ -914,8 +898,14 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@d2bee4f07e8ca410d6b196d00f90c12e7d48c33a # v2.6.0
+        uses: isbang/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile idp"
@@ -927,15 +917,15 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Cypress run
-        uses: cypress-io/github-action@c495c3ddffba403ba11be95fffb67e25203b3799 # v7.1.10
+        uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
           cypress_video: false
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
+          config: baseUrl=http://localhost:4000,retries=1
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -944,84 +934,55 @@ jobs:
           path: test/e2e/cypress/screenshots/
 
   target-branch-deps:
-    name: Rebuild target branch dependencies
-    needs: [setup-matrix-env, detect-changes]
+    name: Rebuild target branch dependencies (Elixir ${{ matrix.toolchain.elixir }})
+    needs: [elixir-toolchain, detect-changes]
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-    if: github.event_name == 'pull_request'
+        mix_env: ["test"]
+        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+    env:
+      MIX_ENV: ${{ matrix.mix_env }}
     steps:
-      - name: Checkout target branch
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.ref }}
-      - name: Set up Elixir
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
+          persist-credentials: false
+      - name: Set up Elixir and build dependencies
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
-      - name: Retrieve Elixir Cached Dependencies - target branch
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
-        id: mix-cache-target
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
-      - name: Install missing dependencies
-        if: steps.mix-cache-target.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p priv/plts
-          mix local.rebar --force
-          mix local.hex --force
-          mix deps.get
-          mix deps.compile --warnings-as-errors
-          mix dialyzer --plt
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
+          build-deps: "true"
 
   api-docs-check:
-    name: API docs check
-    needs: [setup-matrix-env, elixir-deps, detect-changes]
+    name: API docs check (Elixir ${{ matrix.toolchain.elixir }})
+    needs: [elixir-toolchain, setup-matrix-env, elixir-deps, detect-changes]
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Set up Elixir
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
-        with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
-      - name: Retrieve Elixir Cached Dependencies - current branch
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+      - name: Set up Elixir and restore cached dependencies - current branch
         id: mix-cache-current
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
       - name: Setup Node.js
         id: setup-node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install API linting tools
@@ -1033,66 +994,41 @@ jobs:
         run: ./hack/api_docs_check.sh
 
   api-bc-check:
-    name: API bc check
-    needs: [setup-matrix-env, elixir-deps, target-branch-deps, detect-changes]
+    name: API bc check (${{ matrix.version }}, Elixir ${{ matrix.toolchain.elixir }})
+    needs: [elixir-toolchain, elixir-deps, target-branch-deps, detect-changes]
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - version: Unversioned
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - version: Unversioned
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          - version: V1
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - version: V1
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          - version: V2
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - version: V2
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        version:
+          - Unversioned
+          - V1
+          - V2
+        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - name: Set up Elixir
-        id: setup-elixir
-        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
-        with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
-      - name: Retrieve Elixir Cached Dependencies - current branch
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Elixir and restore cached dependencies - current branch
         id: mix-cache-current
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
       - name: Generate current openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/current-spec.json
       - name: Checkout target branch
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
       - name: Retrieve Elixir Cached Dependencies - target branch
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache-target
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
+          setup-beam: "false"
       - name: Install missing dependencies
         if: steps.mix-cache-target.outputs.cache-hit != 'true'
         run: mix deps.get
@@ -1139,7 +1075,7 @@ jobs:
             tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
           - mix_env: demo
             tag: demo
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
     with:
       image_name: trento-web
       tag: ${{ matrix.tag }}
@@ -1181,36 +1117,43 @@ jobs:
         uses: jupyterhub/action-k3s-helm@502a9ff4d816dad543e359971fe2c3128d0f4c6e # v4
         with:
           k3s-version: ${{ env.K3S_VERSION }}
-      - name: Add bitnami & jetstack(cert-manager) helm deps
-        run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo add jetstack https://charts.jetstack.io
-          helm repo update
-      - name: Install CRDs for cert-manager
-        run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${{ env.CERT_MANAGER_VERSION }}/cert-manager.crds.yaml
+          helm-version: ${{ env.HELM_VERSION }}
+          metrics-enabled: false
       - name: Install cert-manager
-        run: helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version ${{ env.CERT_MANAGER_VERSION }}
-        continue-on-error: true
-      - name: Download and unzip helm chart
         run: |
-          rm rolling.zip | true
-          rm -rf helm-charts-rolling | true
-          wget https://github.com/trento-project/helm-charts/archive/refs/tags/rolling.zip
-          unzip rolling.zip
-      - name: Prepare valid cluster-issuer and certificate (for cert-manager)
+          helm upgrade -i cert-manager oci://quay.io/jetstack/charts/cert-manager \
+            --version ${{ env.CERT_MANAGER_VERSION }} \
+            --namespace cert-manager \
+            --create-namespace \
+            --set crds.enabled=true
+          kubectl wait --for=condition=available --timeout=300s \
+            deployment/cert-manager -n cert-manager
+      - name: Checkout helm-charts repository for cert-manager templates
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: trento-project/helm-charts
+          ref: rolling
+          path: helm-charts
+      - name: Prepare valid cluster-issuer and certificate (for cert-manager) and values for ingress
         run: |
-          envsubst < helm-charts-rolling/hack/cert-manager/certificate.tpl.yaml > helm-charts-rolling/hack/cert-manager/certificate.yaml
-          envsubst < helm-charts-rolling/hack/cert-manager/cluster-issuer.tpl.yaml > helm-charts-rolling/hack/cert-manager/cluster-issuer.yaml
-          envsubst < helm-charts-rolling/hack/cert-manager/override-values.tpl.yaml > helm-charts-rolling/hack/cert-manager/override-values.yaml
+          envsubst < helm-charts/hack/cert-manager/cluster-issuer.tpl.yaml > helm-charts/hack/cert-manager/cluster-issuer.yaml
+          envsubst < helm-charts/hack/cert-manager/certificate.tpl.yaml > helm-charts/hack/cert-manager/certificate.yaml
+          envsubst < helm-charts/hack/cert-manager/override-values.tpl.yaml > helm-charts/hack/cert-manager/override-values.yaml
       - name: Apply cluster-issuer and certificate (for cert-manager)
         run: |
-          kubectl apply -f helm-charts-rolling/hack/cert-manager/cluster-issuer.yaml
-          kubectl apply -f helm-charts-rolling/hack/cert-manager/certificate.yaml
-      - name: Install trento-server helm chart
+          kubectl create namespace ${{ env.TRENTO_NAMESPACE }} || true
+          kubectl apply -f helm-charts/hack/cert-manager/cluster-issuer.yaml
+          kubectl apply -f helm-charts/hack/cert-manager/certificate.yaml
+      - name: Login to GHCR for pulling OCI chart
         run: |
-          cd helm-charts-rolling/charts/trento-server
-          helm dependency update
-          helm upgrade -i trento --wait . \
+          echo "${{ github.token }}" | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
+      - name: Install trento-server helm chart from OCI registry
+        run: |
+          helm upgrade -i trento oci://ghcr.io/trento-project/helm-charts/trento-server --wait \
+            --devel \
+            --namespace ${{ env.TRENTO_NAMESPACE }} \
+            --create-namespace \
+            --timeout 3m \
             --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
             --set trento-web.image.pullPolicy=Always \
             --set trento-web.image.repository="${IMAGE_REPOSITORY}/trento-web" \
@@ -1221,10 +1164,15 @@ jobs:
             --set trento-wanda.checks.image.pullPolicy=Always \
             --set trento-wanda.checks.image.repository="${IMAGE_REPOSITORY}/checks" \
             --set trento-wanda.checks.image.tag="rolling" \
+            --set trento-mcp-server.enabled=true \
+            --set trento-mcp-server.image.pullPolicy=Always \
+            --set trento-mcp-server.image.repository="${IMAGE_REPOSITORY}/mcp-server-trento" \
+            --set trento-mcp-server.image.tag="rolling" \
+            --set prometheus.server.auth.type=none \
             --set global.trentoWeb.origin="${TRENTO_WEB_ORIGIN}" \
             --set global.logLevel="debug" \
             --set prometheus.enabled=false \
-            -f ../../hack/cert-manager/override-values.yaml
+            -f helm-charts/hack/cert-manager/override-values.yaml
 
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the demo environment
@@ -1241,7 +1189,7 @@ jobs:
       TRENTO_DEMO_IP: ${{ secrets.TRENTO_DEMO_IP }}
       TRENTO_API_KEY: ${{ secrets.TRENTO_API_KEY }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Install photofinish
@@ -1260,7 +1208,7 @@ jobs:
   obs-sync:
     name: Update OBS packages
     if: fromJSON(vars.OBS_ENABLED) && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
     needs:
       - static-code-analysis-elixir
       - static-code-analysis-js
@@ -1277,3 +1225,30 @@ jobs:
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
+
+  dependabot-auto-merge:
+    name: Approve and merge Dependabot PRs
+    if: >
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled') &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
+    needs:
+      - codespell
+      - license-headers
+      - static-code-analysis-js
+      - static-code-analysis-elixir
+      - test-javascript
+      - test-elixir
+      - test-e2e
+      - test-regression
+      - test-integration
+      - api-docs-check
+      - api-bc-check
+      - test-release
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    uses: trento-project/.github/.github/workflows/dependabot-auto-merge.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0

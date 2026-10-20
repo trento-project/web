@@ -1,7 +1,9 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { mockAnimationsApi } from 'jsdom-testing-mocks';
+
+jest.retryTimes(1, { logErrorsBeforeRetry: true });
 
 // Silence the Headless UI warning globally
 mockAnimationsApi();

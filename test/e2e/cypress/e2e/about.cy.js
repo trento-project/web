@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as aboutPage from '../pageObject/about_po';
 
@@ -22,23 +22,23 @@ describe('About page', () => {
   });
 
   it('should show the Wanda version', () => {
-    aboutPage.expectedWandaVersionIsDisplayed();
+    aboutPage.expectedComponentVersionIsDisplayed('wanda');
   });
 
   it('should show the Checks version', () => {
-    aboutPage.expectedChecksVersionIsDisplayed();
+    aboutPage.expectedComponentVersionIsDisplayed('checks');
   });
 
   it('should show the PostgreSQL version', () => {
-    aboutPage.expectedPostgresVersionIsDisplayed();
+    aboutPage.expectedComponentVersionIsDisplayed('postgres');
   });
 
   it('should show the RabbitMQ version', () => {
-    aboutPage.expectedRabbitmqVersionIsDisplayed();
+    aboutPage.expectedComponentVersionIsDisplayed('rabbitmq');
   });
 
   it('should show the Prometheus version', () => {
-    aboutPage.expectedPrometheusVersionIsDisplayed();
+    aboutPage.expectedComponentVersionIsDisplayed('prometheus');
   });
 
   it('should show the github project link', () => {

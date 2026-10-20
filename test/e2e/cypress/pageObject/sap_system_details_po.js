@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 export * from './base_po.js';
 import * as basePage from './base_po.js';
@@ -9,6 +9,7 @@ import * as basePage from './base_po.js';
 import {
   selectedSystem,
   attachedHosts,
+  attachedDatabaseInstances,
   healthMap,
 } from '../fixtures/sap-system-details/selected_system';
 
@@ -21,14 +22,25 @@ const hostToDeregister = {
 // Selectors
 
 const sapSystemName = 'div[class="font-bold"]:contains("Name") + div span';
-const sapSystemType = 'div[class="font-bold"]:contains("Type") + div span';
+const sapSystemType = 'div[class="font-bold"]:contains("Type") + div';
+const sapSystemEnsaVersion =
+  'div[class="font-bold"]:contains("ENSA version") + div';
+const sapSystemDatabase = 'div[class="font-bold"]:contains("Database") + div';
+const sapSystemDatabaseTenant =
+  'div[class="font-bold"]:contains("Tenant") + div';
 const notFoundLabel = 'div:contains("Not Found")';
 const thirdRowStatusCellSelector =
-  'div[class="mt-16"]:contains("Layout") table tbody tr:eq(2) td:eq(6)';
+  'div[class="mt-16"]:contains("Layout") table tbody tr:eq(2) td:eq(0)';
 const hostToDeregisterName = `td a:contains("${hostToDeregister.name}")`;
 const hostToDeregisterFeatures = `td:contains("${hostToDeregister.features}")`;
 const cleanUpButton = 'button:contains("Clean up")';
 const sapSystemsRows = 'div[class="mt-16"]:contains("Layout") table tbody tr';
+const layoutTableHostRow = (hostName) =>
+  `div[class="mt-16"]:contains("Layout") tr:has(td:contains("${hostName}"))`;
+const hostsTableHostRow = (hostName) =>
+  `div[class="mt-8"]:contains("Hosts") tr:has(td:contains("${hostName}"))`;
+const stalenessBannerName =
+  /An agent in one of the SAP system hosts is not reporting since/;
 
 // UI Interactions
 
@@ -38,18 +50,43 @@ export const visit = () => {
   return cy.wait('@hostsEndpoint');
 };
 export const visitNonExistentSapSystem = () =>
-  basePage.visit('/sap_systems/other', { failOnStatusCode: false });
+  basePage.visit('/sap_systems/other', '', { failOnStatusCode: false });
 
 // UI Validations
 
 export const validatePageUrl = (systemId = selectedSystem.Id) =>
   basePage.validateUrl(`/sap_systems/${systemId}`);
 
+export const pageTitleHealthIsCorrectlyDisplayed = (
+  health = selectedSystem.Health
+) => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', health);
+};
+
 export const sapSystemHasExpectedName = () =>
   cy.get(sapSystemName).should('have.text', selectedSystem.Sid);
 
 export const sapSystemHasExpectedType = () =>
   cy.get(sapSystemType).should('have.text', selectedSystem.Type);
+
+export const sapSystemHasExpectedEnsaVersion = () =>
+  cy.get(sapSystemEnsaVersion).should('have.text', selectedSystem.EnsaVersion);
+
+export const sapSystemHasExpectedDatabase = () =>
+  cy.get(sapSystemDatabase).should('have.text', selectedSystem.Database);
+
+export const sapSystemHasExpectedDatabaseHealth = (
+  health = selectedSystem.DatabaseHealth
+) => {
+  cy.findByRole('img', { name: /database health/i }).as('healthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@healthIcon', health);
+};
+
+export const sapSystemHasExpectedDatabaseTenant = () =>
+  cy
+    .get(sapSystemDatabaseTenant)
+    .should('have.text', selectedSystem.DatabaseTenant);
 
 export const notFoundLabelIsDisplayed = () =>
   cy.get(notFoundLabel).should('be.visible');
@@ -64,46 +101,49 @@ export const layoutTableShowsExpectedData = () =>
       cy.get(tableCellSelector).should('have.text', expectedValue);
 
       if (key === 'Status') {
-        return cy
-          .get(`${tableCellSelector} svg`)
-          .should('have.class', healthMap[instance.Status]);
+        cy.get(`${tableCellSelector} svg`)
+          .should('have.class', healthMap[instance.Status])
+          .trigger('mouseover');
+        return cy.get(`span:contains("${instance.Status}")`).should('exist');
       }
     });
   });
 
 const _getFormattedExpectedValue = (key, value) => {
   if (key === 'Features') return value.replaceAll('|', '');
-  else if (key === 'Status') return `SAPControl: ${value}`;
+  else if (key === 'Status') return '';
   else return value;
 };
 
-export const shouldDisplayExpectedHealthStatusChanges = () =>
+export const shouldDisplayExpectedStatusChanges = () =>
   cy.wrap(Object.entries(healthMap)).each(([state, health]) => {
     basePage.loadScenario(`sap-system-detail-${state.toUpperCase()}`);
-    cy.get(thirdRowStatusCellSelector).should(
-      'have.text',
-      `SAPControl: ${state}`
-    );
-    return cy
-      .get(`${thirdRowStatusCellSelector} svg`)
-      .should('have.class', health);
+
+    cy.get(`${thirdRowStatusCellSelector} svg`)
+      .should('have.class', health)
+      .trigger('mouseover');
+    return cy.get(`span:contains("${state}")`).should('exist');
   });
 
 export const eachHostHasTheExpectedLink = () =>
   cy.wrap(attachedHosts).each((host, index) => {
+    const expectedHref = `/hosts/${host.AgentId}`;
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(0) a`;
-    cy.get(tableCellSelector).click();
-    basePage.validateUrl(`/hosts/${host.AgentId}`);
-    return basePage.goBack();
+    cy.get(tableCellSelector).should('have.attr', 'href', expectedHref).click();
+    basePage.validateUrl(expectedHref);
+    basePage.goBack();
+    return validatePageUrl();
   });
 
 export const eachHostHasTheExpectedClusterLink = () =>
   cy.wrap(attachedHosts).each((host, index) => {
     if (!host.ClusterId) return;
+    const expectedHref = `/clusters/${host.ClusterId}`;
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(3) a`;
-    cy.get(tableCellSelector).click();
-    basePage.validateUrl(`/clusters/${host.ClusterId}`);
-    return basePage.goBack();
+    cy.get(tableCellSelector).should('have.attr', 'href', expectedHref).click();
+    basePage.validateUrl(expectedHref);
+    basePage.goBack();
+    return validatePageUrl();
   });
 
 export const eachHostHasTheExpectedData = () =>
@@ -140,10 +180,57 @@ export const newSapSystemIsDisplayed = () => {
   return cy.get('div:contains("99")').should('be.visible');
 };
 
+export const sapSystemHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
+
+export const sapSystemHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+};
+
+export const sapSystemDatabaseHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: /database health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
+
+export const sapSystemDatabaseHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: /database health/i }).as('healthIcon');
+  basePage.healthIconIsMarkedInSync('@healthIcon');
+};
+
+export const sapSystemStaleBannerIsDisplayed = (timeout = 20000) =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout })
+    .should('be.visible');
+
+export const sapSystemStaleBannerIsNotDisplayed = () =>
+  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
+
+export const sapSystemInstanceRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(
+    layoutTableHostRow(selectedSystem.Hosts[1].Hostname)
+  );
+
+export const sapSystemInstanceRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(
+    layoutTableHostRow(selectedSystem.Hosts[1].Hostname)
+  );
+
+export const hostRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(hostsTableHostRow(attachedHosts[1].Name));
+
+export const hostRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(hostsTableHostRow(attachedHosts[1].Name));
+
 // API
 
 export const restoreInstanceHealth = () =>
   basePage.loadScenario('sap-system-detail-GREEN');
+
+export const restoreDatabaseInstanceHealth = () =>
+  basePage.loadScenario('hana-database-detail-GREEN');
 
 export const apiDeregisterHost = () =>
   basePage.apiDeregisterHost(hostToDeregister.id);
@@ -161,3 +248,31 @@ export const apiCreateUserWithApplicationCleanupAbility = () =>
 
 export const loadNewSapSystem = () =>
   basePage.loadScenario('sap-system-detail-NEW');
+
+export const startSapSystemAgentsHeartbeat = () =>
+  basePage.startAgentsHeartbeat([
+    ...attachedHosts.map((host) => host.AgentId),
+    ...attachedDatabaseInstances.map((instance) => instance.AgentId),
+  ]);
+
+export const startSapSystemAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([attachedHosts[1].AgentId]);
+
+export const stopSapSystemAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([attachedHosts[1].AgentId]);
+
+export const startDatabaseAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([attachedDatabaseInstances[0].AgentId]);
+
+export const stopDatabaseAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([attachedDatabaseInstances[0].AgentId]);
+
+export const markSapSystemAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedSystem.Sid}-${selectedSystem.Hosts[1].Instance}-present`
+  );
+
+export const markDatabaseAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedSystem.Database}-${attachedDatabaseInstances[0].Instance}-present`
+  );

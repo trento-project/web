@@ -1,22 +1,40 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
+import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
 
-import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
-import PatchList from '.';
+import PatchList from './PatchList';
 
 export default {
   title: 'Components/PatchList',
-  components: PatchList,
+  component: PatchList,
   argTypes: {
     patches: {
-      control: {
-        type: 'array',
-      },
+      control: { type: 'object' },
       description: 'A list of patches',
+      action: 'callback',
+    },
+    onNavigate: {
+      action: 'onNavigate',
+      description:
+        'Callback function invoked when a patch is selected for navigation',
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+    },
+    searchParams: {
+      description:
+        'URL search params (e.g. `new URLSearchParams(window.location.search)`) used for filters/pagination',
+      control: { type: 'object' },
+    },
+    setSearchParams: {
+      description:
+        'Setter function to update search params (usually from React Router)',
+      action: 'setSearchParams',
     },
   },
   decorators: [
@@ -33,23 +51,25 @@ export const Default = {
   args: {
     patches: relevantPatchFactory.buildList(5),
     onNavigate: action('onNavigate'),
+    searchParams: new URLSearchParams(),
+    setSearchParams: action('setSearchParams'),
   },
 };
 
 export const NoPatches = {
   args: {
+    ...Default.args,
     patches: undefined,
-    onNavigate: action('onNavigate'),
   },
 };
 
 export const AllStates = {
   args: {
+    ...Default.args,
     patches: [
       relevantPatchFactory.build({ advisory_type: 'security_advisory' }),
       relevantPatchFactory.build({ advisory_type: 'bugfix' }),
       relevantPatchFactory.build({ advisory_type: 'enhancement' }),
     ],
-    onNavigate: action('onNavigate'),
   },
 };

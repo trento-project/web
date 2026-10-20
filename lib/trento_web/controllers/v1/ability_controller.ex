@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.AbilityController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Abilities
 
@@ -22,6 +23,8 @@ defmodule TrentoWeb.V1.AbilityController do
         {"Comprehensive list of all abilities available for user management and access control in the system.",
          "application/json", AbilityCollection}
     ]
+
+  ai_tool :abilities_list, display_text: "List available abilities"
 
   def index(conn, _params) do
     abilities = Abilities.list_abilities()

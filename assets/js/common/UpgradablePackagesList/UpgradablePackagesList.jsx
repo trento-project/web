@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useEffect, useState } from 'react';
 import { noop } from 'lodash';
@@ -13,6 +13,8 @@ const upgradablePackagesDefault = [];
 function UpgradablePackagesList({
   upgradablePackages = upgradablePackagesDefault,
   patchesLoading,
+  searchParams,
+  setSearchParams,
   onPatchClick = noop,
   sortDirection = 'asc',
   toggleSortDirection = () => {},
@@ -80,6 +82,8 @@ function UpgradablePackagesList({
       className="pt-2"
       config={config}
       data={upgradablePackages}
+      searchParams={searchParams}
+      setSearchParams={setSearchParams}
       sortBy={sortByLatestPackage}
     />
   );

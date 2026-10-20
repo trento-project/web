@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.AIConfigurationController do
   use TrentoWeb, :controller
@@ -73,6 +73,24 @@ defmodule TrentoWeb.V1.AIConfigurationController do
       conn
       |> put_status(:ok)
       |> render(:ai_configuration, %{ai_configuration: user_ai_config})
+    end
+  end
+
+  operation :clear_ai_configuration,
+    summary: "Clears User's AI Configuration",
+    description: "Clears the AI configuration for the currently authenticated user.",
+    tags: ["Profile"],
+    responses: [
+      no_content: "User AI Configuration cleared successfully.",
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response()
+    ]
+
+  def clear_ai_configuration(conn, _) do
+    %User{} = current_user = Pow.Plug.current_user(conn)
+
+    with :ok <- AI.clear_user_configuration(current_user) do
+      send_resp(conn, :no_content, "")
     end
   end
 end

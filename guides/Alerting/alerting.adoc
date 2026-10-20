@@ -130,11 +130,13 @@ Mailpit to require authentication from its clients.
 Mailpit server requiring authentication over insecure channel (eg.
 sending passwords in plain text). This is very useful for local
 development without need to setup TLS.
+* `+TRENTO_SMTP_TLS_DIR+` – Path to a directory containing the
+`+cert.pem+` and `+key.pem+` files. It is mounted into Mailpit to enable
+TLS (STARTTLS) on the SMTP server.
+* `+TRENTO_SMTP_REQUIRE_STARTTLS+` – By setting it to `+true+`, Mailpit
+requires clients to upgrade the connection with STARTTLS before sending
+mail. It defaults to `+false+` and is meant to be used together with
+`+TRENTO_SMTP_TLS_DIR+`.
 
 By default, the Mailpit SMTP server runs without need for authentication
 over an unencrypted channel.
-
-[IMPORTANT]
-====
-_TBD_: Add STARTTLS/TLS configuration.
-====

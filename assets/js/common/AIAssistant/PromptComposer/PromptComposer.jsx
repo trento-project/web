@@ -1,19 +1,39 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
+import { get } from 'lodash';
+import { EOS_STOP_FILLED } from 'eos-icons-react';
 import { ComposerPrimitive } from '@assistant-ui/react';
 
 import Button from '@common/Button';
-import { CONNECTION_STATUS } from '@lib/ai';
+import { CONNECTION_STATUS, CONVERSATION_STATUS } from '@lib/ai';
+
+import {
+  CONFIGURATION_STATUS,
+  canSendMessage,
+  readOnlyReason,
+} from '../status';
 
 const COMPOSER_INPUT_CLASS_NAME =
   'w-full border border-gray-300 rounded-lg p-4 text-gray-700 resize-none h-[130px] focus:outline-none focus:border-[#2fb371] focus:ring-1 focus:ring-[#2fb371] placeholder-gray-400 text-lg font-medium bg-white shadow-sm disabled:bg-gray-50 disabled:cursor-not-allowed';
+
+const ACTION_BUTTON_CLASS_NAME =
+  'min-w-20 inline-flex items-center justify-center';
 
 const PLACEHOLDERS = {
   [CONNECTION_STATUS.CONNECTED]: 'How can I help you?',
   [CONNECTION_STATUS.CONNECTING]: 'Connecting...',
   [CONNECTION_STATUS.DISCONNECTED]: 'Offline - waiting to reconnect...',
+};
+
+// Read-only causes that need different wording:
+// - CLEARED means there is nothing left to answer with
+// - RESTORED and EXPIRED mean a new chat needs to be started
+const READ_ONLY_PLACEHOLDERS = {
+  [CONFIGURATION_STATUS.CLEARED]: 'AI Assistant is disabled',
+  [CONFIGURATION_STATUS.RESTORED]: 'Start a new chat to continue',
+  [CONVERSATION_STATUS.EXPIRED]: 'Start a new chat to continue',
 };
 
 const footnote = (
@@ -23,22 +43,24 @@ const footnote = (
     <a
       href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
       className="underline hover:text-gray-500"
+      target="_blank"
+      rel="noopener noreferrer"
     >
       Learn more
     </a>
   </>
 );
 
-function SendButton({ disabled, isRunning }) {
-  if (isRunning) return null;
+function SendButton({ disabled, reason }) {
   return (
     <ComposerPrimitive.Send asChild>
       <Button
         asSubmit
         type="default-fit"
+        className={ACTION_BUTTON_CLASS_NAME}
         disabled={disabled}
         aria-label="Send message"
-        title={disabled ? 'Waiting for connection...' : 'Send message'}
+        title={disabled ? reason : 'Send message'}
       >
         Send
       </Button>
@@ -46,11 +68,44 @@ function SendButton({ disabled, isRunning }) {
   );
 }
 
-function PromptComposer({ connectionStatus, isRunning = false }) {
-  const isConnected = connectionStatus === CONNECTION_STATUS.CONNECTED;
-  const placeholder =
-    PLACEHOLDERS[connectionStatus] ??
-    PLACEHOLDERS[CONNECTION_STATUS.DISCONNECTED];
+function StopButton() {
+  return (
+    <ComposerPrimitive.Cancel asChild>
+      <Button
+        type="danger-bold"
+        className={ACTION_BUTTON_CLASS_NAME}
+        aria-label="Stop generating"
+        title="Stop generating"
+      >
+        <EOS_STOP_FILLED className="h-6 w-6 fill-current" />
+      </Button>
+    </ComposerPrimitive.Cancel>
+  );
+}
+
+function PromptComposer({
+  connectionStatus,
+  configurationStatus = CONFIGURATION_STATUS.OK,
+  conversationStatus = CONVERSATION_STATUS.ACTIVE,
+  isRunning = false,
+}) {
+  const inputDisabled = !canSendMessage(
+    connectionStatus,
+    configurationStatus,
+    conversationStatus
+  );
+  const reason = readOnlyReason(configurationStatus, conversationStatus);
+  const placeholder = reason
+    ? get(
+        READ_ONLY_PLACEHOLDERS,
+        reason,
+        READ_ONLY_PLACEHOLDERS[CONFIGURATION_STATUS.CLEARED]
+      )
+    : get(
+        PLACEHOLDERS,
+        connectionStatus,
+        PLACEHOLDERS[CONNECTION_STATUS.DISCONNECTED]
+      );
 
   return (
     <ComposerPrimitive.Root className="relative flex w-full flex-col">
@@ -59,14 +114,18 @@ function PromptComposer({ connectionStatus, isRunning = false }) {
           <ComposerPrimitive.Input
             className={COMPOSER_INPUT_CLASS_NAME}
             placeholder={placeholder}
-            disabled={!isConnected}
+            disabled={inputDisabled}
             aria-label="Message input"
           />
         </ComposerPrimitive.AttachmentDropzone>
       </div>
       <div className="flex justify-between items-center w-full mt-4">
         <div className="text-sm text-gray-400 leading-tight">{footnote}</div>
-        <SendButton disabled={!isConnected} isRunning={isRunning} />
+        {isRunning ? (
+          <StopButton />
+        ) : (
+          <SendButton disabled={inputDisabled} reason={placeholder} />
+        )}
       </div>
     </ComposerPrimitive.Root>
   );

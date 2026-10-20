@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.SapSystems.Projections.SapSystemReadModel do
   @moduledoc """
@@ -49,6 +49,7 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
 
     has_many :tags, Tag, foreign_key: :resource_id
 
+    field :stale_at, :utc_datetime_usec
     field :deregistered_at, :utc_datetime_usec
 
     timestamps(type: :utc_datetime_usec)

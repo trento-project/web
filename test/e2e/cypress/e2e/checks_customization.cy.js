@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as checksSelectionPage from '../pageObject/checks_customization_po';
 
@@ -16,7 +16,12 @@ context('Checks customization', () => {
   });
 
   after(() => {
+    // Reset checks and run new execution to restore health
     checksSelectionPage.apiResetAllChecks();
+    if (Cypress.expose('wanda_mode') === 'demo') {
+      checksSelectionPage.apiRequestExecution();
+      checksSelectionPage.waitUntilExecutionFinished();
+    }
   });
 
   describe('Checks customization should be possible for a cluster target', () => {
@@ -121,8 +126,9 @@ context('Checks customization', () => {
   });
 
   describe('Execution with customized check values', () => {
+    // checks execution is only available when wanda runs in demo mode
     before(function () {
-      if (Cypress.env('wanda_mode') !== 'demo') this.skip();
+      if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 
     it('should run a checks execution with customized check values', () => {
@@ -130,7 +136,7 @@ context('Checks customization', () => {
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.inputCheckValue('expected_max_messages', '100');
       checksSelectionPage.clickModalSaveButton();
-      checksSelectionPage.clickCorosyncSelectionToggle();
+      checksSelectionPage.selectCheck('00081D');
       checksSelectionPage.clickSaveChecksSelectionButton();
       checksSelectionPage.clickStartExecutionButton();
       checksSelectionPage.waitForCustomizedCheckElements();

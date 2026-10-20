@@ -1,11 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as settingsPage from '../pageObject/settings_po';
 
 describe('Alerting settings from DB', () => {
   before(function () {
-    if (!Cypress.env('ALERTING_DB_TESTS')) {
+    if (!Cypress.expose('ALERTING_DB_TESTS')) {
+      // alerting settings cannot be changed through the API in this environment
       this.skip();
     }
   });

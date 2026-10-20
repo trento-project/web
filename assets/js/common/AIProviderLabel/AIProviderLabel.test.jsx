@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
@@ -8,10 +8,10 @@ import AIProviderLabel from './AIProviderLabel';
 
 describe('AI Provider Label', () => {
   it('should display an icon and label with Google AI as the provider', () => {
-    const { container } = render(<AIProviderLabel provider="googleai" />);
+    const { container } = render(<AIProviderLabel provider="google" />);
     expect(screen.getAllByText(/Google Gemini/)).toBeTruthy();
     expect(container.querySelector('img').getAttribute('alt')).toContain(
-      'googleai'
+      'google'
     );
   });
 

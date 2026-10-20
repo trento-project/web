@@ -1,38 +1,46 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-const { defineConfig } = require('cypress');
+import { defineConfig } from 'cypress';
+
+import setupPlugins from './cypress/plugins/index.js';
 
 const DEMO = 'demo';
 const DEV = 'dev';
 
 const calculateWandaUrl = (config) => {
-  if (config.env.wandaUrl) return config.env.wandaUrl;
-  return config.env.wanda_mode === DEMO
+  const { wandaUrl, wanda_mode: wandaMode } = config.expose;
+
+  if (wandaUrl) return wandaUrl;
+  return wandaMode === DEMO
     ? 'http://localhost:4001'
     : `${config.baseUrl}/wanda`;
 };
 
-module.exports = defineConfig({
+export default defineConfig({
   viewportWidth: 1366,
   viewportHeight: 768,
   defaultCommandTimeout: 10000,
-  env: {
-    heartbeat_interval: 5000,
+  // Default public configuration (can be overridden by environment variables)
+  expose: {
     project_root: '../..',
     photofinish_binary: 'photofinish',
-    login_user: 'admin',
-    login_password: 'adminpassword',
     idp_url: 'http://localhost:8081',
     wanda_mode: DEMO, //demo: local dev instance with, docker compose with wanda profile / prod: instance installed via rpm
     web_mode: DEV, //dev: local dev instance / prod: instance installed via rpm
+  },
+  // Internal Cypress environment variables (not exposed by default)
+  env: {
+    heartbeat_interval: 5000,
+    login_user: 'admin',
+    login_password: 'adminpassword',
   },
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     async setupNodeEvents(on, config) {
-      config.env.wandaUrl = calculateWandaUrl(config);
-      return require('./cypress/plugins/index.js')(on, config);
+      config.expose.wandaUrl = calculateWandaUrl(config);
+      return setupPlugins(on, config);
     },
     testIsolation: false,
     baseUrl: 'http://localhost:4000',

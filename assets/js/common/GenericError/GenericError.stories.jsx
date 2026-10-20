@@ -1,20 +1,30 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 
-import GenericError from '.';
+import GenericError from './GenericError';
 
 export default {
   title: 'Components/GenericError',
   component: GenericError,
-  args: { message: undefined },
+  argTypes: {
+    message: {
+      description: 'Optional error message to display',
+      control: { type: 'text' },
+    },
+  },
 };
 
-export function Default(args) {
-  return <GenericError {...args} />;
-}
+export const Default = {
+  args: {
+    message: undefined,
+  },
+};
 
-export function WithMessage(args) {
-  return <GenericError {...args} message="My super cool error message" />;
-}
+export const WithMessage = {
+  args: {
+    ...Default.args,
+    message: 'My super cool error message',
+  },
+};

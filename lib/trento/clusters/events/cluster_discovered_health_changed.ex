@@ -1,9 +1,11 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Clusters.Events.ClusterDiscoveredHealthChanged do
   @moduledoc """
   This event is emitted when the discovered health of a cluster changes.
+
+  This event is deprecated in favor of specific health change events.
   """
 
   use Trento.Support.Event

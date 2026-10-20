@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # This file is responsible for configuring your application
 # and its dependencies with the aid of the Config module.
@@ -226,13 +226,14 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
   ]
 
 config :trento, :component_versions, adapter: Trento.Infrastructure.ComponentVersions
+config :trento, Trento.Infrastructure.ComponentVersions, http_client: Trento.Support.HttpClient
 
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.PrometheusApi
 
 config :trento, Trento.Infrastructure.Prometheus.PrometheusApi,
   url: "http://localhost:9090",
-  http_client: Trento.Infrastructure.Prometheus.Adapter.HttpClient
+  http_client: Trento.Support.HttpClient
 
 config :trento, Trento.Charts,
   enabled: true,
@@ -258,7 +259,8 @@ config :trento,
 
 config :trento, :analytics,
   enabled: true,
-  gtm_id: System.get_env("GTM_ID", "")
+  gtm_id: System.get_env("GTM_ID", ""),
+  installation_method: System.get_env("INSTALLATION_METHOD", "dev")
 
 config :trento, Trento.Vault,
   ciphers: [
@@ -271,13 +273,16 @@ config :trento, Trento.Vault,
   ]
 
 config :trento, Trento.SoftwareUpdates.Discovery,
-  adapter: Trento.Infrastructure.SoftwareUpdates.MockSuma
+  adapter: Trento.Infrastructure.SoftwareUpdates.MockSmlm
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.Suma,
-  auth: Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth
+config :trento, Trento.Infrastructure.SoftwareUpdates.Smlm,
+  auth: Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
-  executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
+config :trento, Trento.Infrastructure.SoftwareUpdates.SmlmApi,
+  executor: Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor
+
+config :trento, Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor,
+  http_client: Trento.Support.HttpClient
 
 config :bodyguard,
   # The second element of the {:error, reason} tuple returned on auth failure
@@ -296,35 +301,17 @@ config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelatio
 
 config :trento, :ai,
   enabled: true,
-  providers: [
-    googleai: [
-      models: [
-        "gemini-2.5-pro",
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-3.1-flash-preview",
-        "gemini-3.1-flash-lite-preview",
-        "gemini-3.1-pro-preview"
-      ]
-    ],
-    openai: [
-      models: [
-        "o3-mini",
-        "o3",
-        "gpt-4.1",
-        "gpt-4",
-        "gpt-5-mini",
-        "gpt-5.4"
-      ]
-    ],
-    anthropic: [
-      models: [
-        "claude-opus-4-6",
-        "claude-sonnet-4-6",
-        "claude-haiku-4-5"
-      ]
-    ]
-  ]
+  base_system_prompt: "priv/ai/BASE_SYSTEM_PROMPT.md",
+  agent_server_adapter: Trento.Infrastructure.AI.SagentsAgentServer,
+  agent_supervisor_adapter: Trento.Infrastructure.AI.SagentsDynamicSupervisor,
+  ai_configuration_events_adapter: Trento.Infrastructure.AI.PubSubConfigurationEvents,
+  llm_builder_adapter: Trento.AI.LLMBuilder,
+  tool_sources: [
+    TrentoWeb.AI.ControllerToolSource,
+    {Trento.AI.RemoteOpenApiToolSource,
+     name: :wanda, spec_url: "http://localhost:4001/api/all/openapi"}
+  ],
+  http_client: Trento.Support.HttpClient
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

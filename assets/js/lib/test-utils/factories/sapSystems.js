@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
@@ -8,6 +8,8 @@ import { databaseInstanceFactory, generateSid } from '.';
 
 const ensaVersion = () =>
   faker.helpers.arrayElement(['no_ensa', 'ensa1', 'ensa2']);
+const statusEnum = () =>
+  faker.helpers.arrayElement(['green', 'yellow', 'red', 'gray']);
 const healthEnum = () =>
   faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
 const roles = () =>
@@ -23,7 +25,7 @@ const roles = () =>
 
 export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   features: roles().join('|'),
-  health: healthEnum(),
+  status: statusEnum(),
   host_id: faker.string.uuid(),
   http_port: faker.internet.port(),
   https_port: faker.internet.port(),
@@ -33,6 +35,7 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   start_priority: faker.number.int({ min: 1, max: 9 }).toString(),
   sap_system_id: faker.string.uuid(),
   absent_at: null,
+  stale_at: null,
 }));
 
 export const sapSystemFactory = Factory.define(({ params }) => {
@@ -57,7 +60,10 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     sid,
     tags: [],
     database_sid: databaseSid,
+    database_health: healthEnum(),
+    database_stale_at: null,
     tenant: databaseSid,
     database_id: databaseId,
+    stale_at: null,
   };
 });

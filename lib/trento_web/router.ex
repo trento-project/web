@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.Router do
   use TrentoWeb, :router
@@ -148,12 +148,12 @@ defmodule TrentoWeb.Router do
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
       get "/hosts/:id/metrics/query", HostController, :query_metrics
 
-      get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
+      get "/hosts/:id/software_updates", SmlmController, :software_updates
 
-      get "/software_updates/packages", SUSEManagerController, :patches_for_packages
+      get "/software_updates/packages", SmlmController, :patches_for_packages
 
       get "/software_updates/errata_details/:advisory_name",
-          SUSEManagerController,
+          SmlmController,
           :errata_details
 
       post "/clusters/:id/tags", TagsController, :add_tag_to_cluster,
@@ -243,10 +243,11 @@ defmodule TrentoWeb.Router do
           delete "/:token_id", PersonalAccessTokensController, :revoke_personal_access_token
         end
 
-        if Application.compile_env!(:trento, :ai)[:enabled] do
+        if Application.compile_env!(:trento, [:ai, :enabled]) do
           scope "/ai_configuration" do
             post "/", AIConfigurationController, :create_ai_configuration
             patch "/", AIConfigurationController, :update_ai_configuration
+            delete "/", AIConfigurationController, :clear_ai_configuration
           end
         end
       end
@@ -261,6 +262,16 @@ defmodule TrentoWeb.Router do
         put "/activity_log", SettingsController, :update_activity_log_settings
         get "/activity_log", SettingsController, :get_activity_log_settings
 
+        scope "/smlm" do
+          get "/", SettingsController, :get_smlm_settings
+          post "/", SettingsController, :save_smlm_settings
+          patch "/", SettingsController, :patch_smlm_settings
+          put "/", SettingsController, :put_smlm_settings
+          delete "/", SettingsController, :delete_smlm_settings
+          post "/test", SettingsController, :test_smlm_settings
+        end
+
+        # Kept for backward compatibility with the old suse_manager endpoint
         scope "/suse_manager" do
           get "/", SettingsController, :get_suse_manager_settings
           post "/", SettingsController, :save_suse_manager_settings
@@ -274,6 +285,7 @@ defmodule TrentoWeb.Router do
           get "/", SettingsController, :get_alerting_settings
           post "/", SettingsController, :create_alerting_settings
           patch "/", SettingsController, :update_alerting_settings
+          post "/test", SettingsController, :test_alerting_settings
         end
       end
 

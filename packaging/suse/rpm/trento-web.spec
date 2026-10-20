@@ -20,8 +20,7 @@ Name:           trento-web
 Version:        0
 Release:        0
 Summary:        Trento server component
-# FIXME: Select a correct license from https://github.com/openSUSE/spec-cleaner#spdx-licenses
-License:        Apache-2.0
+License:        GPL-3.0-or-later
 URL:            https://github.com/trento-project/web
 Source:         %{name}-%{version}.tar.gz
 Source1:        deps.tar.gz
@@ -29,8 +28,6 @@ Source2:        package-lock.json
 Source3:        node_modules.spec.inc
 %include        %{_sourcedir}/node_modules.spec.inc
 Group:          System/Monitoring
-BuildRequires:  elixir-hex
-BuildRequires:  erlang-rebar3
 BuildRequires:  gcc
 BuildRequires:  git-core
 BuildRequires:  local-npm-registry
@@ -38,13 +35,15 @@ BuildRequires:  make
 BuildRequires:  npm >= 20
 
 %if !0%{?is_opensuse} && 0%{?suse_version} < 1600
-BuildRequires:  erlang26
-BuildConflicts: erlang27
-BuildConflicts: erlang27-providers
-BuildRequires:  elixir115
-BuildConflicts: elixir119
+BuildRequires:  erlang27
+BuildRequires:  erlang27-epmd
+BuildRequires:  erlang27-rebar3
+BuildRequires:  elixir119
+BuildRequires:  elixir119-hex
 %else
-BuildRequires:  elixir >= 1.15
+BuildRequires:  elixir
+BuildRequires:  elixir-hex
+BuildRequires:  erlang-rebar3
 %endif
 
 %description
@@ -71,6 +70,7 @@ export MIX_HOME=/usr/bin
 export MIX_REBAR3=/usr/bin/rebar3
 export MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 export GTM_ID=%%GTM_ID%%
+export INSTALLATION_METHOD=rpm
 export VERSION=%{version}
 mix phx.digest
 mix release

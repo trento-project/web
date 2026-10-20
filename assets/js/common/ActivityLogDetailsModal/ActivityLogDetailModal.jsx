@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { get, noop } from 'lodash';
@@ -52,7 +52,7 @@ const renderResource = (entry) => (
 function RenderCorrelatedEventsLink({ onClose, entry }) {
   return (
     <NavLink
-      to={`/activity_log?severity=info&severity=warning&severity=critical&search=${entry.metadata.correlation_id}&first=20`}
+      to={`/activity_log?severity=debug&severity=info&severity=warning&severity=critical&search=${entry.metadata.correlation_id}&first=20`}
       onClick={onClose}
       className="text-jungle-green-500"
     >

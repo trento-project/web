@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.OpenApi.V1.Schema.Operations.SapInstanceStartStopParams do
   @moduledoc false
@@ -14,7 +14,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Operations.SapInstanceStartStopParams do
       additionalProperties: false,
       properties: %{
         timeout: %Schema{
-          type: :number,
+          type: :integer,
           description:
             "Specifies the time in seconds to wait for the SAP instance to complete the start or stop operation.",
           example: 300

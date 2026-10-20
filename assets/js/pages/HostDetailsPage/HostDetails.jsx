@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-import React, { useState } from 'react';
-import { get, zipWith, startCase, some } from 'lodash';
+import React, { useState, useId } from 'react';
+import { get, startCase, some } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -11,6 +11,7 @@ import {
 } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
+import { buildCidrNotation } from '@lib/network/ip';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
@@ -19,14 +20,13 @@ import {
   getOperationLabel,
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import { isHeartbeatPassing } from '@lib/model/hosts';
 import { formatBytes } from '@lib/charts';
 import { formatDateTime } from '@lib/timezones';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
 import CleanUpButton from '@common/CleanUpButton';
-import PageHeader from '@common/PageHeader';
+import { DetailsViewHeader } from '@common/PageHeader';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 import Banner from '@common/Banners';
@@ -57,15 +57,8 @@ import DiskSpaceChart from './DiskSpaceChart';
 
 import {
   subscriptionsTableConfiguration,
-  sapInstancesTableConfiguration,
+  getSapInstancesTableConfiguration,
 } from './tableConfigs';
-
-export const buildCidrNotation = (ipAddresses, netmasks) =>
-  zipWith(
-    ipAddresses,
-    netmasks,
-    (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
-  );
 
 function HostDetails({
   agentVersion,
@@ -76,6 +69,8 @@ function HostDetails({
   deregistering,
   exportersStatus = {},
   heartbeat,
+  staleAt,
+  health,
   hostID,
   hostname,
   ipAddresses = [],
@@ -114,6 +109,7 @@ function HostDetails({
   const [simpleOperationModalOpen, setSimpleOperationModalOpen] =
     useState(false);
   const [currentOperation, setCurrentOperation] = useState(null);
+  const tableLabelId = useId();
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -140,7 +136,7 @@ function HostDetails({
       <StatusPill
         key={exporterName}
         className="self-center ml-4 shadow"
-        heartbeat={exporterStatus}
+        status={exporterStatus}
       >
         {startCase(exporterName)}
       </StatusPill>
@@ -230,16 +226,21 @@ function HostDetails({
         <BackButton url="/hosts">Back to Hosts</BackButton>
         <div className="flex flex-wrap">
           <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-            <PageHeader>
+            <DetailsViewHeader
+              health={health}
+              staleAt={staleAt}
+              timezone={timezone}
+              healthAriaLabelPrefix="Host"
+            >
               Host Details: <span className="font-bold">{hostname}</span>
-            </PageHeader>
+            </DetailsViewHeader>
           </div>
           <div className="flex w-1/2 justify-end">
             <div className="flex w-fit whitespace-nowrap">
               {operationsEnabled && (
                 <OperationsButton
                   userAbilities={userAbilities}
-                  disabled={!isHeartbeatPassing({ heartbeat })}
+                  disabled={!!staleAt}
                   disabledTooltip={OPERATION_NOT_ALLOWED_HOST}
                   operations={[
                     {
@@ -332,12 +333,19 @@ function HostDetails({
             </div>
           </div>
           <div className="pb-3">
-            <StatusPill className="self-center shadow" heartbeat={heartbeat}>
+            <StatusPill className="self-center shadow" status={heartbeat}>
               Agent
             </StatusPill>
             {renderedExporters}
           </div>
         </div>
+        {staleAt && (
+          <Banner type="warning" truncate={false}>
+            The agent in this host is not responding since{' '}
+            {formatDateTime(staleAt, timezone)}. Some information in this view
+            might be stale.
+          </Banner>
+        )}
         {versionWarningMessage && (
           <Banner type="warning">{versionWarningMessage}</Banner>
         )}
@@ -366,8 +374,10 @@ function HostDetails({
               timezone={timezone}
               loading={catalogLoading || lastExecutionLoading}
               error={catalogError || lastExecutionError}
-              onCheckClick={(health) =>
-                navigate(`/hosts/${hostID}/executions/last?health=${health}`)
+              onCheckClick={(checksHealth) =>
+                navigate(
+                  `/hosts/${hostID}/executions/last?health=${checksHealth}`
+                )
               }
             />
           </div>
@@ -417,12 +427,17 @@ function HostDetails({
 
         <div className="mt-8">
           <div>
-            <h2 className="text-2xl font-bold">SAP instances</h2>
+            <h2 id={tableLabelId} className="text-2xl font-bold">
+              SAP instances
+            </h2>
           </div>
           <Table
             className="pt-2"
-            config={sapInstancesTableConfiguration}
+            config={getSapInstancesTableConfiguration({
+              userTimezone: timezone,
+            })}
             data={sapInstances}
+            ariaLabelledBy={tableLabelId}
           />
         </div>
 

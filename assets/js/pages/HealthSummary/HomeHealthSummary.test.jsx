@@ -1,12 +1,15 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { faker } from '@faker-js/faker';
+import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { healthSummaryFactory } from '@lib/test-utils/factories';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import HomeHealthSummary from './HomeHealthSummary';
 
@@ -37,16 +40,29 @@ const homeHealthSummaryData = [
   healthSummaryFactory.build({
     application_cluster_id: null,
     database_cluster_id: null,
-    application_cluster_health: 'unknown',
-    database_cluster_health: 'unknown',
+    application_cluster_health: null,
+    database_cluster_health: null,
     application_health: 'critical',
     database_health: 'passing',
     hosts_health: 'passing',
     sapsystem_health: 'passing',
   }),
+  healthSummaryFactory.build({
+    application_cluster_stale_at: faker.date.past(),
+    application_stale_at: faker.date.past(),
+    database_cluster_stale_at: faker.date.past(),
+    database_stale_at: faker.date.past(),
+    hosts_health: 'critical',
+    hosts_stale_at: faker.date.past(),
+  }),
 ];
 
 describe('HomeHealthSummary component', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   it('should have a clickable SAP INSTANCE icon with link to the belonging instance', () => {
     const { container } = renderWithRouter(
       <HomeHealthSummary
@@ -119,8 +135,38 @@ describe('HomeHealthSummary component', () => {
     ).toContain('/hosts?sid=NWD&sid=HDD');
   });
 
+  it('should display stale SAP systems with gray background and stale icons', () => {
+    renderWithRouter(
+      <HomeHealthSummary
+        sapSystemsHealth={homeHealthSummaryData}
+        loading={false}
+        userTimezone="Etc/UTC"
+      />
+    );
+
+    const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+    const inSyncRow = rows[0];
+    const staleRow = rows[4];
+
+    expect(inSyncRow).not.toHaveClass('bg-gray-100');
+    within(inSyncRow)
+      .getAllByRole('img', { name: /health/i })
+      .forEach((icon) => {
+        expect(icon).not.toHaveAttribute('data-stale');
+      });
+
+    expect(staleRow).toHaveClass('bg-gray-100');
+    within(staleRow)
+      .getAllByRole('img', { name: /health/i })
+      .forEach((icon) => {
+        expect(icon).toHaveAttribute('data-stale');
+      });
+  });
+
   describe('health box filter behaviour', () => {
     it('should put the filters values in the query string when health filters are selected', async () => {
+      const user = userEvent.setup();
+
       const { container } = renderWithRouter(
         <HomeHealthSummary
           sapSystemsHealth={homeHealthSummaryData}
@@ -128,16 +174,16 @@ describe('HomeHealthSummary component', () => {
         />
       );
 
-      expect(container.querySelector('tbody').childNodes.length).toEqual(4);
+      expect(container.querySelector('tbody').childNodes.length).toEqual(5);
 
       const cases = [
         ['passing', 1],
         ['warning', 1],
-        ['critical', 4],
+        ['critical', 5],
       ];
 
-      cases.forEach(([health, results]) => {
-        fireEvent.click(
+      for (const [health, results] of cases) {
+        await user.click(
           screen.getByTestId(`health-box-${health}-not-selected`)
         );
 
@@ -147,19 +193,82 @@ describe('HomeHealthSummary component', () => {
 
         expect(window.location.search).toEqual(`?health=${health}`);
 
-        fireEvent.click(screen.getByTestId(`health-box-${health}-selected`));
-      });
+        await user.click(screen.getByTestId(`health-box-${health}-selected`));
+      }
 
       expect(window.location.search).toEqual('');
 
-      cases.forEach(([health]) => {
-        fireEvent.click(
+      for (const [health] of cases) {
+        await user.click(
           screen.getByTestId(`health-box-${health}-not-selected`)
         );
-      });
+      }
 
       expect(window.location.search).toEqual(
         '?health=passing&health=warning&health=critical'
+      );
+    });
+
+    it('should restore the stored filters when landing on a bare url', async () => {
+      writeViewSetting('dashboard', 'health=passing');
+
+      const { container } = renderWithRouter(
+        <HomeHealthSummary
+          sapSystemsHealth={homeHealthSummaryData}
+          loading={false}
+        />
+      );
+
+      await waitFor(() =>
+        expect(window.location.search).toEqual('?health=passing')
+      );
+
+      expect(container.querySelector('tbody').childNodes.length).toEqual(1);
+      expect(
+        screen.getByTestId('health-box-passing-selected')
+      ).toBeInTheDocument();
+    });
+
+    it('should let the filters in the url win over the stored ones', async () => {
+      writeViewSetting('dashboard', 'health=critical');
+
+      const { container } = renderWithRouter(
+        <HomeHealthSummary
+          sapSystemsHealth={homeHealthSummaryData}
+          loading={false}
+        />,
+        { route: '/?health=passing' }
+      );
+
+      expect(container.querySelector('tbody').childNodes.length).toEqual(1);
+
+      await waitFor(() =>
+        expect(readViewSetting('dashboard')).toEqual('health=passing')
+      );
+    });
+
+    it('should store the selected filters', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <HomeHealthSummary
+          sapSystemsHealth={homeHealthSummaryData}
+          loading={false}
+        />
+      );
+
+      await user.click(screen.getByTestId('health-box-passing-not-selected'));
+
+      await waitFor(() =>
+        expect(readViewSetting('dashboard')).toEqual('health=passing')
+      );
+
+      await user.click(screen.getByTestId('health-box-warning-not-selected'));
+
+      await waitFor(() =>
+        expect(readViewSetting('dashboard')).toEqual(
+          'health=passing&health=warning'
+        )
       );
     });
   });

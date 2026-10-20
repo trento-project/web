@@ -1,10 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { generateSid } from '.';
 
+const statusEnum = () =>
+  faker.helpers.arrayElement(['green', 'yellow', 'red', 'gray']);
 const healthEnum = () =>
   faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
 const features = () =>
@@ -12,7 +14,7 @@ const features = () =>
 
 export const databaseInstanceFactory = Factory.define(() => ({
   database_id: faker.string.uuid(),
-  health: healthEnum(),
+  status: statusEnum(),
   host_id: faker.string.uuid(),
   http_port: faker.internet.port(),
   https_port: faker.internet.port(),
@@ -29,6 +31,7 @@ export const databaseInstanceFactory = Factory.define(() => ({
   system_replication_source_site: '',
   system_replication_tier: 0,
   absent_at: null,
+  stale_at: null,
 }));
 
 export const databaseFactory = Factory.define(({ params }) => {
@@ -43,5 +46,6 @@ export const databaseFactory = Factory.define(({ params }) => {
       database_id: id,
       sid,
     }),
+    stale_at: null,
   };
 });

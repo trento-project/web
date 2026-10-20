@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.ActivityLogControllerTest do
   use TrentoWeb.ConnCase, async: true
@@ -18,7 +18,13 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
     "user_creation",
     "user_modification",
     "user_deletion",
-    "profile_update"
+    "profile_update",
+    "personal_access_token_creation",
+    "personal_access_token_deletion",
+    "personal_access_token_admin_deletion",
+    "ai_configuration_creation",
+    "ai_configuration_modification",
+    "ai_configuration_deletion"
   ]
 
   describe "ActivityLogController" do

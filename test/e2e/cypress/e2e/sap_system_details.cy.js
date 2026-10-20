@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as sapSystemDetailsPage from '../pageObject/sap_system_details_po';
 
@@ -9,20 +9,37 @@ context('SAP system details', () => {
   describe('SAP system details page is available', () => {
     beforeEach(() => sapSystemDetailsPage.visit());
 
+    after(() => {
+      sapSystemDetailsPage.restoreDatabaseInstanceHealth();
+    });
+
     it('should have expected url', () => {
       sapSystemDetailsPage.validatePageUrl();
     });
 
     it('should display the selected system details page', () => {
       sapSystemDetailsPage.pageTitleIsCorrectlyDisplayed('SAP System Details');
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
       sapSystemDetailsPage.sapSystemHasExpectedName();
       sapSystemDetailsPage.sapSystemHasExpectedType();
+      sapSystemDetailsPage.sapSystemHasExpectedEnsaVersion();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabase();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseTenant();
     });
 
     it(`should display "Not found" page when SAP system doesn't exist`, () => {
       sapSystemDetailsPage.visitNonExistentSapSystem();
       sapSystemDetailsPage.validatePageUrl('other');
       sapSystemDetailsPage.notFoundLabelIsDisplayed();
+    });
+
+    it('should update system and database health icons when database health is changed', () => {
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth();
+      sapSystemDetailsPage.loadScenario('hana-database-detail-RED');
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth('critical');
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed('critical');
     });
   });
 
@@ -36,12 +53,11 @@ context('SAP system details', () => {
     });
 
     it('should show expected status badge in instance when a new state is received', () => {
-      sapSystemDetailsPage.shouldDisplayExpectedHealthStatusChanges();
+      sapSystemDetailsPage.shouldDisplayExpectedStatusChanges();
     });
 
     /* This test is skipped because there is not any option to remove added SAP instances or
     resetting the database afterwards, and it affects the rest of the test suite.*/
-    // eslint-disable-next-line mocha/no-pending-tests
     it.skip('should show a new instance when an event with a new SAP instance is received', () => {
       sapSystemDetailsPage.loadNewSapSystem();
       sapSystemDetailsPage.newSapSystemIsDisplayed();
@@ -79,6 +95,47 @@ context('SAP system details', () => {
     it('should include restored host again in the list', () => {
       sapSystemDetailsPage.restoreDeregisteredHost();
       sapSystemDetailsPage.hostToDeregisterIsDisplayed();
+    });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      sapSystemDetailsPage.startSapSystemAgentsHeartbeat();
+      sapSystemDetailsPage.visit();
+    });
+
+    after(() => sapSystemDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark SAP system data as stale when an agent composing the system stops reporting', () => {
+      sapSystemDetailsPage.stopSapSystemAgentHeartbeat();
+      sapSystemDetailsPage.sapSystemHealthIsMarkedAsStale();
+      sapSystemDetailsPage.sapSystemStaleBannerIsDisplayed();
+      sapSystemDetailsPage.sapSystemInstanceRowIsMarkedAsStale();
+      sapSystemDetailsPage.hostRowIsMarkedAsStale();
+    });
+
+    it('should mark SAP system data as sync when the agent starts reporting data again', () => {
+      sapSystemDetailsPage.startSapSystemAgentHeartbeat();
+      sapSystemDetailsPage.markSapSystemAsPresent();
+      sapSystemDetailsPage.sapSystemHealthIsMarkedInSync();
+      sapSystemDetailsPage.sapSystemStaleBannerIsNotDisplayed();
+      sapSystemDetailsPage.sapSystemInstanceRowIsMarkedInSync();
+      sapSystemDetailsPage.hostRowIsMarkedInSync();
+    });
+
+    it('should mark SAP system data as stale when an agent with a database instance composing the system stops reporting', () => {
+      sapSystemDetailsPage.stopDatabaseAgentHeartbeat();
+      sapSystemDetailsPage.sapSystemHealthIsMarkedAsStale();
+      sapSystemDetailsPage.sapSystemDatabaseHealthIsMarkedAsStale();
+      sapSystemDetailsPage.sapSystemStaleBannerIsDisplayed();
+    });
+
+    it('should mark SAP system data as sync when the agent with a database instance starts reporting data again', () => {
+      sapSystemDetailsPage.startDatabaseAgentHeartbeat();
+      sapSystemDetailsPage.markDatabaseAsPresent();
+      sapSystemDetailsPage.sapSystemHealthIsMarkedInSync();
+      sapSystemDetailsPage.sapSystemDatabaseHealthIsMarkedInSync();
+      sapSystemDetailsPage.sapSystemStaleBannerIsNotDisplayed();
     });
   });
 

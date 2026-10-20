@@ -1,5 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+import semver from 'semver';
 
 export * from './base_po';
 import * as basePage from './base_po';
@@ -8,16 +10,15 @@ const hostToDeregister = '7269ee51-5007-5849-aaa7-7c4a98b0c9ce';
 
 const url = '/about';
 const pageTitle = 'h2';
-const versionLabel = 'div.font-bold:contains("Server version") + div span';
-const wandaVersionLabel = 'div.font-bold:contains("Wanda version") + div span';
-const checksVersionLabel =
-  'div.font-bold:contains("Checks version") + div span';
-const postgresVersionLabel =
-  'div.font-bold:contains("PostgreSQL version") + div span';
-const rabbitmqVersionLabel =
-  'div.font-bold:contains("RabbitMQ version") + div span';
-const prometheusVersionLabel =
-  'div.font-bold:contains("Prometheus version") + div span';
+const versionLabels = {
+  server: 'div.font-bold:contains("Server version") + div span',
+  wanda: 'div.font-bold:contains("Wanda version") + div span',
+  checks: 'div.font-bold:contains("Checks version") + div span',
+  postgres: 'div.font-bold:contains("PostgreSQL version") + div span',
+  rabbitmq: 'div.font-bold:contains("RabbitMQ version") + div span',
+  prometheus: 'div.font-bold:contains("Prometheus version") + div span',
+};
+
 const githubRepositoryLabel =
   'div.font-bold:contains("GitHub repository") + div a';
 const amountOfSlesForSapSubscriptionsLabel =
@@ -30,33 +31,30 @@ export const pageTitleIsDisplayed = () =>
   cy.get(pageTitle).should('have.text', 'About Trento Console');
 
 export const expectedServerVersionIsDisplayed = () =>
-  cy.readFile(versionFilePath, 'utf8').then((version) => {
-    version = version.trim();
-    return cy.get(versionLabel).should('have.text', version);
-  });
+  Cypress.expose('web_mode') === 'prod'
+    ? expectedComponentVersionIsDisplayed('server')
+    : cy.readFile(versionFilePath, 'utf8').then((expectedVersion) => {
+        expectedVersion = expectedVersion.trim();
+
+        return cy
+          .get(versionLabels.server)
+          .should('have.text', expectedVersion);
+      });
 
 export const expectedGithubUrlIsDisplayed = () =>
   cy
     .get(githubRepositoryLabel)
     .should('have.text', 'https://github.com/trento-project/web');
 
-export const componentVersionIsDisplayed = (selector) =>
-  cy.get(selector).should('not.be.empty').and('be.visible');
-
-export const expectedWandaVersionIsDisplayed = () =>
-  componentVersionIsDisplayed(wandaVersionLabel);
-
-export const expectedChecksVersionIsDisplayed = () =>
-  componentVersionIsDisplayed(checksVersionLabel);
-
-export const expectedPostgresVersionIsDisplayed = () =>
-  componentVersionIsDisplayed(postgresVersionLabel);
-
-export const expectedRabbitmqVersionIsDisplayed = () =>
-  componentVersionIsDisplayed(rabbitmqVersionLabel);
-
-export const expectedPrometheusVersionIsDisplayed = () =>
-  componentVersionIsDisplayed(prometheusVersionLabel);
+export const expectedComponentVersionIsDisplayed = (component) =>
+  cy
+    .get(versionLabels[component])
+    .invoke('text')
+    .should((version) => {
+      const isValidVersion = semver.valid(semver.coerce(version)) !== null;
+      expect(isValidVersion, `expected "${version}" to be a valid semver`).to.be
+        .true;
+    });
 
 export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
   cy

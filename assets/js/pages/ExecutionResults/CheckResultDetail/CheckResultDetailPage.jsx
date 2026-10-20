@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useEffect } from 'react';
 import { find, get, some } from 'lodash';
@@ -89,8 +89,10 @@ function CheckResultDetailPage({ targetType }) {
 
   const hostsIDList = useSelector((state) => getHostIDs(state));
 
+  const check = findCheck(catalog, checkID);
+
   useEffect(() => {
-    if (catalog.length === 0) {
+    if (!check) {
       dispatch(updateCatalog());
     }
     if (!executionData) {
@@ -170,7 +172,7 @@ function CheckResultDetailPage({ targetType }) {
     );
   }
 
-  const { description, severity, expectations } = findCheck(catalog, checkID);
+  const { description, severity, expectations } = check;
 
   const resultTargetID = getResultTargetID(
     targetID,

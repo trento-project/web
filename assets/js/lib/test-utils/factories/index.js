@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
@@ -13,6 +13,14 @@ export * from './relevantPatches';
 export * from './advisoryErrata';
 export * from './users';
 export * from './checks';
+export * from './upgradablePackage';
+export * from './alertingSettings';
+export * from './activityLog';
+export * from './activityLogsSettings';
+export * from './charts';
+export * from './operations';
+export * from './settings';
+export * from './softwareUpdatesSettings';
 
 export const randomObjectFactory = Factory.define(({ transientParams }) => {
   const depth = transientParams.depth || 2;
@@ -71,12 +79,17 @@ export const checkFactory = Factory.define(() => ({
 export const healthSummaryFactory = Factory.define(() => ({
   application_cluster_id: faker.string.uuid(),
   application_cluster_health: healthEnum(),
+  application_cluster_stale_at: null,
   application_health: healthEnum(),
+  application_stale_at: null,
   database_health: healthEnum(),
   database_id: faker.string.uuid(),
+  database_stale_at: null,
   database_cluster_id: faker.string.uuid(),
   database_cluster_health: healthEnum(),
+  database_cluster_stale_at: null,
   hosts_health: healthEnum(),
+  hosts_stale_at: null,
   id: faker.string.uuid(),
   sapsystem_health: healthEnum(),
   sid: generateSid(),

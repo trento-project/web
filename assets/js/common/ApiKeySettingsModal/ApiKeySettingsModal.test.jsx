@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
@@ -276,7 +276,9 @@ describe('ApiKeySettingsModal', () => {
       expect(
         screen.getByText('Are you sure you want to generate a new API key?')
       ).toBeVisible();
-      expect(screen.getByTestId('banner')).toBeVisible();
+      expect(
+        screen.getByRole('alert', { name: /Generating a new API Key forces/i })
+      ).toBeVisible();
       expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
       expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
     });

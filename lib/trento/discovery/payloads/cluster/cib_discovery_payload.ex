@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
   @moduledoc """
@@ -87,6 +87,9 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
         embeds_one :primitive, Primitive
       end
 
+      # Deprecated CIB <master> tag, superseded by <clone promotable="true">.
+      # Kept for CIBs written by Pacemaker < 3.0;
+      # modern promotable clones arrive under :clones instead and this stays empty.
       embeds_many :masters, Master, primary_key: false do
         field :id, :string
 

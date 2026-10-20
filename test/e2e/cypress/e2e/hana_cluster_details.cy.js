@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as hanaClusterDetailsPage from '../pageObject/hana_cluster_details_po';
 
@@ -16,6 +16,10 @@ context('HANA cluster details', () => {
 
     it('should have expected cluster name in header', () => {
       hanaClusterDetailsPage.expectedClusterNameIsDisplayedInHeader();
+    });
+
+    it('should have expected cluster health in header', () => {
+      hanaClusterDetailsPage.expectedClusterHealthIsDisplayedInHeader();
     });
 
     it('should have expected provider', () => {
@@ -150,8 +154,19 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.waitForInitialEndpoints();
     });
 
+    after(() => hanaClusterDetailsPage.loadScenario('cluster-sbd-healthy'));
+
     it('should have SBD expected device name & status', () => {
       hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus();
+    });
+
+    it('should have SBD with unhealthy status after change', () => {
+      hanaClusterDetailsPage.loadScenario('cluster-sbd-unhealthy');
+      hanaClusterDetailsPage.criticalClusterHealthIsDisplayedInHeader();
+      hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus([
+        {},
+        { status: 'Unhealthy' },
+      ]);
     });
   });
 
@@ -304,11 +319,15 @@ context('HANA cluster details', () => {
     const CHECK_PACEMAKER = 'Pacemaker';
     const CHECK_SBD = 'SBD';
 
+    // checks results are only available when wanda runs in demo mode
     before(function () {
-      if (Cypress.env('wanda_mode') !== 'demo') this.skip();
+      if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 
-    beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
+    beforeEach(() => {
+      cy.clearAllSessionStorage();
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    });
 
     it('should include the checks catalog in the checks results once enabled', () => {
       hanaClusterDetailsPage.interceptGetChecks();
@@ -426,6 +445,28 @@ context('HANA cluster details', () => {
     it('should show resources table content', () => {
       hanaClusterDetailsPage.expandGroupedResources();
       hanaClusterDetailsPage.expectedResourcesDisplayed();
+    });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      hanaClusterDetailsPage.startHanaClusterAgentsHeartbeat();
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    });
+
+    after(() => hanaClusterDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark cluster data as stale when an agent composing the cluster stops reporting', () => {
+      hanaClusterDetailsPage.stopHanaClusterAgentHeartbeat();
+      hanaClusterDetailsPage.hanaClusterHealthIsMarkedAsStale();
+      hanaClusterDetailsPage.hanaClusterStaleBannerIsDisplayed();
+    });
+
+    it('should mark cluster data as sync when the agent starts reporting data again', () => {
+      hanaClusterDetailsPage.startHanaClusterAgentHeartbeat();
+      hanaClusterDetailsPage.apiRestoreWdfHost();
+      hanaClusterDetailsPage.hanaClusterHealthIsMarkedInSync();
+      hanaClusterDetailsPage.hanaClusterStaleBannerIsNotDisplayed();
     });
   });
 

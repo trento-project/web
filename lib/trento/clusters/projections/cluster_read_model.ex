@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Clusters.Projections.ClusterReadModel do
   @moduledoc """
@@ -40,6 +40,7 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
     field :hosts_number, :integer
     field :state, Ecto.Enum, values: ClusterState.values()
     field :details, Trento.Support.Ecto.Payload, keys_as_atoms: true
+    field :stale_at, :utc_datetime_usec
 
     has_many :tags, Tag, foreign_key: :resource_id
 

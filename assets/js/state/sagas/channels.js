@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { eventChannel, END } from 'redux-saga';
 import { all, call, fork, put, select, take } from 'redux-saga/effects';
@@ -25,16 +25,19 @@ import {
   clusterCibLastWrittenUpdated,
   clusterDeregistered,
   clusterRestored,
+  clusterStaleChanged,
 } from '@state/clusters';
 
 import {
   sapSystemRegistered,
   sapSystemHealthChanged,
+  sapSystemStaleChanged,
   applicationInstanceRegistered,
   applicationInstanceMoved,
   applicationInstanceAbsentAtChanged,
+  applicationInstanceStaleChanged,
   applicationInstanceDeregistered,
-  applicationInstanceHealthChanged,
+  applicationInstanceStatusChanged,
   sapSystemDeregistered,
   sapSystemRestored,
   sapSystemUpdated,
@@ -45,10 +48,12 @@ import {
   databaseDeregistered,
   databaseRestored,
   databaseHealthChanged,
+  databaseStaleChanged,
   databaseInstanceRegistered,
   databaseInstanceAbsentAtChanged,
+  databaseInstanceStaleChanged,
   databaseInstanceDeregistered,
-  databaseInstanceHealthChanged,
+  databaseInstanceStatusChanged,
   databaseInstanceSystemReplicationChanged,
 } from '@state/databases';
 
@@ -119,6 +124,10 @@ const clusterEvents = [
     action: clusterHealthChanged,
   },
   {
+    name: 'cluster_stale_changed',
+    action: clusterStaleChanged,
+  },
+  {
     name: 'cluster_cib_last_written_updated',
     action: clusterCibLastWrittenUpdated,
   },
@@ -142,6 +151,10 @@ const sapSystemEvents = [
     action: sapSystemHealthChanged,
   },
   {
+    name: 'sap_system_stale_changed',
+    action: sapSystemStaleChanged,
+  },
+  {
     name: 'application_instance_registered',
     action: applicationInstanceRegistered,
   },
@@ -154,12 +167,16 @@ const sapSystemEvents = [
     action: applicationInstanceAbsentAtChanged,
   },
   {
+    name: 'application_instance_stale_changed',
+    action: applicationInstanceStaleChanged,
+  },
+  {
     name: 'application_instance_deregistered',
     action: applicationInstanceDeregistered,
   },
   {
-    name: 'application_instance_health_changed',
-    action: applicationInstanceHealthChanged,
+    name: 'application_instance_status_changed',
+    action: applicationInstanceStatusChanged,
   },
   {
     name: 'sap_system_deregistered',
@@ -193,6 +210,10 @@ const databaseEvents = [
     action: databaseHealthChanged,
   },
   {
+    name: 'database_stale_changed',
+    action: databaseStaleChanged,
+  },
+  {
     name: 'database_instance_registered',
     action: databaseInstanceRegistered,
   },
@@ -201,12 +222,16 @@ const databaseEvents = [
     action: databaseInstanceAbsentAtChanged,
   },
   {
+    name: 'database_instance_stale_changed',
+    action: databaseInstanceStaleChanged,
+  },
+  {
     name: 'database_instance_deregistered',
     action: databaseInstanceDeregistered,
   },
   {
-    name: 'database_instance_health_changed',
-    action: databaseInstanceHealthChanged,
+    name: 'database_instance_status_changed',
+    action: databaseInstanceStatusChanged,
   },
   {
     name: 'database_instance_system_replication_changed',

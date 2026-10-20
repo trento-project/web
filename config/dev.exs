@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import Config
 
@@ -163,7 +163,7 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.MockPrometheusApi
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
+config :trento, Trento.Infrastructure.SoftwareUpdates.MockSmlm,
   relevant_patches_system_ids: [
     # vmdrbddev01
     5980

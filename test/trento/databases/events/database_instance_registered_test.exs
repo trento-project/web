@@ -1,8 +1,10 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.Databases.Events.DatabaseInstanceRegisteredTest do
   use ExUnit.Case
+
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Databases.Events.DatabaseInstanceRegistered
 
@@ -11,18 +13,20 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegisteredTest do
       database_id = Faker.UUID.v4()
 
       assert %DatabaseInstanceRegistered{
-               version: 4,
+               version: 5,
                database_id: ^database_id,
                system_replication_site: nil,
                system_replication_site_id: nil,
                system_replication_mode: nil,
                system_replication_operation_mode: nil,
                system_replication_source_site: nil,
-               system_replication_tier: nil
+               system_replication_tier: nil,
+               status: Status.green()
              } =
                %{
                  "database_id" => database_id,
-                 "system_replication_tier" => 0
+                 "system_replication_tier" => 0,
+                 "health" => "passing"
                }
                |> DatabaseInstanceRegistered.upcast(%{})
                |> DatabaseInstanceRegistered.new!()

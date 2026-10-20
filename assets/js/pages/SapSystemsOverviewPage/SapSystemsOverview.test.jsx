@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
@@ -17,12 +17,18 @@ import {
 import { renderWithRouter } from '@lib/test-utils';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { filterTable, clearFilter } from '@lib/test-utils/table';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import SapSystemsOverview from './SapSystemsOverview';
 
 const userAbilities = [{ name: 'all', resource: 'all' }];
 
 describe('SapSystemsOverviews component', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   describe('overview content', () => {
     it('should display the correct number of SAP systems', () => {
       const sapSystemCount = 3;
@@ -292,6 +298,56 @@ describe('SapSystemsOverviews component', () => {
         ).toHaveAttribute('href', `/hosts/${instance.host.id}`);
       });
     });
+
+    it('should display stale SAP systems with gray background and stale icon', async () => {
+      const user = userEvent.setup();
+      const sapSystemID = faker.string.uuid();
+      const staleDate = faker.date.past().toISOString();
+      const sapSystem = sapSystemFactory.build({
+        id: sapSystemID,
+        health: 'passing',
+        stale_at: staleDate,
+        application_instances: sapSystemApplicationInstanceFactory.buildList(
+          2,
+          { sap_system_id: sapSystemID, stale_at: staleDate }
+        ),
+      });
+
+      const { application_instances: applicationInstances } = sapSystem;
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={[sapSystem]}
+          applicationInstances={applicationInstances}
+          databaseInstances={[]}
+        />
+      );
+
+      const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+      expect(rows[0]).toHaveClass('bg-gray-100');
+
+      const healthCell = rows[0].querySelector('td:nth-child(2)');
+      const svgs = healthCell.querySelectorAll(
+        '[data-testid="eos-svg-component"]'
+      );
+      expect(svgs).toHaveLength(2);
+
+      const table = screen.getByRole('table');
+      await user.click(
+        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+      );
+
+      const detailsRow = screen
+        .getByRole('table')
+        .querySelectorAll('tbody > tr')[1];
+      expect(detailsRow).toHaveClass('bg-gray-100');
+
+      const instanceRows = detailsRow.querySelectorAll(
+        'div.table-row-group > div.table-row'
+      );
+      expect(instanceRows[0]).toHaveClass('bg-gray-100');
+    });
   });
 
   describe('instance cleanup', () => {
@@ -501,6 +557,111 @@ describe('SapSystemsOverviews component', () => {
         expect(window.location.search).toEqual(
           `?health=${health}&sid=${sid}&tags=${tags[0].value}`
         )
+      );
+    });
+
+    it('should restore the stored filters when landing on a bare url', async () => {
+      const sapSystems = [].concat(
+        sapSystemFactory.buildList(3, { health: 'critical' }),
+        sapSystemFactory.buildList(2, { health: 'passing' })
+      );
+
+      writeViewSetting('sapSystems', 'health=critical&itemsPerPage=20');
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />,
+        { route: '/sap_systems' }
+      );
+
+      await waitFor(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        expect(params.get('health')).toEqual('critical');
+        expect(params.get('itemsPerPage')).toEqual('20');
+      });
+
+      expect(
+        screen.getByRole('table').querySelectorAll('tbody > tr:not([hidden])')
+      ).toHaveLength(3);
+    });
+
+    it('should let the filters in the url win over the stored ones', async () => {
+      const sapSystems = [].concat(
+        sapSystemFactory.buildList(3, { health: 'critical' }),
+        sapSystemFactory.buildList(2, { health: 'passing' })
+      );
+
+      writeViewSetting('sapSystems', 'health=critical');
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />,
+        { route: '/sap_systems?health=passing' }
+      );
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr:not([hidden])')
+        ).toHaveLength(2)
+      );
+
+      await waitFor(() =>
+        expect(readViewSetting('sapSystems')).toEqual('health=passing')
+      );
+    });
+
+    it('should store the selected filters', async () => {
+      const user = userEvent.setup();
+
+      const sapSystems = [].concat(
+        sapSystemFactory.buildList(3, { health: 'critical' }),
+        sapSystemFactory.buildList(2, { health: 'passing' })
+      );
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />,
+        { route: '/sap_systems' }
+      );
+
+      await filterTable(user, 'Health', 'critical');
+
+      await waitFor(() =>
+        expect(readViewSetting('sapSystems')).toEqual('health=critical')
+      );
+    });
+
+    it('should store the selected items per page', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={sapSystemFactory.buildList(3)}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />,
+        { route: '/sap_systems' }
+      );
+
+      await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+      await user.click(screen.getByRole('option', { name: '50' }));
+
+      await waitFor(() =>
+        expect(readViewSetting('sapSystems')).toEqual('itemsPerPage=50')
       );
     });
   });

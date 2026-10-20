@@ -1,0 +1,179 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+defmodule Trento.AI.Agent do
+  @moduledoc """
+  Factory + lifecycle entrypoint for the Trento AI Assistant agent.
+
+  `run/3` is the single side-effecting entrypoint: it builds the agent,
+  ensures the per-thread `Sagents.AgentServer` is running, subscribes the
+  **calling process** to the agent's `{:agent, ...}` event stream, and
+  sends the user prompt. Callers (the Phoenix channel) only deal with
+  trento-domain arguments + the AG-UI events that arrive in their mailbox;
+  `Sagents` and `LangChain` are implementation details of this module.
+
+  `new!/1` is the pure factory (no side effects). Useful for tests that
+  want to inspect the configured agent.
+  """
+
+  alias LangChain.Message
+  alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
+  alias Trento.AI.Agent.Server, as: AgentServer
+  alias Trento.AI.Agent.Supervisor, as: AgentSupervisor
+  alias Trento.AI.{ApplicationConfigLoader, Presence, ToolsRegistry}
+
+  # Stops any idle agent, viewed or not: sagents' idle timer ignores presence. Overridable via `:inactivity_timeout`.
+  @inactivity_timeout :timer.minutes(30)
+
+  @doc """
+  Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.
+
+  Accepted `opts`:
+
+  - `:agent_id`, `:model`, `:scope` — required (see Sagents docs).
+  - `:tool_context` — optional map set verbatim on the Sagents agent's
+    `tool_context` field. Sagents propagates this into the per-call
+    `context.tool_context` map that tool function closures receive.
+    Used to forward request-scoped data (e.g. the websocket user's JWT)
+    to tools that need it, without polluting `:scope`.
+  """
+  @spec new!(keyword()) :: Sagents.Agent.t()
+  def new!(opts) do
+    tool_context = Keyword.get(opts, :tool_context, %{})
+
+    Sagents.Agent.new!(
+      %{
+        agent_id: Keyword.fetch!(opts, :agent_id),
+        model: Keyword.fetch!(opts, :model),
+        scope: Keyword.fetch!(opts, :scope),
+        tool_context: tool_context,
+        base_system_prompt: load_base_system_prompt(),
+        tools: ToolsRegistry.tools(tool_context),
+        # see https://github.com/sagents-ai/sagents#provided-middleware
+        middleware: [
+          # Task management with write_todos tool for tracking multi-step work
+          {TodoList, []},
+          # Automatic conversation compression when token limits approach
+          {Summarization, []},
+          # Fix dangling tool calls from interrupted conversations
+          {PatchToolCalls, []}
+        ]
+      },
+      replace_default_middleware: true
+    )
+  end
+
+  @doc """
+  Ensure the agent for `:agent_id` is running, subscribe the calling
+  process to its event stream, and send the user prompt. Returns
+  `{:ok, server_pid}` or the first `{:error, reason}` from the start/subscribe/send chain.
+
+  Returns `{:error, :agent_busy}` while a run is in flight: sagents would
+  queue the prompt behind it, and its events would read as this run's.
+
+  Pass `:agent_pid` to continue the conversation held by that agent
+  server. When the thread's agent is gone, or is another process (sagents
+  restarts a crashed server with an empty state), returns
+  `{:error, :conversation_expired}` instead of sending the prompt to an agent
+  that would answer without the conversation.
+  """
+  @spec run(Sagents.Agent.t(), String.t(), keyword()) :: {:ok, pid()} | {:error, term()}
+  def run(%Sagents.Agent{agent_id: agent_id} = maybe_new_agent, prompt, opts \\ []) do
+    refresh_when = Keyword.get(opts, :refresh_when, &default_refresh_when/2)
+    agent_pid = Keyword.get(opts, :agent_pid)
+
+    with :ok <- ensure_started(maybe_new_agent, agent_pid),
+         :ok <- ensure_not_running(agent_id),
+         :ok <- maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when),
+         {:ok, server_pid, _monitor_ref} <- AgentServer.subscribe(agent_id),
+         :ok <- AgentServer.add_message(agent_id, Message.new_user!(prompt)) do
+      {:ok, server_pid}
+    end
+  end
+
+  @doc """
+  Stops the running agent for `agent_id`, terminating any in-flight run.
+
+  It cancels in-flight runs first, then stops the agent process.
+
+  This is faster than only stopping the agent, because `Sagents.AgentServer.terminate/2`
+  waits for the running task to finish (up to 25s) before the process exits.
+
+  Best-effort — the cancel result is discarded and the supervisor's result is
+  returned verbatim (`{:error, term()}` when no agent is running for the id).
+  """
+  @spec stop(String.t()) :: :ok | {:error, term()}
+  def stop(agent_id) do
+    cancel(agent_id)
+    AgentSupervisor.stop_agent(agent_id)
+  end
+
+  @doc """
+  Cancels the in-flight run for `agent_id`, keeping the agent process and its
+  conversation state alive.
+
+  Best-effort — returns `{:error, reason}` when nothing is running for the id.
+  """
+  @spec cancel(String.t()) :: :ok | {:error, term()}
+  def cancel(agent_id), do: AgentServer.cancel(agent_id)
+
+  # Best effort: no agent yet, a `:noop` or a failed write must not block the
+  # prompt. Only a drained registry ends the run, as nothing after it can work.
+  defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
+    with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
+         {:ok, updated_agent} <- refresh_when.(current_agent, maybe_new_agent),
+         %{state: current_state} <- AgentServer.get_info(agent_id),
+         :ok <- AgentServer.update_agent_and_state(agent_id, updated_agent, current_state) do
+      :ok
+    else
+      {:error, :registry_unavailable} = error -> error
+      _ -> :ok
+    end
+  end
+
+  defp default_refresh_when(_current_agent, _new_agent), do: :noop
+
+  defp ensure_started(%Sagents.Agent{agent_id: agent_id} = agent, nil = _current_agent) do
+    with {:ok, _} <- agent_id |> start_opts(agent) |> AgentSupervisor.start_agent_sync(),
+         do: :ok
+  end
+
+  defp ensure_started(%Sagents.Agent{agent_id: agent_id}, agent_pid) do
+    case AgentServer.fetch_pid(agent_id) do
+      {:ok, ^agent_pid} -> :ok
+      {:error, :registry_unavailable} = error -> error
+      _ -> {:error, :conversation_expired}
+    end
+  end
+
+  defp ensure_not_running(agent_id) do
+    case AgentServer.get_status(agent_id) do
+      :running -> {:error, :agent_busy}
+      {:error, :registry_unavailable} = error -> error
+      _ -> :ok
+    end
+  end
+
+  defp start_opts(agent_id, agent) do
+    [
+      agent_id: agent_id,
+      agent: agent,
+      inactivity_timeout: inactivity_timeout(),
+      pubsub: {Phoenix.PubSub, Trento.PubSub},
+      presence_tracking: [
+        presence_module: Presence,
+        topic: Presence.viewers_topic(agent_id),
+        check_delay: Presence.viewer_check_delay()
+      ]
+    ]
+  end
+
+  defp inactivity_timeout,
+    do: Keyword.get(ApplicationConfigLoader.load(), :inactivity_timeout, @inactivity_timeout)
+
+  defp load_base_system_prompt do
+    ApplicationConfigLoader.load()
+    |> Keyword.fetch!(:base_system_prompt)
+    |> File.read!()
+  end
+end

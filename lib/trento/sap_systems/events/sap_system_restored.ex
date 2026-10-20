@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule Trento.SapSystems.Events.SapSystemRestored do
   @moduledoc """
@@ -16,5 +16,6 @@ defmodule Trento.SapSystems.Events.SapSystemRestored do
     field :db_host, :string
     field :health, Ecto.Enum, values: Health.values()
     field :database_health, Ecto.Enum, values: Health.values()
+    field :database_stale_at, :utc_datetime_usec
   end
 end

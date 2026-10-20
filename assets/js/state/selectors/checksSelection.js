@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { TARGET_HOST, TARGET_CLUSTER } from '@lib/model';
 import { SAVING, SAVING_FAILED, SUCCESSFULLY_SAVED } from '../checksSelection';

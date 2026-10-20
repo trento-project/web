@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 // ***********************************************************
 // This example support/index.js is processed and
@@ -16,28 +16,26 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Enable Testing Library plugin for Cypress
+import '@testing-library/cypress/add-commands';
+
 // Import commands.js using ES2015 syntax:
 import {
   apiLoginAndCreateSession,
-  apiDeregisterProdHost,
+  apiAcceptAnalyticsEula,
+  getLoginCredentials,
 } from '../pageObject/base_po';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 //
 
-// eslint-disable-next-line mocha/no-top-level-hooks
 before(() => {
   Cypress.session.clearAllSavedSessions();
-  if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
+  if (!Cypress.expose('SSO_INTEGRATION_TESTS')) {
     apiLoginAndCreateSession();
+    getLoginCredentials().then(({ username, password }) =>
+      apiAcceptAnalyticsEula(username, password)
+    );
   }
-
-  // This is required to not break cypress tests when running against a prod instance (which installs a real agent)
-  if (Cypress.config().baseUrl.includes('target')) apiDeregisterProdHost();
-});
-
-// This is needed because requests that depend on Prometheus in a real environment return a 500 in SLES16, this can be removed once TRNT-4344 is done.
-Cypress.on('uncaught:exception', () => {
-  if (Cypress.config().baseUrl.includes('target16sp0')) return false;
 });

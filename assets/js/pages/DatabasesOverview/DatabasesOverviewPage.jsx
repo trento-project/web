@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -32,11 +32,12 @@ function DatabasesOverviewPage() {
     getEnrichedDatabaseInstances(state)
   );
   const dispatch = useDispatch();
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
 
   return (
     <DatabasesOverview
       userAbilities={abilities}
+      userTimezone={timezone}
       databases={databases}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}

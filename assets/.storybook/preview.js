@@ -1,5 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+import { jsx as _jsx } from 'react/jsx-runtime';
+import { withState } from '@lib/test-utils';
 
 import { jsx as _jsx } from 'react/jsx-runtime';
 import { withState } from '@lib/test-utils';

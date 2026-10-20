@@ -1,12 +1,14 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import sapSystemsReducer, {
   removeSAPSystem,
   upsertApplicationInstances,
   updateApplicationInstanceHost,
-  updateApplicationInstanceHealth,
+  updateApplicationInstanceStatus,
   updateApplicationInstanceAbsentAt,
+  updateApplicationInstanceStaleAt,
+  updateSapSystemStaleAt,
   removeApplicationInstance,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
@@ -105,9 +107,9 @@ describe('SAP Systems reducer', () => {
     expect(state.applicationInstances[0].host_id).toEqual(newHostId);
   });
 
-  it('should update the health of an application instance', () => {
+  it('should update the status of an application instance', () => {
     const instance = sapSystemApplicationInstanceFactory.build();
-    const newHealth = 'newHealth';
+    const newStatus = 'newStatus';
 
     const initialState = {
       applicationInstances: [instance],
@@ -117,12 +119,12 @@ describe('SAP Systems reducer', () => {
       sap_system_id: instance.sap_system_id,
       instance_number: instance.instance_number,
       host_id: instance.host_id,
-      health: newHealth,
+      status: newStatus,
     };
-    const action = updateApplicationInstanceHealth(instanceToUpdate);
+    const action = updateApplicationInstanceStatus(instanceToUpdate);
 
     const expectedState = {
-      applicationInstances: [{ ...instance, health: newHealth }],
+      applicationInstances: [{ ...instance, status: newStatus }],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
@@ -149,6 +151,61 @@ describe('SAP Systems reducer', () => {
           ...instance,
           absent_at: absentAt,
         },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the stale_at field of an application instance', () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+    const staleAt = Date.now();
+
+    const initialState = {
+      applicationInstances: [instance],
+    };
+
+    const instanceToUpdate = {
+      ...instance,
+      stale_at: staleAt,
+    };
+
+    const action = updateApplicationInstanceStaleAt(instanceToUpdate);
+
+    const expectedState = {
+      applicationInstances: [
+        {
+          ...instance,
+          stale_at: staleAt,
+        },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the stale_at field of a SAP system', () => {
+    const [sapSystem1, sapSystem2] = sapSystemFactory.buildList(2);
+    const staleAt = Date.now();
+
+    const initialState = {
+      sapSystems: [sapSystem1, sapSystem2],
+    };
+
+    const systemToUpdate = {
+      id: sapSystem1.id,
+      stale_at: staleAt,
+    };
+
+    const action = updateSapSystemStaleAt(systemToUpdate);
+
+    const expectedState = {
+      sapSystems: [
+        {
+          ...sapSystem1,
+          stale_at: staleAt,
+        },
+        sapSystem2,
       ],
     };
 

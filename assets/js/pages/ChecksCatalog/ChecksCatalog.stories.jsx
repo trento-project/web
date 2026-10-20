@@ -1,10 +1,11 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
-
-import React from 'react';
-import { MemoryRouter } from 'react-router';
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { catalogCheckFactory } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
 import ChecksCatalog from './ChecksCatalog';
 
 const groupName1 = 'group 1';
@@ -41,28 +42,17 @@ export default {
   title: 'Layouts/ChecksCatalog',
   component: ChecksCatalog,
   argTypes: {
-    completeCatalog: {
-      control: 'object',
-      description: 'The whole Catalog content',
-    },
-    filteredCatalog: {
-      control: 'object',
-      description: 'The filtered Catalog content',
+    catalog: {
+      control: { type: 'object' },
+      description: 'The catalog content',
     },
     catalogError: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'Error message getting catalog data',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Catalog data is being loaded',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     updateCatalog: {
       action: 'Update catalog',
@@ -85,7 +75,10 @@ export default {
 
 export const Default = {
   args: {
-    completeCatalog: catalogData,
+    catalog: catalogData,
+    loading: false,
+    catalogError: '',
+    updateCatalog: action('updateCatalog'),
   },
 };
 
@@ -106,6 +99,6 @@ export const Error = {
 export const Empty = {
   args: {
     ...Default.args,
-    filteredCatalog: [],
+    catalog: [],
   },
 };

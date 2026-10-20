@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.SettingsJSON do
   def settings(%{
@@ -35,7 +35,7 @@ defmodule TrentoWeb.V1.SettingsJSON do
         }
       }
 
-  def suse_manager(%{
+  def smlm(%{
         settings: %{
           url: url,
           username: username,

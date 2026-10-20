@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
@@ -127,6 +127,7 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     provider: cloudProviderEnum(),
     health: healthEnum(),
     heartbeat: heartbeatEnum(),
+    stale_at: null,
     provider_data: {
       admin_username: faker.person.firstName().toLowerCase(),
       data_disk_number: faker.number.int({ min: 1, max: 9 }),

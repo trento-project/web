@@ -1,25 +1,99 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { noop } from 'lodash';
+import { Link } from 'react-router';
 import { ThreadPrimitive } from '@assistant-ui/react';
+import { EOS_CLOSE } from 'eos-icons-react';
+
+import Button from '@common/Button';
+import { CONVERSATION_STATUS, getProviderLabel } from '@lib/ai';
 
 import ChatHeader from './ChatHeader';
 import PromptComposer from './PromptComposer';
 import { AssistantMessage, UserMessage } from './MessageBubble';
 import ThreadWelcome from './ThreadWelcome';
+import {
+  CONFIGURATION_STATUS,
+  canSendMessage,
+  effectiveConnectionStatus,
+  readOnlyReason,
+} from './status';
 
-const SUGGESTION_CLASS_NAME =
-  'text-left bg-[#f8f9fa] border border-gray-200 rounded-lg p-3.5 text-gray-500 hover:bg-gray-100 transition-colors text-[15px]';
+function ThreadBanner({ children }) {
+  return (
+    <div
+      className="mb-3 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-yellow-800"
+      role="alert"
+    >
+      {children}
+    </div>
+  );
+}
 
-function AssistantThread({
-  connectionStatus,
-  isEmpty = false,
-  isRunning = false,
-  onNewThread = noop,
-  onClose = noop,
-}) {
+function ClearedBanner() {
+  return (
+    <ThreadBanner>
+      Your AI settings were cleared. This conversation is now read-only.
+      Configure AI in your{' '}
+      <Link
+        to="/profile"
+        className="underline hover:opacity-75 text-jungle-green-500"
+      >
+        Profile
+      </Link>{' '}
+      to continue.
+    </ThreadBanner>
+  );
+}
+
+function RestoredBanner() {
+  return (
+    <ThreadBanner>
+      A new AI configuration is available. Start a new chat to continue.
+    </ThreadBanner>
+  );
+}
+
+function ExpiredBanner() {
+  return (
+    <ThreadBanner>
+      This conversation has expired. Start a new chat to continue.
+    </ThreadBanner>
+  );
+}
+
+const READ_ONLY_BANNERS = {
+  [CONFIGURATION_STATUS.CLEARED]: ClearedBanner,
+  [CONFIGURATION_STATUS.RESTORED]: RestoredBanner,
+  [CONVERSATION_STATUS.EXPIRED]: ExpiredBanner,
+};
+
+function ModelChangeBanner({ provider, model, onDismiss = noop }) {
+  return (
+    <ThreadBanner>
+      <div className="flex items-start justify-between gap-2">
+        <span>
+          AI model changed to{' '}
+          <span className="font-semibold">{getProviderLabel(provider)}</span> (
+          {model}) for this conversation.
+        </span>
+        <Button
+          type="icon"
+          size="none"
+          onClick={onDismiss}
+          aria-label="Dismiss"
+          className="!text-yellow-800 hover:opacity-75"
+        >
+          <EOS_CLOSE className="h-5 w-5 fill-current" />
+        </Button>
+      </div>
+    </ThreadBanner>
+  );
+}
+
+export function ThreadContainer({ children }) {
   return (
     <ThreadPrimitive.Root
       className="relative flex h-full flex-col bg-white text-sm"
@@ -29,8 +103,64 @@ function AssistantThread({
         '--accent-foreground': '#ffffff',
       }}
     >
+      {children}
+    </ThreadPrimitive.Root>
+  );
+}
+
+export function ThreadMessages({ isRunning = false, isChatActive = false }) {
+  return (
+    <ThreadPrimitive.Messages>
+      {({ message }) => {
+        switch (message.role) {
+          case 'user':
+            return <UserMessage />;
+          case 'assistant':
+            return (
+              <AssistantMessage
+                isChatActive={isChatActive}
+                isRunning={isRunning}
+                message={message}
+              />
+            );
+          default:
+            return null;
+        }
+      }}
+    </ThreadPrimitive.Messages>
+  );
+}
+
+function AssistantThread({
+  connectionStatus,
+  configurationStatus,
+  conversationStatus = CONVERSATION_STATUS.ACTIVE,
+  isEmpty = false,
+  isRunning = false,
+  onNewThread = noop,
+  onClose = noop,
+  modelNotice = null,
+  onDismissModelNotice = noop,
+}) {
+  const connection = effectiveConnectionStatus(
+    connectionStatus,
+    configurationStatus
+  );
+
+  const isChatActive = canSendMessage(
+    connection,
+    configurationStatus,
+    conversationStatus
+  );
+
+  const ReadOnlyBanner =
+    READ_ONLY_BANNERS[readOnlyReason(configurationStatus, conversationStatus)];
+
+  return (
+    <ThreadContainer>
       <ChatHeader
-        connectionStatus={connectionStatus}
+        connectionStatus={connection}
+        isRunning={isRunning}
         onNewChat={onNewThread}
         onClose={onClose}
       />
@@ -38,51 +168,26 @@ function AssistantThread({
         turnAnchor="top"
         className="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto scroll-smooth px-6 pt-4"
       >
-        {isEmpty && <WelcomePanel />}
+        {isEmpty && <ThreadWelcome />}
 
-        <ThreadPrimitive.Messages>
-          {({ message }) => {
-            switch (message.role) {
-              case 'user':
-                return <UserMessage />;
-              case 'assistant':
-                return <AssistantMessage isRunning={isRunning} />;
-              default:
-                return null;
-            }
-          }}
-        </ThreadPrimitive.Messages>
+        <ThreadMessages isChatActive={isChatActive} isRunning={isRunning} />
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
+          {ReadOnlyBanner && <ReadOnlyBanner />}
+          {modelNotice && (
+            <ModelChangeBanner
+              {...modelNotice}
+              onDismiss={onDismissModelNotice}
+            />
+          )}
           <PromptComposer
-            connectionStatus={connectionStatus}
+            connectionStatus={connection}
+            configurationStatus={configurationStatus}
+            conversationStatus={conversationStatus}
             isRunning={isRunning}
           />
         </ThreadPrimitive.ViewportFooter>
       </ThreadPrimitive.Viewport>
-    </ThreadPrimitive.Root>
-  );
-}
-
-function WelcomePanel() {
-  return (
-    <ThreadWelcome>
-      <ThreadPrimitive.Suggestion
-        prompt="What is the API key for adding agents?"
-        className={SUGGESTION_CLASS_NAME}
-      >
-        <span className="font-bold text-gray-600">What is the API key</span> for
-        adding agents?
-      </ThreadPrimitive.Suggestion>
-      <ThreadPrimitive.Suggestion
-        prompt="What is the check results that was run recently?"
-        className={SUGGESTION_CLASS_NAME}
-      >
-        <span className="font-bold text-gray-600">
-          What is the check results
-        </span>{' '}
-        that was run recently?
-      </ThreadPrimitive.Suggestion>
-    </ThreadWelcome>
+    </ThreadContainer>
   );
 }
 

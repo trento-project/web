@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { assign, find, orderBy, startsWith } from 'lodash';
@@ -48,7 +48,7 @@ const groupedAbilities = [
     tooltip: 'Permits all operations on settings',
     groupAbilities: [
       'all:api_key_settings',
-      'all:suma_settings',
+      'all:smlm_settings',
       'all:activity_logs_settings',
       'all:alerting_settings',
     ],

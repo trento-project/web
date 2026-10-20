@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.OpenApi.ApiSpecTest do
   use ExUnit.Case
@@ -91,6 +91,17 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
                },
                paths: %{"/api/not_versioned" => _, "/api/v1/route" => _, "/api/v2/route" => _}
              } = All.spec(TestRouter)
+    end
+
+    test "marks the legacy SUSE Manager settings routes as deprecated" do
+      spec = TrentoWeb.OpenApi.V1.ApiSpec.spec()
+      legacy_settings = spec.paths["/api/v1/settings/suse_manager"]
+
+      for operation <- [:get, :post, :patch, :put, :delete] do
+        assert Map.fetch!(legacy_settings, operation).deprecated
+      end
+
+      assert spec.paths["/api/v1/settings/suse_manager/test"].post.deprecated
     end
 
     test "should use oas_server_url if configured" do

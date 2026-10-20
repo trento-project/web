@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { has } from 'lodash';
 import {
@@ -23,11 +23,12 @@ export const LOGIN_ATTEMPT = 'login_attempt';
 export const RESOURCE_TAGGING = 'resource_tagging';
 export const RESOURCE_UNTAGGING = 'resource_untagging';
 export const API_KEY_GENERATION = 'api_key_generation';
-export const SAVING_SUMA_SETTINGS = 'saving_suma_settings';
-export const CHANGING_SUMA_SETTINGS = 'changing_suma_settings';
-export const CLEARING_SUMA_SETTINGS = 'clearing_suma_settings';
+export const SAVING_SMLM_SETTINGS = 'saving_smlm_settings';
+export const CHANGING_SMLM_SETTINGS = 'changing_smlm_settings';
+export const CLEARING_SMLM_SETTINGS = 'clearing_smlm_settings';
 export const SAVING_ALERTING_SETTINGS = 'saving_alerting_settings';
 export const CHANGING_ALERTING_SETTINGS = 'changing_alerting_settings';
+export const TESTING_ALERTING_SETTINGS = 'testing_alerting_settings';
 export const USER_CREATION = 'user_creation';
 export const USER_MODIFICATION = 'user_modification';
 export const USER_DELETION = 'user_deletion';
@@ -43,6 +44,10 @@ export const HOST_CLEANUP_REQUESTED = 'host_cleanup_requested';
 export const SAP_SYSTEM_CLEANUP_REQUESTED = 'sap_system_cleanup_requested';
 export const DATABASE_CLEANUP_REQUESTED = 'database_cleanup_requested';
 export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
+
+export const AI_CONFIGURATION_CREATION = 'ai_configuration_creation';
+export const AI_CONFIGURATION_MODIFICATION = 'ai_configuration_modification';
+export const AI_CONFIGURATION_DELETION = 'ai_configuration_deletion';
 
 // Host events
 export const HEARTBEAT_FAILED = 'heartbeat_failed';
@@ -75,7 +80,12 @@ export const CLUSTER_CHECKS_HEALTH_CHANGED = 'cluster_checks_health_changed';
 export const CLUSTER_DEREGISTERED = 'cluster_deregistered';
 export const CLUSTER_DETAILS_UPDATED = 'cluster_details_updated';
 export const CLUSTER_DISCOVERED_HEALTH_CHANGED =
-  'cluster_discovered_health_changed';
+  'cluster_discovered_health_changed'; // deprecated
+export const CLUSTER_REPLICATION_HEALTH_CHANGED =
+  'cluster_replication_health_changed';
+export const CLUSTER_DISTRIBUTED_HEALTH_CHANGED =
+  'cluster_distributed_health_changed';
+export const CLUSTER_SBD_HEALTH_CHANGED = 'cluster_sbd_health_changed';
 export const CLUSTER_HEALTH_CHANGED = 'cluster_health_changed';
 export const CLUSTER_REGISTERED = 'cluster_registered';
 export const CLUSTER_RESTORED = 'cluster_restored';
@@ -85,17 +95,25 @@ export const CLUSTER_TOMBSTONED = 'cluster_tombstoned';
 export const HOST_ADDED_TO_CLUSTER = 'host_added_to_cluster';
 export const HOST_REMOVED_FROM_CLUSTER = 'host_removed_from_cluster';
 export const CLUSTER_HOST_STATUS_CHANGED = 'cluster_host_status_changed';
+export const CLUSTER_DATA_MARKED_STALE = 'cluster_data_marked_stale';
+export const CLUSTER_DATA_MARKED_IN_SYNC = 'cluster_data_marked_in_sync';
 
 // SAP System events
 
 export const APPLICATION_INSTANCE_DEREGISTERED =
   'application_instance_deregistered';
 export const APPLICATION_INSTANCE_HEALTH_CHANGED =
-  'application_instance_health_changed';
+  'application_instance_health_changed'; // deprecated
+export const APPLICATION_INSTANCE_STATUS_CHANGED =
+  'application_instance_status_changed';
 export const APPLICATION_INSTANCE_MARKED_ABSENT =
   'application_instance_marked_absent';
 export const APPLICATION_INSTANCE_MARKED_PRESENT =
   'application_instance_marked_present';
+export const APPLICATION_INSTANCE_DATA_MARKED_STALE =
+  'application_instance_data_marked_stale';
+export const APPLICATION_INSTANCE_DATA_MARKED_IN_SYNC =
+  'application_instance_data_marked_in_sync';
 export const APPLICATION_INSTANCE_MOVED = 'application_instance_moved';
 export const APPLICATION_INSTANCE_REGISTERED =
   'application_instance_registered';
@@ -109,17 +127,25 @@ export const SAP_SYSTEM_ROLLED_UP = 'sap_system_rolled_up';
 export const SAP_SYSTEM_ROLL_UP_REQUESTED = 'sap_system_roll_up_requested';
 export const SAP_SYSTEM_TOMBSTONED = 'sap_system_tombstoned';
 export const SAP_SYSTEM_UPDATED = 'sap_system_updated';
+export const SAP_SYSTEM_DATA_MARKED_STALE = 'sap_system_data_marked_stale';
+export const SAP_SYSTEM_DATA_MARKED_IN_SYNC = 'sap_system_data_marked_in_sync';
 
 // Database events
 export const DATABASE_DEREGISTERED = 'database_deregistered';
 export const DATABASE_HEALTH_CHANGED = 'database_health_changed';
 export const DATABASE_INSTANCE_DEREGISTERED = 'database_instance_deregistered';
 export const DATABASE_INSTANCE_HEALTH_CHANGED =
-  'database_instance_health_changed';
+  'database_instance_health_changed'; // deprecated
+export const DATABASE_INSTANCE_STATUS_CHANGED =
+  'database_instance_status_changed';
 export const DATABASE_INSTANCE_MARKED_ABSENT =
   'database_instance_marked_absent';
 export const DATABASE_INSTANCE_MARKED_PRESENT =
   'database_instance_marked_present';
+export const DATABASE_INSTANCE_DATA_MARKED_STALE =
+  'database_instance_data_marked_stale';
+export const DATABASE_INSTANCE_DATA_MARKED_IN_SYNC =
+  'database_instance_data_marked_in_sync';
 export const DATABASE_INSTANCE_REGISTERED = 'database_instance_registered';
 export const DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED =
   'database_instance_system_replication_changed';
@@ -129,6 +155,8 @@ export const DATABASE_ROLLED_UP = 'database_rolled_up';
 export const DATABASE_ROLL_UP_REQUESTED = 'database_roll_up_requested';
 export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
+export const DATABASE_DATA_MARKED_STALE = 'database_data_marked_stale';
+export const DATABASE_DATA_MARKED_IN_SYNC = 'database_data_marked_in_sync';
 
 // Operations
 export const APPLICATION_INSTANCE_OPERATION_REQUESTED =
@@ -159,21 +187,23 @@ export const availableResourceNameKeys = pipe(
   uniq
 )(resourceTypesToNameKeyMap);
 
-const sumaSettingsResourceType = (_entry) => 'SUMA Settings';
+const smlmSettingsResourceType = (_entry) =>
+  'SUSE Multi-Linux Manager Settings';
 const alertingSettingsResourceType = (_entry) => 'Alerting Settings';
 const userResourceType = (_entry) => 'User';
+const profileResourceType = (_entry) => 'Profile';
 const clusterResourceType = (_entry) => 'Cluster';
 const hostResourceType = (_entry) => 'Host';
 const sapSystemResourceType = (_entry) => 'SAP System';
 const databaseResourceType = (_entry) => 'Database';
-const applicationInstaceResourceType = (_entry) => 'Application Instance';
+const applicationInstanceResourceType = (_entry) => 'Application Instance';
 
 const resourceTypeMapping = (entry) => ({
   host: hostResourceType(entry),
   cluster: clusterResourceType(entry),
   database: databaseResourceType(entry),
   sap_system: sapSystemResourceType(entry),
-  application_instance: applicationInstaceResourceType(entry),
+  application_instance: applicationInstanceResourceType(entry),
   cluster_host: hostResourceType(entry),
 });
 
@@ -239,20 +269,20 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => 'API Key was generated',
     resource: (_entry) => 'API Key',
   },
-  [SAVING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Saved',
-    message: (_entry) => 'SUMA Settings was saved',
-    resource: sumaSettingsResourceType,
+  [SAVING_SMLM_SETTINGS]: {
+    label: 'SUSE Multi-Linux Manager Settings Saved',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were saved',
+    resource: smlmSettingsResourceType,
   },
-  [CHANGING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Changed',
-    message: (_entry) => 'SUMA Settings was changed',
-    resource: sumaSettingsResourceType,
+  [CHANGING_SMLM_SETTINGS]: {
+    label: 'SUSE Multi-Linux Manager Settings Changed',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were changed',
+    resource: smlmSettingsResourceType,
   },
-  [CLEARING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Cleared',
-    message: (_entry) => 'SUMA Settings was cleared',
-    resource: sumaSettingsResourceType,
+  [CLEARING_SMLM_SETTINGS]: {
+    label: 'SUSE Multi-Linux Manager Settings Cleared',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were cleared',
+    resource: smlmSettingsResourceType,
   },
   [SAVING_ALERTING_SETTINGS]: {
     label: 'Alerting Settings Saved',
@@ -262,6 +292,14 @@ export const ACTIVITY_TYPES_CONFIG = {
   [CHANGING_ALERTING_SETTINGS]: {
     label: 'Alerting Settings Changed',
     message: (_entry) => 'Alerting Settings were changed',
+    resource: alertingSettingsResourceType,
+  },
+  [TESTING_ALERTING_SETTINGS]: {
+    label: 'Test Email Requested',
+    message: ({ metadata }) =>
+      metadata?.result === 'success'
+        ? 'Test email delivery succeeded'
+        : 'Test email delivery failed',
     resource: alertingSettingsResourceType,
   },
   [USER_CREATION]: {
@@ -285,19 +323,37 @@ export const ACTIVITY_TYPES_CONFIG = {
   [PROFILE_UPDATE]: {
     label: 'Profile Updated',
     message: (_entry) => `User modified profile`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_CREATION]: {
     label: 'Personal Access Token Created',
     message: (_entry) => `Personal access token was created`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_DELETION]: {
     label: 'Personal Access Token Deleted',
     message: (_entry) => `Personal access token was deleted`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_CREATION]: {
+    label: 'AI Configuration Created',
+    message: (_entry) => `AI configuration was created`,
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_MODIFICATION]: {
+    label: 'AI Configuration Updated',
+    message: (_entry) => `AI configuration was updated`,
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_DELETION]: {
+    label: 'AI Configuration Cleared',
+    message: (_entry) => `AI configuration was cleared`,
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_ADMIN_DELETION]: {
@@ -464,6 +520,21 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Cluster's discovered health changed`,
     resource: clusterResourceType,
   },
+  [CLUSTER_REPLICATION_HEALTH_CHANGED]: {
+    label: 'Cluster Replication Health Changed',
+    message: (_entry) => `Cluster's replication health changed`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_DISTRIBUTED_HEALTH_CHANGED]: {
+    label: 'Cluster Distributed Health Changed',
+    message: (_entry) => `Cluster's ASCS/ERS nodes distribution health changed`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_SBD_HEALTH_CHANGED]: {
+    label: 'Cluster SBD Health Changed',
+    message: (_entry) => `Cluster's SBD fencing health changed`,
+    resource: clusterResourceType,
+  },
   [CLUSTER_HEALTH_CHANGED]: {
     label: 'Cluster Health Changed',
     message: (_entry) => `Cluster health changed`,
@@ -510,6 +581,16 @@ export const ACTIVITY_TYPES_CONFIG = {
       `Cluster host status changed to ${metadata.cluster_host_status}`,
     resource: clusterResourceType,
   },
+  [CLUSTER_DATA_MARKED_STALE]: {
+    label: 'Cluster Data Marked Stale',
+    message: (_entry) => `Cluster data was marked stale`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_DATA_MARKED_IN_SYNC]: {
+    label: 'Cluster Data Marked In Sync',
+    message: (_entry) => `Cluster data was marked in sync`,
+    resource: clusterResourceType,
+  },
   // SAP System events
   [APPLICATION_INSTANCE_DEREGISTERED]: {
     label: 'Application Instance Deregistered',
@@ -521,6 +602,11 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Application instance health changed`,
     resource: sapSystemResourceType,
   },
+  [APPLICATION_INSTANCE_STATUS_CHANGED]: {
+    label: 'Application Instance Status Changed',
+    message: (_entry) => `Application instance status changed`,
+    resource: sapSystemResourceType,
+  },
   [APPLICATION_INSTANCE_MARKED_ABSENT]: {
     label: 'Application Instance Marked Absent',
     message: (_entry) => `Application instance was marked absent`,
@@ -529,6 +615,16 @@ export const ACTIVITY_TYPES_CONFIG = {
   [APPLICATION_INSTANCE_MARKED_PRESENT]: {
     label: 'Application Instance Marked Present',
     message: (_entry) => `Application instance was marked present`,
+    resource: sapSystemResourceType,
+  },
+  [APPLICATION_INSTANCE_DATA_MARKED_STALE]: {
+    label: 'Application Instance Data Marked Stale',
+    message: (_entry) => `Application instance data was marked stale`,
+    resource: sapSystemResourceType,
+  },
+  [APPLICATION_INSTANCE_DATA_MARKED_IN_SYNC]: {
+    label: 'Application Instance Data Marked In Sync',
+    message: (_entry) => `Application instance data was marked in sync`,
     resource: sapSystemResourceType,
   },
   [APPLICATION_INSTANCE_MOVED]: {
@@ -586,6 +682,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `SAP system was updated`,
     resource: sapSystemResourceType,
   },
+  [SAP_SYSTEM_DATA_MARKED_STALE]: {
+    label: 'SAP System Data Marked Stale',
+    message: (_entry) => `SAP System data was marked stale`,
+    resource: sapSystemResourceType,
+  },
+  [SAP_SYSTEM_DATA_MARKED_IN_SYNC]: {
+    label: 'SAP System Data Marked In Sync',
+    message: (_entry) => `SAP System data was marked in sync`,
+    resource: sapSystemResourceType,
+  },
   // Database events
   [DATABASE_DEREGISTERED]: {
     label: 'Database Deregistered',
@@ -607,6 +713,11 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Database instance health changed`,
     resource: databaseResourceType,
   },
+  [DATABASE_INSTANCE_STATUS_CHANGED]: {
+    label: 'Database Instance Status Changed',
+    message: (_entry) => `Database instance status changed`,
+    resource: databaseResourceType,
+  },
   [DATABASE_INSTANCE_MARKED_ABSENT]: {
     label: 'Database Instance Marked Absent',
     message: (_entry) => `Database instance was marked absent`,
@@ -615,6 +726,16 @@ export const ACTIVITY_TYPES_CONFIG = {
   [DATABASE_INSTANCE_MARKED_PRESENT]: {
     label: 'Database Instance Marked Present',
     message: (_entry) => `Database instance was marked present`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_INSTANCE_DATA_MARKED_STALE]: {
+    label: 'Database Instance Data Marked Stale',
+    message: (_entry) => `Database instance data was marked stale`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_INSTANCE_DATA_MARKED_IN_SYNC]: {
+    label: 'Database Instance Data Marked In Sync',
+    message: (_entry) => `Database instance data was marked in sync`,
     resource: databaseResourceType,
   },
   [DATABASE_INSTANCE_REGISTERED]: {
@@ -657,12 +778,22 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Database was tombstoned`,
     resource: databaseResourceType,
   },
+  [DATABASE_DATA_MARKED_STALE]: {
+    label: 'Database Data Marked Stale',
+    message: (_entry) => `Database data was marked stale`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_DATA_MARKED_IN_SYNC]: {
+    label: 'Database Data Marked In Sync',
+    message: (_entry) => `Database data was marked in sync`,
+    resource: databaseResourceType,
+  },
   // Operations
   [APPLICATION_INSTANCE_OPERATION_REQUESTED]: {
     label: 'Application Instance Operation Requested',
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
-    resource: applicationInstaceResourceType,
+    resource: applicationInstanceResourceType,
   },
   [CLUSTER_OPERATION_REQUESTED]: {
     label: 'Cluster Operation Requested',

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
   @moduledoc false
@@ -9,6 +9,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
   alias OpenApiSpex.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.{Provider, ResourceHealth, Tags}
+
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
 
   defmodule ClusterResource do
     @moduledoc false
@@ -31,7 +33,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         example: %{
           id: "msl_SAPHana_PRD_HDB00",
           type: "ocf::suse:SAPHanaTopology",
-          role: "Master",
+          role: "Promoted",
           status: "Started",
           fail_count: 0
         }
@@ -84,7 +86,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
             %{
               id: "rsc_SAPHana_PRD_HDB00",
               type: "ocf::suse:SAPHana",
-              role: "Master",
+              role: "Promoted",
               status: "running",
               fail_count: 0
             }
@@ -107,7 +109,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         type: :object,
         properties: %{
           device: %Schema{type: :string},
-          status: %Schema{type: :string}
+          status: %Schema{type: :string, enum: SbdDeviceStatus.values()}
         },
         example: %{
           device: "/dev/disk/by-id/scsi-SLIO-ORG_disk_01",

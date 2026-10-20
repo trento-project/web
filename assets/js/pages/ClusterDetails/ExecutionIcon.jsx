@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import { computedIconCssClass } from '@lib/icon';
@@ -9,7 +9,13 @@ import { EOS_SCHEDULE } from 'eos-icons-react';
 import HealthIcon from '@common/HealthIcon';
 import Spinner from '@common/Spinner';
 
-export function ExecutionIcon({ health, executionState, centered = false }) {
+export function ExecutionIcon({
+  health,
+  executionState,
+  centered = false,
+  staleAt = null,
+  timezone = 'Etc/UTC',
+}) {
   switch (executionState) {
     case 'requested':
       return (
@@ -20,6 +26,13 @@ export function ExecutionIcon({ health, executionState, centered = false }) {
     case 'running':
       return <Spinner />;
     default:
-      return <HealthIcon health={health} centered={centered} />;
+      return (
+        <HealthIcon
+          health={health}
+          centered={centered}
+          staleAt={staleAt}
+          timezone={timezone}
+        />
+      );
   }
 }

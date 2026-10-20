@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.SapSystemJSONTest do
   use TrentoWeb.ConnCase, async: true
@@ -9,7 +9,8 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
 
   describe "SapSystemJSON" do
     test "should render sap_systems.json" do
-      %{id: database_id, sid: database_sid} = database = build(:database)
+      %{id: database_id, sid: database_sid, health: database_health, stale_at: database_stale_at} =
+        database = build(:database)
 
       database_instances = build_list(1, :database_instance, database_id: database_id)
       application_instances = build_list(1, :application_instance)
@@ -29,6 +30,8 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
         |> Map.delete(:deregistered_at)
         |> Map.delete(:database)
         |> Map.put(:database_sid, database_sid)
+        |> Map.put(:database_health, database_health)
+        |> Map.put(:database_stale_at, database_stale_at)
         |> Map.put(
           :application_instances,
           Enum.map(application_instances, fn app_instance ->
@@ -37,6 +40,7 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
             |> Map.delete(:__meta__)
             |> Map.delete(:host)
             |> Map.delete(:sap_system)
+            |> Map.put(:health, :unknown)
           end)
         )
         |> Map.put(
@@ -47,6 +51,7 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
             |> Map.delete(:__meta__)
             |> Map.delete(:host)
             |> Map.put(:sap_system_id, database_id)
+            |> Map.put(:health, :unknown)
           end)
         )
 

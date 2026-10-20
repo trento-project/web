@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
 import classNames from 'classnames';
@@ -21,12 +21,13 @@ function ListView({
       {data.map(
         ({
           title,
+          key,
           content,
           className: contentClassName = '',
           render = (component) => <span>{component}</span>,
         }) => (
           <div
-            key={title}
+            key={key || title}
             className={
               orientation === 'vertical'
                 ? 'grid grid-flow-row'
