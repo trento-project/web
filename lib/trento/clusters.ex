@@ -17,6 +17,7 @@ defmodule Trento.Clusters do
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+  require Trento.Operations.Enums.ClusterBulkOperations, as: ClusterBulkOperations
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -36,6 +37,8 @@ defmodule Trento.Clusters do
     Checks,
     Operations
   }
+
+  alias Trento.Support.OperationsHelper
 
   alias Trento.Repo
 
@@ -58,6 +61,13 @@ defmodule Trento.Clusters do
     ClusterReadModel
     |> where([c], c.id == ^id and is_nil(c.deregistered_at))
     |> Repo.one()
+  end
+
+  @spec get_clusters_by_ids([String.t()]) :: [ClusterReadModel.t()]
+  def get_clusters_by_ids(ids) do
+    ClusterReadModel
+    |> where([c], c.id in ^ids and is_nil(c.deregistered_at))
+    |> Repo.all()
   end
 
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
@@ -233,6 +243,19 @@ defmodule Trento.Clusters do
   end
 
   def request_operation(_, _, _), do: {:error, :operation_not_found}
+
+  @spec request_bulk_operation(atom(), [String.t()], map()) ::
+          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}]}
+          | {:error, any}
+  def request_bulk_operation(operation, cluster_ids, params)
+      when operation in ClusterBulkOperations.values() do
+    OperationsHelper.reduce_bulk_operation_request(
+      cluster_ids,
+      &request_operation(operation, &1, params)
+    )
+  end
+
+  def request_bulk_operation(_, _, _), do: {:error, :operation_not_found}
 
   @spec request_host_operation(atom(), String.t(), String.t()) ::
           {:ok, String.t()} | {:error, any}
