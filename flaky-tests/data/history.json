@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-01T20:29:21Z",
-    "commit": "d83868fa7332fc8c6ad1cc5c1ddfab2f7d607526",
-    "run_id": "33553541522",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-01T20:30:37Z",
     "commit": "d83868fa7332fc8c6ad1cc5c1ddfab2f7d607526",
     "run_id": "33553541522",
@@ -5788,6 +5777,26 @@
       },
       {
         "name": "should have a correct link to each host::HANA database details The hosts table shows the attached hosts to this HANA database should have a correct link to each host",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-20T20:26:35Z",
+    "commit": "ee4669d42432274fb1c8fc0435a6b2db6f30157f",
+    "run_id": "39491999134",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.TrentoWeb.AIAssistantChannelTest::test handle_in send_message/3 — access_token validation replies {-error, -unauthorized} when token sub does not match the socket user",
         "score": 0.02501
       }
     ]
