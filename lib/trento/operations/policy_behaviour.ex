@@ -33,4 +33,14 @@ defmodule Trento.Operations.PolicyBehaviour do
                 | SapSystemReadModel.t(),
               params :: map
             ) :: :ok | {:error, [OperationsHelper.forbidden_error()]}
+
+  @callback metadata(
+              read_model ::
+                ApplicationInstanceReadModel.t()
+                | ClusterReadModel.t()
+                | DatabaseInstanceReadModel.t()
+                | DatabaseReadModel.t()
+                | HostReadModel.t()
+                | SapSystemReadModel.t()
+            ) :: OperationsHelper.metadata()
 end

@@ -20,6 +20,12 @@ defmodule Trento.Operations.HostPolicyTest do
              HostPolicy.authorize_operation(:unknown, host, %{})
   end
 
+  test "should return the resource metadata" do
+    %{id: id, hostname: hostname} = host = build(:host)
+
+    assert %{id: id, label: hostname, type: :host} == HostPolicy.metadata(host)
+  end
+
   test "should forbid operation if the host heartbeat is not passing" do
     host = build(:host, heartbeat: :critical)
 

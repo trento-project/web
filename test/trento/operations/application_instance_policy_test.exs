@@ -27,6 +27,13 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
              ApplicationInstancePolicy.authorize_operation(:unknown, instance, %{})
   end
 
+  test "should return the resource metadata" do
+    %{sap_system_id: sap_system_id, sid: sid} = instance = build(:application_instance)
+
+    assert %{id: sap_system_id, label: sid, type: :sap_system} ==
+             ApplicationInstancePolicy.metadata(instance)
+  end
+
   test "should forbid operation if the host heartbeat where the application instance is running is not passing" do
     instance =
       build(:application_instance,

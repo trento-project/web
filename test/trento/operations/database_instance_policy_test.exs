@@ -15,4 +15,11 @@ defmodule Trento.Operations.DatabaseInstancePolicyTest do
     assert {:error, [%{message: "Unknown operation", metadata: []}]} ==
              DatabaseInstancePolicy.authorize_operation(:unknown, instance, %{})
   end
+
+  test "should return the resource metadata" do
+    %{database_id: database_id, sid: sid} = instance = build(:database_instance)
+
+    assert %{id: database_id, label: sid, type: :database} ==
+             DatabaseInstancePolicy.metadata(instance)
+  end
 end

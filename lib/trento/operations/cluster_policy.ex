@@ -26,7 +26,7 @@ defmodule Trento.Operations.ClusterPolicy do
   # - cluster resource is not managed
   def authorize_operation(
         :maintenance,
-        %ClusterReadModel{id: id, name: name} = cluster,
+        %ClusterReadModel{} = cluster,
         %{cluster_resource_id: nil}
       ) do
     if Clusters.maintenance?(cluster) do
@@ -36,7 +36,7 @@ defmodule Trento.Operations.ClusterPolicy do
        [
          OperationsHelper.build_error(
            "Cluster {0} operating this host is not in maintenance mode",
-           [%{id: id, label: name, type: :cluster}]
+           [metadata(cluster)]
          )
        ]}
     end
@@ -44,7 +44,7 @@ defmodule Trento.Operations.ClusterPolicy do
 
   def authorize_operation(
         :maintenance,
-        %ClusterReadModel{id: id, name: name} = cluster,
+        %ClusterReadModel{} = cluster,
         %{cluster_resource_id: cluster_resource_id}
       ) do
     if Enum.any?([
@@ -57,7 +57,7 @@ defmodule Trento.Operations.ClusterPolicy do
        [
          OperationsHelper.build_error(
            "Cluster {0} or resource #{cluster_resource_id} operating this host are not in maintenance mode",
-           [%{id: id, label: name, type: :cluster}]
+           [metadata(cluster)]
          )
        ]}
     end
@@ -113,9 +113,11 @@ defmodule Trento.Operations.ClusterPolicy do
   def authorize_operation(_, _, _),
     do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
+  def metadata(%ClusterReadModel{id: id, name: name}), do: %{id: id, label: name, type: :cluster}
+
   defp do_authorize_operation(
          operation,
-         %ClusterReadModel{id: id, name: name, hosts: hosts},
+         %ClusterReadModel{hosts: hosts} = cluster,
          _
        )
        when operation in ClusterOperations.values() do
@@ -127,7 +129,7 @@ defmodule Trento.Operations.ClusterPolicy do
       {:error,
        [
          OperationsHelper.build_error("Cluster {0} does not have any online node", [
-           %{id: id, label: name, type: :cluster}
+           metadata(cluster)
          ])
        ]}
     end
