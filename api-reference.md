@@ -1,4 +1,4 @@
-# Trento Web v3.1.6 - API Reference
+# Trento Web v3.2.0 - API Reference
 
 ## Modules
 
