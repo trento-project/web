@@ -50,6 +50,37 @@ defmodule Trento.Support.OperationsHelper do
     |> reduce_operation_authorizations(acc)
   end
 
+  @spec reduce_bulk_operation_request(
+          resource_ids :: [String.t()],
+          request_func :: (String.t() -> {:ok, String.t()} | {:error, any})
+        ) ::
+          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}]}
+          | {:error, any}
+  def reduce_bulk_operation_request(resource_ids, request_func) do
+    bulk_operation_id = UUID.uuid4()
+
+    resource_ids
+    |> Enum.reduce_while({:ok, []}, fn resource_id, {:ok, operations} ->
+      case request_func.(resource_id) do
+        {:ok, operation_id} ->
+          {:cont, {:ok, [%{resource_id: resource_id, operation_id: operation_id} | operations]}}
+
+        error ->
+          {:halt, error}
+      end
+    end)
+    |> case do
+      {:ok, operations} -> {:ok, bulk_operation_id, Enum.reverse(operations)}
+      error -> error
+    end
+  end
+
   @spec build_error(message :: String.t(), metadata :: [metadata()]) :: forbidden_error
   def build_error(message, metadata \\ []), do: %{message: message, metadata: metadata}
+
+  @spec to_bulk_operation(operation :: [atom] | atom) :: [atom] | atom
+  def to_bulk_operation(operations) when is_list(operations),
+    do: Enum.map(operations, &to_bulk_operation/1)
+
+  def to_bulk_operation(operation), do: :"bulk_#{operation}"
 end
