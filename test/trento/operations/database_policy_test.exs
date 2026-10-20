@@ -19,6 +19,13 @@ defmodule Trento.Operations.DatabasePolicyTest do
              DatabasePolicy.authorize_operation(:unknown, database, %{})
   end
 
+  test "should return the resource metadata" do
+    %{id: id, sid: sid} = database = build(:database)
+
+    assert %{id: id, label: sid, type: :database} ==
+             DatabasePolicy.metadata(database)
+  end
+
   test "should forbid operation if any of the hosts heartbeat per site where the database is running is not passing" do
     database =
       build(:database,
