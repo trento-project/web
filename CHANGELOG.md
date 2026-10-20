@@ -86,7 +86,7 @@
 * Implement persistent filters usage in frontend (#4775) @arbulu89
 * Adapt web to Pacemaker 3.0.2 (#4474) @antgamdia
 * Add yaml to devDependencies (#4776) @nelsonkopliku
-* Test email alerting setttings configuration with a test email (#4758) @arbulu89
+* Test email alerting settings configuration with a test email (#4758) @arbulu89
 * Use transparent type for hosts list cleanup button (#4755) @arbulu89
 * Add retry last prompt capability (#4688) @nelsonkopliku
 * Copy Liz reply (#4667) @nelsonkopliku
@@ -134,8 +134,8 @@
 * Add clear AI settings capability (#4442) @nelsonkopliku
 * Add stale information to instance status icon (#4441) @arbulu89
 * Health Details for Host Aggregate (#4450) @skrech
-* Stale database instances when host hearbeat fails (#4437) @arbulu89
-* Stale application instances when host hearbeat fails (#4399) @arbulu89
+* Stale database instances when host heartbeat fails (#4437) @arbulu89
+* Stale application instances when host heartbeat fails (#4399) @arbulu89
 * Remove Prompt Suggestions (#4434) @nelsonkopliku, @Copilot
 * Open new tab on AI Assistant `learn more` link (#4433) @nelsonkopliku
 * Log AI settings changes (#4426) @nelsonkopliku
