@@ -146,7 +146,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
   defp with_resource_metadata(:ok, _, _), do: :ok
 
   defp with_resource_metadata({:error, errors}, resource, policy) do
-    resource_metadata = Map.put(policy.metadata(resource), :mass_operation, true)
+    resource_metadata = Map.put(policy.metadata(resource), :bulk_operation, true)
 
     {:error,
      Enum.map(errors, fn error ->

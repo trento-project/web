@@ -18,7 +18,7 @@ const urlTypes = {
   sap_system: 'sap_systems',
 };
 
-const findMassResource = (metadata) => find(metadata, 'mass_operation');
+const findBulkResource = (metadata) => find(metadata, 'bulk_operation');
 
 const formatError = (error, metadata, onCancel) => {
   // find {i} entries in the text splitting the whole content
@@ -55,14 +55,14 @@ const renderErrors = (errors, onCancel) =>
     </li>
   ));
 
-const renderMassErrors = (errors, onCancel) => {
+const renderBulkErrors = (errors, onCancel) => {
   const errorsByResource = groupBy(
     errors,
-    ({ metadata }) => findMassResource(metadata)?.id
+    ({ metadata }) => findBulkResource(metadata)?.id
   );
 
   return map(errorsByResource, (resourceErrors, id) => {
-    const { label, type } = findMassResource(resourceErrors[0].metadata);
+    const { label, type } = findBulkResource(resourceErrors[0].metadata);
 
     return (
       <li key={id} className="text-sm">
@@ -87,8 +87,8 @@ function OperationForbiddenModal({
   isOpen = false,
   onCancel = noop,
 }) {
-  const isMassOperation = some(errors, ({ metadata }) =>
-    findMassResource(metadata)
+  const isBulkOperation = some(errors, ({ metadata }) =>
+    findBulkResource(metadata)
   );
 
   return (
@@ -105,8 +105,8 @@ function OperationForbiddenModal({
         Some of the following pre-requisites are not met:
       </p>
       <ul className="list-disc list-inside space-y-1 mb-1">
-        {isMassOperation
-          ? renderMassErrors(errors, onCancel)
+        {isBulkOperation
+          ? renderBulkErrors(errors, onCancel)
           : renderErrors(errors, onCancel)}
       </ul>
       <div className="flex justify-start gap-2 mt-4">

@@ -144,21 +144,21 @@ describe('OperationForbiddenModal', () => {
     expect(mockOnCancel).toHaveBeenCalled();
   });
 
-  describe('mass operation', () => {
+  describe('bulk operation', () => {
     it('should group the errors by resource', async () => {
       const { id: hostID1, hostname: hostname1 } = hostFactory.build();
       const { id: hostID2, hostname: hostname2 } = hostFactory.build();
-      const massMetadata1 = {
+      const bulkMetadata1 = {
         id: hostID1,
         label: hostname1,
         type: 'host',
-        mass_operation: true,
+        bulk_operation: true,
       };
-      const massMetadata2 = {
+      const bulkMetadata2 = {
         id: hostID2,
         label: hostname2,
         type: 'host',
-        mass_operation: true,
+        bulk_operation: true,
       };
 
       await act(() =>
@@ -166,9 +166,9 @@ describe('OperationForbiddenModal', () => {
           <OperationForbiddenModal
             operation="My operation"
             errors={[
-              { detail: 'error1', metadata: [massMetadata1] },
-              { detail: 'error2', metadata: [massMetadata1] },
-              { detail: 'error3', metadata: [massMetadata2] },
+              { detail: 'error1', metadata: [bulkMetadata1] },
+              { detail: 'error2', metadata: [bulkMetadata1] },
+              { detail: 'error3', metadata: [bulkMetadata2] },
             ]}
             isOpen
           />
@@ -211,7 +211,7 @@ describe('OperationForbiddenModal', () => {
                     id: hostID,
                     label: hostname,
                     type: 'host',
-                    mass_operation: true,
+                    bulk_operation: true,
                   },
                 ],
               },
@@ -246,7 +246,7 @@ describe('OperationForbiddenModal', () => {
               {
                 detail: 'error1',
                 metadata: [
-                  { id, label: hostname, type: 'host', mass_operation: true },
+                  { id, label: hostname, type: 'host', bulk_operation: true },
                 ],
               },
             ]}
