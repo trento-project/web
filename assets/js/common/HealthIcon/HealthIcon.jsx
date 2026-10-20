@@ -48,7 +48,6 @@ function HealthIcon({
     case 'passing': {
       const PassingIcon = isLink ? PassingIconLink : PassingIconBlank;
       return (
-        // eslint-disable-next-line @eslint-react/static-components
         <PassingIcon
           centered={centered}
           className={classNames(hoverOpacityClass, 'fill-jungle-green-500')}
@@ -65,7 +64,6 @@ function HealthIcon({
     case 'warning': {
       const WarningIcon = isLink ? WarningIconLink : WarningIconBlank;
       return (
-        // eslint-disable-next-line @eslint-react/static-components
         <WarningIcon
           centered={centered}
           className={classNames(hoverOpacityClass, 'fill-yellow-500')}
@@ -82,7 +80,6 @@ function HealthIcon({
     case 'critical': {
       const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank;
       return (
-        // eslint-disable-next-line @eslint-react/static-components
         <CriticalIcon
           centered={centered}
           className={classNames(hoverOpacityClass, 'fill-red-500')}
