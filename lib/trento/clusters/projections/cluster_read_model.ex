@@ -17,8 +17,8 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
   alias Trento.Hosts.Projections.HostReadModel
 
-  alias Trento.Clusters.ValueObjects.AscsErsClusterHealthDetailsRead
-  alias Trento.Clusters.ValueObjects.HanaClusterHealthDetailsRead
+  alias Trento.Clusters.Projections.AscsErsClusterHealthDetails
+  alias Trento.Clusters.Projections.HanaClusterHealthDetails
   alias Trento.Clusters.ValueObjects.SapInstance
 
   alias Trento.Tags.Tag
@@ -43,9 +43,9 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
     polymorphic_embeds_one(:health_details,
       types: [
-        hana_scale_up: HanaClusterHealthDetailsRead,
-        hana_scale_out: HanaClusterHealthDetailsRead,
-        ascs_ers: AscsErsClusterHealthDetailsRead
+        hana_scale_up: HanaClusterHealthDetails,
+        hana_scale_out: HanaClusterHealthDetails,
+        ascs_ers: AscsErsClusterHealthDetails
       ],
       on_replace: :update,
       use_parent_field_for_type: :type,
