@@ -31,15 +31,3 @@ defmodule Trento.Support.ValueDetails do
     end
   end
 end
-
-defmodule Trento.Support.HealthValueDetails do
-  @moduledoc """
-  ValueDetails struct with Trento.Enums.Health as `value` field type.
-  """
-  require Trento.Enums.Health, as: Health
-
-  use Trento.Support.ValueDetails,
-    value_type: Ecto.Enum,
-    values: Health.values(),
-    default: Health.unknown()
-end
