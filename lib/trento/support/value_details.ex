@@ -12,22 +12,13 @@ defmodule Trento.Support.ValueDetails do
     value_opts = Keyword.delete(opts, :value_type)
 
     quote do
-      use Ecto.Schema
-      import Ecto.Changeset
+      @required_fields [:value]
 
-      @derive {Jason.Encoder, except: [:__struct__]}
-      @primary_key false
-      embedded_schema do
+      use Trento.Support.Type
+
+      deftype do
         field :value, unquote(value_type), unquote(value_opts)
       end
-
-      def changeset(%__MODULE__{} = struct, params) do
-        struct
-        |> cast(params, [:value])
-        |> validate_required([:value])
-      end
-
-      defoverridable changeset: 2
     end
   end
 end
