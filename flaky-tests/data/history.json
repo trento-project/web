@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-02T19:56:36Z",
-    "commit": "4d0d3a90478f07f0be4489c76266c1b2ca01d6ed",
-    "run_id": "33674898296",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 41,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-02T19:57:39Z",
     "commit": "4d0d3a90478f07f0be4489c76266c1b2ca01d6ed",
     "run_id": "33674898296",
@@ -5763,5 +5752,57 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-20T21:37:34Z",
+    "commit": "ee4669d42432274fb1c8fc0435a6b2db6f30157f",
+    "run_id": "39501871293",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 21
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.3334
+      },
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.1402
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.1191
+      },
+      {
+        "name": "should preserve filters in the upgradable packages view::SUSE Multi-Linux Manager overviews Persistent filters should preserve filters in the upgradable packages view",
+        "score": 0.05001
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.03577
+      },
+      {
+        "name": "should allow changing autorefresh interval only on first page::Activity Log page Autorefresh should allow changing autorefresh interval only on first page",
+        "score": 0.02501
+      },
+      {
+        "name": "should have all cost optimized SID`s and correct database links::HANA cluster details HANA cluster details in a cost optimized scenario should be consistent with the state of the cluster should have all cost optimized SID`s and correct database links",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark cluster data as stale when an agent composing the cluster stops reporting::HANA cluster details Stale data should mark cluster data as stale when an agent composing the cluster stops reporting",
+        "score": 0.02501
+      },
+      {
+        "name": "should preserve the selected items per page when reloading clusters view::Clusters Overview Persistent filters should preserve the selected items per page when reloading clusters view",
+        "score": 0.02501
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.02501
+      }
+    ]
   }
 ]
