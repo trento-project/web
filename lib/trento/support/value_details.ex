@@ -5,7 +5,7 @@ defmodule Trento.Support.ValueDetails do
   @moduledoc """
   ValueDetails struct blueprint
 
-  Module intended to be used in a `use` expressions to define derived modules having the the same structure of their struct but configurable type for the `value` field.
+  Module intended to be used in `use` expressions to define derived modules having the same structure of their struct but configurable type for the `value` field.
   """
   defmacro __using__(opts) do
     value_type = Keyword.fetch!(opts, :value_type)
