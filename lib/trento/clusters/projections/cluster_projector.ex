@@ -11,6 +11,9 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     repo: Trento.Repo,
     name: "cluster_projector"
 
+  require Trento.Enums.Health, as: Health
+  require Trento.Support.HealthValueDetails, as: HealthValueDetails
+
   alias TrentoWeb.V2.ClusterJSON
 
   alias Trento.Clusters.Events.{
@@ -28,7 +31,12 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     ClusterSbdHealthChanged
   }
 
-  alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Clusters.Projections.{
+    ClusterReadModel,
+    HanaClusterHealthDetails,
+    AscsErsClusterHealthDetails
+  }
+
   alias Trento.Repo
   alias Trento.Support.StructHelper
 
@@ -36,17 +44,33 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   project(
     %ClusterRegistered{
-      cluster_id: cluster_id
-    } = event,
+      cluster_id: id,
+      name: name,
+      sap_instances: sap_instances,
+      provider: provider,
+      type: type,
+      resources_number: resources_number,
+      hosts_number: hosts_number,
+      details: details,
+      health: health,
+      health_details: health_details,
+      state: state
+    },
     fn multi ->
-      params =
-        event
-        |> StructHelper.to_atomized_map()
-        |> Map.put(:id, cluster_id)
-        |> postprocess_health_details()
-
       changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{}, params)
+        ClusterReadModel.changeset(%ClusterReadModel{}, %{
+          id: id,
+          name: name,
+          sap_instances: StructHelper.to_map(sap_instances),
+          provider: provider,
+          type: type,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
+          details: details,
+          health: health,
+          health_details: postprocess_health_details(health_details),
+          state: state
+        })
 
       Ecto.Multi.insert(multi, :cluster, changeset)
     end
@@ -100,8 +124,13 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     fn multi ->
       cluster = Repo.get!(ClusterReadModel, id)
 
-      params =
-        %{
+      health_details =
+        type
+        |> maybe_get_default_health_details(cluster.health_details)
+        |> StructHelper.to_map()
+
+      changeset =
+        ClusterReadModel.changeset(cluster, %{
           name: name,
           sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           provider: provider,
@@ -109,12 +138,9 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
+          health_details: health_details,
           state: state
-        }
-        |> maybe_put_default_health_details(cluster.health_details)
-        |> postprocess_health_details()
-
-      changeset = ClusterReadModel.changeset(cluster, params)
+        })
 
       Ecto.Multi.update(multi, :cluster, changeset)
     end
@@ -196,25 +222,6 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       )
     end
   )
-
-  defp health_details_update_query(cluster_id, value_path, value) do
-    from(
-      c in ClusterReadModel,
-      where: c.id == ^cluster_id,
-      update: [
-        set: [
-          health_details:
-            fragment(
-              "jsonb_set(?, ARRAY[?::text, 'value'], to_jsonb(?::text), false)",
-              c.health_details,
-              ^value_path,
-              ^to_string(value)
-            ),
-          updated_at: ^DateTime.utc_now()
-        ]
-      ]
-    )
-  end
 
   project(
     %ClusterDataMarkedStale{cluster_id: cluster_id, stale_at: stale_at},
@@ -332,31 +339,48 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   # -- Helpers --
 
-  defp postprocess_health_details(%{health_details: health_details} = params)
-       when not is_nil(health_details) do
+  defp postprocess_health_details(nil), do: nil
+
+  defp postprocess_health_details(health_details) do
     health_details
-    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
-    |> then(&Map.replace!(params, :health_details, &1))
+    |> StructHelper.to_map()
+    |> Map.new(&{&1, %{value: &2}})
   end
 
-  defp postprocess_health_details(params), do: params
+  defp maybe_get_default_health_details(:ascs_ers, nil),
+    do: %AscsErsClusterHealthDetails{
+      checks_health: %HealthValueDetails{value: Health.unknown()},
+      sbd_health: %HealthValueDetails{value: Health.unknown()},
+      distributed_health: %HealthValueDetails{value: Health.unknown()}
+    }
 
-  defp maybe_put_default_health_details(%{type: :ascs_ers} = params, nil) do
-    Map.put(params, :health_details, %{
-      checks_health: :unknown,
-      sbd_health: :unknown,
-      distributed_health: :unknown
-    })
+  defp maybe_get_default_health_details(new_type, nil)
+       when new_type in [:hana_scale_up, :hana_scale_out],
+       do: %HanaClusterHealthDetails{
+         checks_health: %HealthValueDetails{value: Health.unknown()},
+         sbd_health: %HealthValueDetails{value: Health.unknown()},
+         replication_health: %HealthValueDetails{value: Health.unknown()}
+       }
+
+  defp maybe_get_default_health_details(_new_type, previous_health_details),
+    do: previous_health_details
+
+  defp health_details_update_query(cluster_id, value_path, value) do
+    from(
+      c in ClusterReadModel,
+      where: c.id == ^cluster_id,
+      update: [
+        set: [
+          health_details:
+            fragment(
+              "jsonb_set(?, ARRAY[?::text, 'value'], to_jsonb(?::text), false)",
+              c.health_details,
+              ^value_path,
+              ^to_string(value)
+            ),
+          updated_at: ^DateTime.utc_now()
+        ]
+      ]
+    )
   end
-
-  defp maybe_put_default_health_details(%{type: type} = params, nil)
-       when type in [:hana_scale_up, :hana_scale_out] do
-    Map.put(params, :health_details, %{
-      checks_health: :unknown,
-      sbd_health: :unknown,
-      replication_health: :unknown
-    })
-  end
-
-  defp maybe_put_default_health_details(params, _previous_health_details), do: params
 end
