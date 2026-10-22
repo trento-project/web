@@ -54,8 +54,9 @@ defmodule Trento.Support.OperationsHelper do
           resource_ids :: [String.t()],
           request_func :: (String.t() -> {:ok, String.t()} | {:error, any})
         ) ::
-          {String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
            [%{resource_id: String.t(), reason: any}]}
+          | {:error, :bulk_operation_failed}
   def reduce_bulk_operation_request(resource_ids, request_func) do
     bulk_operation_id = UUID.uuid4()
 
@@ -70,7 +71,13 @@ defmodule Trento.Support.OperationsHelper do
         end
       end)
 
-    {bulk_operation_id, Enum.reverse(operations), Enum.reverse(failed_operations)}
+    case {operations, failed_operations} do
+      {[], [_ | _]} ->
+        {:error, :bulk_operation_failed}
+
+      _ ->
+        {:ok, bulk_operation_id, Enum.reverse(operations), Enum.reverse(failed_operations)}
+    end
   end
 
   @spec build_error(message :: String.t(), metadata :: [metadata()]) :: forbidden_error
