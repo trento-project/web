@@ -104,7 +104,7 @@ function OperationForbiddenModal({
       <p className="text-sm mb-1">
         Some of the following pre-requisites are not met:
       </p>
-      <ul className="list-disc list-inside space-y-1 mb-1">
+      <ul className="list-disc list-inside space-y-1 mb-1 max-h-60 overflow-y-auto">
         {isBulkOperation
           ? renderBulkErrors(errors, onCancel)
           : renderErrors(errors, onCancel)}
