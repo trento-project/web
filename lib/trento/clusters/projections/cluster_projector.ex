@@ -347,7 +347,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   defp postprocess_health_details(health_details) do
     health_details
     |> StructHelper.to_map()
-    |> Map.new(&{&1, %{value: &2}})
+    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
   end
 
   defp maybe_get_default_health_details(:ascs_ers, nil),
