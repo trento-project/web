@@ -16,7 +16,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.ClusterHealthDetails do
       nullable: true,
       oneOf: [
         %OpenApiSpex.Schema{
-          title: "Health details for clusters of type `hana_scale_up` and `hana_scale_out`",
+          title: HanaClusterHealthDetails,
+          description: "Health details for clusters of type `hana_scale_up` and `hana_scale_out`",
           properties: %{
             checks_health: HealthValueDetails,
             sbd_health: HealthValueDetails,
@@ -25,7 +26,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.ClusterHealthDetails do
           required: [:checks_health, :sbd_health, :replication_health]
         },
         %OpenApiSpex.Schema{
-          title: "Health details for clusters of type `ascs_ers`",
+          title: AscsErsClusterHealthDetails,
+          description: "Health details for clusters of type `ascs_ers`",
           properties: %{
             checks_health: HealthValueDetails,
             sbd_health: HealthValueDetails,

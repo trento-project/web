@@ -209,7 +209,7 @@ defmodule Mix.Tasks.RepairProjections do
 
   defp result_to_recorded_events(%Postgrex.Result{rows: rows}, serializer) do
     rows
-    |> EventStore.Storage.Reader.EventAdapter.to_event_data()
+    |> EventStore.Storage.Reader.EventAdapter.to_event_data("uuid", "uuid")
     |> Enum.map(&EventStore.RecordedEvent.deserialize(&1, serializer))
     |> Enum.map(&Commanded.EventStore.Adapters.EventStore.Mapper.from_recorded_event/1)
   end
