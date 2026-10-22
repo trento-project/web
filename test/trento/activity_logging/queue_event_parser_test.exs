@@ -92,48 +92,38 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
                })
     end
 
-    test "should get actor if bulk and single operation requested entries are logged" do
-      %{operation_id: operation_id} = operation_completed = build(:operation_completed_v1)
-
-      insert(:activity_log_entry,
-        type: "someresource_bulk_operation_requested",
-        actor: "bulk_actor",
-        metadata: %{"operation_id" => operation_id}
-      )
-
-      insert(:activity_log_entry,
-        type: "someresource_operation_requested",
-        actor: "bulk_actor",
-        metadata: %{"operation_id" => operation_id}
-      )
-
-      assert "bulk_actor" ==
-               QueueEventParser.get_activity_actor(:operation_completed, %{
-                 queue_event: operation_completed
-               })
-    end
-
-    test "should get operation completed metadata if bulk and single operation requested entries are logged" do
+    test "should get operation completed metadata from bulk operation requested only for its own operation" do
       %{operation_id: operation_id, result: result} =
         operation_completed =
         build(:operation_completed_v1, operation_type: "saptuneapplysolution@v1")
 
-      resource_id = Faker.UUID.v4()
+      bulk_operation_id = Faker.UUID.v4()
+      cluster_id = Faker.UUID.v4()
 
       insert(:activity_log_entry,
         type: "someresource_bulk_operation_requested",
-        metadata: %{"operation_id" => operation_id, "resource_id" => resource_id}
-      )
-
-      insert(:activity_log_entry,
-        type: "someresource_operation_requested",
-        metadata: %{"operation_id" => operation_id, "resource_id" => resource_id}
+        metadata: %{
+          "bulk_operation_id" => bulk_operation_id,
+          "correlation_id" => bulk_operation_id,
+          "params" => %{"key" => "value"},
+          "operations" => [
+            %{"cluster_id" => cluster_id, "name" => "my-cluster", "operation_id" => operation_id},
+            %{
+              "cluster_id" => Faker.UUID.v4(),
+              "name" => "other-cluster",
+              "operation_id" => Faker.UUID.v4()
+            }
+          ]
+        }
       )
 
       assert %{
                correlation_id: operation_id,
+               bulk_operation_id: bulk_operation_id,
                operation_id: operation_id,
-               resource_id: resource_id,
+               cluster_id: cluster_id,
+               name: "my-cluster",
+               params: %{key: "value"},
                operation: :saptune_solution_apply,
                result: result
              } ==

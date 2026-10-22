@@ -296,12 +296,17 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     %{"bulk_operation_id" => bulk_operation_id, "operations" => operations} =
       Jason.decode!(resp_body)
 
+    resource_id_field = get_operation_resource_id_field(activity)
+
     %{
       correlation_id: bulk_operation_id,
       bulk_operation_id: bulk_operation_id,
       operation: operation,
       params: params,
-      operations: operations
+      operations:
+        Enum.map(operations, fn %{"resource_id" => resource_id, "operation_id" => operation_id} ->
+          Map.put(%{operation_id: operation_id}, resource_id_field, resource_id)
+        end)
     }
   end
 
@@ -316,46 +321,6 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(_, _), do: %{}
-
-  @doc """
-  Returns the activities derived from a single connection activity, with their metadata.
-  """
-  @spec get_derived_activities(atom(), Plug.Conn.t()) :: [{atom(), map()}]
-  def get_derived_activities(
-        activity,
-        %Plug.Conn{
-          body_params: body_params,
-          resp_body: resp_body,
-          assigns: %{bulk_operation: operation}
-        }
-      )
-      when activity in [
-             :cluster_bulk_operation_requested
-           ] do
-    params = Map.get(body_params, :params, %{})
-
-    %{"bulk_operation_id" => bulk_operation_id, "operations" => operations} =
-      Jason.decode!(resp_body)
-
-    single_operation_activity = get_operation_from_bulk_operation(activity)
-
-    Enum.map(operations, fn %{"resource_id" => resource_id, "operation_id" => operation_id} ->
-      {single_operation_activity,
-       Map.put(
-         %{
-           correlation_id: operation_id,
-           operation: operation,
-           operation_id: operation_id,
-           bulk_operation_id: bulk_operation_id,
-           params: params
-         },
-         get_operation_resource_id_field(activity),
-         resource_id
-       )}
-    end)
-  end
-
-  def get_derived_activities(_, _), do: []
 
   defp redact(request_body, key) do
     case Map.has_key?(request_body, key) && Map.fetch!(request_body, key) != nil do
@@ -382,9 +347,6 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   defp get_operation_resource_id_field(:host_operation_requested), do: :host_id
 
   defp get_operation_resource_id_field(:database_operation_requested), do: :database_id
-
-  defp get_operation_from_bulk_operation(:cluster_bulk_operation_requested),
-    do: :cluster_operation_requested
 
   defp maybe_add_additional_fields(
          metadata,
