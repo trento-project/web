@@ -14,6 +14,7 @@ defmodule TrentoWeb.V1.ClusterController do
 
   alias TrentoWeb.OpenApi.V1.Schema.{
     BadRequest,
+    BulkOperationAccepted,
     Checks,
     Cluster,
     Forbidden,
@@ -23,18 +24,25 @@ defmodule TrentoWeb.V1.ClusterController do
   }
 
   alias TrentoWeb.OpenApi.V1.Schema.Operations.{
+    ClusterBulkMaintenanceChangeParams,
+    ClusterBulkResourceRefreshParams,
     ClusterMaintenanceChangeParams,
     ClusterResourceRefreshParams
   }
 
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+  require Trento.Operations.Enums.ClusterBulkOperations, as: ClusterBulkOperations
+
+  alias Trento.Support.OperationsHelper
+
+  @cluster_bulk_operations OperationsHelper.to_bulk_operation(ClusterBulkOperations.values())
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
   plug Bodyguard.Plug.Authorize,
     policy: Trento.Clusters.Policy,
-    action: {Phoenix.Controller, :action_name},
+    action: {__MODULE__, :get_action},
     user: {Pow.Plug, :current_user},
     params: {__MODULE__, :get_policy_resource},
     fallback: TrentoWeb.FallbackController
@@ -45,11 +53,12 @@ defmodule TrentoWeb.V1.ClusterController do
        [
          policy: Trento.Operations.ClusterPolicy,
          resource: &__MODULE__.get_operation_cluster/1,
-         operation: &Phoenix.Controller.action_name/1,
+         operation: &__MODULE__.get_action/1,
          assigns_to: :cluster,
          params: &__MODULE__.get_operation_params/1
        ]
-       when action in ClusterOperations.values() or action in ClusterHostOperations.values()
+       when action in ClusterOperations.values() or action in ClusterHostOperations.values() or
+              action in @cluster_bulk_operations
 
   action_fallback TrentoWeb.FallbackController
 
@@ -202,6 +211,50 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
+  @bulk_operations [
+    %{
+      operation: ClusterBulkOperations.cluster_maintenance_change(),
+      summary: "Request cluster maintenance change bulk operation",
+      description:
+        "Request maintenance change operation to change maintenance state of multiple clusters at once. The request is forbidden if any of the clusters is not authorized to run the operation. Otherwise, an individual operation is requested for every cluster.",
+      request_body: ClusterBulkMaintenanceChangeParams
+    },
+    %{
+      operation: ClusterBulkOperations.cluster_resource_refresh(),
+      summary: "Request cluster resource refresh bulk operation",
+      description:
+        "Request resource refresh operation to refresh all the resources of multiple clusters at once. The request is forbidden if any of the clusters is not authorized to run the operation. Otherwise, an individual operation is requested for every cluster.",
+      request_body: ClusterBulkResourceRefreshParams
+    }
+  ]
+
+  for %{
+        operation: cluster_bulk_operation,
+        summary: summary,
+        description: description,
+        request_body: request_body
+      } <- @bulk_operations do
+    @bulk_action OperationsHelper.to_bulk_operation(cluster_bulk_operation)
+
+    operation @bulk_action,
+      summary: summary,
+      tags: ["Operations"],
+      description: description,
+      request_body:
+        {"Request containing the clusters and the parameters for the specified cluster bulk operation.",
+         "application/json", request_body},
+      responses: [
+        accepted: BulkOperationAccepted.response(),
+        not_found: NotFound.response(),
+        forbidden: Forbidden.response(),
+        unprocessable_entity: UnprocessableEntity.response()
+      ]
+
+    def unquote(@bulk_action)(conn, params) do
+      request_bulk_operation(conn, params)
+    end
+  end
+
   @host_operations [
     %{
       operation: ClusterHostOperations.pacemaker_enable(),
@@ -283,6 +336,9 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
+  def get_action(%{assigns: %{bulk_operation: bulk_operation}}), do: bulk_operation
+  def get_action(conn), do: Phoenix.Controller.action_name(conn)
+
   def get_policy_resource(_), do: ClusterReadModel
 
   def get_operation_cluster(%{
@@ -317,6 +373,28 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
+  def get_operation_cluster(
+        %{
+          assigns: %{bulk_operation: operation}
+        } = conn
+      )
+      when operation in ClusterBulkOperations.values() do
+    %{cluster_ids: cluster_ids} = OpenApiSpex.body_params(conn)
+
+    clusters =
+      cluster_ids
+      |> Clusters.get_clusters_by_ids()
+      |> Repo.preload(:hosts)
+
+    case cluster_ids -- Enum.map(clusters, & &1.id) do
+      [] ->
+        clusters
+
+      missing_cluster_ids ->
+        {:error, "Clusters not found: #{Enum.join(missing_cluster_ids, ", ")}."}
+    end
+  end
+
   def get_operation_cluster(_), do: nil
 
   def get_operation_params(%{assigns: %{operation: operation}, params: %{host_id: host_id}})
@@ -336,6 +414,25 @@ defmodule TrentoWeb.V1.ClusterController do
       conn
       |> put_status(:accepted)
       |> json(%{operation_id: operation_id})
+    end
+  end
+
+  defp request_bulk_operation(%{assigns: %{operation: operation}} = conn, _) do
+    %{cluster_ids: cluster_ids} = body_params = OpenApiSpex.body_params(conn)
+    params = Map.get(body_params, :params, %{})
+
+    with {:ok, bulk_operation_id, operations, failed_operations} <-
+           Clusters.request_bulk_operation(operation, cluster_ids, params) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{
+        bulk_operation_id: bulk_operation_id,
+        operations: operations,
+        failed_operations:
+          Enum.map(failed_operations, fn %{reason: reason} = failed_operation ->
+            %{failed_operation | reason: inspect(reason)}
+          end)
+      })
     end
   end
 

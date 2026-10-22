@@ -8,10 +8,13 @@ defmodule TrentoWeb.Router do
 
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+  require Trento.Operations.Enums.ClusterBulkOperations, as: ClusterBulkOperations
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
   require Trento.Operations.Enums.HostOperations, as: HostOperations
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
   require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
+
+  alias Trento.Support.OperationsHelper
 
   # From newest to oldest
   @available_api_versions ["v2", "v1"]
@@ -199,6 +202,13 @@ defmodule TrentoWeb.Router do
           post "/clusters/:id/operations/#{cluster_operation}",
                ClusterController,
                cluster_operation
+        end
+
+        for cluster_bulk_operation <- ClusterBulkOperations.values() do
+          post "/clusters/operations/#{cluster_bulk_operation}",
+               ClusterController,
+               OperationsHelper.to_bulk_operation(cluster_bulk_operation),
+               assigns: %{bulk_operation: cluster_bulk_operation}
         end
 
         for sap_system_operation <- SapSystemOperations.values() do

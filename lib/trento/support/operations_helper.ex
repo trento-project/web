@@ -50,6 +50,42 @@ defmodule Trento.Support.OperationsHelper do
     |> reduce_operation_authorizations(acc)
   end
 
+  @spec reduce_bulk_operation_request(
+          resource_ids :: [String.t()],
+          request_func :: (String.t() -> {:ok, String.t()} | {:error, any})
+        ) ::
+          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+           [%{resource_id: String.t(), reason: any}]}
+          | {:error, :bulk_operation_failed}
+  def reduce_bulk_operation_request(resource_ids, request_func) do
+    bulk_operation_id = UUID.uuid4()
+
+    {operations, failed_operations} =
+      Enum.reduce(resource_ids, {[], []}, fn resource_id, {operations, failed} ->
+        case request_func.(resource_id) do
+          {:ok, operation_id} ->
+            {[%{resource_id: resource_id, operation_id: operation_id} | operations], failed}
+
+          {:error, reason} ->
+            {operations, [%{resource_id: resource_id, reason: reason} | failed]}
+        end
+      end)
+
+    case {operations, failed_operations} do
+      {[], [_ | _]} ->
+        {:error, :bulk_operation_failed}
+
+      _ ->
+        {:ok, bulk_operation_id, Enum.reverse(operations), Enum.reverse(failed_operations)}
+    end
+  end
+
   @spec build_error(message :: String.t(), metadata :: [metadata()]) :: forbidden_error
   def build_error(message, metadata \\ []), do: %{message: message, metadata: metadata}
+
+  @spec to_bulk_operation(operation :: [atom] | atom) :: [atom] | atom
+  def to_bulk_operation(operations) when is_list(operations),
+    do: Enum.map(operations, &to_bulk_operation/1)
+
+  def to_bulk_operation(operation), do: :"bulk_#{operation}"
 end
