@@ -139,7 +139,11 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_data_marked_stale" => :debug,
     "database_data_marked_in_sync" => :debug,
     "cluster_operation_requested" => :info,
-    "cluster_bulk_operation_requested" => :info,
+    "cluster_bulk_operation_requested" => %{
+      type: :key,
+      key: :failed_operations,
+      condition: :non_empty_list
+    },
     "host_operation_requested" => :info,
     "application_instance_operation_requested" => :info,
     "sap_system_operation_requested" => :info,
@@ -220,6 +224,12 @@ defmodule Trento.ActivityLog.SeverityLevel do
 
           false ->
             :info
+        end
+
+      :non_empty_list ->
+        case Map.get(metadata, mapping.key) do
+          [_ | _] -> :warning
+          _ -> :info
         end
     end
   end

@@ -29,7 +29,8 @@ defmodule Trento.ActivityLog.SeverityLevelTest do
         "*" => :debug
       },
       condition: :map_value_to_severity
-    }
+    },
+    "activity_type_7" => %{type: :key, key: :items, condition: :non_empty_list}
   }
   describe "map_severity_level/3" do
     test "should map unmapped activity type to info" do
@@ -108,6 +109,27 @@ defmodule Trento.ActivityLog.SeverityLevelTest do
         SeverityLevel.map_severity_level(activity_type, metadata, @severity_level_mapping)
 
       assert severity == :info
+    end
+
+    test "should map non empty list activity types appropriately" do
+      activity_type = "activity_type_7"
+
+      assert :warning ==
+               SeverityLevel.map_severity_level(
+                 activity_type,
+                 %{items: [1]},
+                 @severity_level_mapping
+               )
+
+      assert :info ==
+               SeverityLevel.map_severity_level(
+                 activity_type,
+                 %{items: []},
+                 @severity_level_mapping
+               )
+
+      assert :info ==
+               SeverityLevel.map_severity_level(activity_type, %{}, @severity_level_mapping)
     end
 
     test "should map conditional key suffix types with no metadata correctly" do
