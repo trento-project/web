@@ -170,6 +170,9 @@ const data = [
   },
 ];
 
+const buildData = (length) =>
+  Array.from({ length }, (_, index) => ({ ...data[index % data.length] }));
+
 export const Sorted = {
   args: {
     ...Default.args,
@@ -252,7 +255,7 @@ export const Paginated = {
   args: {
     ...Default.args,
     config: { ...config, pagination: true },
-    data: [].concat(data, data, data, data),
+    data: buildData(12),
   },
 };
 
@@ -294,6 +297,15 @@ export const WithStyledRows = {
         classNames({ 'bg-gray-100': status === 'inactive' }),
     };
     return <Table {...args} config={configWithRowClass} />;
+  },
+};
+
+export const WithSelectableRows = {
+  args: {
+    ...Default.args,
+    config: { ...filteredConfig, pagination: true, selectable: true },
+    data: buildData(25),
+    renderSelectionActions: () => <div>Selection actions</div>,
   },
 };
 
