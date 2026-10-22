@@ -281,6 +281,31 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
+        activity,
+        %Plug.Conn{
+          body_params: body_params,
+          resp_body: resp_body,
+          assigns: %{bulk_operation: operation}
+        }
+      )
+      when activity in [
+             :cluster_bulk_operation_requested
+           ] do
+    params = Map.get(body_params, :params, %{})
+
+    %{"bulk_operation_id" => bulk_operation_id, "operations" => operations} =
+      Jason.decode!(resp_body)
+
+    %{
+      correlation_id: bulk_operation_id,
+      bulk_operation_id: bulk_operation_id,
+      operation: operation,
+      params: params,
+      operations: operations
+    }
+  end
+
+  def get_activity_metadata(
         action,
         %Plug.Conn{
           body_params: request_body
