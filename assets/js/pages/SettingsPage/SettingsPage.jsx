@@ -39,11 +39,14 @@ import {
 
 import AlertingSettingsConfig from '@common/AlertingSettingsConfig';
 import AlertingSettingsModal from '@common/AlertingSettingsModal';
+import ChecksExecutionSettingsConfig from '@common/ChecksExecutionSettingsConfig';
+import ChecksExecutionSettingsModal from '@common/ChecksExecutionSettingsModal';
 
 import {
   useApiKeySettings,
   useSuseMultiLinuxManagerSettings,
   useAlertingSettings,
+  useChecksExecutionSettings,
 } from '@pages/SettingsPage/hooks';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
@@ -135,6 +138,11 @@ function SettingsPage() {
     sendTestEmail: sendAlertingTestEmail,
     clearSubmitErrors: clearAlertingSubmitErrors,
   } = useAlertingSettings();
+
+  const { checksExecutionSettings, changeChecksExecutionSettings } =
+    useChecksExecutionSettings();
+  const [checksExecutionModalOpen, setChecksExecutionModalOpen] =
+    useState(false);
 
   const [alertingSettingsModalOpen, setAlertingSettingsModalOpen] =
     useState(false);
@@ -402,6 +410,29 @@ function SettingsPage() {
           />
         </div>
       </section>
+
+      {checksExecutionSettings && (
+        <section>
+          <div className="pb-4">
+            <ChecksExecutionSettingsConfig
+              settings={checksExecutionSettings}
+              userAbilities={abilities}
+              onEditClick={() => setChecksExecutionModalOpen(true)}
+            />
+            <ChecksExecutionSettingsModal
+              key={`checksexecutionmodal-${checksExecutionSettings.interval}-${checksExecutionModalOpen}`}
+              open={checksExecutionModalOpen}
+              initialInterval={checksExecutionSettings.interval}
+              onSave={(newSettings) =>
+                changeChecksExecutionSettings(newSettings).then(() =>
+                  setChecksExecutionModalOpen(false)
+                )
+              }
+              onCancel={() => setChecksExecutionModalOpen(false)}
+            />
+          </div>
+        </section>
+      )}
     </>
   );
 }

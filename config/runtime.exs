@@ -218,20 +218,24 @@ if config_env() in [:prod, :demo] do
       depth: 99
     ]
 
-  config :trento, Trento.Scheduler,
-    jobs: [
-      # Runs every five minutes by default
-      clusters_checks_execution: [
-        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
-      ],
-      hosts_checks_execution: [
-        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
-      ],
-      prune_discovery_events: [
-        schedule: System.get_env("PRUNE_EVENTS_INTERVAL", "0 0 * * *"),
-        task:
-          {Trento.Discovery, :prune_discovery_events,
-           ["PRUNE_EVENTS_OLDER_THAN" |> System.get_env("10") |> String.to_integer()]}
+  # Global checks execution interval in minutes. When set, it is enforced and
+  # the value cannot be changed from the settings.
+  if checks_interval = System.get_env("CHECKS_INTERVAL") do
+    config :trento, :checks_execution, interval: String.to_integer(checks_interval)
+  end
+
+  config :trento, Oban,
+    cron: [
+      crontab: [
+        {"* * * * *", Trento.Infrastructure.Jobs.ChecksExecutionJob, queue: :checks},
+        {"0 */12 * * *", Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob},
+        {"@daily", Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob},
+        {"@daily", Trento.Infrastructure.Jobs.ActivityLogCleaningJob},
+        {System.get_env("PRUNE_EVENTS_INTERVAL", "0 0 * * *"),
+         Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
+         args: %{
+           older_than: "PRUNE_EVENTS_OLDER_THAN" |> System.get_env("10") |> String.to_integer()
+         }}
       ]
     ]
 

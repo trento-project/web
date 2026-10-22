@@ -24,23 +24,26 @@ defmodule Trento.Application do
         # Start the Endpoint (http/https)
         TrentoWeb.Endpoint,
         Trento.Commanded,
-        Trento.Scheduler,
-        Trento.EventHandlersSupervisor,
-        Trento.ProjectorsSupervisor,
-        Trento.ProcessManagersSupervisor,
-        Trento.Infrastructure.Checks.AMQP.Publisher,
-        Trento.Infrastructure.Checks.AMQP.Consumer,
-        Trento.Infrastructure.Operations.AMQP.Publisher,
-        Trento.Infrastructure.Operations.AMQP.Consumer,
-        Trento.Infrastructure.Catalog.AMQP.Consumer,
-        Trento.Infrastructure.Discovery.AMQP.Publisher,
-        Trento.Vault,
-        Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth,
-        {Samly.Provider, []},
-        {Sagents.Supervisor, []}
-        # Start a worker by calling: Trento.Worker.start_link(arg)
-        # {Trento.Worker, arg}
+        {Oban, Application.fetch_env!(:trento, Oban)}
       ] ++
+        Trento.Infrastructure.Ticker.children(Application.get_env(:trento, :tickers, [])) ++
+        [
+          Trento.EventHandlersSupervisor,
+          Trento.ProjectorsSupervisor,
+          Trento.ProcessManagersSupervisor,
+          Trento.Infrastructure.Checks.AMQP.Publisher,
+          Trento.Infrastructure.Checks.AMQP.Consumer,
+          Trento.Infrastructure.Operations.AMQP.Publisher,
+          Trento.Infrastructure.Operations.AMQP.Consumer,
+          Trento.Infrastructure.Catalog.AMQP.Consumer,
+          Trento.Infrastructure.Discovery.AMQP.Publisher,
+          Trento.Vault,
+          Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth,
+          {Samly.Provider, []},
+          {Sagents.Supervisor, []}
+          # Start a worker by calling: Trento.Worker.start_link(arg)
+          # {Trento.Worker, arg}
+        ] ++
         Application.get_env(:trento, :extra_children, [])
 
     # See https://hexdocs.pm/elixir/Supervisor.html

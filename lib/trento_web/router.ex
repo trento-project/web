@@ -135,6 +135,16 @@ defmodule TrentoWeb.Router do
            HostController,
            :request_checks_execution
 
+      for {target_type, path} <- [host: "/hosts/:id", cluster: "/clusters/:id"] do
+        get "#{path}/checks/schedule", ChecksScheduleController, :show,
+          assigns: %{target_type: target_type},
+          as: :"#{target_type}s_checks_schedule"
+
+        put "#{path}/checks/schedule", ChecksScheduleController, :update,
+          assigns: %{target_type: target_type},
+          as: :"#{target_type}s_checks_schedule"
+      end
+
       delete "/hosts/:id", HostController, :delete
 
       post "/hosts/:id/tags", TagsController, :add_tag_to_host,
@@ -262,6 +272,9 @@ defmodule TrentoWeb.Router do
         put "/activity_log", SettingsController, :update_activity_log_settings
         get "/activity_log", SettingsController, :get_activity_log_settings
 
+        get "/checks_execution", SettingsController, :get_checks_execution_settings
+        put "/checks_execution", SettingsController, :update_checks_execution_settings
+
         scope "/smlm" do
           get "/", SettingsController, :get_smlm_settings
           post "/", SettingsController, :save_smlm_settings
@@ -382,6 +395,8 @@ defmodule TrentoWeb.Router do
   end
 
   if Mix.env() == :dev do
+    import TrentoWeb.DevRoutes
+
     # Enables the Swoosh mailbox preview in development.
     #
     # Note that preview only shows emails that were sent by the same
@@ -390,6 +405,9 @@ defmodule TrentoWeb.Router do
       pipe_through :browser
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+
+      # Oban Web dashboard to inspect scheduled and periodic jobs
+      oban_dashboard("/oban")
     end
   end
 

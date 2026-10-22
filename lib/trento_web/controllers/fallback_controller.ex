@@ -161,6 +161,20 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Credentials have already been set.")
   end
 
+  def call(conn, {:error, :checks_exception_window}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: ErrorJSON)
+    |> render(:"422", reason: "Checks cannot be executed during exception window.")
+  end
+
+  def call(conn, {:error, :checks_execution_settings_enforced}) do
+    conn
+    |> put_status(:conflict)
+    |> put_view(json: ErrorJSON)
+    |> render(:"409", reason: "Checks execution settings can not be set, enforced by ENV.")
+  end
+
   def call(conn, {:error, :no_checks_selected}) do
     conn
     |> put_status(:unprocessable_entity)
