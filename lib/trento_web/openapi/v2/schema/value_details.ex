@@ -17,7 +17,10 @@ defmodule TrentoWeb.OpenApi.V2.Schema.HealthValueDetails do
       properties: %{
         value: ResourceHealth
       },
-      required: [:value]
+      required: [:value],
+      example: %{
+        value: "passing"
+      }
     },
     struct?: false
   )
