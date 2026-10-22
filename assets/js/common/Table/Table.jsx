@@ -79,6 +79,16 @@ const detectItemsPerPage = (value) =>
     ? Number(value)
     : defaultItemsPerPage;
 
+/**
+ * Generic table with optional filters, sorting, pagination, collapsible rows
+ * and row selection.
+ *
+ * Row selection is enabled with `config.selectable`. The selection is stored by
+ * row key and kept across pages and filters, so selectable tables need distinct
+ * rows, each with a unique and stable `rowKey` (for example the `id` of the
+ * entity), not the position of the row. Without it the selection can move to a
+ * different row when the data is refreshed or reordered.
+ */
 function Table({
   className,
   config,
