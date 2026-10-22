@@ -168,6 +168,12 @@ export const CLUSTER_HOST_OPERATION_REQUESTED =
 export const SAP_SYSTEM_OPERATION_REQUESTED = 'sap_system_operation_requested';
 export const DATABASE_OPERATION_REQUESTED = 'database_operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
+export const OPERATION_SCHEDULED = 'operation_scheduled';
+export const OPERATION_SCHEDULE_CHANGED = 'operation_schedule_changed';
+export const OPERATION_SCHEDULE_CANCELLED = 'operation_schedule_cancelled';
+export const SCHEDULED_OPERATION_REQUESTED = 'scheduled_operation_requested';
+export const SCHEDULED_OPERATION_REQUEST_FAILED =
+  'scheduled_operation_request_failed';
 
 // Check Customization
 const CHECK_CUSTOMIZATION_APPLIED = 'check_customization_applied';
@@ -800,6 +806,36 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
     resource: clusterResourceType,
+  },
+  [OPERATION_SCHEDULED]: {
+    label: 'Operation Scheduled',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata?.operation)} scheduled`,
+    resource: hostResourceType,
+  },
+  [OPERATION_SCHEDULE_CHANGED]: {
+    label: 'Operation Schedule Changed',
+    message: ({ metadata }) =>
+      `Schedule of operation ${getOperationLabel(metadata?.operation)} changed`,
+    resource: hostResourceType,
+  },
+  [OPERATION_SCHEDULE_CANCELLED]: {
+    label: 'Operation Schedule Cancelled',
+    message: ({ metadata }) =>
+      `Schedule of operation ${getOperationLabel(metadata?.operation)} cancelled`,
+    resource: hostResourceType,
+  },
+  [SCHEDULED_OPERATION_REQUESTED]: {
+    label: 'Scheduled Operation Requested',
+    message: ({ metadata }) =>
+      `Scheduled operation ${getOperationLabel(metadata?.operation)} requested`,
+    resource: hostResourceType,
+  },
+  [SCHEDULED_OPERATION_REQUEST_FAILED]: {
+    label: 'Scheduled Operation Request Failed',
+    message: ({ metadata }) =>
+      `Scheduled operation ${getOperationLabel(metadata?.operation)} not requested: ${metadata?.reason}`,
+    resource: hostResourceType,
   },
   [HOST_OPERATION_REQUESTED]: {
     label: 'Host Operation Requested',

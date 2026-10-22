@@ -10,7 +10,10 @@ import {
 } from '@state/lastExecutions';
 import { userUpdated } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
-import { operationCompleted } from '@state/runningOperations';
+import {
+  operationCompleted,
+  setRunningOperation,
+} from '@state/runningOperations';
 
 import { watchSocketEvents } from './channels';
 
@@ -144,6 +147,23 @@ describe('Channels saga', () => {
 
     expect(dispatched).toEqual([
       activityLogUsersPushed({ users: ['user1', 'user2', 'user3'] }),
+    ]);
+  });
+
+  it('should mark the operation as running on operation_started event', async () => {
+    const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
+
+    channels['monitoring:operations'].emit('operation_started', {
+      operation_id: 'operation_id',
+      group_id: 'group_id',
+      operation_type: 'reboot',
+    });
+
+    closeSocket();
+    await saga;
+
+    expect(dispatched).toEqual([
+      setRunningOperation({ groupID: 'group_id', operation: 'reboot' }),
     ]);
   });
 
