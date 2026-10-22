@@ -55,7 +55,8 @@ export default {
       control: { type: 'object' },
     },
     rowKey: {
-      description: 'Function to compute a unique key for each row',
+      description:
+        'Function to compute a unique key for each row. Required when `config.selectable` is enabled: the selection is stored by key, so rows must be distinct and the key must be unique and stable when the data is refreshed or reordered (for example an `id`), not the position of the row',
       control: { type: 'object' },
     },
     roundedTop: {
@@ -170,6 +171,9 @@ const data = [
   },
 ];
 
+const buildData = (length) =>
+  Array.from({ length }, (_, index) => ({ ...data[index % data.length] }));
+
 export const Sorted = {
   args: {
     ...Default.args,
@@ -252,7 +256,7 @@ export const Paginated = {
   args: {
     ...Default.args,
     config: { ...config, pagination: true },
-    data: [].concat(data, data, data, data),
+    data: buildData(12),
   },
 };
 
@@ -294,6 +298,23 @@ export const WithStyledRows = {
         classNames({ 'bg-gray-100': status === 'inactive' }),
     };
     return <Table {...args} config={configWithRowClass} />;
+  },
+};
+
+export const WithSelectableRows = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Rows can be selected with `config.selectable`. Selection is kept across pages and filters. This table needs distinct rows with a unique, stable `rowKey`, here the index is used only because the data is static.',
+      },
+    },
+  },
+  args: {
+    ...Default.args,
+    config: { ...filteredConfig, pagination: true, selectable: true },
+    data: buildData(25),
+    renderSelectionActions: () => <div>Selection actions</div>,
   },
 };
 
