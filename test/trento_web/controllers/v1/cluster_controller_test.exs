@@ -439,7 +439,8 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
                } = resp
       end
 
-      test "should respond with 500 on messaging error for #{@operation}", %{conn: conn} do
+      test "should respond with 202 and the failed operations on messaging error for #{@operation}",
+           %{conn: conn, api_spec: api_spec} do
         %{id: cluster_id} = insert(:cluster)
         insert(:host, heartbeat: :passing, cluster_id: cluster_id)
 
@@ -458,14 +459,14 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
             "/api/v1/clusters/operations/#{@operation}",
             Map.put(@arguments, "cluster_ids", [cluster_id])
           )
-          |> json_response(:internal_server_error)
+          |> json_response(:accepted)
+
+        assert_schema(resp, "BulkOperationAcceptedV1", api_spec)
 
         assert %{
-                 "errors" => [
-                   %{
-                     "detail" => "Something went wrong.",
-                     "title" => "Internal Server Error"
-                   }
+                 "operations" => [],
+                 "failed_operations" => [
+                   %{"resource_id" => ^cluster_id, "reason" => ":amqp_error"}
                  ]
                } = resp
       end
@@ -511,7 +512,8 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
                  "operations" => [
                    %{"resource_id" => ^cluster_id_1},
                    %{"resource_id" => ^cluster_id_2}
-                 ]
+                 ],
+                 "failed_operations" => []
                } = resp
 
         assert %{assigns: %{cluster: [%{id: ^cluster_id_1}, %{id: ^cluster_id_2}]}} =

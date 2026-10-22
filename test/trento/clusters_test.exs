@@ -1372,21 +1372,21 @@ defmodule Trento.ClustersTest do
                 [
                   %{resource_id: ^cluster_id_1, operation_id: operation_id_1},
                   %{resource_id: ^cluster_id_2, operation_id: operation_id_2}
-                ]} =
+                ], []} =
                  Clusters.request_bulk_operation(@operation, [cluster_id_1, cluster_id_2], %{})
 
         refute operation_id_1 == operation_id_2
       end
     end
 
-    test "should stop at the first messaging error" do
+    test "should return the failed operations on messaging errors" do
       cluster_ids = [UUID.uuid4(), UUID.uuid4()]
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
         OperationsPublisher, "requests", %OperationRequested{} -> {:error, :amqp_error}
       end)
 
-      assert {:error, :amqp_error} =
+      assert {:ok, _bulk_operation_id, [], [%{reason: :amqp_error}, %{reason: :amqp_error}]} =
                Clusters.request_bulk_operation(:cluster_maintenance_change, cluster_ids, %{})
     end
 

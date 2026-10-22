@@ -245,14 +245,18 @@ defmodule Trento.Clusters do
   def request_operation(_, _, _), do: {:error, :operation_not_found}
 
   @spec request_bulk_operation(atom(), [String.t()], map()) ::
-          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}]}
+          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+           [%{resource_id: String.t(), reason: any}]}
           | {:error, any}
   def request_bulk_operation(operation, cluster_ids, params)
       when operation in ClusterBulkOperations.values() do
-    OperationsHelper.reduce_bulk_operation_request(
-      cluster_ids,
-      &request_operation(operation, &1, params)
-    )
+    {bulk_operation_id, operations, failed_operations} =
+      OperationsHelper.reduce_bulk_operation_request(
+        cluster_ids,
+        &request_operation(operation, &1, params)
+      )
+
+    {:ok, bulk_operation_id, operations, failed_operations}
   end
 
   def request_bulk_operation(_, _, _), do: {:error, :operation_not_found}
