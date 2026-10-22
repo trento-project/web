@@ -7,6 +7,8 @@ import { noop } from 'lodash';
 
 import { page, pages } from '@lib/lists';
 import { changeSearchParams } from '@lib/searchParams';
+import Button from '@common/Button';
+import { Checkbox } from '@common/Input';
 import Pagination, {
   PageStats,
   defaultItemsPerPage,
@@ -89,9 +91,11 @@ function Table({
   rowKey = defaultRowKey,
   roundedTop = true,
   ariaLabelledBy,
+  renderSelectionActions = noop,
 }) {
   const {
     columns,
+    selectable = false,
     collapsibleDetailRenderer = undefined,
     wrapCollapsedRowInCell = true,
     headerClassName = '',
@@ -106,6 +110,7 @@ function Table({
   const [currentPage, setCurrentPage] = useState(1);
   const [localItemsPerPage, setLocalItemsPerPage] =
     useState(defaultItemsPerPage);
+  const [selectedKeys, setSelectedKeys] = useState(new Set());
 
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
@@ -200,6 +205,41 @@ function Table({
     onPageChange(renderedData);
   }, [selectedPage, renderedData.length]);
 
+  // Selected keys of rows that do not exist anymore are ignored
+  const keyByItem = new Map(
+    data.map((item, index) => [item, rowKey(item, index)])
+  );
+  const renderedKeys = renderedData.map((item) => keyByItem.get(item));
+  const filteredKeys = filteredData.map((item) => keyByItem.get(item));
+
+  const isSelected = (key) => selectedKeys.has(key);
+  const selectedItems = data.filter((item) => isSelected(keyByItem.get(item)));
+  const selectedRenderedCount = renderedKeys.filter(isSelected).length;
+  const selectedFilteredCount = filteredKeys.filter(isSelected).length;
+  const allSelected =
+    renderedKeys.length > 0 && selectedRenderedCount === renderedKeys.length;
+  const someSelected = selectedRenderedCount > 0 && !allSelected;
+  const selectionActive = selectedItems.length > 0;
+
+  const selectKeys = (keys) =>
+    setSelectedKeys((prev) => new Set([...prev, ...keys]));
+
+  const deselectKeys = (keys) =>
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      keys.forEach((key) => next.delete(key));
+      return next;
+    });
+
+  const toggleAllRows = () =>
+    allSelected ? deselectKeys(renderedKeys) : selectKeys(renderedKeys);
+
+  const toggleRow = (key) =>
+    isSelected(key) ? deselectKeys([key]) : selectKeys([key]);
+
+  const extraColumns =
+    (collapsibleDetailRenderer ? 1 : 0) + (selectable ? 1 : 0);
+
   return (
     <div
       className={classNames(className, 'container mx-auto', {
@@ -230,6 +270,36 @@ function Table({
               }
             )}
           >
+            {selectionActive && (
+              <div className="flex items-center justify-between px-5 py-2 border-b border-gray-200 bg-gray-50">
+                <div className="flex items-center space-x-4 text-sm">
+                  <span className="text-gray-500">
+                    {selectedItems.length} of {data.length} selected
+                  </span>
+                  {selectedFilteredCount < filteredKeys.length && (
+                    <Button
+                      type="link"
+                      size="fit"
+                      className="focus:outline-none"
+                      onClick={() => selectKeys(filteredKeys)}
+                    >
+                      Select all {filteredKeys.length} items
+                    </Button>
+                  )}
+                  {selectedFilteredCount > 0 && (
+                    <Button
+                      type="link"
+                      size="fit"
+                      className="focus:outline-none"
+                      onClick={() => deselectKeys(filteredKeys)}
+                    >
+                      Clear
+                    </Button>
+                  )}
+                </div>
+                {renderSelectionActions(selectedItems)}
+              </div>
+            )}
             {header}
             <table
               className="min-w-full leading-normal table-fixed"
@@ -237,6 +307,24 @@ function Table({
             >
               <thead>
                 <tr>
+                  {selectable && (
+                    <th
+                      key="selection"
+                      scope="col"
+                      className={classNames(
+                        'w-10 pl-5 border-b bg-gray-100',
+                        headerClassName
+                      )}
+                    >
+                      <Checkbox
+                        aria-label="Select all rows"
+                        checked={allSelected}
+                        indeterminate={someSelected}
+                        disabled={renderedKeys.length === 0}
+                        onChange={toggleAllRows}
+                      />
+                    </th>
+                  )}
                   {collapsibleDetailRenderer && (
                     <th
                       key="collapsible"
@@ -283,16 +371,12 @@ function Table({
               <tbody className="bg-white text-gray-900">
                 {renderedData.length === 0 ? (
                   <EmptyState
-                    colSpan={
-                      collapsibleDetailRenderer
-                        ? columns.length + 1
-                        : columns.length
-                    }
+                    colSpan={columns.length + extraColumns}
                     emptyStateText={emptyStateText}
                   />
                 ) : (
                   renderedData.map((item, index) => {
-                    const key = rowKey(item, index);
+                    const key = renderedKeys[index];
 
                     return (
                       <CollapsibleTableRow
@@ -302,7 +386,10 @@ function Table({
                         wrapCollapsedRowInCell={wrapCollapsedRowInCell}
                         renderCells={renderCells}
                         columns={columns}
-                        colSpan={columns.length}
+                        colSpan={columns.length + (selectable ? 1 : 0)}
+                        selectable={selectable}
+                        selected={isSelected(key)}
+                        onSelect={() => toggleRow(key)}
                         className={getRowClassName(rowClassName, item)}
                         collapsedRowClassName={collapsedRowClassName}
                       />

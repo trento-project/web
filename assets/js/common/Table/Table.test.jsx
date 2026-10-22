@@ -645,4 +645,484 @@ describe('Table component', () => {
       expect(collapsedCell).toHaveTextContent(content);
     });
   });
+
+  describe('selection', () => {
+    const selectableConfig = { ...tableConfig, selectable: true };
+    const rowKey = ({ column1 }) => column1;
+
+    describe('rendering', () => {
+      it('should not render checkboxes when the table is not selectable', () => {
+        const data = tableDataFactory.buildList(5);
+
+        render(<Table config={tableConfig} data={data} rowKey={rowKey} />);
+
+        expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+      });
+
+      it('should render a checkbox for the header and each row when selectable', () => {
+        const data = tableDataFactory.buildList(5);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        expect(
+          screen.getByRole('checkbox', { name: 'Select all rows' })
+        ).not.toBeChecked();
+        const rowCheckboxes = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        expect(rowCheckboxes).toHaveLength(5);
+        rowCheckboxes.forEach((checkbox) => expect(checkbox).not.toBeChecked());
+      });
+
+      it('should not render the selection area when nothing is selected', () => {
+        const data = tableDataFactory.buildList(5);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        expect(screen.queryByText(/selected$/)).not.toBeInTheDocument();
+      });
+
+      it('should account for the selection column in the collapsed row', () => {
+        const data = tableDataFactory.buildList(1);
+
+        render(
+          <Table
+            config={{
+              ...selectableConfig,
+              collapsibleDetailRenderer: () => <p>detail</p>,
+            }}
+            data={data}
+            rowKey={rowKey}
+          />
+        );
+
+        expect(screen.getByText('detail').closest('td')).toHaveAttribute(
+          'colspan',
+          '5'
+        );
+      });
+    });
+
+    describe('row selection', () => {
+      it('should update the selected count when rows are selected', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        const checkboxes = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        await user.click(checkboxes[0]);
+        await user.click(checkboxes[1]);
+        await user.click(checkboxes[2]);
+
+        expect(screen.getByText('3 of 12 selected')).toBeInTheDocument();
+      });
+
+      it('should hide the selection area when the last selected row is unchecked', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        const [firstCheckbox] = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        await user.click(firstCheckbox);
+        await user.click(firstCheckbox);
+
+        expect(firstCheckbox).not.toBeChecked();
+        expect(screen.queryByText(/selected$/)).not.toBeInTheDocument();
+      });
+
+      it('should highlight the selected rows only', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(3);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        const [firstCheckbox, secondCheckbox] = screen.getAllByRole(
+          'checkbox',
+          { name: 'Select row' }
+        );
+        await user.click(firstCheckbox);
+
+        expect(firstCheckbox.closest('tr')).toHaveClass('!bg-jungle-green-100');
+        expect(secondCheckbox.closest('tr')).not.toHaveClass(
+          '!bg-jungle-green-100'
+        );
+      });
+    });
+
+    describe('selection area', () => {
+      it('should not render the selection actions when nothing is selected', () => {
+        const data = tableDataFactory.buildList(3);
+        const renderSelectionActions = jest.fn(() => <button>Operate</button>);
+
+        render(
+          <Table
+            config={selectableConfig}
+            data={data}
+            rowKey={rowKey}
+            renderSelectionActions={renderSelectionActions}
+          />
+        );
+
+        expect(renderSelectionActions).not.toHaveBeenCalled();
+        expect(
+          screen.queryByRole('button', { name: 'Operate' })
+        ).not.toBeInTheDocument();
+      });
+
+      it('should render the selection actions with the selected items', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(3);
+        const renderSelectionActions = jest.fn(() => <button>Operate</button>);
+
+        render(
+          <Table
+            config={selectableConfig}
+            data={data}
+            rowKey={rowKey}
+            renderSelectionActions={renderSelectionActions}
+          />
+        );
+
+        const checkboxes = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        await user.click(checkboxes[0]);
+        await user.click(checkboxes[2]);
+
+        expect(
+          screen.getByRole('button', { name: 'Operate' })
+        ).toBeInTheDocument();
+        expect(renderSelectionActions).toHaveBeenLastCalledWith([
+          data[0],
+          data[2],
+        ]);
+      });
+    });
+
+    describe('header checkbox', () => {
+      const goToNextPage = (user) =>
+        user.click(
+          within(screen.getByTestId('pagination')).getByLabelText('next-page')
+        );
+
+      it('should select all the rows of the current page', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await user.click(
+          screen.getByRole('checkbox', { name: 'Select all rows' })
+        );
+
+        expect(
+          screen.getByRole('checkbox', { name: 'Select all rows' })
+        ).toBeChecked();
+        screen
+          .getAllByRole('checkbox', { name: 'Select row' })
+          .forEach((checkbox) => expect(checkbox).toBeChecked());
+        expect(screen.getByText('10 of 12 selected')).toBeInTheDocument();
+      });
+
+      it('should deselect all the rows of the current page', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        const headerCheckbox = screen.getByRole('checkbox', {
+          name: 'Select all rows',
+        });
+        await user.click(headerCheckbox);
+        await user.click(headerCheckbox);
+
+        expect(headerCheckbox).not.toBeChecked();
+        screen
+          .getAllByRole('checkbox', { name: 'Select row' })
+          .forEach((checkbox) => expect(checkbox).not.toBeChecked());
+        expect(screen.queryByText(/selected$/)).not.toBeInTheDocument();
+      });
+
+      it('should be indeterminate when only some rows of the page are selected', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+
+        const headerCheckbox = screen.getByRole('checkbox', {
+          name: 'Select all rows',
+        });
+        expect(headerCheckbox).not.toBeChecked();
+        expect(headerCheckbox.indeterminate).toBe(true);
+      });
+
+      it('should not change the selection of the other pages', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        const headerCheckbox = screen.getByRole('checkbox', {
+          name: 'Select all rows',
+        });
+        await user.click(headerCheckbox);
+        await goToNextPage(user);
+
+        expect(headerCheckbox).not.toBeChecked();
+        expect(headerCheckbox.indeterminate).toBe(false);
+
+        await user.click(headerCheckbox);
+        expect(screen.getByText('12 of 12 selected')).toBeInTheDocument();
+
+        await user.click(headerCheckbox);
+        expect(screen.getByText('10 of 12 selected')).toBeInTheDocument();
+      });
+
+      it('should be disabled when there are no rows', () => {
+        render(<Table config={selectableConfig} data={[]} rowKey={rowKey} />);
+
+        expect(
+          screen.getByRole('checkbox', { name: 'Select all rows' })
+        ).toBeDisabled();
+      });
+    });
+
+    describe('persistence', () => {
+      it('should keep the selection when changing page', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+        const pagination = within(screen.getByTestId('pagination'));
+        await user.click(pagination.getByLabelText('next-page'));
+
+        expect(screen.getByText('1 of 12 selected')).toBeInTheDocument();
+
+        await user.click(pagination.getByLabelText('prev-page'));
+
+        expect(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        ).toBeChecked();
+      });
+
+      it('should keep the selection when applying and clearing a filter', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        const checkboxes = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        await user.click(checkboxes[0]);
+        await user.click(checkboxes[1]);
+
+        await filterTable(user, 'Column1', data[0].column1);
+
+        const [filteredCheckbox] = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        expect(filteredCheckbox).toBeChecked();
+        expect(screen.getByText('2 of 12 selected')).toBeInTheDocument();
+
+        await clearFilter(user, 'Column1');
+
+        const restoredCheckboxes = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        expect(restoredCheckboxes[0]).toBeChecked();
+        expect(restoredCheckboxes[1]).toBeChecked();
+      });
+
+      it('should keep the selection when changing the items per page', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+        await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+        await user.click(screen.getByRole('option', { name: '20' }));
+
+        expect(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        ).toBeChecked();
+        expect(screen.getByText('1 of 12 selected')).toBeInTheDocument();
+      });
+
+      it('should keep the rows hidden by a filter selected', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(12);
+        const renderSelectionActions = jest.fn(() => <button>Operate</button>);
+
+        render(
+          <Table
+            config={selectableConfig}
+            data={data}
+            rowKey={rowKey}
+            renderSelectionActions={renderSelectionActions}
+          />
+        );
+
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+        await filterTable(user, 'Column1', data[1].column1);
+
+        const [filteredCheckbox] = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        expect(filteredCheckbox).not.toBeChecked();
+        expect(screen.getByText('1 of 12 selected')).toBeInTheDocument();
+        expect(renderSelectionActions).toHaveBeenLastCalledWith([data[0]]);
+      });
+    });
+
+    describe('select all and clear', () => {
+      const filterKey = 'column3';
+      const filterTitle = 'Column3';
+      const filterValue = 'groupA';
+
+      const buildFilterableData = () => [
+        ...tableDataFactory.buildList(3, { [filterKey]: filterValue }),
+        ...tableDataFactory.buildList(9),
+      ];
+
+      it('should select all the rows of all the pages', async () => {
+        const user = userEvent.setup();
+        const data = buildFilterableData();
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+        await user.click(
+          screen.getByRole('button', { name: 'Select all 12 items' })
+        );
+
+        expect(screen.getByText('12 of 12 selected')).toBeInTheDocument();
+        screen
+          .getAllByRole('checkbox', { name: 'Select row' })
+          .forEach((checkbox) => expect(checkbox).toBeChecked());
+
+        await user.click(
+          within(screen.getByTestId('pagination')).getByLabelText('next-page')
+        );
+
+        screen
+          .getAllByRole('checkbox', { name: 'Select row' })
+          .forEach((checkbox) => expect(checkbox).toBeChecked());
+
+        expect(
+          screen.queryByRole('button', { name: /Select all/ })
+        ).not.toBeInTheDocument();
+      });
+
+      it('should clear the selection of all the rows', async () => {
+        const user = userEvent.setup();
+        const data = buildFilterableData();
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+        await user.click(
+          screen.getByRole('button', { name: 'Select all 12 items' })
+        );
+        await user.click(screen.getByRole('button', { name: 'Clear' }));
+
+        expect(screen.queryByText(/selected$/)).not.toBeInTheDocument();
+        screen
+          .getAllByRole('checkbox', { name: 'Select row' })
+          .forEach((checkbox) => expect(checkbox).not.toBeChecked());
+      });
+
+      it('should select only the rows that match the filters', async () => {
+        const user = userEvent.setup();
+        const data = buildFilterableData();
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await filterTable(user, filterTitle, filterValue);
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+        await user.click(
+          screen.getByRole('button', { name: 'Select all 3 items' })
+        );
+
+        expect(screen.getByText('3 of 12 selected')).toBeInTheDocument();
+
+        await clearFilter(user, filterTitle);
+
+        const checkboxes = screen.getAllByRole('checkbox', {
+          name: 'Select row',
+        });
+        expect(checkboxes[2]).toBeChecked();
+        expect(checkboxes[3]).not.toBeChecked();
+      });
+
+      it('should keep the rows hidden by the filters when selecting all', async () => {
+        const user = userEvent.setup();
+        const data = buildFilterableData();
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[5]
+        );
+        await filterTable(user, filterTitle, filterValue);
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+        await user.click(
+          screen.getByRole('button', { name: 'Select all 3 items' })
+        );
+
+        expect(screen.getByText('4 of 12 selected')).toBeInTheDocument();
+      });
+
+      it('should clear only the rows that match the filters', async () => {
+        const user = userEvent.setup();
+        const data = buildFilterableData();
+
+        render(<Table config={selectableConfig} data={data} rowKey={rowKey} />);
+
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[5]
+        );
+        await filterTable(user, filterTitle, filterValue);
+        await user.click(
+          screen.getAllByRole('checkbox', { name: 'Select row' })[0]
+        );
+        await user.click(
+          screen.getByRole('button', { name: 'Select all 3 items' })
+        );
+        await user.click(screen.getByRole('button', { name: 'Clear' }));
+
+        expect(screen.getByText('1 of 12 selected')).toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: 'Clear' })
+        ).not.toBeInTheDocument();
+      });
+    });
+  });
 });
