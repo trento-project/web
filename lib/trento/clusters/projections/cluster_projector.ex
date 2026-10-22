@@ -23,7 +23,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
-    ClusterDiscoveredHealthChanged,
+    ClusterDistributedHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
     ClusterReplicationHealthChanged,
@@ -185,12 +185,15 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   )
 
   project(
-    %ClusterDiscoveredHealthChanged{cluster_id: cluster_id, discovered_health: discovered_health},
+    %ClusterDistributedHealthChanged{
+      cluster_id: cluster_id,
+      distributed_health: distributed_health
+    },
     fn multi ->
       Ecto.Multi.update_all(
         multi,
         :health_details,
-        health_details_update_query(cluster_id, "discovered_health", discovered_health),
+        health_details_update_query(cluster_id, "distributed_health", distributed_health),
         []
       )
     end
