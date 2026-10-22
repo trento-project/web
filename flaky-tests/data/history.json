@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-09-03T20:06:07Z",
-    "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
-    "run_id": "33798088719",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-03T20:28:46Z",
     "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
     "run_id": "33800345068",
@@ -5767,5 +5743,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-10-22T20:46:15Z",
+    "commit": "567eb39394675447e768319314e26a23cb9ba88d",
+    "run_id": "39851703638",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
