@@ -135,7 +135,7 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
     operation_entry = Enum.find(operations, %{}, &(&1[:operation_id] == operation_id))
 
     bulk_metadata
-    |> Map.delete(:operations)
+    |> Map.drop([:operations, :failed_operations])
     |> Map.merge(operation_entry)
   end
 

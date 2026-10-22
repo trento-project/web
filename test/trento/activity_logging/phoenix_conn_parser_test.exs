@@ -378,11 +378,14 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
 
         [resource_id_1, resource_id_2] = [Faker.UUID.v4(), Faker.UUID.v4()]
         [operation_id_1, operation_id_2] = [Faker.UUID.v4(), Faker.UUID.v4()]
+        failed_resource_id = Faker.UUID.v4()
 
         operations = [
           %{"resource_id" => resource_id_1, "operation_id" => operation_id_1},
           %{"resource_id" => resource_id_2, "operation_id" => operation_id_2}
         ]
+
+        failed_operations = [%{"resource_id" => failed_resource_id, "reason" => ":amqp_error"}]
 
         assert %{
                  correlation_id: bulk_operation_id,
@@ -392,6 +395,9 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                  operations: [
                    %{:operation_id => operation_id_1, resource_field => resource_id_1},
                    %{:operation_id => operation_id_2, resource_field => resource_id_2}
+                 ],
+                 failed_operations: [
+                   %{:reason => ":amqp_error", resource_field => failed_resource_id}
                  ]
                } ==
                  PhoenixConnParser.get_activity_metadata(
@@ -402,7 +408,8 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                        resp_body:
                          Jason.encode!(%{
                            bulk_operation_id: bulk_operation_id,
-                           operations: operations
+                           operations: operations,
+                           failed_operations: failed_operations
                          }),
                        assigns: %{bulk_operation: operation}
                    }

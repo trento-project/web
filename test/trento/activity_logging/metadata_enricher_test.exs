@@ -430,10 +430,14 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
 
   describe "enriching bulk operation requests" do
     test "should enrich every cluster bulk operation entry with the cluster name" do
-      [%{id: cluster_id_1, name: name_1}, %{id: cluster_id_2, name: name_2}] =
-        insert_list(2, :cluster)
+      [
+        %{id: cluster_id_1, name: name_1},
+        %{id: cluster_id_2, name: name_2},
+        %{id: failed_cluster_id, name: failed_name}
+      ] = insert_list(3, :cluster)
 
       unknown_cluster_id = Faker.UUID.v4()
+      unknown_failed_cluster_id = Faker.UUID.v4()
 
       [operation_id_1, operation_id_2, unknown_operation_id] =
         Enum.map(1..3, fn _ -> Faker.UUID.v4() end)
@@ -446,6 +450,10 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
           %{cluster_id: cluster_id_1, operation_id: operation_id_1},
           %{cluster_id: cluster_id_2, operation_id: operation_id_2},
           %{cluster_id: unknown_cluster_id, operation_id: unknown_operation_id}
+        ],
+        failed_operations: [
+          %{cluster_id: failed_cluster_id, reason: ":amqp_error"},
+          %{cluster_id: unknown_failed_cluster_id, reason: ":amqp_error"}
         ]
       }
 
@@ -456,6 +464,10 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
                   %{cluster_id: cluster_id_1, operation_id: operation_id_1, name: name_1},
                   %{cluster_id: cluster_id_2, operation_id: operation_id_2, name: name_2},
                   %{cluster_id: unknown_cluster_id, operation_id: unknown_operation_id}
+                ],
+                failed_operations: [
+                  %{cluster_id: failed_cluster_id, reason: ":amqp_error", name: failed_name},
+                  %{cluster_id: unknown_failed_cluster_id, reason: ":amqp_error"}
                 ]
               }} == MetadataEnricher.enrich(:cluster_bulk_operation_requested, metadata)
     end
