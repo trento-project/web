@@ -54,25 +54,23 @@ defmodule Trento.Support.OperationsHelper do
           resource_ids :: [String.t()],
           request_func :: (String.t() -> {:ok, String.t()} | {:error, any})
         ) ::
-          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}]}
-          | {:error, any}
+          {String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+           [%{resource_id: String.t(), reason: any}]}
   def reduce_bulk_operation_request(resource_ids, request_func) do
     bulk_operation_id = UUID.uuid4()
 
-    resource_ids
-    |> Enum.reduce_while({:ok, []}, fn resource_id, {:ok, operations} ->
-      case request_func.(resource_id) do
-        {:ok, operation_id} ->
-          {:cont, {:ok, [%{resource_id: resource_id, operation_id: operation_id} | operations]}}
+    {operations, failed_operations} =
+      Enum.reduce(resource_ids, {[], []}, fn resource_id, {operations, failed} ->
+        case request_func.(resource_id) do
+          {:ok, operation_id} ->
+            {[%{resource_id: resource_id, operation_id: operation_id} | operations], failed}
 
-        error ->
-          {:halt, error}
-      end
-    end)
-    |> case do
-      {:ok, operations} -> {:ok, bulk_operation_id, Enum.reverse(operations)}
-      error -> error
-    end
+          {:error, reason} ->
+            {operations, [%{resource_id: resource_id, reason: reason} | failed]}
+        end
+      end)
+
+    {bulk_operation_id, Enum.reverse(operations), Enum.reverse(failed_operations)}
   end
 
   @spec build_error(message :: String.t(), metadata :: [metadata()]) :: forbidden_error
