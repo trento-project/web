@@ -34,10 +34,8 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
           queue_event: %OperationCompleted{operation_id: operation_id}
         }
       ) do
-    # Find associated operation request. This can return one entry for single operations
-    # and two entries for bulk operations
     case ActivityLog.list_activity_log(%{type: "operation_requested", search: operation_id}) do
-      {:ok, [%{actor: actor} | _], _meta} -> actor
+      {:ok, [%{actor: actor}], _meta} -> actor
       _ -> "system"
     end
   end
@@ -70,9 +68,10 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
     metadata =
       case ActivityLog.list_activity_log(%{type: "operation_requested", search: operation_id}) do
-        {:ok, [%{metadata: request_metadata} | _], _meta} ->
+        {:ok, [%{metadata: request_metadata}], _meta} ->
           request_metadata
           |> StructHelper.to_atomized_map()
+          |> to_operation_metadata(operation_id)
           |> Map.put(:operation, operation)
           |> Map.put(:result, result)
           |> Map.put(:correlation_id, operation_id)
@@ -130,6 +129,17 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   end
 
   def get_activity_metadata(_, _), do: %{}
+
+  # Bulk request metadata holds every operation: keep only the one being completed
+  defp to_operation_metadata(%{operations: operations} = bulk_metadata, operation_id) do
+    operation_entry = Enum.find(operations, %{}, &(&1[:operation_id] == operation_id))
+
+    bulk_metadata
+    |> Map.delete(:operations)
+    |> Map.merge(operation_entry)
+  end
+
+  defp to_operation_metadata(metadata, _operation_id), do: metadata
 
   defp maybe_put_error_details(metadata, %{
          details:

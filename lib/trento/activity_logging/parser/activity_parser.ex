@@ -23,37 +23,30 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
           metadata: map()
         }
 
-  @spec to_activity_logs(ActivityCatalog.activity_type(), map()) ::
-          {:ok, [activity_log()]} | {:error, :cannot_parse_activity}
-  def to_activity_logs(activity, activity_context) do
+  @spec to_activity_log(ActivityCatalog.activity_type(), map()) ::
+          {:ok, activity_log()} | {:error, :cannot_parse_activity}
+  def to_activity_log(activity, activity_context) do
     with true <- activity in ActivityCatalog.supported_activities(),
          {:ok, actor} <- get_activity_info(:actor, activity, activity_context),
          {:ok, metadata} <- get_activity_info(:metadata, activity, activity_context),
-         {:ok, derived_activities} <-
-           get_activity_info(:derived_activities, activity, activity_context) do
-      activities = [{activity, metadata} | derived_activities]
+         {:ok, enriched_metadata} <- MetadataEnricher.enrich(activity, metadata) do
+      activity_type = Atom.to_string(activity)
 
-      {:ok, Enum.map(activities, &build_activity_log(&1, actor))}
+      severity =
+        activity_type
+        |> SeverityLevel.map_severity_level(enriched_metadata)
+        |> SeverityLevel.severity_level_to_integer()
+
+      {:ok,
+       %{
+         type: activity_type,
+         actor: actor,
+         severity: severity,
+         metadata: enriched_metadata
+       }}
     else
       _ -> {:error, :cannot_parse_activity}
     end
-  end
-
-  defp build_activity_log({activity, metadata}, actor) do
-    {:ok, enriched_metadata} = MetadataEnricher.enrich(activity, metadata)
-    activity_type = Atom.to_string(activity)
-
-    severity =
-      activity_type
-      |> SeverityLevel.map_severity_level(enriched_metadata)
-      |> SeverityLevel.severity_level_to_integer()
-
-    %{
-      type: activity_type,
-      actor: actor,
-      severity: severity,
-      metadata: enriched_metadata
-    }
   end
 
   defp get_activity_info(info, activity, activity_context) do
@@ -78,22 +71,15 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   defp parse_connection_activity_info(:metadata, activity, activity_context),
     do: PhoenixConnParser.get_activity_metadata(activity, activity_context)
 
-  defp parse_connection_activity_info(:derived_activities, activity, activity_context),
-    do: PhoenixConnParser.get_derived_activities(activity, activity_context)
-
   defp parse_domain_event_activity_info(:actor, activity, activity_context),
     do: EventParser.get_activity_actor(activity, activity_context)
 
   defp parse_domain_event_activity_info(:metadata, activity, activity_context),
     do: EventParser.get_activity_metadata(activity, activity_context)
 
-  defp parse_domain_event_activity_info(:derived_activities, _, _), do: []
-
   defp parse_queue_event_activity_info(:actor, activity, activity_context),
     do: QueueEventParser.get_activity_actor(activity, activity_context)
 
   defp parse_queue_event_activity_info(:metadata, activity, activity_context),
     do: QueueEventParser.get_activity_metadata(activity, activity_context)
-
-  defp parse_queue_event_activity_info(:derived_activities, _, _), do: []
 end

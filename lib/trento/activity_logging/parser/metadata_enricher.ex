@@ -12,6 +12,14 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
 
   alias Trento.Users.User
 
+  # activity => {id field in each bulk entry, context module, bulk getter, field used as name}
+  @bulk_operation_enrichments %{
+    cluster_bulk_operation_requested: {:cluster_id, Clusters, :get_clusters_by_ids, :name}
+    # host_bulk_operation_requested: {:host_id, Hosts, :get_hosts_by_ids, :hostname},
+    # sap_system_bulk_operation_requested: {:sap_system_id, SapSystems, :get_sap_systems_by_ids, :sid},
+    # database_bulk_operation_requested: {:database_id, Databases, :get_databases_by_ids, :sid}
+  }
+
   @spec enrich(activity :: ActivityCatalog.activity_type(), metadata :: map()) ::
           {:ok, maybe_enriched_metadata :: map()}
   def enrich(activity, metadata) do
@@ -29,6 +37,23 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
     end
   end
 
+  defp enrich_metadata(activity, %{operations: operations} = metadata)
+       when is_map_key(@bulk_operation_enrichments, activity) do
+    {id_field, context_module, getter, enriching_field} =
+      Map.fetch!(@bulk_operation_enrichments, activity)
+
+    values =
+      context_module
+      |> apply(getter, [Enum.map(operations, &Map.fetch!(&1, id_field))])
+      |> Map.new(&{&1.id, Map.fetch!(&1, enriching_field)})
+
+    %{
+      metadata
+      | operations:
+          Enum.map(operations, &put_enriching_value(&1, id_field, enriching_field, values))
+    }
+  end
+
   defp enrich_metadata(activity, metadata),
     do:
       {activity, metadata}
@@ -38,6 +63,13 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
       |> maybe_enrich(:sap_system, SapSystems, :sid)
       |> maybe_enrich(:user, Users, :username)
       |> elem(1)
+
+  defp put_enriching_value(operation, id_field, enriching_field, values) do
+    case Map.fetch(values, Map.fetch!(operation, id_field)) do
+      {:ok, value} -> Map.put(operation, enriching_field, value)
+      :error -> operation
+    end
+  end
 
   defp maybe_enrich({activity, metadata}, entity_reference, context_module, enriching_field) do
     enriched_metadata =

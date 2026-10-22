@@ -505,52 +505,6 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     end
   end
 
-  describe "bulk operation request activity detection" do
-    bulk_operation_scenarios = [
-      %{
-        operation: "cluster_maintenance_change",
-        arguments: %{"params" => %{"maintenance" => true}}
-      },
-      %{
-        operation: "cluster_resource_refresh",
-        arguments: %{}
-      }
-    ]
-
-    for %{operation: operation} = scenario <- bulk_operation_scenarios do
-      @scenario scenario
-
-      test "should log the bulk request and one operation request per cluster for #{operation}",
-           %{conn: conn, user: %{id: user_id, username: username}} do
-        %{operation: operation, arguments: arguments} = @scenario
-
-        %{id: cluster_id_1} = insert(:cluster)
-        %{id: cluster_id_2} = insert(:cluster)
-        insert(:host, heartbeat: :passing, cluster_id: cluster_id_1)
-        insert(:host, heartbeat: :passing, cluster_id: cluster_id_2)
-
-        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn _, _, _ -> :ok end)
-
-        conn
-        |> with_token(user_id)
-        |> put_req_header("content-type", "application/json")
-        |> post(
-          "/api/v1/clusters/operations/#{operation}",
-          Map.put(arguments, "cluster_ids", [cluster_id_1, cluster_id_2])
-        )
-        |> json_response(202)
-
-        wait_for_tasks_completion()
-
-        assert [
-                 %ActivityLog{type: "cluster_bulk_operation_requested", actor: ^username},
-                 %ActivityLog{type: "cluster_operation_requested", actor: ^username},
-                 %ActivityLog{type: "cluster_operation_requested", actor: ^username}
-               ] = Trento.Repo.all(ActivityLog)
-      end
-    end
-  end
-
   test "domain event activity logging" do
     heartbeat_succeeded_event = build(:heartbeat_succeded)
     heartbeat_failed_event = build(:heartbeat_failed)
