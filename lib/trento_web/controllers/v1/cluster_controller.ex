@@ -421,11 +421,18 @@ defmodule TrentoWeb.V1.ClusterController do
     %{cluster_ids: cluster_ids} = body_params = OpenApiSpex.body_params(conn)
     params = Map.get(body_params, :params, %{})
 
-    with {:ok, bulk_operation_id, operations} <-
+    with {:ok, bulk_operation_id, operations, failed_operations} <-
            Clusters.request_bulk_operation(operation, cluster_ids, params) do
       conn
       |> put_status(:accepted)
-      |> json(%{bulk_operation_id: bulk_operation_id, operations: operations})
+      |> json(%{
+        bulk_operation_id: bulk_operation_id,
+        operations: operations,
+        failed_operations:
+          Enum.map(failed_operations, fn %{reason: reason} = failed_operation ->
+            %{failed_operation | reason: inspect(reason)}
+          end)
+      })
     end
   end
 
