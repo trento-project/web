@@ -4,7 +4,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { get, map, noop, split } from 'lodash';
+import { find, get, groupBy, map, noop, some, split } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -17,6 +17,8 @@ const urlTypes = {
   host: 'hosts',
   sap_system: 'sap_systems',
 };
+
+const findBulkResource = (metadata) => find(metadata, 'bulk_operation');
 
 const formatError = (error, metadata, onCancel) => {
   // find {i} entries in the text splitting the whole content
@@ -46,12 +48,49 @@ const formatError = (error, metadata, onCancel) => {
   });
 };
 
+const renderErrors = (errors, onCancel) =>
+  map(errors, ({ detail, metadata }) => (
+    <li key={detail} className="text-sm">
+      {formatError(detail, metadata, onCancel)}
+    </li>
+  ));
+
+const renderBulkErrors = (errors, onCancel) => {
+  const errorsByResource = groupBy(
+    errors,
+    ({ metadata }) => findBulkResource(metadata)?.id
+  );
+
+  return map(errorsByResource, (resourceErrors, id) => {
+    const { label, type } = findBulkResource(resourceErrors[0].metadata);
+
+    return (
+      <li key={id} className="text-sm">
+        <Link
+          className="text-jungle-green-500 hover:opacity-75"
+          onClick={onCancel}
+          to={`/${urlTypes[type]}/${id}`}
+        >
+          {label}
+        </Link>
+        <ul className="list-[circle] list-inside ml-6 mt-1 space-y-1">
+          {renderErrors(resourceErrors, onCancel)}
+        </ul>
+      </li>
+    );
+  });
+};
+
 function OperationForbiddenModal({
   operation,
   errors,
   isOpen = false,
   onCancel = noop,
 }) {
+  const isBulkOperation = some(errors, ({ metadata }) =>
+    findBulkResource(metadata)
+  );
+
   return (
     <Modal
       className="!w-3/4 !max-w-3xl"
@@ -65,12 +104,10 @@ function OperationForbiddenModal({
       <p className="text-sm mb-1">
         Some of the following pre-requisites are not met:
       </p>
-      <ul className="list-disc list-inside space-y-1 mb-1">
-        {errors.map(({ detail, metadata }) => (
-          <li key={detail} className="text-sm">
-            {formatError(detail, metadata, onCancel)}
-          </li>
-        ))}
+      <ul className="list-disc list-inside space-y-1 mb-1 max-h-60 overflow-y-auto">
+        {isBulkOperation
+          ? renderBulkErrors(errors, onCancel)
+          : renderErrors(errors, onCancel)}
       </ul>
       <div className="flex justify-start gap-2 mt-4">
         <Button

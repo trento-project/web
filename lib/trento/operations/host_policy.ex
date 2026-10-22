@@ -15,6 +15,8 @@ defmodule Trento.Operations.HostPolicy do
 
   alias Trento.Support.OperationsHelper
 
+  alias Trento.Operations.{ApplicationInstancePolicy, DatabaseInstancePolicy}
+
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
@@ -111,6 +113,9 @@ defmodule Trento.Operations.HostPolicy do
   def authorize_operation(_, _, _),
     do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
+  def metadata(%HostReadModel{id: id, hostname: hostname}),
+    do: %{id: id, label: hostname, type: :host}
+
   defp authorize_saptune_solution_operation(
          :saptune_solution_apply,
          saptune_status
@@ -174,35 +179,30 @@ defmodule Trento.Operations.HostPolicy do
   defp ensure_all_instances_stopped(instances) when is_list(instances),
     do: Enum.map(instances, &ensure_instance_stopped/1)
 
-  defp ensure_instance_stopped(%ApplicationInstanceReadModel{
-         sap_system_id: sap_system_id,
-         sid: sid,
-         instance_number: instance_number,
-         status: status
-       })
+  defp ensure_instance_stopped(
+         %ApplicationInstanceReadModel{instance_number: instance_number, status: status} =
+           instance
+       )
        when status != Status.gray(),
        do:
          {:error,
           [
             OperationsHelper.build_error(
               "Instance #{instance_number} of SAP system {0} is not stopped",
-              [%{id: sap_system_id, label: sid, type: :sap_system}]
+              [ApplicationInstancePolicy.metadata(instance)]
             )
           ]}
 
-  defp ensure_instance_stopped(%DatabaseInstanceReadModel{
-         database_id: database_id,
-         sid: sid,
-         instance_number: instance_number,
-         status: status
-       })
+  defp ensure_instance_stopped(
+         %DatabaseInstanceReadModel{instance_number: instance_number, status: status} = instance
+       )
        when status != Status.gray(),
        do:
          {:error,
           [
             OperationsHelper.build_error(
               "Instance #{instance_number} of HANA database {0} is not stopped",
-              [%{id: database_id, label: sid, type: :database}]
+              [DatabaseInstancePolicy.metadata(instance)]
             )
           ]}
 
