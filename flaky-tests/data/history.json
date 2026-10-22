@@ -1,93 +1,5 @@
 [
   {
-    "timestamp": "2026-09-03T00:34:21Z",
-    "commit": "4d0d3a90478f07f0be4489c76266c1b2ca01d6ed",
-    "run_id": "33682992971",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 15
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.08788
-      },
-      {
-        "name": "should allow check selection saving::Host Details Forbidden actions Check Selection should allow check selection saving",
-        "score": 0.05001
-      },
-      {
-        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should enable check execution button when the correct user abilities are present::Host Details Forbidden actions Check Execution should enable check execution button when the correct user abilities are present",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check selection saving::Host Details Forbidden actions Check Selection should forbid check selection saving",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the Checks version::About page should show the Checks version",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the Wanda version::About page should show the Wanda version",
-        "score": 0.05001
-      },
-      {
-        "name": "should deregister an application instance::SAP Systems Overview Instance deregistration should deregister an application instance",
-        "score": 0.04323
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.03207
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.02501
-      },
-      {
-        "name": "should forbid check execution when the correct user abilities are missing in details and settings::HANA cluster details Forbidden actions Check Execution should forbid check execution when the correct user abilities are missing in details and settings",
-        "score": 0.02501
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should mark cluster data as sync when the agent starts reporting data again::Clusters Overview Stale data should mark cluster data as sync when the agent starts reporting data again",
-        "score": 0.02501
-      },
-      {
-        "name": "should mark cluster data as sync when the agent starts reporting data again::HANA cluster details Stale data should mark cluster data as sync when the agent starts reporting data again",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-03T20:05:10Z",
     "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
     "run_id": "33798088719",
@@ -5799,5 +5711,53 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-21T21:43:10Z",
+    "commit": "567eb39394675447e768319314e26a23cb9ba88d",
+    "run_id": "39681038891",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 17
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.25
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.08683
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.08281
+      },
+      {
+        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve the selected items per page when reloading clusters view::Clusters Overview Persistent filters should preserve the selected items per page when reloading clusters view",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.02501
+      }
+    ]
   }
 ]
