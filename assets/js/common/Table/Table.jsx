@@ -280,7 +280,6 @@ function Table({
                     <Button
                       type="link"
                       size="fit"
-                      className="focus:outline-none"
                       onClick={() => selectKeys(filteredKeys)}
                     >
                       Select all {filteredKeys.length} items
@@ -290,7 +289,6 @@ function Table({
                     <Button
                       type="link"
                       size="fit"
-                      className="focus:outline-none"
                       onClick={() => deselectKeys(filteredKeys)}
                     >
                       Clear
