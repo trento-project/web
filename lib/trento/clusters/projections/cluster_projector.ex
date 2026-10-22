@@ -32,9 +32,9 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   }
 
   alias Trento.Clusters.Projections.{
+    AscsErsClusterHealthDetails,
     ClusterReadModel,
-    HanaClusterHealthDetails,
-    AscsErsClusterHealthDetails
+    HanaClusterHealthDetails
   }
 
   alias Trento.Repo
