@@ -37,20 +37,25 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
     end
   end
 
-  defp enrich_metadata(activity, %{operations: operations} = metadata)
+  defp enrich_metadata(
+         activity,
+         %{operations: operations, failed_operations: failed_operations} = metadata
+       )
        when is_map_key(@bulk_operation_enrichments, activity) do
     {id_field, context_module, getter, enriching_field} =
       Map.fetch!(@bulk_operation_enrichments, activity)
 
     values =
       context_module
-      |> apply(getter, [Enum.map(operations, &Map.fetch!(&1, id_field))])
+      |> apply(getter, [Enum.map(operations ++ failed_operations, &Map.fetch!(&1, id_field))])
       |> Map.new(&{&1.id, Map.fetch!(&1, enriching_field)})
+
+    enrich_entry = &put_enriching_value(&1, id_field, enriching_field, values)
 
     %{
       metadata
-      | operations:
-          Enum.map(operations, &put_enriching_value(&1, id_field, enriching_field, values))
+      | operations: Enum.map(operations, enrich_entry),
+        failed_operations: Enum.map(failed_operations, enrich_entry)
     }
   end
 
