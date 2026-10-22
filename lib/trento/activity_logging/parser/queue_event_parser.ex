@@ -34,8 +34,10 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
           queue_event: %OperationCompleted{operation_id: operation_id}
         }
       ) do
+    # Find associated operation request. This can return one entry for single operations
+    # and two entries for bulk operations
     case ActivityLog.list_activity_log(%{type: "operation_requested", search: operation_id}) do
-      {:ok, [%{actor: actor}], _meta} -> actor
+      {:ok, [%{actor: actor} | _], _meta} -> actor
       _ -> "system"
     end
   end
@@ -68,7 +70,7 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
     metadata =
       case ActivityLog.list_activity_log(%{type: "operation_requested", search: operation_id}) do
-        {:ok, [%{metadata: request_metadata}], _meta} ->
+        {:ok, [%{metadata: request_metadata} | _], _meta} ->
           request_metadata
           |> StructHelper.to_atomized_map()
           |> Map.put(:operation, operation)

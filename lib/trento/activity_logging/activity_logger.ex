@@ -16,8 +16,9 @@ defmodule Trento.ActivityLog.ActivityLogger do
 
   def log_activity(activity_context) do
     with {:ok, detected_activity} <- ActivityCatalog.detect_activity(activity_context),
-         {:ok, log_entry} <- ActivityParser.to_activity_log(detected_activity, activity_context) do
-      write_log(log_entry)
+         {:ok, log_entries} <-
+           ActivityParser.to_activity_logs(detected_activity, activity_context) do
+      Enum.each(log_entries, &write_log/1)
     end
 
     :ok
