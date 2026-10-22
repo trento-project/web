@@ -16,7 +16,6 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
   @bulk_operation_scenarios [
     %{
       activity: :cluster_bulk_operation_requested,
-      single_activity: :cluster_operation_requested,
       operation: :cluster_maintenance_change,
       resource_field: :cluster_id
     }
@@ -372,14 +371,17 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       test "should extract bulk operation metadata for #{activity}", %{
         conn: %Plug.Conn{} = conn
       } do
-        %{activity: activity, operation: operation} = @scenario
+        %{activity: activity, operation: operation, resource_field: resource_field} = @scenario
 
         bulk_operation_id = Faker.UUID.v4()
         params = %{"key" => "value"}
 
+        [resource_id_1, resource_id_2] = [Faker.UUID.v4(), Faker.UUID.v4()]
+        [operation_id_1, operation_id_2] = [Faker.UUID.v4(), Faker.UUID.v4()]
+
         operations = [
-          %{"resource_id" => Faker.UUID.v4(), "operation_id" => Faker.UUID.v4()},
-          %{"resource_id" => Faker.UUID.v4(), "operation_id" => Faker.UUID.v4()}
+          %{"resource_id" => resource_id_1, "operation_id" => operation_id_1},
+          %{"resource_id" => resource_id_2, "operation_id" => operation_id_2}
         ]
 
         assert %{
@@ -387,7 +389,10 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                  bulk_operation_id: bulk_operation_id,
                  operation: operation,
                  params: params,
-                 operations: operations
+                 operations: [
+                   %{:operation_id => operation_id_1, resource_field => resource_id_1},
+                   %{:operation_id => operation_id_2, resource_field => resource_id_2}
+                 ]
                } ==
                  PhoenixConnParser.get_activity_metadata(
                    activity,
@@ -503,76 +508,6 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                      resp_body: resp_body
                  })
       end
-    end
-  end
-
-  describe "derived activities" do
-    for %{activity: activity} = scenario <- @bulk_operation_scenarios do
-      @scenario scenario
-
-      test "should derive a single operation requested activity per #{activity} entry", %{
-        conn: %Plug.Conn{} = conn
-      } do
-        %{
-          activity: activity,
-          single_activity: single_activity,
-          operation: operation,
-          resource_field: resource_field
-        } = @scenario
-
-        bulk_operation_id = Faker.UUID.v4()
-        params = %{"key" => "value"}
-
-        [
-          %{"resource_id" => resource_id_1, "operation_id" => operation_id_1},
-          %{"resource_id" => resource_id_2, "operation_id" => operation_id_2}
-        ] =
-          operations = [
-            %{"resource_id" => Faker.UUID.v4(), "operation_id" => Faker.UUID.v4()},
-            %{"resource_id" => Faker.UUID.v4(), "operation_id" => Faker.UUID.v4()}
-          ]
-
-        expected_activities = [
-          {single_activity,
-           %{
-             :correlation_id => operation_id_1,
-             :operation => operation,
-             :operation_id => operation_id_1,
-             :bulk_operation_id => bulk_operation_id,
-             :params => params,
-             resource_field => resource_id_1
-           }},
-          {single_activity,
-           %{
-             :correlation_id => operation_id_2,
-             :operation => operation,
-             :operation_id => operation_id_2,
-             :bulk_operation_id => bulk_operation_id,
-             :params => params,
-             resource_field => resource_id_2
-           }}
-        ]
-
-        assert expected_activities ==
-                 PhoenixConnParser.get_derived_activities(
-                   activity,
-                   %Plug.Conn{
-                     conn
-                     | body_params: %{params: params},
-                       resp_body:
-                         Jason.encode!(%{
-                           bulk_operation_id: bulk_operation_id,
-                           operations: operations
-                         }),
-                       assigns: %{bulk_operation: operation}
-                   }
-                 )
-      end
-    end
-
-    test "should return no derived activities for other activities", %{conn: conn} do
-      assert [] == PhoenixConnParser.get_derived_activities(:cluster_operation_requested, conn)
-      assert [] == PhoenixConnParser.get_derived_activities(:unknown, %Plug.Conn{})
     end
   end
 
