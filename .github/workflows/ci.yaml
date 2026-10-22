@@ -28,6 +28,7 @@ env:
   NODEJS_BC: "20.20.0"
   OPENAPI_DIFF_VERSION: "2.1.7" # https://github.com/OpenAPITools/openapi-diff/releases
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
+  CHROME_VERSION: "156.0.8078.47" # https://googlechromelabs.github.io/chrome-for-testing
   K3S_VERSION: "v1.36.1+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
   CERT_MANAGER_VERSION: "v1.20.2" # https://github.com/cert-manager/cert-manager/releases
   HELM_VERSION: "v4.2.0" # https://github.com/helm/helm/releases
@@ -656,6 +657,11 @@ jobs:
           set -euo pipefail
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
+        with:
+          chrome-version: ${{ env.CHROME_VERSION }}
       - name: Cypress run
         uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
@@ -665,6 +671,7 @@ jobs:
           cypress_video: false
         with:
           working-directory: test/e2e
+          browser: ${{ steps.setup-chrome.outputs.chrome-path }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000,retries=1
           expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
@@ -768,12 +775,18 @@ jobs:
           set -euo pipefail
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
+        with:
+          chrome-version: ${{ env.CHROME_VERSION }}
       - name: Cypress run
         uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
           cypress_video: false
         with:
           working-directory: test/e2e
+          browser: ${{ steps.setup-chrome.outputs.chrome-path }}
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000,retries=1
@@ -916,12 +929,18 @@ jobs:
         run: mix setup
       - name: Run trento detached
         run: mix phx.server &
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
+        with:
+          chrome-version: ${{ env.CHROME_VERSION }}
       - name: Cypress run
         uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
           cypress_video: false
         with:
           working-directory: test/e2e
+          browser: ${{ steps.setup-chrome.outputs.chrome-path }}
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000,retries=1
