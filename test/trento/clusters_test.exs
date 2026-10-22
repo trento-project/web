@@ -1379,14 +1379,14 @@ defmodule Trento.ClustersTest do
       end
     end
 
-    test "should return the failed operations on messaging errors" do
+    test "should return an error when all the messaging requests fail" do
       cluster_ids = [UUID.uuid4(), UUID.uuid4()]
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
         OperationsPublisher, "requests", %OperationRequested{} -> {:error, :amqp_error}
       end)
 
-      assert {:ok, _bulk_operation_id, [], [%{reason: :amqp_error}, %{reason: :amqp_error}]} =
+      assert {:error, :bulk_operation_failed} =
                Clusters.request_bulk_operation(:cluster_maintenance_change, cluster_ids, %{})
     end
 
