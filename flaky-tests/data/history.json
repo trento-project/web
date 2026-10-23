@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-03T20:28:46Z",
-    "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
-    "run_id": "33800345068",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-03T20:29:52Z",
     "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
     "run_id": "33800345068",
@@ -5754,5 +5743,37 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-22T21:36:25Z",
+    "commit": "567eb39394675447e768319314e26a23cb9ba88d",
+    "run_id": "39858622200",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 22
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.09621
+      },
+      {
+        "name": "should preserve filters when the activity log sidebar entry is clicked from the activity log view::Activity Log page Filtering should preserve filters when the activity log sidebar entry is clicked from the activity log view",
+        "score": 0.07997
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.05063
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should keep configuration when clear modal is dismissed::Users AI Configuration Clearing AI Configuration should keep configuration when clear modal is dismissed",
+        "score": 0.05001
+      }
+    ]
   }
 ]
