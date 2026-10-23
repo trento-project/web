@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-09-03T20:29:52Z",
-    "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
-    "run_id": "33800345068",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "UpgradablePackagesPage::should render correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-04T00:44:51Z",
     "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
     "run_id": "33805740915",
@@ -5773,6 +5757,22 @@
       {
         "name": "should keep configuration when clear modal is dismissed::Users AI Configuration Clearing AI Configuration should keep configuration when clear modal is dismissed",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-23T20:18:36Z",
+    "commit": "567eb39394675447e768319314e26a23cb9ba88d",
+    "run_id": "40018210223",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.02501
       }
     ]
   }
