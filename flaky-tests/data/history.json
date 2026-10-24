@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-04T20:15:09Z",
-    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
-    "run_id": "33913190000",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-04T20:16:08Z",
     "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
     "run_id": "33913190000",
@@ -5763,6 +5752,26 @@
       {
         "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-24T19:23:57Z",
+    "commit": "c658fbeda8c8b9264ed2a264e18512eb266f75fa",
+    "run_id": "40125109296",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 39,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.07786
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.05001
       }
     ]
   }
