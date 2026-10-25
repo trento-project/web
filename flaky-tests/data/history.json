@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-05T19:10:45Z",
-    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
-    "run_id": "33985638113",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 32,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-05T19:11:37Z",
     "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
     "run_id": "33985638113",
@@ -5729,5 +5718,53 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-24T20:50:42Z",
+    "commit": "c658fbeda8c8b9264ed2a264e18512eb266f75fa",
+    "run_id": "40131602059",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 19
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.1551
+      },
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.08891
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.06077
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve filters in the upgradable packages view::SUSE Multi-Linux Manager overviews Persistent filters should preserve filters in the upgradable packages view",
+        "score": 0.05001
+      },
+      {
+        "name": "should start autorefresh ticker::Activity Log page Autorefresh should start autorefresh ticker",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::HANA database details Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.02501
+      }
+    ]
   }
 ]
