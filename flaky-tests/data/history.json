@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-05T19:11:37Z",
-    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
-    "run_id": "33985638113",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 38,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-05T19:47:59Z",
     "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
     "run_id": "33987154780",
@@ -5764,6 +5753,26 @@
       {
         "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-25T20:43:32Z",
+    "commit": "c658fbeda8c8b9264ed2a264e18512eb266f75fa",
+    "run_id": "40232109139",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
+        "score": 0.05001
       }
     ]
   }
