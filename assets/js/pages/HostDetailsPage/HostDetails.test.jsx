@@ -2,7 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { act, screen, waitFor, within } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
@@ -23,6 +29,7 @@ import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
   HOST_REBOOT,
+  waiveOperationDisclaimer,
 } from '@lib/operations';
 
 import HostDetails from './HostDetails';
@@ -774,6 +781,53 @@ describe('HostDetails component', () => {
           : expect(menuButton).toBeDisabled();
       }
     );
+  });
+
+  describe('Host reboot scheduling', () => {
+    it('should schedule a host reboot', async () => {
+      waiveOperationDisclaimer();
+      const user = userEvent.setup();
+      const onScheduleOperation = jest.fn();
+      const hostID = faker.string.uuid();
+
+      renderWithRouter(
+        <HostDetails
+          hostID={hostID}
+          agentVersion="2.0.0"
+          heartbeat="passing"
+          userAbilities={userAbilities}
+          operationsEnabled
+          timezone="Etc/UTC"
+          onScheduleOperation={onScheduleOperation}
+        />
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+      await user.click(screen.getByRole('menuitem', { name: 'Reboot Host' }));
+      await user.click(screen.getByText('Now'));
+      await user.click(screen.getByRole('option', { name: 'One Time' }));
+      fireEvent.change(screen.getByLabelText('Date'), {
+        target: { value: '2026-11-20' },
+      });
+      fireEvent.change(screen.getByLabelText('Start Time'), {
+        target: { value: '03:00' },
+      });
+      await user.click(screen.getByRole('button', { name: 'Schedule' }));
+
+      expect(onScheduleOperation).toHaveBeenCalledWith(
+        {
+          target_type: 'host',
+          target_id: hostID,
+          operation: HOST_REBOOT,
+          params: {},
+        },
+        {
+          starts_at: '2026-11-20T03:00:00.000Z',
+          timezone: 'Etc/UTC',
+          recurrence: null,
+        }
+      );
+    });
   });
 
   describe('Host reboot operation button', () => {

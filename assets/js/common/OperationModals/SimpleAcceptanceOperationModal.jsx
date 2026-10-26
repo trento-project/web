@@ -83,8 +83,12 @@ function SimpleAcceptanceOperationModal({
   operation,
   descriptionResolverArgs = {},
   isOpen = false,
+  schedulable = false,
+  timezone,
+  initialSchedule = null,
   onRequest = noop,
   onCancel = noop,
+  onCancelSchedule = null,
 }) {
   const operationTitle = getOperationTitle(operation);
 
@@ -100,7 +104,11 @@ function SimpleAcceptanceOperationModal({
       description={descriptionResolver(operation, descriptionResolverArgs)}
       operationText={operationTitle}
       isOpen={isOpen}
-      onRequest={() => onRequest({})}
+      schedulable={schedulable}
+      timezone={timezone}
+      initialSchedule={initialSchedule}
+      onCancelSchedule={onCancelSchedule}
+      onRequest={(schedule) => onRequest({}, schedule)}
       onCancel={onCancel}
     />
   );

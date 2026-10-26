@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import {
@@ -13,6 +13,7 @@ import {
   SAP_SYSTEM_STOP,
   DATABASE_START,
   DATABASE_STOP,
+  waiveOperationDisclaimer,
 } from '@lib/operations';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
@@ -1626,6 +1627,60 @@ describe('GenericSystemDetails', () => {
         await user.click(siteOpButton);
 
         expect(label).toHaveMenuitem({ enabled: !forbidden });
+      }
+    );
+  });
+
+  it('should schedule a database start on the database', async () => {
+    waiveOperationDisclaimer();
+    const user = userEvent.setup();
+    const onScheduleOperation = jest.fn();
+    const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
+
+    const database = databaseFactory.build({
+      hosts,
+      instances: [
+        databaseInstanceFactory.build({ status: 'gray', host: hosts[0] }),
+      ],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        userTimezone="Etc/UTC"
+        cleanUpPermittedFor={[]}
+        getSystemOperations={getDatabaseOperations}
+        operationsEnabled
+        onScheduleOperation={onScheduleOperation}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Operations' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Start database' }));
+    await user.click(screen.getByText('Now'));
+    await user.click(screen.getByRole('option', { name: 'One Time' }));
+    fireEvent.change(screen.getByLabelText('Date'), {
+      target: { value: '2026-11-20' },
+    });
+    fireEvent.change(screen.getByLabelText('Start Time'), {
+      target: { value: '03:00' },
+    });
+    await user.click(screen.getByRole('button', { name: 'Schedule' }));
+
+    expect(onScheduleOperation).toHaveBeenCalledWith(
+      {
+        target_type: 'database',
+        target_id: database.id,
+        operation: DATABASE_START,
+        params: { timeout: 300 },
+      },
+      {
+        starts_at: '2026-11-20T03:00:00.000Z',
+        timezone: 'Etc/UTC',
+        recurrence: null,
       }
     );
   });

@@ -45,6 +45,7 @@ import {
   getSoftwareUpdatesErrorTooltip,
 } from './suseMultiLinuxManagerMessaging';
 import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
+import useScheduleOperation from '@hooks/useScheduleOperation';
 
 import HostDetails from './HostDetails';
 
@@ -63,6 +64,7 @@ function HostDetailsPage() {
   );
   const { abilities, timezone } = useSelector(getUserProfile);
   const { schedule: checksSchedule } = useChecksSchedule(TARGET_HOST, hostID);
+  const scheduleOperation = useScheduleOperation();
 
   const lastExecution = useSelector(getLastExecution(hostID));
   const catalog = useSelector(getCatalog);
@@ -163,6 +165,7 @@ function HostDetailsPage() {
       timezone={timezone}
       operationsEnabled={operationsEnabled}
       inExceptionWindow={!!checksSchedule?.in_exception_window}
+      onScheduleOperation={scheduleOperation}
       nextExecutionAt={
         checksSchedule ? checksSchedule.next_execution_at : undefined
       }
