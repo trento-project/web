@@ -7,6 +7,8 @@ defmodule Trento.Operations.Schedules do
   see `Trento.Operations.Scheduler`.
   """
 
+  import Ecto.Query, only: [from: 2]
+
   alias Ecto.Multi
   alias Trento.Operations.{OperationSchedule, Requests, ScheduleActivity}
   alias Trento.Repo
@@ -35,6 +37,26 @@ defmodule Trento.Operations.Schedules do
          {:ok, warnings} <- policy_warnings(schedule),
          {:ok, %{schedule: schedule}} <- insert(changeset, actor) do
       {:ok, schedule, warnings}
+    end
+  end
+
+  @doc """
+  Lists the schedules of a target, the next one first.
+  """
+  @spec list_schedules(String.t()) :: [OperationSchedule.t()]
+  def list_schedules(target_id) do
+    Repo.all(
+      from s in OperationSchedule,
+        where: s.target_id == ^target_id,
+        order_by: [asc: s.next_run_at, asc: s.inserted_at]
+    )
+  end
+
+  @spec get_schedule(String.t()) :: {:ok, OperationSchedule.t()} | {:error, :not_found}
+  def get_schedule(schedule_id) do
+    case Repo.get(OperationSchedule, schedule_id) do
+      nil -> {:error, :not_found}
+      schedule -> {:ok, schedule}
     end
   end
 
