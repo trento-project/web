@@ -13,7 +13,12 @@ defmodule Trento.Operations.Projections.OperationScheduleProjector do
     name: "operation_schedule_projector",
     consistency: :strong
 
-  alias Trento.Operations.Events.{OperationScheduleChanged, OperationScheduled}
+  alias Trento.Operations.Events.{
+    OperationScheduleCancelled,
+    OperationScheduleChanged,
+    OperationScheduled
+  }
+
   import Ecto.Query, only: [from: 2]
 
   alias Trento.Operations.OperationSchedule
@@ -52,6 +57,14 @@ defmodule Trento.Operations.Projections.OperationScheduleProjector do
       })
 
     update(multi, schedule_id, changes)
+  end)
+
+  project(%OperationScheduleCancelled{schedule_id: schedule_id}, fn multi ->
+    Ecto.Multi.delete_all(
+      multi,
+      :operation_schedule,
+      from(s in OperationSchedule, where: s.id == ^schedule_id)
+    )
   end)
 
   # update_all, so that fields going back to their default value are written too

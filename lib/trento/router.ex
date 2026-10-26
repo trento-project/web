@@ -31,7 +31,11 @@ defmodule Trento.Router do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Operations.Commands.{ChangeOperationSchedule, ScheduleOperation}
+  alias Trento.Operations.Commands.{
+    CancelOperationSchedule,
+    ChangeOperationSchedule,
+    ScheduleOperation
+  }
 
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
@@ -125,5 +129,6 @@ defmodule Trento.Router do
 
   identify Operations.Schedule, by: :schedule_id
 
-  dispatch [ScheduleOperation, ChangeOperationSchedule], to: Operations.Schedule
+  dispatch [ScheduleOperation, ChangeOperationSchedule, CancelOperationSchedule],
+    to: Operations.Schedule
 end

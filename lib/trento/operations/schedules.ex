@@ -13,7 +13,13 @@ defmodule Trento.Operations.Schedules do
   import Ecto.Query, only: [from: 2]
 
   alias Trento.Operations.{OperationSchedule, Requests}
-  alias Trento.Operations.Commands.{ChangeOperationSchedule, ScheduleOperation}
+
+  alias Trento.Operations.Commands.{
+    CancelOperationSchedule,
+    ChangeOperationSchedule,
+    ScheduleOperation
+  }
+
   alias Trento.Repo
   alias Trento.Support.{CommandedUtils, DateService}
 
@@ -57,6 +63,34 @@ defmodule Trento.Operations.Schedules do
          :ok <- dispatch(change_command(schedule, actor), schedule_id) do
       {:ok, Repo.get!(OperationSchedule, schedule_id), warnings}
     end
+  end
+
+  @doc """
+  Cancels a schedule: it no longer runs. An operation already running is not affected.
+  """
+  @spec cancel_schedule(String.t(), String.t()) :: :ok | {:error, :not_found} | {:error, any()}
+  def cancel_schedule(schedule_id, actor) do
+    with {:ok, _} <- get_schedule(schedule_id) do
+      schedule_id
+      |> cancel_command(actor)
+      |> dispatch(schedule_id)
+      |> not_found_when_gone()
+    end
+  end
+
+  @doc """
+  Cancels the schedules of a target that is removed, on behalf of the system,
+  correlated to the clean up that removed the target.
+  """
+  @spec cancel_target_schedules(String.t(), String.t() | nil) :: :ok
+  def cancel_target_schedules(target_id, correlation_id) do
+    for %OperationSchedule{id: schedule_id} <- list_schedules(target_id) do
+      schedule_id
+      |> cancel_command("system")
+      |> dispatch(correlation_id || schedule_id)
+    end
+
+    :ok
   end
 
   @doc """
@@ -112,6 +146,12 @@ defmodule Trento.Operations.Schedules do
       actor: actor
     })
   end
+
+  defp cancel_command(schedule_id, actor),
+    do: CancelOperationSchedule.new!(%{schedule_id: schedule_id, actor: actor})
+
+  defp not_found_when_gone({:error, :operation_schedule_not_found}), do: {:error, :not_found}
+  defp not_found_when_gone(result), do: result
 
   defp dispatch(command, correlation_id) do
     CommandedUtils.dispatch(command,

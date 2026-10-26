@@ -2,7 +2,12 @@ defmodule Trento.Operations.Projections.OperationScheduleProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
-  alias Trento.Operations.Events.{OperationScheduleChanged, OperationScheduled}
+  alias Trento.Operations.Events.{
+    OperationScheduleCancelled,
+    OperationScheduleChanged,
+    OperationScheduled
+  }
+
   alias Trento.Operations.OperationSchedule
   alias Trento.Operations.Projections.OperationScheduleProjector
 
@@ -75,5 +80,25 @@ defmodule Trento.Operations.Projections.OperationScheduleProjectorTest do
              next_run_at: ~U[2026-11-10 04:00:00.000000Z],
              occurrences: 0
            } = Repo.get!(OperationSchedule, schedule_id)
+  end
+
+  test "should remove a cancelled schedule" do
+    %{id: schedule_id} =
+      Repo.insert!(%OperationSchedule{
+        target_type: "host",
+        target_id: UUID.uuid4(),
+        operation: "reboot",
+        starts_at: ~U[2026-11-07 02:00:00.000000Z],
+        timezone: "Etc/UTC",
+        next_run_at: ~U[2026-11-07 02:00:00.000000Z]
+      })
+
+    Trento.ProjectorTestHelper.project(
+      OperationScheduleProjector,
+      %OperationScheduleCancelled{schedule_id: schedule_id, actor: "operator"},
+      "operation_schedule_projector"
+    )
+
+    assert nil == Repo.get(OperationSchedule, schedule_id)
   end
 end
