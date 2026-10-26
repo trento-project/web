@@ -18,6 +18,7 @@ import {
   AI_CONFIGURATION_MODIFICATION,
   AI_CONFIGURATION_DELETION,
   OPERATION_COMPLETED,
+  CLUSTER_BULK_OPERATION_REQUESTED,
   TESTING_ALERTING_SETTINGS,
   availableResourceNameKeys,
   resourceNameFromMetadata,
@@ -28,6 +29,7 @@ import {
   toMessage,
 } from './activityLog';
 import {
+  CLUSTER_MAINTENANCE_CHANGE,
   SAPTUNE_SOLUTION_APPLY,
   OPERATION_REQUEST_FAILED,
 } from '@lib/operations';
@@ -253,6 +255,35 @@ describe('activityLog', () => {
           `Operation Apply Saptune solution ${message}`
         );
       });
+    });
+
+    it('should resolve cluster bulk operation requested message', () => {
+      const entry = {
+        type: CLUSTER_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: CLUSTER_MAINTENANCE_CHANGE,
+          operations: [{}, {}, {}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Cluster maintenance change requested on 3 clusters'
+      );
+    });
+
+    it('should resolve cluster bulk operation requested message when some operation failed', () => {
+      const entry = {
+        type: CLUSTER_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: CLUSTER_MAINTENANCE_CHANGE,
+          operations: [{}, {}],
+          failed_operations: [{}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Cluster maintenance change requested on 3 clusters (1 failed)'
+      );
     });
 
     it.each`

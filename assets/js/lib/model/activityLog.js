@@ -162,6 +162,8 @@ export const DATABASE_DATA_MARKED_IN_SYNC = 'database_data_marked_in_sync';
 export const APPLICATION_INSTANCE_OPERATION_REQUESTED =
   'application_instance_operation_requested';
 export const CLUSTER_OPERATION_REQUESTED = 'cluster_operation_requested';
+export const CLUSTER_BULK_OPERATION_REQUESTED =
+  'cluster_bulk_operation_requested';
 export const HOST_OPERATION_REQUESTED = 'host_operation_requested';
 export const CLUSTER_HOST_OPERATION_REQUESTED =
   'cluster_host_operation_requested';
@@ -799,6 +801,17 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Cluster Operation Requested',
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_BULK_OPERATION_REQUESTED]: {
+    label: 'Cluster Bulk Operation Requested',
+    message: ({ metadata }) => {
+      const failed = metadata.failed_operations?.length ?? 0;
+      const total = (metadata.operations?.length ?? 0) + failed;
+      const clustersText = total === 1 ? 'cluster' : 'clusters';
+      const failedText = failed ? ` (${failed} failed)` : '';
+      return `Operation ${getOperationLabel(metadata.operation)} requested on ${total} ${clustersText}${failedText}`;
+    },
     resource: clusterResourceType,
   },
   [HOST_OPERATION_REQUESTED]: {
