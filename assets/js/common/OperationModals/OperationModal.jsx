@@ -14,6 +14,13 @@ import {
   waiveOperationDisclaimer,
 } from '@lib/operations';
 
+import ScheduleFields, {
+  initialScheduleForm,
+  isScheduleFormValid,
+  scheduleToForm,
+  toScheduleRequest,
+} from './ScheduleFields';
+
 function DisclaimerContent({
   dontShowAgainDisclaimerChecked,
   setDontShowAgainDisclaimerChecked,
@@ -46,10 +53,22 @@ function OperationModal({
   operationText,
   requestDisabled = false,
   isOpen = false,
+  schedulable = false,
+  timezone = 'Etc/UTC',
+  initialSchedule = null,
   onRequest = noop,
   onCancel = noop,
+  onCancelSchedule = null,
   children,
 }) {
+  const startForm = () =>
+    initialSchedule
+      ? scheduleToForm(initialSchedule, timezone)
+      : initialScheduleForm(timezone);
+
+  const [scheduleForm, setScheduleForm] = useState(startForm);
+  const scheduling = schedulable && scheduleForm.type !== 'now';
+
   const [showDisclaimer, setShowDisclaimer] = useState(
     shouldShowOperationDisclaimer()
   );
@@ -64,13 +83,23 @@ function OperationModal({
     setDontShowAgainDisclaimerChecked(false);
   };
 
+  // onRequest receives the schedule, or null when the operation is requested now
   const resolvedOnProceedClick = showDisclaimer
     ? maybeWaiveDisclaimerAndContinue
-    : onRequest;
+    : () =>
+        onRequest(
+          schedulable ? toScheduleRequest(scheduleForm, timezone) : null
+        );
 
   useEffect(() => {
     isOpen && setShowDisclaimer(shouldShowOperationDisclaimer());
+    isOpen && setScheduleForm(startForm());
+    // Reset only when the modal opens, not when the schedule list refreshes
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, [isOpen]);
+
+  let requestLabel = 'Request';
+  if (scheduling) requestLabel = initialSchedule ? 'Save Schedule' : 'Schedule';
 
   return (
     <Modal
@@ -92,6 +121,13 @@ function OperationModal({
             {description}
           </p>
           {children}
+          {schedulable && (
+            <ScheduleFields
+              form={scheduleForm}
+              allowNow={!initialSchedule}
+              onChange={setScheduleForm}
+            />
+          )}
         </>
       )}
       <div className="flex justify-start gap-2 mt-4">
@@ -99,11 +135,25 @@ function OperationModal({
           type="default-fit"
           className="inline-block mx-0.5 border-green-500 border w-fit"
           size="small"
-          disabled={showDisclaimer ? false : requestDisabled}
+          disabled={
+            showDisclaimer
+              ? false
+              : requestDisabled || !isScheduleFormValid(scheduleForm)
+          }
           onClick={resolvedOnProceedClick}
         >
-          {showDisclaimer ? 'Proceed' : 'Request'}
+          {showDisclaimer ? 'Proceed' : requestLabel}
         </Button>
+        {!showDisclaimer && initialSchedule && onCancelSchedule && (
+          <Button
+            type="danger"
+            size="small"
+            className="inline-block mx-0.5 w-fit"
+            onClick={onCancelSchedule}
+          >
+            Cancel Schedule
+          </Button>
+        )}
         <Button
           type="primary-white-fit"
           className="inline-block mx-0.5 border-green-500 border"

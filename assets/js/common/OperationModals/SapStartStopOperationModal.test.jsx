@@ -116,10 +116,13 @@ describe('SapStartStopOperationModal', () => {
       await user.click(screen.getByRole('option', { name: option }));
       await user.click(screen.getByText('Request'));
 
-      expect(onRequest).toHaveBeenCalledWith({
-        instance_type: instanceType,
-        timeout: 300,
-      });
+      expect(onRequest).toHaveBeenCalledWith(
+        {
+          instance_type: instanceType,
+          timeout: 300,
+        },
+        null
+      );
     }
   );
 
@@ -143,10 +146,13 @@ describe('SapStartStopOperationModal', () => {
     expect(screen.getByText('Request')).toBeEnabled();
     await user.click(screen.getByText('Request'));
 
-    expect(onRequest).toHaveBeenCalledWith({
-      timeout: 300,
-      site: systemReplicationSite,
-    });
+    expect(onRequest).toHaveBeenCalledWith(
+      {
+        timeout: 300,
+        site: systemReplicationSite,
+      },
+      null
+    );
   });
 
   it('should call onCancel callback', async () => {

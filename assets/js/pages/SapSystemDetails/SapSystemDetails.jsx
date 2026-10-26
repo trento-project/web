@@ -24,6 +24,7 @@ import {
   getSapSystemOperations,
   getSapInstanceOperations,
 } from './sapOperations';
+import useScheduleOperation from '@hooks/useScheduleOperation';
 
 const operationsEnabled = getFromConfig('operationsEnabled');
 
@@ -33,6 +34,7 @@ function SapSystemDetails() {
     getEnrichedSapSystemDetails(state, id)
   );
   const { abilities, timezone } = useSelector(getUserProfile);
+  const scheduleOperation = useScheduleOperation();
   const dispatch = useDispatch();
 
   const runningOperations = useSelector(getRunningOperationsList);
@@ -63,6 +65,7 @@ function SapSystemDetails() {
           dispatch(deregisterApplicationInstance(instance));
         }}
         onRequestOperation={(payload) => dispatch(operationRequested(payload))}
+        onScheduleOperation={scheduleOperation}
         onCleanForbiddenOperation={(groupID) =>
           dispatch(removeRunningOperation({ groupID }))
         }

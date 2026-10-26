@@ -111,6 +111,21 @@ const OPERATION_RESOURCE_TYPES = {
 
 export const OPERATION_REQUEST_FAILED = 'REQUEST_FAILED';
 
+// Operations that can be scheduled, see Trento.Operations.Requests
+const SCHEDULABLE_OPERATIONS = [
+  HOST_REBOOT,
+  CLUSTER_MAINTENANCE_CHANGE,
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
+  SAP_INSTANCE_START,
+  SAP_INSTANCE_STOP,
+  DATABASE_START,
+  DATABASE_STOP,
+];
+
+export const isSchedulable = (operation) =>
+  SCHEDULABLE_OPERATIONS.includes(operation);
+
 export const getOperationLabel = (operation) =>
   get(OPERATION_LABELS, operation, 'unknown');
 
