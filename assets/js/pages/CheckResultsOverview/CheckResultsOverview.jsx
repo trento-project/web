@@ -15,10 +15,24 @@ import CheckResultCount from './CheckResultCount';
 
 const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 
+// Shown only when the next execution is known: a date, or null when disabled
+function NextExecution({ at, timezone }) {
+  if (at === undefined) return null;
+
+  return (
+    <h6 className="opacity-60 text-xs">
+      {at
+        ? `Next execution: ${formatDateTime(at, timezone)}`
+        : 'No execution planned'}
+    </h6>
+  );
+}
+
 function CheckResultsOverview({
   data,
   catalogDataEmpty = false,
   timezone,
+  nextExecutionAt = undefined,
   loading = false,
   error = null,
   onCheckClick,
@@ -61,6 +75,7 @@ function CheckResultsOverview({
     return (
       <div className="flex flex-col items-center mt-2 px-4">
         <div className="text-center text-xs">No check results available.</div>
+        <NextExecution at={nextExecutionAt} timezone={timezone} />
       </div>
     );
   }
@@ -71,6 +86,7 @@ function CheckResultsOverview({
       <h6 className="opacity-60 text-xs">
         {formatDateTime(data.completed_at, timezone)}
       </h6>
+      <NextExecution at={nextExecutionAt} timezone={timezone} />
 
       <div className="flex flex-col self-start w-full px-4 mt-2">
         <CheckResultCount

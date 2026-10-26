@@ -21,13 +21,18 @@ import PageHeader from '@common/PageHeader';
 
 import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
+import TargetChecksExecutions from '@pages/ChecksSelection/TargetChecksExecutions';
+import TargetChecksExecutionsModal from '@pages/ChecksSelection/TargetChecksExecutionsModal';
+import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
 
 function HostSettingsPage() {
   const dispatch = useDispatch();
   const { hostID } = useParams();
   const [selection, setSelection] = useState([]);
 
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const { schedule, saveSchedule } = useChecksSchedule(TARGET_HOST, hostID);
   const host = useSelector(getHost(hostID));
   const selectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)
@@ -99,6 +104,7 @@ function HostSettingsPage() {
         userAbilities={abilities}
         checkSelectionPermittedFor={['all:host_checks_selection']}
         checkExecutionPermittedFor={['all:host_checks_execution']}
+        inExceptionWindow={!!schedule?.in_exception_window}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />
@@ -107,6 +113,28 @@ function HostSettingsPage() {
         provider={provider}
         agentVersion={agentVersion}
       />
+      {schedule && (
+        <>
+          <TargetChecksExecutions
+            targetType="host"
+            schedule={schedule}
+            timezone={timezone}
+            userAbilities={abilities}
+            permittedFor={['all:host_checks_selection']}
+            onEditClick={() => setScheduleModalOpen(true)}
+          />
+          <TargetChecksExecutionsModal
+            key={`checks-executions-${JSON.stringify(schedule)}-${scheduleModalOpen}`}
+            open={scheduleModalOpen}
+            schedule={schedule}
+            timezone={timezone}
+            onSave={(newSchedule) =>
+              saveSchedule(newSchedule).then(() => setScheduleModalOpen(false))
+            }
+            onCancel={() => setScheduleModalOpen(false)}
+          />
+        </>
+      )}
       <ChecksSelection
         groupID={hostID}
         catalog={checksSelection}
