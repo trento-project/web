@@ -830,6 +830,58 @@ describe('HostDetails component', () => {
     });
   });
 
+  describe('Scheduled operations', () => {
+    const schedule = {
+      id: 'schedule-id',
+      target_type: 'host',
+      operation: HOST_REBOOT,
+      params: {},
+      starts_at: '2026-11-20T03:00:00.000000Z',
+      timezone: 'Etc/UTC',
+      recurrence: null,
+      next_run_at: '2026-11-20T03:00:00.000000Z',
+    };
+
+    it('should change and cancel a scheduled operation', async () => {
+      waiveOperationDisclaimer();
+      const user = userEvent.setup();
+      const onUpdateSchedule = jest.fn();
+      const onCancelSchedule = jest.fn();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          heartbeat="passing"
+          userAbilities={userAbilities}
+          operationsEnabled
+          timezone="Etc/UTC"
+          operationSchedules={[schedule]}
+          onUpdateSchedule={onUpdateSchedule}
+          onCancelSchedule={onCancelSchedule}
+        />
+      );
+
+      expect(screen.getByText('Scheduled Operations')).toBeVisible();
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      fireEvent.change(screen.getByLabelText('Start Time'), {
+        target: { value: '04:00' },
+      });
+      await user.click(screen.getByRole('button', { name: 'Save Schedule' }));
+
+      expect(onUpdateSchedule).toHaveBeenCalledWith('schedule-id', {
+        params: {},
+        starts_at: '2026-11-20T04:00:00.000Z',
+        timezone: 'Etc/UTC',
+        recurrence: null,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      await user.click(screen.getByRole('button', { name: 'Cancel Schedule' }));
+      expect(onCancelSchedule).toHaveBeenCalledWith('schedule-id');
+    });
+  });
+
   describe('Host reboot operation button', () => {
     it('should show the reboot button always enabled', async () => {
       const user = userEvent.setup();
