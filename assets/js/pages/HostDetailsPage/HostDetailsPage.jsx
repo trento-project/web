@@ -44,6 +44,8 @@ import {
   getSoftwareUpdatesErrorMessage,
   getSoftwareUpdatesErrorTooltip,
 } from './suseMultiLinuxManagerMessaging';
+import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
+
 import HostDetails from './HostDetails';
 
 const chartsEnabled = getFromConfig('chartsEnabled');
@@ -60,6 +62,7 @@ function HostDetailsPage() {
     getInstancesOnHost(state, hostID)
   );
   const { abilities, timezone } = useSelector(getUserProfile);
+  const { schedule: checksSchedule } = useChecksSchedule(TARGET_HOST, hostID);
 
   const lastExecution = useSelector(getLastExecution(hostID));
   const catalog = useSelector(getCatalog);
@@ -159,6 +162,10 @@ function HostDetailsPage() {
       userAbilities={abilities}
       timezone={timezone}
       operationsEnabled={operationsEnabled}
+      inExceptionWindow={!!checksSchedule?.in_exception_window}
+      nextExecutionAt={
+        checksSchedule ? checksSchedule.next_execution_at : undefined
+      }
       runningOperation={runningOperation}
       cleanUpHost={() => {
         dispatch(deregisterHost({ id: hostID, hostname: host.hostname }));

@@ -58,6 +58,7 @@ function ClusterDetails({
   clusterName,
   details,
   hasSelectedChecks,
+  inExceptionWindow = false,
   hosts,
   health,
   state,
@@ -89,6 +90,7 @@ function ClusterDetails({
   const startExecutionDisabled =
     executionLoading ||
     !hasSelectedChecks ||
+    inExceptionWindow ||
     RUNNING_STATES.includes(executionStatus);
 
   const runningOperationName = get(runningOperation, 'operation', null);
@@ -221,7 +223,7 @@ function ClusterDetails({
               onClick={() => navigate(`/clusters/${clusterID}/settings`)}
             >
               <EOS_PLAYLIST_ADD_CHECK_FILLED className="inline-block fill-jungle-green-500" />{' '}
-              Check Selection
+              Check Settings
             </Button>
 
             <Button
@@ -239,8 +241,12 @@ function ClusterDetails({
               permitted={['all:cluster_checks_execution']}
             >
               <Tooltip
-                isEnabled={!hasSelectedChecks}
-                content="Select some Checks first!"
+                isEnabled={!hasSelectedChecks || inExceptionWindow}
+                content={
+                  inExceptionWindow
+                    ? 'Checks cannot be executed during exception window'
+                    : 'Select some Checks first!'
+                }
                 place="bottom"
                 wrap={false}
               >

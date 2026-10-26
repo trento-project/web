@@ -45,6 +45,7 @@ function HanaClusterDetails({
   lastExecution,
   userAbilities,
   timezone,
+  nextExecutionAt,
   navigate = noop,
   getClusterHostOperations = noop,
 }) {
@@ -143,6 +144,7 @@ function HanaClusterDetails({
             data={executionData}
             catalogDataEmpty={catalogData?.length === 0}
             timezone={timezone}
+            nextExecutionAt={nextExecutionAt}
             loading={catalogLoading || executionLoading}
             error={catalogError || executionError}
             onCheckClick={(health) =>

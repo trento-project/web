@@ -93,6 +93,7 @@ function AscsErsClusterDetails({
   lastExecution,
   userAbilities = [],
   timezone,
+  nextExecutionAt,
   navigate = () => {},
   getClusterHostOperations = noop,
 }) {
@@ -202,6 +203,7 @@ function AscsErsClusterDetails({
             data={executionData}
             catalogDataEmpty={catalogData?.length === 0}
             timezone={timezone}
+            nextExecutionAt={nextExecutionAt}
             loading={catalogLoading || executionLoading}
             error={catalogError || executionError}
             onCheckClick={(health) =>
