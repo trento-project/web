@@ -8,7 +8,7 @@ export const OPERATION_REQUESTED = 'OPERATION_REQUESTED';
 export const UPDATE_RUNNING_OPERATIONS = 'UPDATE_RUNNING_OPERATIONS';
 export const BULK_OPERATION_REQUESTED = 'BULK_OPERATION_REQUESTED';
 
-// IDs to identify if bulk operations are being executed. Used to idenfity 
+// IDs to identify if bulk operations are being executed. Used to identify
 // forbidden requests
 export const CLUSTER_BULK_OPERATION_ID = 'cluster_bulk_operation';
 
