@@ -37,6 +37,8 @@ import {
   isValidClusterType,
 } from '@lib/model/clusters';
 
+import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
+
 import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
@@ -79,6 +81,10 @@ export function ClusterDetailsPage() {
   );
 
   const { abilities, timezone } = useSelector(getUserProfile);
+  const { schedule: checksSchedule } = useChecksSchedule(
+    TARGET_CLUSTER,
+    clusterID
+  );
 
   useEffect(() => {
     const env = buildEnv({
@@ -120,6 +126,7 @@ export function ClusterDetailsPage() {
   return (
     <ClusterDetails
       clusterID={clusterID}
+      inExceptionWindow={!!checksSchedule?.in_exception_window}
       clusterName={getClusterName(cluster)}
       details={cluster.details}
       hasSelectedChecks={hasSelectedChecks}
@@ -172,6 +179,9 @@ export function ClusterDetailsPage() {
         sapSystems={clusterSapSystems}
         userAbilities={abilities}
         timezone={timezone}
+        nextExecutionAt={
+          checksSchedule ? checksSchedule.next_execution_at : undefined
+        }
         navigate={navigate}
         // the following props are specific to hana details
         clusterSids={getClusterSids(cluster)}

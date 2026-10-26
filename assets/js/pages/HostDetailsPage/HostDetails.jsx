@@ -97,6 +97,8 @@ function HostDetails({
   cleanUpHost,
   requestHostChecksExecution,
   requestOperation,
+  inExceptionWindow = false,
+  nextExecutionAt = undefined,
   cleanForbiddenOperation,
   navigate,
   timezone,
@@ -156,6 +158,9 @@ function HostDetails({
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
 
   const timeNow = new Date();
+
+  const executionAllowed =
+    canStartExecution(selectedChecks, savingChecks) && !inExceptionWindow;
 
   const openOperationModal = (operation) => () => {
     setCurrentOperation(operation);
@@ -284,7 +289,7 @@ function HostDetails({
                 onClick={() => navigate(`/hosts/${hostID}/settings`)}
               >
                 <EOS_PLAYLIST_ADD_CHECK_FILLED className="inline-block fill-jungle-green-500" />{' '}
-                Check Selection
+                Check Settings
               </Button>
 
               <Button
@@ -303,8 +308,12 @@ function HostDetails({
               >
                 <Tooltip
                   wrap={false}
-                  isEnabled={!canStartExecution(selectedChecks, savingChecks)}
-                  content="Select some Checks first!"
+                  isEnabled={!executionAllowed}
+                  content={
+                    inExceptionWindow
+                      ? 'Checks cannot be executed during exception window'
+                      : 'Select some Checks first!'
+                  }
                   place="bottom"
                 >
                   <Button
@@ -312,18 +321,12 @@ function HostDetails({
                     className="mx-0.5"
                     size="small"
                     onClick={requestHostChecksExecution}
-                    disabled={!canStartExecution(selectedChecks, savingChecks)}
+                    disabled={!executionAllowed}
                   >
                     <EOS_PLAY_CIRCLE
                       className={classNames('inline-block align-sub', {
-                        'fill-white': canStartExecution(
-                          selectedChecks,
-                          savingChecks
-                        ),
-                        'fill-gray-200': !canStartExecution(
-                          selectedChecks,
-                          savingChecks
-                        ),
+                        'fill-white': executionAllowed,
+                        'fill-gray-200': !executionAllowed,
                       })}
                     />{' '}
                     Start Execution
@@ -372,6 +375,7 @@ function HostDetails({
               data={lastExecutionData}
               catalogDataEmpty={catalogData?.length === 0}
               timezone={timezone}
+              nextExecutionAt={nextExecutionAt}
               loading={catalogLoading || lastExecutionLoading}
               error={catalogError || lastExecutionError}
               onCheckClick={(checksHealth) =>
