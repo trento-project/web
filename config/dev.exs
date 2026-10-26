@@ -114,15 +114,7 @@ config :trento, Trento.Mailer,
   ]
 
 if !IEx.started?() do
-  config :trento, Trento.Scheduler,
-    jobs: [
-      clusters_checks_execution: [
-        schedule: {:extended, "@hourly"}
-      ],
-      hosts_checks_execution: [
-        schedule: {:extended, "@hourly"}
-      ]
-    ]
+  config :trento, :checks_execution_cron, "@hourly"
 end
 
 amqp_connection =

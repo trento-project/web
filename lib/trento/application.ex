@@ -24,7 +24,7 @@ defmodule Trento.Application do
         # Start the Endpoint (http/https)
         TrentoWeb.Endpoint,
         Trento.Commanded,
-        Trento.Scheduler,
+        {Oban, Trento.Infrastructure.Jobs.oban_config()},
         Trento.EventHandlersSupervisor,
         Trento.ProjectorsSupervisor,
         Trento.ProcessManagersSupervisor,
@@ -41,6 +41,7 @@ defmodule Trento.Application do
         # Start a worker by calling: Trento.Worker.start_link(arg)
         # {Trento.Worker, arg}
       ] ++
+        Trento.Infrastructure.Ticker.children(Application.get_env(:trento, :tickers, [])) ++
         Application.get_env(:trento, :extra_children, [])
 
     # See https://hexdocs.pm/elixir/Supervisor.html

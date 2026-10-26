@@ -129,56 +129,29 @@ config :trento, Trento.Heartbeats,
 # to wait before displaying the deregistration button
 config :trento, deregistration_debounce: :timer.seconds(0)
 
-config :trento, Trento.Scheduler,
-  jobs: [
-    heartbeat_check: [
-      # Runs every ten seconds
-      schedule: {:extended, "*/10"},
-      task: {Trento.Heartbeats, :dispatch_heartbeat_failed_commands, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    clusters_checks_execution: [
-      # Runs every five minutes
-      schedule: "*/5 * * * *",
-      task: {Trento.Clusters, :request_clusters_checks_execution, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    hosts_checks_execution: [
-      # Runs every five minutes
-      schedule: "*/5 * * * *",
-      task: {Trento.Hosts, :request_hosts_checks_execution, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    discover_software_updates: [
-      # Runs every 12 hours. At 00:00 and 12:00
-      schedule: "0 */12 * * *",
-      task: {Trento.SoftwareUpdates, :run_discovery, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    api_key_expiration_alert: [
-      schedule: "@daily",
-      task: {Trento.Infrastructure.Alerting.Alerting, :notify_api_key_expiration, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    activity_log_cleaning: [
-      schedule: "@daily",
-      task: {Trento.ActivityLog, :clear_expired_logs, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    prune_discovery_events: [
-      schedule: "0 0 * * *",
-      task: {Trento.Discovery, :prune_discovery_events, [10]},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
+# Periodic tasks under one minute. Oban cron has a one minute resolution.
+config :trento, :tickers,
+  heartbeat_check: [
+    interval: :timer.seconds(10),
+    mfa: {Trento.Heartbeats, :dispatch_heartbeat_failed_commands, []}
+  ]
+
+# How often every host and cluster gets a checks execution, see Trento.Infrastructure.Jobs
+config :trento, :checks_execution_cron, "*/5 * * * *"
+
+config :trento, Oban,
+  repo: Trento.Repo,
+  queues: [default: 5, checks: 1],
+  pruner: [max_age: {7, :days}],
+  lifeline: [rescue_after: {30, :minutes}],
+  cron: [
+    crontab: [
+      {"0 */12 * * *", Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob},
+      {"@daily", Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob},
+      {"@daily", Trento.Infrastructure.Jobs.ActivityLogCleaningJob},
+      {"0 0 * * *", Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob, args: %{older_than: 10}}
     ]
-  ],
-  debug_logging: false
+  ]
 
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
