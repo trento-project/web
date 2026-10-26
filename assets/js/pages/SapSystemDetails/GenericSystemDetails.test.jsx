@@ -77,15 +77,6 @@ expect.extend({
       };
     }
 
-    const isDisabled = opItem.hasAttribute('disabled');
-    if (!isDisabled) {
-      return {
-        pass: false,
-        message: () =>
-          `Expected menuitem "${operation}" to be disabled but it was enabled.`,
-      };
-    }
-
     const { queryByTestId } = within(opItem);
     const svgPresent = queryByTestId('eos-svg-component') !== null;
     if (!svgPresent) {
@@ -1242,7 +1233,7 @@ describe('GenericSystemDetails', () => {
     ).toBeInTheDocument();
   });
 
-  it('should disable SAP system operations if all the hosts heartbeat is not passing', async () => {
+  it('should keep SAP system operations available when no host heartbeat passes', async () => {
     const user = userEvent.setup();
 
     const hosts = hostFactory.buildList(2, { heartbeat: 'critical' });
@@ -1268,15 +1259,17 @@ describe('GenericSystemDetails', () => {
       name: 'Operations',
     });
 
+    // the operations can be scheduled, the policies refuse a request now
+    expect(operationsButton).toBeEnabled();
     await user.hover(operationsButton);
     expect(
       screen.queryByText(
         'Trento agent is not currently running in any of the hosts in the SAP system'
       )
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
-  it('should disable database operations if all the hosts heartbeat in a site is not passing', async () => {
+  it('should keep database operations available when no host heartbeat of a site passes', async () => {
     const user = userEvent.setup();
 
     const host1 = hostFactory.build({ heartbeat: 'critical' });
@@ -1310,15 +1303,16 @@ describe('GenericSystemDetails', () => {
       name: 'Operations',
     });
 
+    expect(operationsButton).toBeEnabled();
     await user.hover(operationsButton);
     expect(
       screen.queryByText(
         'Trento agent is not currently running in any of the hosts of some database site'
       )
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
-  it('should disable database site operations if all the hosts in the site heartbeat is not passing', async () => {
+  it('should keep database site operations available when no host heartbeat of the site passes', async () => {
     const user = userEvent.setup();
 
     const hosts = hostFactory.buildList(1, { heartbeat: 'critical' });
@@ -1345,12 +1339,13 @@ describe('GenericSystemDetails', () => {
 
     const { getByRole } = within(siteTables[0].previousSibling);
     const siteOpButton1 = getByRole('button');
+    expect(siteOpButton1).toBeEnabled();
     await user.hover(siteOpButton1);
     expect(
       screen.queryByText(
         'Trento agent is not currently running in any of the hosts in the database site'
       )
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
   describe('forbidden actions', () => {

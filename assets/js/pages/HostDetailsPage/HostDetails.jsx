@@ -16,9 +16,9 @@ import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
   HOST_REBOOT,
-  OPERATION_NOT_ALLOWED_HOST,
   getOperationLabel,
   isSchedulable,
+  ALREADY_RUNNING_ERRORS,
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { formatBytes } from '@lib/charts';
@@ -118,6 +118,7 @@ function HostDetails({
     useState(false);
   const [currentOperation, setCurrentOperation] = useState(null);
   const [editingSchedule, setEditingSchedule] = useState(null);
+  const [alreadyRunning, setAlreadyRunning] = useState(null);
   const tableLabelId = useId();
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
@@ -163,6 +164,11 @@ function HostDetails({
   const runningOperationName = get(runningOperation, 'operation', null);
   const operationForbidden = get(runningOperation, 'forbidden', false);
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
+
+  const requestNow = (operation, params) =>
+    runningOperationName && !operationForbidden
+      ? setAlreadyRunning(operation)
+      : requestOperation(operation, params);
 
   const timeNow = new Date();
 
@@ -210,6 +216,12 @@ function HostDetails({
             onCancel={cleanForbiddenOperation}
             errors={operationForbiddenErrors}
           />
+          <OperationForbiddenModal
+            operation={getOperationLabel(alreadyRunning)}
+            isOpen={!!alreadyRunning}
+            onCancel={() => setAlreadyRunning(null)}
+            errors={ALREADY_RUNNING_ERRORS}
+          />
           <SaptuneSolutionOperationModal
             operation={currentOperation}
             currentlyApplied={currentlyAppliedSolution}
@@ -218,7 +230,7 @@ function HostDetails({
             isOpen={!!saptuneSolutionOperationModalOpen}
             onRequest={(solution) => {
               closeOperationModal();
-              requestOperation(currentOperation, { solution });
+              requestNow(currentOperation, { solution });
             }}
             onCancel={closeOperationModal}
           />
@@ -240,7 +252,7 @@ function HostDetails({
                   schedule
                 );
               } else {
-                requestOperation(currentOperation, {});
+                requestNow(currentOperation, {});
               }
               closeOperationModal();
             }}
@@ -286,8 +298,6 @@ function HostDetails({
               {operationsEnabled && (
                 <OperationsButton
                   userAbilities={userAbilities}
-                  disabled={!!staleAt}
-                  disabledTooltip={OPERATION_NOT_ALLOWED_HOST}
                   operations={[
                     {
                       value: 'Reboot Host',
