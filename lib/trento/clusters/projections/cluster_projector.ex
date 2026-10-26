@@ -11,22 +11,34 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     repo: Trento.Repo,
     name: "cluster_projector"
 
+  require Trento.Enums.Health, as: Health
+  require Trento.Support.HealthValueDetails, as: HealthValueDetails
+
   alias TrentoWeb.V2.ClusterJSON
 
   alias Trento.Clusters.Events.{
     ChecksSelected,
+    ClusterChecksHealthChanged,
     ClusterDataMarkedInSync,
     ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
+    ClusterDistributedHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
-    ClusterRestored
+    ClusterReplicationHealthChanged,
+    ClusterRestored,
+    ClusterSbdHealthChanged
   }
 
-  alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Clusters.Projections.{
+    AscsErsClusterHealthDetails,
+    ClusterReadModel,
+    HanaClusterHealthDetails
+  }
 
   alias Trento.Repo
+  alias Trento.Support.StructHelper
 
   import Trento.Clusters, only: [enrich_cluster_model: 1]
 
@@ -41,6 +53,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       hosts_number: hosts_number,
       details: details,
       health: health,
+      health_details: health_details,
       state: state
     },
     fn multi ->
@@ -48,13 +61,14 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
         ClusterReadModel.changeset(%ClusterReadModel{}, %{
           id: id,
           name: name,
-          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
+          sap_instances: StructHelper.to_map(sap_instances),
           provider: provider,
           type: type,
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
           health: health,
+          health_details: postprocess_health_details(health_details),
           state: state
         })
 
@@ -108,10 +122,15 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       state: state
     },
     fn multi ->
+      cluster = Repo.get!(ClusterReadModel, id)
+
+      health_details =
+        type
+        |> maybe_get_default_health_details(cluster.health_details)
+        |> StructHelper.to_map()
+
       changeset =
-        ClusterReadModel
-        |> Repo.get!(id)
-        |> ClusterReadModel.changeset(%{
+        ClusterReadModel.changeset(cluster, %{
           name: name,
           sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           provider: provider,
@@ -119,6 +138,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
+          health_details: health_details,
           state: state
         })
 
@@ -151,6 +171,60 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
     Ecto.Multi.update(multi, :cluster, changeset)
   end)
+
+  project(
+    %ClusterChecksHealthChanged{cluster_id: cluster_id, checks_health: checks_health},
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(cluster_id, "checks_health", checks_health),
+        []
+      )
+    end
+  )
+
+  project(
+    %ClusterDistributedHealthChanged{
+      cluster_id: cluster_id,
+      distributed_health: distributed_health
+    },
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(cluster_id, "distributed_health", distributed_health),
+        []
+      )
+    end
+  )
+
+  project(
+    %ClusterReplicationHealthChanged{
+      cluster_id: cluster_id,
+      replication_health: replication_health
+    },
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(cluster_id, "replication_health", replication_health),
+        []
+      )
+    end
+  )
+
+  project(
+    %ClusterSbdHealthChanged{cluster_id: cluster_id, sbd_health: sbd_health},
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(cluster_id, "sbd_health", sbd_health),
+        []
+      )
+    end
+  )
 
   project(
     %ClusterDataMarkedStale{cluster_id: cluster_id, stale_at: stale_at},
@@ -265,4 +339,51 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   end
 
   def after_update(_, _, _), do: :ok
+
+  # -- Helpers --
+
+  defp postprocess_health_details(nil), do: nil
+
+  defp postprocess_health_details(health_details) do
+    health_details
+    |> StructHelper.to_map()
+    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
+  end
+
+  defp maybe_get_default_health_details(:ascs_ers, nil),
+    do: %AscsErsClusterHealthDetails{
+      checks_health: %HealthValueDetails{value: Health.unknown()},
+      sbd_health: %HealthValueDetails{value: Health.unknown()},
+      distributed_health: %HealthValueDetails{value: Health.unknown()}
+    }
+
+  defp maybe_get_default_health_details(new_type, nil)
+       when new_type in [:hana_scale_up, :hana_scale_out],
+       do: %HanaClusterHealthDetails{
+         checks_health: %HealthValueDetails{value: Health.unknown()},
+         sbd_health: %HealthValueDetails{value: Health.unknown()},
+         replication_health: %HealthValueDetails{value: Health.unknown()}
+       }
+
+  defp maybe_get_default_health_details(_new_type, previous_health_details),
+    do: previous_health_details
+
+  defp health_details_update_query(cluster_id, value_path, value) do
+    from(
+      c in ClusterReadModel,
+      where: c.id == ^cluster_id,
+      update: [
+        set: [
+          health_details:
+            fragment(
+              "jsonb_set(?, ARRAY[?::text, 'value'], to_jsonb(?::text), false)",
+              c.health_details,
+              ^value_path,
+              ^to_string(value)
+            ),
+          updated_at: ^DateTime.utc_now()
+        ]
+      ]
+    )
+  end
 end
