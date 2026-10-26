@@ -7,6 +7,7 @@ import runningOperationsReducer, {
   removeRunningOperation,
   setRunningOperation,
   setForbiddenOperation,
+  setStartedOperation,
 } from './runningOperations';
 
 describe('runningOperations reducer', () => {
@@ -57,6 +58,42 @@ describe('runningOperations reducer', () => {
 
     expect(runningOperationsReducer(initialState, action)).toEqual(
       expectedState
+    );
+  });
+
+  it('should set running an operation started by the server', () => {
+    const groupID = faker.string.uuid();
+    const operation = faker.lorem.word();
+
+    const action = setStartedOperation({ groupID, operation });
+
+    expect(runningOperationsReducer({}, action)).toEqual({
+      [groupID]: {
+        groupID,
+        operation,
+        forbidden: false,
+        errors: [],
+        metadata: {},
+      },
+    });
+  });
+
+  it('should keep the operation already known for the group', () => {
+    const groupID = faker.string.uuid();
+    const initialState = {
+      [groupID]: {
+        groupID,
+        operation: 'requested',
+        forbidden: false,
+        errors: [],
+        metadata: { clusterID: groupID },
+      },
+    };
+
+    const action = setStartedOperation({ groupID, operation: 'started' });
+
+    expect(runningOperationsReducer(initialState, action)).toEqual(
+      initialState
     );
   });
 });
