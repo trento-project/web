@@ -65,6 +65,13 @@ export const runningOperationsSlice = createSlice({
         metadata,
       };
     },
+    setStartedOperation: (state, { payload }) => {
+      const { groupID, operation } = payload;
+
+      if (!state[groupID]) {
+        state[groupID] = { ...initialOperationState, groupID, operation };
+      }
+    },
   },
 });
 
@@ -72,6 +79,7 @@ export const {
   removeRunningOperation,
   setForbiddenOperation,
   setRunningOperation,
+  setStartedOperation,
 } = runningOperationsSlice.actions;
 
 export default runningOperationsSlice.reducer;
