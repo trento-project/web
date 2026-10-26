@@ -224,15 +224,6 @@ if config_env() in [:prod, :demo] do
     config :trento, :checks_execution, interval: checks_interval
   end
 
-  # Until checks run per target, a number of minutes up to 59 still drives the checks job
-  checks_cron_minutes =
-    case Integer.parse(checks_interval || "") do
-      {minutes, ""} when minutes in 1..59 -> minutes
-      _ -> 5
-    end
-
-  config :trento, :checks_execution_cron, "*/#{checks_cron_minutes} * * * *"
-
   config :trento, Oban,
     cron: [
       crontab: [

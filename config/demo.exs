@@ -13,7 +13,8 @@ config :swoosh, local: false
 # Do not print debug messages in production
 # config :logger, level: :info
 
-config :trento, :checks_execution_cron, "@hourly"
+# Hourly checks executions, which also keeps the setting read only in the demo
+config :trento, :checks_execution, interval: "1h"
 
 config :trento, :tickers,
   heartbeat_fake: [

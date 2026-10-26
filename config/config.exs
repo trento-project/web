@@ -136,8 +136,8 @@ config :trento, :tickers,
     mfa: {Trento.Heartbeats, :dispatch_heartbeat_failed_commands, []}
   ]
 
-# How often every host and cluster gets a checks execution, see Trento.Infrastructure.Jobs
-config :trento, :checks_execution_cron, "*/5 * * * *"
+# How often the due checks executions are requested, see Trento.ChecksScheduling
+config :trento, :checks_execution_cron, "* * * * *"
 
 config :trento, Oban,
   repo: Trento.Repo,

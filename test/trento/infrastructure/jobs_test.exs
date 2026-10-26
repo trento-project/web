@@ -26,14 +26,14 @@ defmodule Trento.Infrastructure.JobsTest do
   end
 
   test "the checks execution runs on the configured cron expression" do
-    assert {"*/5 * * * *", ChecksExecutionJob, _} =
+    assert {"* * * * *", ChecksExecutionJob, _} =
              Enum.find(
                Jobs.oban_config()[:cron][:crontab],
                &match?({_, ChecksExecutionJob, _}, &1)
              )
   end
 
-  test "the checks execution job requests the checks executions of every host" do
+  test "the checks execution job requests the due checks executions" do
     %{id: host_id} = insert(:host, selected_checks: ["check_1"])
 
     expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
