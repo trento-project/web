@@ -31,6 +31,22 @@ defmodule Trento.ActivityLog.SeverityLevelTest do
       condition: :map_value_to_severity
     }
   }
+  describe "scheduling activities" do
+    test "should log a failed scheduled request as a warning and the rest as info" do
+      assert :warning ==
+               SeverityLevel.map_severity_level("scheduled_operation_request_failed", %{})
+
+      for type <- [
+            "operation_scheduled",
+            "operation_schedule_changed",
+            "operation_schedule_cancelled",
+            "scheduled_operation_requested"
+          ] do
+        assert :info == SeverityLevel.map_severity_level(type, %{})
+      end
+    end
+  end
+
   describe "map_severity_level/3" do
     test "should map unmapped activity type to info" do
       unknown_activity_type = "activity_type_0"

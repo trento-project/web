@@ -150,7 +150,12 @@ defmodule Trento.ActivityLog.SeverityLevel do
       condition: :map_value_to_severity
     },
     "check_customization_applied" => :warning,
-    "check_customization_reset" => :info
+    "check_customization_reset" => :info,
+    "operation_scheduled" => :info,
+    "operation_schedule_changed" => :info,
+    "operation_schedule_cancelled" => :info,
+    "scheduled_operation_requested" => :info,
+    "scheduled_operation_request_failed" => :warning
   }
 
   def map_severity_integer_to_text(n) when n >= 5 and n <= 8, do: "debug"
