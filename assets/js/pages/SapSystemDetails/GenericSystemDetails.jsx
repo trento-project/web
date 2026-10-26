@@ -34,11 +34,9 @@ import {
   SAP_SYSTEM_STOP,
   DATABASE_START,
   DATABASE_STOP,
-  OPERATION_NOT_ALLOWED_DATABASE,
-  OPERATION_NOT_ALLOWED_SAP_SYSTEM,
-  OPERATION_NOT_ALLOWED_SITE,
   getOperationLabel,
   isSchedulable,
+  ALREADY_RUNNING_ERRORS,
 } from '@lib/operations';
 import {
   APPLICATION_TYPE,
@@ -46,7 +44,6 @@ import {
   getEnsaVersionLabel,
   getSapSystemType,
 } from '@lib/model/sapSystems';
-import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
 import { STALE_ROW } from '@lib/tables';
 import { formatDateTime } from '@lib/timezones';
 
@@ -85,8 +82,6 @@ const getUniqueHosts = (hosts) =>
       }, new Map())
       .values()
   );
-
-const mapInstancesHosts = (instances) => map(instances, ({ host }) => host);
 
 // Returns an active instance (stale_at === null) if available,
 // otherwise returns the most recently stale instance (highest stale_at)
@@ -147,6 +142,10 @@ export function GenericSystemDetails({
     useState(undefined);
   const [currentOperationSite, setCurrentOperationSite] = useState(undefined);
   const [editingSchedule, setEditingSchedule] = useState(null);
+  const [alreadyRunning, setAlreadyRunning] = useState(null);
+
+  const isRunning = (groupID) =>
+    some(runningOperations, { groupID, forbidden: false });
 
   if (!system) {
     return <div>Not Found</div>;
@@ -208,18 +207,6 @@ export function GenericSystemDetails({
     (instance) => instance.system_replication
   );
 
-  const someHostHeartbeatPassing =
-    type === APPLICATION_TYPE
-      ? isSomeHostHeartbeatPassing(system.hosts)
-      : every(sitedInstances, (instances, _site) =>
-          isSomeHostHeartbeatPassing(mapInstancesHosts(instances))
-        );
-
-  const operationNotAllowedMsg =
-    type === APPLICATION_TYPE
-      ? OPERATION_NOT_ALLOWED_SAP_SYSTEM
-      : OPERATION_NOT_ALLOWED_DATABASE;
-
   const closeOperationModal = (prevState) => {
     setCurrentOperationInstance(undefined);
     setCurrentOperationSite(undefined);
@@ -248,6 +235,12 @@ export function GenericSystemDetails({
         onCancel={() => onCleanForbiddenOperation(forbiddenOperationID)}
         errors={forbiddenErrors}
       />
+      <OperationForbiddenModal
+        operation={getOperationLabel(alreadyRunning)}
+        isOpen={!!alreadyRunning}
+        onCancel={() => setAlreadyRunning(null)}
+        errors={ALREADY_RUNNING_ERRORS}
+      />
       <SimpleAcceptanceOperationModal
         operation={operationModalOpen.operation}
         descriptionResolverArgs={{
@@ -275,6 +268,11 @@ export function GenericSystemDetails({
               },
               schedule
             );
+            setOperationModelOpen(closeOperationModal);
+            return;
+          }
+          if (isRunning(currentOperationInstance.host_id)) {
+            setAlreadyRunning(operationModalOpen.operation);
             setOperationModelOpen(closeOperationModal);
             return;
           }
@@ -316,6 +314,11 @@ export function GenericSystemDetails({
               },
               schedule
             );
+            setOperationModelOpen(closeOperationModal);
+            return;
+          }
+          if (isRunning(system.id)) {
+            setAlreadyRunning(operationModalOpen.operation);
             setOperationModelOpen(closeOperationModal);
             return;
           }
@@ -402,8 +405,6 @@ export function GenericSystemDetails({
                 userAbilities={userAbilities}
                 operations={systemOperations}
                 menuPosition="bottom end"
-                disabled={!someHostHeartbeatPassing}
-                disabledTooltip={operationNotAllowedMsg}
               />
             </div>
           </div>
@@ -605,12 +606,6 @@ export function GenericSystemDetails({
                             userAbilities={userAbilities}
                             menuPosition="bottom end"
                             transparent
-                            disabled={
-                              !isSomeHostHeartbeatPassing(
-                                mapInstancesHosts(instances)
-                              )
-                            }
-                            disabledTooltip={OPERATION_NOT_ALLOWED_SITE}
                             operations={curriedGetSiteOperations(site)}
                           />
                         </div>

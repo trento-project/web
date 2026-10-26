@@ -301,7 +301,7 @@ describe('ClusterDetails ClusterDetails component', () => {
   );
 
   describe('cluster operations', () => {
-    it('should disable main operations button if all the hosts heartbeat is not passing', async () => {
+    it('should keep the main operations button available if no host heartbeat passes', async () => {
       const user = userEvent.setup();
       const { id, name, details } = clusterFactory.build();
       const hosts = hostFactory.buildList(2, {
@@ -327,12 +327,14 @@ describe('ClusterDetails ClusterDetails component', () => {
         name: 'Operations',
       });
 
+      // the operations can be scheduled, the policies refuse a request now
+      expect(operationsButton).toBeEnabled();
       await user.hover(operationsButton);
       expect(
         screen.queryByText(
           'Trento agent is not currently running in any of the hosts in the cluster'
         )
-      ).toBeInTheDocument();
+      ).not.toBeInTheDocument();
     });
 
     it('should disable resources operations buttons if all the hosts heartbeat is not passing', async () => {
@@ -460,8 +462,6 @@ describe('ClusterDetails ClusterDetails component', () => {
         const menuItem = screen.getByRole('menuitem', {
           name: menuItemText,
         });
-        expect(menuItem).toBeDisabled();
-
         const { getByTestId } = within(menuItem);
 
         expect(getByTestId('eos-svg-component')).toBeInTheDocument();
