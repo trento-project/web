@@ -10,6 +10,7 @@ import { networkClient } from '@lib/network';
 import {
   SAPTUNE_SOLUTION_APPLY,
   CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
   SAP_INSTANCE_START,
   SAP_SYSTEM_START,
   PACEMAKER_ENABLE,
@@ -18,6 +19,7 @@ import {
   getOperationLabel,
 } from '@lib/operations';
 import {
+  CLUSTER_BULK_OPERATION_ID,
   removeRunningOperation,
   setRunningOperation,
   setForbiddenOperation,
@@ -26,6 +28,7 @@ import { notify } from '@state/notifications';
 
 import {
   requestOperation,
+  requestBulkOperation,
   completeOperation,
   updateRunningOperations,
 } from './operations';
@@ -36,6 +39,9 @@ const hostOperationRequestURL = (hostID, operation) =>
 
 const clusterOperationRequestURL = (clusterID, operation) =>
   `/clusters/${clusterID}/operations/${operation}`;
+
+const clusterBulkOperationRequestURL = (operation) =>
+  `/clusters/operations/${operation}`;
 
 const clusterHostOperationRequestURL = (clusterID, hostID, operation) =>
   `/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`;
@@ -356,6 +362,119 @@ describe('operations saga', () => {
         }),
         setForbiddenOperation({
           groupID,
+          operation,
+          errors,
+        }),
+      ]);
+    });
+  });
+
+  describe('request bulk operation', () => {
+    it('should request a cluster bulk operation', async () => {
+      const bulkOperationID = CLUSTER_BULK_OPERATION_ID;
+      const operation = CLUSTER_MAINTENANCE_CHANGE;
+      const label = getOperationLabel(operation);
+      const clusterID1 = faker.string.uuid();
+      const clusterID2 = faker.string.uuid();
+      const targetGroupIDs = [clusterID1, clusterID2];
+      const params = { maintenance: true };
+
+      axiosMock.onPost(clusterBulkOperationRequestURL(operation)).reply(202, {
+        operations: [{ resource_id: clusterID1 }, { resource_id: clusterID2 }],
+        failed_operations: [],
+      });
+
+      const dispatched = await recordSaga(requestBulkOperation, {
+        payload: { bulkOperationID, targetGroupIDs, operation, params },
+      });
+
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID: bulkOperationID }),
+        notify({
+          text: `Operation ${label} requested for 2 clusters`,
+          icon: '⚙️',
+        }),
+      ]);
+    });
+
+    it('should report the failed operations in a cluster bulk operation', async () => {
+      const bulkOperationID = CLUSTER_BULK_OPERATION_ID;
+      const operation = CLUSTER_RESOURCE_REFRESH;
+      const label = getOperationLabel(operation);
+      const passingClusterID1 = faker.string.uuid();
+      const passingClusterID2 = faker.string.uuid();
+      const failingClusterID = faker.string.uuid();
+      const targetGroupIDs = [
+        passingClusterID1,
+        passingClusterID2,
+        failingClusterID,
+      ];
+
+      axiosMock.onPost(clusterBulkOperationRequestURL(operation)).reply(202, {
+        operations: [
+          { resource_id: passingClusterID1 },
+          { resource_id: passingClusterID2 },
+        ],
+        failed_operations: [{ resource_id: failingClusterID }],
+      });
+
+      const dispatched = await recordSaga(requestBulkOperation, {
+        payload: { bulkOperationID, targetGroupIDs, operation },
+      });
+
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID: bulkOperationID }),
+        notify({
+          text: `Operation ${label} requested for 3 clusters (1 failed)`,
+          icon: '⚙️',
+        }),
+      ]);
+    });
+
+    it('should fail requesting a bulk operation if the api request fails', async () => {
+      const bulkOperationID = CLUSTER_BULK_OPERATION_ID;
+      const operation = CLUSTER_RESOURCE_REFRESH;
+      const label = getOperationLabel(operation);
+      const targetGroupIDs = [faker.string.uuid()];
+
+      axiosMock
+        .onPost(clusterBulkOperationRequestURL(operation))
+        .reply(500, {});
+
+      const dispatched = await recordSaga(requestBulkOperation, {
+        payload: { bulkOperationID, targetGroupIDs, operation },
+      });
+
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID: bulkOperationID }),
+        notify({
+          text: `Operation ${label} request for clusters failed`,
+          icon: '❌',
+        }),
+      ]);
+    });
+
+    it('should fail requesting a bulk operation if the api request is forbidden', async () => {
+      const bulkOperationID = CLUSTER_BULK_OPERATION_ID;
+      const operation = CLUSTER_RESOURCE_REFRESH;
+      const targetGroupIDs = [faker.string.uuid()];
+      const errors = [
+        { detail: 'error1', metadata: [{ key: 'value' }] },
+        { detail: 'error2' },
+      ];
+
+      axiosMock
+        .onPost(clusterBulkOperationRequestURL(operation))
+        .reply(403, { errors });
+
+      const dispatched = await recordSaga(requestBulkOperation, {
+        payload: { bulkOperationID, targetGroupIDs, operation },
+      });
+
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID: bulkOperationID }),
+        setForbiddenOperation({
+          groupID: bulkOperationID,
           operation,
           errors,
         }),
