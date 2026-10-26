@@ -138,6 +138,9 @@ config :trento, Trento.Scheduler,
     ],
     operation_schedules: [
       state: :inactive
+    ],
+    checks_execution: [
+      state: :inactive
     ]
   ]
 

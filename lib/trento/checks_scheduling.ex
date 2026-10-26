@@ -10,6 +10,9 @@ defmodule Trento.ChecksScheduling do
   runs during its exception window.
   """
 
+  import Ecto.Query, only: [from: 2]
+
+  alias Trento.{Clusters, Hosts}
   alias Trento.ChecksScheduling.{Interval, TargetSchedule}
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Hosts.Projections.HostReadModel
@@ -17,6 +20,8 @@ defmodule Trento.ChecksScheduling do
   alias Trento.Scheduling.Recurrence
   alias Trento.Settings
   alias Trento.Support.DateService
+
+  require Logger
 
   @type target_type :: :host | :cluster
 
@@ -40,6 +45,36 @@ defmodule Trento.ChecksScheduling do
            |> TargetSchedule.changeset(attrs, now)
            |> Repo.insert_or_update() do
       {:ok, view(schedule, now)}
+    end
+  end
+
+  @doc """
+  Requests a checks execution for every host and cluster with selected checks
+  whose interval elapsed, outside its exception window. A Quantum job calls it
+  every minute.
+
+  When the previous execution of a target still runs, Wanda refuses the new
+  request: executions do not pile up.
+  """
+  @spec request_due_executions(module()) :: :ok
+  def request_due_executions(date_service \\ DateService) do
+    now = date_service.utc_now()
+    schedules = Map.new(Repo.all(TargetSchedule), &{&1.target_id, &1})
+
+    for {target_type, target_id} <- targets_with_checks(),
+        schedule = Map.get(schedules, target_id) || new_schedule(target_type, target_id),
+        due?(schedule, now) do
+      request(target_type, target_id, now)
+    end
+
+    :ok
+  end
+
+  @spec in_exception_window?(String.t(), module()) :: boolean()
+  def in_exception_window?(target_id, date_service \\ DateService) do
+    case Repo.get(TargetSchedule, target_id) do
+      nil -> false
+      schedule -> not is_nil(window_end(schedule, date_service.utc_now()))
     end
   end
 
@@ -89,6 +124,63 @@ defmodule Trento.ChecksScheduling do
         window_end(schedule, due) || due
     end
   end
+
+  defp due?(%TargetSchedule{} = schedule, now) do
+    case Interval.to_minutes(effective_interval(schedule)) do
+      nil ->
+        false
+
+      minutes ->
+        is_nil(window_end(schedule, now)) and
+          (is_nil(schedule.last_requested_at) or
+             DateTime.compare(DateTime.add(schedule.last_requested_at, minutes, :minute), now) !=
+               :gt)
+    end
+  end
+
+  defp request(target_type, target_id, now) do
+    case request_execution(target_type, target_id) do
+      :ok ->
+        Repo.insert!(
+          %TargetSchedule{
+            target_id: target_id,
+            target_type: Atom.to_string(target_type),
+            last_requested_at: now
+          },
+          on_conflict: [set: [last_requested_at: now, updated_at: now]],
+          conflict_target: :target_id
+        )
+
+      {:error, reason} ->
+        Logger.error(
+          "Could not request the checks execution of #{target_type} #{target_id}: #{inspect(reason)}"
+        )
+    end
+  end
+
+  defp request_execution(:host, host_id), do: Hosts.request_checks_execution(host_id)
+  defp request_execution(:cluster, cluster_id), do: Clusters.request_checks_execution(cluster_id)
+
+  defp targets_with_checks do
+    hosts =
+      Repo.all(
+        from h in HostReadModel,
+          where: is_nil(h.deregistered_at) and fragment("cardinality(?) > 0", h.selected_checks),
+          select: h.id
+      )
+
+    clusters =
+      Repo.all(
+        from c in ClusterReadModel,
+          where: is_nil(c.deregistered_at) and fragment("cardinality(?) > 0", c.selected_checks),
+          select: c.id
+      )
+
+    Enum.map(hosts, &{:host, &1}) ++ Enum.map(clusters, &{:cluster, &1})
+  end
+
+  defp new_schedule(target_type, target_id),
+    do: %TargetSchedule{target_id: target_id, target_type: Atom.to_string(target_type)}
 
   defp view(%TargetSchedule{} = schedule, now) do
     %{

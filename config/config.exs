@@ -145,17 +145,10 @@ config :trento, Trento.Scheduler,
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
     ],
-    clusters_checks_execution: [
-      # Runs every five minutes
-      schedule: "*/5 * * * *",
-      task: {Trento.Clusters, :request_clusters_checks_execution, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    hosts_checks_execution: [
-      # Runs every five minutes
-      schedule: "*/5 * * * *",
-      task: {Trento.Hosts, :request_hosts_checks_execution, []},
+    checks_execution: [
+      # Requests the due checks executions every minute, see Trento.ChecksScheduling
+      schedule: "* * * * *",
+      task: {Trento.ChecksScheduling, :request_due_executions, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
     ],
