@@ -3,6 +3,7 @@
 
 import OperationModal from './OperationModal';
 import OperationForbiddenModal from './OperationForbiddenModal';
+import BulkOperationModal from './BulkOperationModal';
 import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
 import SapStartStopOperationModal from './SapStartStopOperationModal';
 import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
@@ -10,6 +11,7 @@ import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
 export {
   OperationModal,
   OperationForbiddenModal,
+  BulkOperationModal,
   SimpleAcceptanceOperationModal,
   SapStartStopOperationModal,
   SaptuneSolutionOperationModal,
