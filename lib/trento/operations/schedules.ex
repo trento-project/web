@@ -59,6 +59,29 @@ defmodule Trento.Operations.Schedules do
   end
 
   @doc """
+  Cancels a schedule: it no longer runs. An operation already running is not affected.
+  """
+  @spec cancel_schedule(String.t(), String.t()) :: :ok | {:error, :not_found}
+  def cancel_schedule(schedule_id, actor) do
+    with {:ok, schedule} <- get_schedule(schedule_id) do
+      delete([schedule], actor, %{})
+    end
+  end
+
+  @doc """
+  Cancels the schedules of a target that is removed. The entries are logged
+  by the system and correlated to the clean up that removed the target.
+  """
+  @spec cancel_target_schedules(String.t(), String.t() | nil) :: :ok
+  def cancel_target_schedules(target_id, correlation_id) do
+    extra = if correlation_id, do: %{correlation_id: correlation_id}, else: %{}
+
+    target_id
+    |> list_schedules()
+    |> delete("system", extra)
+  end
+
+  @doc """
   Lists the schedules of a target, the next one first.
   """
   @spec list_schedules(String.t()) :: [OperationSchedule.t()]
@@ -75,6 +98,23 @@ defmodule Trento.Operations.Schedules do
     case Repo.get(OperationSchedule, schedule_id) do
       nil -> {:error, :not_found}
       schedule -> {:ok, schedule}
+    end
+  end
+
+  defp delete(schedules, actor, extra) do
+    schedules
+    |> Enum.reduce(Multi.new(), fn %OperationSchedule{id: id} = schedule, multi ->
+      multi
+      |> Multi.delete({:schedule, id}, schedule)
+      |> Multi.insert(
+        {:activity, id},
+        ScheduleActivity.changeset("operation_schedule_cancelled", schedule, actor, extra)
+      )
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, _} -> :ok
+      {:error, _, %Ecto.StaleEntryError{}, _} -> {:error, :not_found}
     end
   end
 

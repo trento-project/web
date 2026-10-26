@@ -11,6 +11,7 @@ defmodule Trento.EventHandlersSupervisor do
     AlertsEventHandler,
     DatabaseDeregistrationEventHandler,
     DatabaseRestoreEventHandler,
+    OperationSchedulesCleanupEventHandler,
     RollUpEventHandler,
     SapSystemDatabaseHealthEventHandler,
     SapSystemDatabaseStaleAtEventHandler,
@@ -33,6 +34,7 @@ defmodule Trento.EventHandlersSupervisor do
       SoftwareUpdatesDiscoveryEventHandler,
       DatabaseDeregistrationEventHandler,
       DatabaseRestoreEventHandler,
+      OperationSchedulesCleanupEventHandler,
       SapSystemDatabaseHealthEventHandler,
       SapSystemDatabaseStaleAtEventHandler,
       SaptuneStatusUpdateEventHandler
