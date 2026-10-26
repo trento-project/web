@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import {
@@ -14,6 +14,7 @@ import {
 import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { renderWithRouter, withState } from '@lib/test-utils';
 import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
+import { waiveOperationDisclaimer } from '@lib/operations';
 
 import {
   ASCS_ERS,
@@ -498,5 +499,53 @@ describe('ClustersList component', () => {
         inSyncHealthCell.querySelectorAll('[data-testid="eos-svg-component"]')
       ).toHaveLength(1);
     });
+  });
+
+  describe('bulk operations', () => {
+    beforeAll(() => waiveOperationDisclaimer());
+
+    it.each([
+      { operation: 'Cluster maintenance on', title: 'Maintenance change' },
+      { operation: 'Cluster maintenance off', title: 'Maintenance change' },
+      { operation: 'Refresh resources', title: 'Refresh resources' },
+    ])(
+      'should list the selected clusters in the $operation modal',
+      async ({ operation, title }) => {
+        const user = userEvent.setup();
+        const clusters = clusterFactory.buildList(3);
+        const state = {
+          ...cleanInitialState,
+          clustersList: { clusters },
+        };
+
+        const [StatefulClustersList] = withState(
+          <ClustersList operationsEnabled />,
+          state
+        );
+
+        renderWithRouter(StatefulClustersList);
+
+        const firstRow = screen.getByText(clusters[0].name).closest('tr');
+        await user.click(
+          within(firstRow).getByRole('checkbox', { name: 'Select row' })
+        );
+
+        const thirdRow = screen.getByText(clusters[2].name).closest('tr');
+        await user.click(
+          within(thirdRow).getByRole('checkbox', { name: 'Select row' })
+        );
+
+        await user.click(screen.getByRole('button', { name: 'Operations' }));
+        await user.click(screen.getByRole('menuitem', { name: operation }));
+
+        const modal = screen.getByRole('dialog');
+        expect(within(modal).getByText(title)).toBeInTheDocument();
+        expect(
+          within(modal)
+            .getAllByRole('listitem')
+            .map(({ textContent }) => textContent)
+        ).toEqual([clusters[0].name, clusters[2].name]);
+      }
+    );
   });
 });

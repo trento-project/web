@@ -1,10 +1,11 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
+import { getFromConfig } from '@lib/config';
 import { post, del } from '@lib/network';
 import { STALE_ROW } from '@lib/tables';
 import {
@@ -14,13 +15,25 @@ import {
   getClusterSids,
 } from '@lib/model/clusters';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+import { getOperationLabel } from '@lib/operations';
 
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
+import {
+  CLUSTER_BULK_OPERATION_ID,
+  bulkOperationRequested,
+  removeRunningOperation,
+} from '@state/runningOperations';
 import { getClustersWithEnrichedSapInstances } from '@state/selectors/cluster';
+import { getRunningOperation } from '@state/selectors/runningOperations';
 import { getInstanceID } from '@state/instances';
 
 import { getUserProfile } from '@state/selectors/user';
 
+import {
+  BulkOperationModal,
+  OperationForbiddenModal,
+} from '@common/OperationModals';
+import OperationsButton from '@common/OperationsButton';
 import PageHeader from '@common/PageHeader';
 import SapSystemLink from '@common/SapSystemLink';
 import Table from '@common/Table';
@@ -34,6 +47,7 @@ import { getCounters } from '@pages/HealthSummary/summarySelection';
 import HealthSummary from '@pages/HealthSummary';
 
 import ClusterLink from './ClusterLink';
+import { getClustersBulkOperations } from './clusterOperations';
 
 const getSapSystemBySID = (instances, sid) =>
   instances.find((instance) => instance.sid === sid);
@@ -61,14 +75,47 @@ const removeTag = (tag, clusterId) => {
   del(`/clusters/${clusterId}/tags/${tag}`);
 };
 
-function ClustersList() {
+function ClustersList({
+  operationsEnabled = getFromConfig('operationsEnabled'),
+}) {
   const clusters = useSelector(getClustersWithEnrichedSapInstances);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = usePersistentSearchParams('clusters');
   const { abilities, timezone: userTimezone } = useSelector(getUserProfile);
+  const [bulkOperationModal, setBulkOperationModalOpen] = useState({
+    open: false,
+    operation: undefined,
+    params: {},
+    clusters: [],
+  });
+
+  const closeBulkOperationModal = () =>
+    setBulkOperationModalOpen((prevState) => ({ ...prevState, open: false }));
+
+  const bulkOperation = useSelector(
+    getRunningOperation(CLUSTER_BULK_OPERATION_ID)
+  );
+
+  const clearBulkOperation = () =>
+    dispatch(removeRunningOperation({ groupID: CLUSTER_BULK_OPERATION_ID }));
+
+  const requestBulkOperation = () => {
+    const { operation, params, clusters: targetClusters } = bulkOperationModal;
+
+    dispatch(
+      bulkOperationRequested({
+        bulkOperationID: CLUSTER_BULK_OPERATION_ID,
+        targetGroupIDs: targetClusters.map(({ id }) => id),
+        operation,
+        params,
+      })
+    );
+    closeBulkOperationModal();
+  };
 
   const config = {
     pagination: true,
+    selectable: operationsEnabled,
     usePadding: false,
     rowClassName: ({ staleAt }) =>
       classNames({
@@ -212,6 +259,23 @@ function ClustersList() {
   return (
     <>
       <PageHeader className="font-bold">Clusters</PageHeader>
+      <BulkOperationModal
+        operation={bulkOperationModal.operation}
+        descriptionResolverArgs={bulkOperationModal.params}
+        resources={bulkOperationModal.clusters.map(({ id, name }) => ({
+          id,
+          label: name,
+        }))}
+        isOpen={bulkOperationModal.open}
+        onRequest={requestBulkOperation}
+        onCancel={closeBulkOperationModal}
+      />
+      <OperationForbiddenModal
+        operation={getOperationLabel(bulkOperation?.operation)}
+        isOpen={!!bulkOperation?.forbidden}
+        errors={bulkOperation?.errors ?? []}
+        onCancel={clearBulkOperation}
+      />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
@@ -219,6 +283,17 @@ function ClustersList() {
           data={data}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
+          rowKey={({ id }) => id}
+          renderSelectionActions={(selectedClusters) => (
+            <OperationsButton
+              userAbilities={abilities}
+              menuPosition="bottom end"
+              operations={getClustersBulkOperations(
+                selectedClusters,
+                setBulkOperationModalOpen
+              )}
+            />
+          )}
         />
       </div>
     </>
