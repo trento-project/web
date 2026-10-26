@@ -45,6 +45,17 @@ defmodule Trento.ActivityLog.EventParser do
     end
   end
 
+  describe "actor of events that carry it" do
+    test "should take the actor from the event" do
+      event = %Trento.Operations.Events.OperationScheduled{
+        schedule_id: UUID.uuid4(),
+        actor: "admin"
+      }
+
+      assert "admin" == EventParser.get_activity_actor(:operation_scheduled, %{event: event})
+    end
+  end
+
   describe "metadata extraction" do
     test "should fallback to empty map for unrecognized input" do
       for {event_activity, event_context} <- @unrecognized_inputs do

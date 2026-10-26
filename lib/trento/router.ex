@@ -31,6 +31,8 @@ defmodule Trento.Router do
     UpdateSlesSubscriptions
   }
 
+  alias Trento.Operations.Commands.ScheduleOperation
+
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
@@ -54,6 +56,7 @@ defmodule Trento.Router do
   alias Trento.Clusters
   alias Trento.Databases
   alias Trento.Hosts
+  alias Trento.Operations
   alias Trento.SapSystems
 
   middleware Enrich
@@ -119,4 +122,8 @@ defmodule Trento.Router do
            ],
            to: Databases.Database,
            lifespan: Databases.Lifespan
+
+  identify Operations.Schedule, by: :schedule_id
+
+  dispatch [ScheduleOperation], to: Operations.Schedule
 end

@@ -153,7 +153,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
                  "Hosts",
                  "Clusters",
                  "SapSystems",
-                 "Databases"
+                 "Databases",
+                 "Operations"
                ] ->
             true
 

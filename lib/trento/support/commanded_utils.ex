@@ -7,6 +7,8 @@ defmodule Trento.Support.CommandedUtils do
 
   def dispatch(command), do: commanded().dispatch(command)
 
+  def dispatch(command, opts), do: commanded().dispatch(command, opts)
+
   def correlated_dispatch(command, ctx) do
     key = ActivityLog.correlation_key(ctx)
 

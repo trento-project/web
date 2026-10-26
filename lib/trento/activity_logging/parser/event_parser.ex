@@ -6,6 +6,7 @@ defmodule Trento.ActivityLog.Logger.Parser.EventParser do
   Event parser extracts the event relevant information from the context.
   """
 
+  def get_activity_actor(_, %{event: %{actor: actor}}) when is_binary(actor), do: actor
   def get_activity_actor(_, %{event: _}), do: "system"
   def get_activity_actor(_, _), do: nil
 
