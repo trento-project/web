@@ -131,6 +131,13 @@ config :trento, deregistration_debounce: :timer.seconds(0)
 
 config :trento, Trento.Scheduler,
   jobs: [
+    operation_schedules: [
+      # Runs the due operation schedules every minute
+      schedule: "* * * * *",
+      task: {Trento.Operations.Scheduler, :run_due, []},
+      run_strategy: {Quantum.RunStrategy.Random, :cluster},
+      overlap: false
+    ],
     heartbeat_check: [
       # Runs every ten seconds
       schedule: {:extended, "*/10"},
