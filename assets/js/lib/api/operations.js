@@ -14,6 +14,12 @@ export const requestHostOperation = (hostID, operation, params) =>
 export const requestClusterOperation = (clusterID, operation, params) =>
   post(`/clusters/${clusterID}/operations/${operation}`, params);
 
+export const requestClusterBulkOperation = (clusterIDs, operation, params) =>
+  post(`/clusters/operations/${operation}`, {
+    cluster_ids: clusterIDs,
+    ...(params && { params }),
+  });
+
 export const requestSapSystemOperation = (sapSystemID, operation, params) =>
   post(`/sap_systems/${sapSystemID}/operations/${operation}`, params);
 
