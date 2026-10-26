@@ -135,6 +135,16 @@ defmodule TrentoWeb.Router do
            HostController,
            :request_checks_execution
 
+      for {target_type, path} <- [host: "/hosts/:id", cluster: "/clusters/:id"] do
+        get "#{path}/checks/schedule", ChecksScheduleController, :show,
+          assigns: %{target_type: target_type},
+          as: :"#{target_type}_checks_schedule"
+
+        put "#{path}/checks/schedule", ChecksScheduleController, :update,
+          assigns: %{target_type: target_type},
+          as: :"#{target_type}_checks_schedule"
+      end
+
       delete "/hosts/:id", HostController, :delete
 
       post "/hosts/:id/tags", TagsController, :add_tag_to_host,
