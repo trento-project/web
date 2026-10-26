@@ -235,6 +235,46 @@ describe('activityLog', () => {
       });
     });
 
+    it('should describe the scheduling activities', () => {
+      const metadata = { operation: 'reboot' };
+
+      [
+        ['operation_scheduled', 'Operation Reboot host scheduled'],
+        [
+          'operation_schedule_changed',
+          'Schedule of operation Reboot host changed',
+        ],
+        [
+          'operation_schedule_cancelled',
+          'Schedule of operation Reboot host cancelled',
+        ],
+        [
+          'scheduled_operation_requested',
+          'Scheduled operation Reboot host requested',
+        ],
+        [
+          'checks_execution_settings_updated',
+          'Checks execution settings were updated',
+        ],
+      ].forEach(([type, message]) => {
+        expect(toMessage({ type, metadata })).toBe(message);
+      });
+
+      [
+        ['not_available', 'Trento was not available at the scheduled time'],
+        ['policies', 'the operation policies did not pass'],
+        ['already_running', 'another operation was running'],
+        ['target_not_found', 'the target is gone'],
+      ].forEach(([reason, why]) => {
+        expect(
+          toMessage({
+            type: 'scheduled_operation_request_failed',
+            metadata: { ...metadata, reason },
+          })
+        ).toBe(`Scheduled operation Reboot host not requested: ${why}`);
+      });
+    });
+
     it('should resolve operation completed message', () => {
       const scenarios = [
         { result: OPERATION_REQUEST_FAILED, message: 'request failed' },
