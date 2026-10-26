@@ -565,7 +565,7 @@ describe('HostDetails component', () => {
   });
 
   describe('operations', () => {
-    it('should disable operations button if host data is stale', async () => {
+    it('should keep the operations button available if host data is stale', async () => {
       const user = userEvent.setup();
 
       renderWithRouter(
@@ -582,10 +582,12 @@ describe('HostDetails component', () => {
         name: 'Operations',
       });
 
+      // the operations can be scheduled, the policies refuse a request now
+      expect(operationsButton).toBeEnabled();
       await user.hover(operationsButton);
       expect(
         screen.queryByText('Trento agent is not currently running in the host')
-      ).toBeInTheDocument();
+      ).not.toBeInTheDocument();
     });
 
     it.each`
@@ -617,8 +619,6 @@ describe('HostDetails component', () => {
         const menuItem = screen.getByRole('menuitem', {
           name: menuEntry,
         });
-
-        expect(menuItem).toBeDisabled();
 
         const { getByTestId } = within(menuItem);
 
@@ -781,6 +781,34 @@ describe('HostDetails component', () => {
           : expect(menuButton).toBeDisabled();
       }
     );
+  });
+
+  describe('Requests while an operation runs', () => {
+    it('should refuse a request now and keep scheduling possible', async () => {
+      waiveOperationDisclaimer();
+      const user = userEvent.setup();
+      const requestOperation = jest.fn();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          heartbeat="passing"
+          userAbilities={userAbilities}
+          operationsEnabled
+          runningOperation={{ operation: HOST_REBOOT }}
+          requestOperation={requestOperation}
+        />
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+      await user.click(screen.getByRole('menuitem', { name: 'Reboot Host' }));
+      await user.click(screen.getByRole('button', { name: 'Request' }));
+
+      expect(requestOperation).not.toHaveBeenCalled();
+      expect(
+        screen.getByText('Another operation is already running for this target')
+      ).toBeVisible();
+    });
   });
 
   describe('Host reboot scheduling', () => {
