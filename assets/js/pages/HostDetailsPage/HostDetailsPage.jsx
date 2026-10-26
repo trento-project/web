@@ -46,6 +46,7 @@ import {
 } from './suseMultiLinuxManagerMessaging';
 import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
 import useScheduleOperation from '@hooks/useScheduleOperation';
+import useOperationSchedules from '@hooks/useOperationSchedules';
 
 import HostDetails from './HostDetails';
 
@@ -100,6 +101,14 @@ function HostDetailsPage() {
   );
 
   const runningOperation = useSelector(getRunningOperation(hostID));
+  const {
+    schedules: operationSchedules,
+    refresh: refreshSchedules,
+    updateSchedule,
+    cancelSchedule,
+  } = useOperationSchedules(hostID, {
+    refreshKey: runningOperation?.operation ?? null,
+  });
 
   const getExportersStatus = async () => {
     const { data } = await networkClient.get(
@@ -165,7 +174,12 @@ function HostDetailsPage() {
       timezone={timezone}
       operationsEnabled={operationsEnabled}
       inExceptionWindow={!!checksSchedule?.in_exception_window}
-      onScheduleOperation={scheduleOperation}
+      onScheduleOperation={(target, schedule) =>
+        scheduleOperation(target, schedule).then(refreshSchedules)
+      }
+      operationSchedules={operationSchedules}
+      onUpdateSchedule={updateSchedule}
+      onCancelSchedule={cancelSchedule}
       nextExecutionAt={
         checksSchedule ? checksSchedule.next_execution_at : undefined
       }

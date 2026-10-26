@@ -51,6 +51,7 @@ import {
   getClusterHostOperations,
   getResourceOperations,
 } from './clusterOperations';
+import OperationSchedules from '@common/OperationSchedules';
 
 const operationModalState = { open: false, operation: '' };
 
@@ -73,6 +74,9 @@ function ClusterDetails({
   onStartExecution = noop,
   onRequestOperation = noop,
   onScheduleOperation = noop,
+  operationSchedules = [],
+  onUpdateSchedule = noop,
+  onCancelSchedule = noop,
   onCleanForbiddenOperation = noop,
   onRequestHostOperation = noop,
   navigate = noop,
@@ -82,6 +86,7 @@ function ClusterDetails({
     useState(operationModalState);
   const [currentOperationHost, setCurrentOperationHost] = useState(undefined);
   const [operationParams, setOperationParams] = useState(undefined);
+  const [editingSchedule, setEditingSchedule] = useState(null);
 
   const closeOperationModal = () =>
     setOperationModalOpen((prevState) => ({ ...prevState, open: false }));
@@ -206,6 +211,26 @@ function ClusterDetails({
             }}
             onCancel={closeOperationModal}
           />
+          <SimpleAcceptanceOperationModal
+            operation={editingSchedule?.operation}
+            descriptionResolverArgs={editingSchedule?.params || {}}
+            isOpen={!!editingSchedule}
+            schedulable
+            timezone={userTimezone}
+            initialSchedule={editingSchedule}
+            onRequest={(_params, schedule) => {
+              onUpdateSchedule(editingSchedule.id, {
+                params: editingSchedule.params,
+                ...schedule,
+              });
+              setEditingSchedule(null);
+            }}
+            onCancel={() => setEditingSchedule(null)}
+            onCancelSchedule={() => {
+              onCancelSchedule(editingSchedule.id);
+              setEditingSchedule(null);
+            }}
+          />
         </>
       )}
       <BackButton url="/clusters">Back to Clusters</BackButton>
@@ -299,6 +324,12 @@ function ClusterDetails({
         </Banner>
       )}
       {detailComponent}
+      <OperationSchedules
+        schedules={operationSchedules}
+        timezone={userTimezone}
+        onEdit={setEditingSchedule}
+        onCancel={onCancelSchedule}
+      />
       <Resources
         resources={details?.resources}
         hosts={hosts}

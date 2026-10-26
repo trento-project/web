@@ -12,6 +12,17 @@ const warningText = ({ message, metadata = [] }) =>
   message.replace(/{(\d+)}/g, (_, index) => metadata[index]?.label ?? '');
 
 /**
+ * Notification of a saved schedule, telling the policies that do not pass now
+ */
+export const scheduledNotification = (text, warnings = []) =>
+  warnings.length === 0
+    ? notify({ text, icon: '📅' })
+    : notify({
+        text: `${text}. It would not run now: ${warnings.map(warningText).join(', ')}`,
+        icon: '⚠️',
+      });
+
+/**
  * Schedules an operation and tells the outcome. The schedule is saved even
  * when its policies do not pass now: they run again at the scheduled time.
  */
@@ -22,17 +33,7 @@ function useScheduleOperation() {
     (target, schedule) =>
       createOperationSchedule({ ...target, ...schedule })
         .then(({ data }) => {
-          const warnings = data.warnings || [];
-
-          dispatch(
-            warnings.length === 0
-              ? notify({ text: 'Operation scheduled', icon: '📅' })
-              : notify({
-                  text: `Operation scheduled. It would not run now: ${warnings.map(warningText).join(', ')}`,
-                  icon: '⚠️',
-                })
-          );
-
+          dispatch(scheduledNotification('Operation scheduled', data.warnings));
           return data;
         })
         .catch(() =>

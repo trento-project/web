@@ -46,6 +46,7 @@ import { subHours } from 'date-fns';
 import SuseLogo from '@static/suse_logo.svg';
 
 import CheckResultsOverview from '@pages/CheckResultsOverview';
+import OperationSchedules from '@common/OperationSchedules';
 import { canStartExecution } from '@pages/ChecksSelection';
 import DeregistrationModal from '@pages/DeregistrationModal';
 
@@ -101,6 +102,9 @@ function HostDetails({
   inExceptionWindow = false,
   nextExecutionAt = undefined,
   onScheduleOperation = noop,
+  operationSchedules = [],
+  onUpdateSchedule = noop,
+  onCancelSchedule = noop,
   cleanForbiddenOperation,
   navigate,
   timezone,
@@ -113,6 +117,7 @@ function HostDetails({
   const [simpleOperationModalOpen, setSimpleOperationModalOpen] =
     useState(false);
   const [currentOperation, setCurrentOperation] = useState(null);
+  const [editingSchedule, setEditingSchedule] = useState(null);
   const tableLabelId = useId();
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
@@ -240,6 +245,26 @@ function HostDetails({
               closeOperationModal();
             }}
             onCancel={closeOperationModal}
+          />
+          <SimpleAcceptanceOperationModal
+            operation={editingSchedule?.operation}
+            descriptionResolverArgs={{ hostName: hostname }}
+            isOpen={!!editingSchedule}
+            schedulable
+            timezone={timezone}
+            initialSchedule={editingSchedule}
+            onRequest={(_params, schedule) => {
+              onUpdateSchedule(editingSchedule.id, {
+                params: editingSchedule.params,
+                ...schedule,
+              });
+              setEditingSchedule(null);
+            }}
+            onCancel={() => setEditingSchedule(null)}
+            onCancelSchedule={() => {
+              onCancelSchedule(editingSchedule.id);
+              setEditingSchedule(null);
+            }}
           />
         </>
       )}
@@ -438,6 +463,13 @@ function HostDetails({
           </div>
           <DiskSpaceChart hostId={hostID} />
         </ChartsFeatureWrapper>
+        <OperationSchedules
+          schedules={operationSchedules}
+          timezone={timezone}
+          onEdit={setEditingSchedule}
+          onCancel={onCancelSchedule}
+        />
+
         <div className="mt-16">
           <div className="mb-4">
             <h2 className="text-2xl font-bold">Provider details</h2>

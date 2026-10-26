@@ -25,6 +25,7 @@ import {
   getSapInstanceOperations,
 } from './sapOperations';
 import useScheduleOperation from '@hooks/useScheduleOperation';
+import useOperationSchedules from '@hooks/useOperationSchedules';
 
 const operationsEnabled = getFromConfig('operationsEnabled');
 
@@ -38,6 +39,12 @@ function SapSystemDetails() {
   const dispatch = useDispatch();
 
   const runningOperations = useSelector(getRunningOperationsList);
+  const {
+    schedules: operationSchedules,
+    refresh: refreshSchedules,
+    updateSchedule,
+    cancelSchedule,
+  } = useOperationSchedules(id, { refreshKey: runningOperations.length });
 
   useEffect(() => {
     operationsEnabled && dispatch(updateRunningOperations());
@@ -65,7 +72,12 @@ function SapSystemDetails() {
           dispatch(deregisterApplicationInstance(instance));
         }}
         onRequestOperation={(payload) => dispatch(operationRequested(payload))}
-        onScheduleOperation={scheduleOperation}
+        onScheduleOperation={(target, schedule) =>
+          scheduleOperation(target, schedule).then(refreshSchedules)
+        }
+        operationSchedules={operationSchedules}
+        onUpdateSchedule={updateSchedule}
+        onCancelSchedule={cancelSchedule}
         onCleanForbiddenOperation={(groupID) =>
           dispatch(removeRunningOperation({ groupID }))
         }
