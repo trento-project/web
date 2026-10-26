@@ -54,6 +54,19 @@
   &:disabled {
     @apply opacity-50;
   }
+
+  /* forced-colors mode (e.g. Windows High Contrast): fall back to the native checkbox */
+  @media (forced-colors: active) {
+    appearance: auto;
+    &:checked,
+    &:indeterminate {
+      background-image: none;
+    }
+    &:focus-visible {
+      outline: 2px solid Highlight;
+      outline-offset: 2px;
+    }
+  }
 }
 
 .rc-input-disabled {
