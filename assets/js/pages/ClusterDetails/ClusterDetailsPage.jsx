@@ -38,6 +38,7 @@ import {
 } from '@lib/model/clusters';
 
 import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
+import useScheduleOperation from '@hooks/useScheduleOperation';
 
 import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
@@ -85,6 +86,7 @@ export function ClusterDetailsPage() {
     TARGET_CLUSTER,
     clusterID
   );
+  const scheduleOperation = useScheduleOperation();
 
   useEffect(() => {
     const env = buildEnv({
@@ -127,6 +129,7 @@ export function ClusterDetailsPage() {
     <ClusterDetails
       clusterID={clusterID}
       inExceptionWindow={!!checksSchedule?.in_exception_window}
+      onScheduleOperation={scheduleOperation}
       clusterName={getClusterName(cluster)}
       details={cluster.details}
       hasSelectedChecks={hasSelectedChecks}

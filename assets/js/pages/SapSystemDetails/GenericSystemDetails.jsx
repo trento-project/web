@@ -38,6 +38,7 @@ import {
   OPERATION_NOT_ALLOWED_SAP_SYSTEM,
   OPERATION_NOT_ALLOWED_SITE,
   getOperationLabel,
+  isSchedulable,
 } from '@lib/operations';
 import {
   APPLICATION_TYPE,
@@ -131,6 +132,7 @@ export function GenericSystemDetails({
   getSiteOperations = noop,
   onInstanceCleanUp = noop,
   onRequestOperation = noop,
+  onScheduleOperation = noop,
   onCleanForbiddenOperation = noop,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
@@ -251,7 +253,26 @@ export function GenericSystemDetails({
           operationModalOpen.open &&
           instanceStartStopOperations.includes(operationModalOpen.operation)
         }
-        onRequest={(params) => {
+        schedulable={isSchedulable(operationModalOpen.operation)}
+        timezone={userTimezone}
+        onRequest={(params, schedule) => {
+          if (schedule) {
+            onScheduleOperation(
+              {
+                target_type: 'sap_system',
+                target_id: system.id,
+                operation: operationModalOpen.operation,
+                params: {
+                  ...params,
+                  host_id: currentOperationInstance.host_id,
+                  instance_number: currentOperationInstance.instance_number,
+                },
+              },
+              schedule
+            );
+            setOperationModelOpen(closeOperationModal);
+            return;
+          }
           onRequestOperation({
             groupID: currentOperationInstance.host_id,
             operation: operationModalOpen.operation,
@@ -277,7 +298,22 @@ export function GenericSystemDetails({
           operationModalOpen.open &&
           startStopOperations.includes(operationModalOpen.operation)
         }
-        onRequest={(params) => {
+        schedulable={isSchedulable(operationModalOpen.operation)}
+        timezone={userTimezone}
+        onRequest={(params, schedule) => {
+          if (schedule) {
+            onScheduleOperation(
+              {
+                target_type: type === DATABASE_TYPE ? 'database' : 'sap_system',
+                target_id: system.id,
+                operation: operationModalOpen.operation,
+                params,
+              },
+              schedule
+            );
+            setOperationModelOpen(closeOperationModal);
+            return;
+          }
           onRequestOperation({
             groupID: system.id,
             operation: operationModalOpen.operation,
