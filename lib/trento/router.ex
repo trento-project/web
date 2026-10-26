@@ -34,7 +34,9 @@ defmodule Trento.Router do
   alias Trento.Operations.Commands.{
     CancelOperationSchedule,
     ChangeOperationSchedule,
-    ScheduleOperation
+    CompleteScheduledRun,
+    ScheduleOperation,
+    StartScheduledRun
   }
 
   alias Trento.Databases.Commands.{
@@ -129,6 +131,12 @@ defmodule Trento.Router do
 
   identify Operations.Schedule, by: :schedule_id
 
-  dispatch [ScheduleOperation, ChangeOperationSchedule, CancelOperationSchedule],
-    to: Operations.Schedule
+  dispatch [
+             ScheduleOperation,
+             ChangeOperationSchedule,
+             CancelOperationSchedule,
+             StartScheduledRun,
+             CompleteScheduledRun
+           ],
+           to: Operations.Schedule
 end

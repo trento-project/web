@@ -13,14 +13,21 @@ defmodule Trento.Operations.Schedule do
   alias Trento.Operations.Commands.{
     CancelOperationSchedule,
     ChangeOperationSchedule,
-    ScheduleOperation
+    CompleteScheduledRun,
+    ScheduleOperation,
+    StartScheduledRun
   }
 
   alias Trento.Operations.Events.{
     OperationScheduleCancelled,
     OperationScheduleChanged,
-    OperationScheduled
+    OperationScheduled,
+    ScheduledOperationRequested,
+    ScheduledOperationRequestFailed,
+    ScheduledRunStarted
   }
+
+  alias Trento.Scheduling.Recurrence
 
   @required_fields []
 
@@ -40,7 +47,16 @@ defmodule Trento.Operations.Schedule do
     field :bulk_id, Ecto.UUID
     field :created_by, :string
     field :cancelled, :boolean, default: false
+    field :ended, :boolean, default: false
+    field :run_in_progress, :utc_datetime_usec
   end
+
+  @frequency_atoms %{
+    "daily" => :daily,
+    "weekly" => :weekly,
+    "monthly" => :monthly,
+    "yearly" => :yearly
+  }
 
   def execute(%__MODULE__{schedule_id: nil}, %ScheduleOperation{} = command),
     do: struct(OperationScheduled, Map.from_struct(command))
@@ -50,6 +66,34 @@ defmodule Trento.Operations.Schedule do
 
   def execute(%__MODULE__{schedule_id: nil}, _), do: {:error, :operation_schedule_not_found}
   def execute(%__MODULE__{cancelled: true}, _), do: {:error, :operation_schedule_not_found}
+  def execute(%__MODULE__{ended: true}, _), do: {:error, :operation_schedule_not_found}
+
+  def execute(%__MODULE__{run_in_progress: run_at}, %StartScheduledRun{run_at: run_at})
+      when not is_nil(run_at),
+      do: {:error, :run_in_progress}
+
+  def execute(%__MODULE__{next_run_at: next_run_at} = schedule, %StartScheduledRun{} = command) do
+    if DateTime.compare(next_run_at, command.run_at) == :eq do
+      %ScheduledRunStarted{
+        schedule_id: schedule.schedule_id,
+        run_at: command.run_at,
+        started_at: command.started_at
+      }
+    else
+      {:error, :stale_run}
+    end
+  end
+
+  def execute(%__MODULE__{run_in_progress: nil}, %CompleteScheduledRun{}),
+    do: {:error, :stale_run}
+
+  def execute(%__MODULE__{run_in_progress: run_at} = schedule, %CompleteScheduledRun{} = command) do
+    if DateTime.compare(run_at, command.run_at) == :eq do
+      complete(schedule, command)
+    else
+      {:error, :stale_run}
+    end
+  end
 
   def execute(%__MODULE__{} = schedule, %ChangeOperationSchedule{} = command) do
     schedule
@@ -99,6 +143,65 @@ defmodule Trento.Operations.Schedule do
 
   def apply(%__MODULE__{} = schedule, %OperationScheduleCancelled{}),
     do: %__MODULE__{schedule | cancelled: true}
+
+  def apply(%__MODULE__{} = schedule, %ScheduledRunStarted{run_at: run_at}),
+    do: %__MODULE__{schedule | run_in_progress: run_at}
+
+  def apply(%__MODULE__{} = schedule, %event{next_run_at: next_run_at, occurrences: occurrences})
+      when event in [ScheduledOperationRequested, ScheduledOperationRequestFailed] do
+    %__MODULE__{
+      schedule
+      | next_run_at: next_run_at,
+        occurrences: occurrences,
+        run_in_progress: nil,
+        ended: is_nil(next_run_at)
+    }
+  end
+
+  defp complete(%__MODULE__{} = schedule, %CompleteScheduledRun{} = command) do
+    occurrences = schedule.occurrences + 1
+    after_instant = Enum.max([command.run_at, command.completed_at], DateTime)
+
+    fields =
+      schedule
+      |> event_fields("system")
+      |> Map.merge(%{
+        run_at: command.run_at,
+        occurrences: occurrences,
+        next_run_at: next_occurrence(schedule, occurrences, after_instant)
+      })
+
+    case command.outcome do
+      :requested ->
+        struct(ScheduledOperationRequested, Map.put(fields, :operation_id, command.operation_id))
+
+      :failed ->
+        struct(
+          ScheduledOperationRequestFailed,
+          Map.merge(fields, %{reason: command.reason, errors: command.errors})
+        )
+    end
+  end
+
+  defp next_occurrence(%__MODULE__{recurrence: nil}, _, _), do: nil
+
+  defp next_occurrence(%__MODULE__{recurrence: recurrence} = schedule, occurrences, after_instant) do
+    recurrence = Map.new(recurrence, fn {key, value} -> {to_string(key), value} end)
+
+    Recurrence.next_occurrence(
+      %{
+        starts_at: schedule.starts_at,
+        timezone: schedule.timezone,
+        frequency: Map.get(@frequency_atoms, recurrence["frequency"]),
+        interval: recurrence["interval"] || 1,
+        weekdays: recurrence["weekdays"] || [],
+        ends_on: recurrence["ends_on"] && Date.from_iso8601!(to_string(recurrence["ends_on"])),
+        max_occurrences: recurrence["max_occurrences"],
+        occurrences: occurrences
+      },
+      after_instant
+    )
+  end
 
   # The schedule as the events describe it, so that every activity entry tells
   # which target and operation it is about.

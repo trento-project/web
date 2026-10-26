@@ -27,7 +27,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
     Trento.Clusters.Events.ChecksSelected,
     Trento.Clusters.Events.ClusterHostDataMarkedStale,
     Trento.Clusters.Events.ClusterHostDataMarkedInSync,
-    Trento.SapSystems.Events.SapSystemDatabaseStaleAtChanged
+    Trento.SapSystems.Events.SapSystemDatabaseStaleAtChanged,
+    Trento.Operations.Events.ScheduledRunStarted
   ]
 
   @operation_activities [

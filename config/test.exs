@@ -135,6 +135,9 @@ config :trento, Trento.Scheduler,
   jobs: [
     heartbeat_check: [
       state: :inactive
+    ],
+    operation_schedules: [
+      state: :inactive
     ]
   ]
 

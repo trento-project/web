@@ -16,7 +16,9 @@ defmodule Trento.Operations.Projections.OperationScheduleProjector do
   alias Trento.Operations.Events.{
     OperationScheduleCancelled,
     OperationScheduleChanged,
-    OperationScheduled
+    OperationScheduled,
+    ScheduledOperationRequested,
+    ScheduledOperationRequestFailed
   }
 
   import Ecto.Query, only: [from: 2]
@@ -66,6 +68,25 @@ defmodule Trento.Operations.Projections.OperationScheduleProjector do
       from(s in OperationSchedule, where: s.id == ^schedule_id)
     )
   end)
+
+  project(%event{schedule_id: schedule_id, next_run_at: nil}, fn multi
+                                                                 when event in [
+                                                                        ScheduledOperationRequested,
+                                                                        ScheduledOperationRequestFailed
+                                                                      ] ->
+    Ecto.Multi.delete_all(
+      multi,
+      :operation_schedule,
+      from(s in OperationSchedule, where: s.id == ^schedule_id)
+    )
+  end)
+
+  project(
+    %event{schedule_id: schedule_id, next_run_at: next_run_at, occurrences: occurrences},
+    fn multi when event in [ScheduledOperationRequested, ScheduledOperationRequestFailed] ->
+      update(multi, schedule_id, %{next_run_at: next_run_at, occurrences: occurrences})
+    end
+  )
 
   # update_all, so that fields going back to their default value are written too
   defp update(multi, schedule_id, changes) do
