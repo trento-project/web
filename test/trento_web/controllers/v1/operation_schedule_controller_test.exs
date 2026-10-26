@@ -101,6 +101,61 @@ defmodule TrentoWeb.V1.OperationScheduleControllerTest do
     end
   end
 
+  describe "bulk" do
+    defp bulk(conn, body) do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/operation_schedules/bulk", body)
+    end
+
+    defp bulk_body(target_ids) do
+      %{
+        target_type: "host",
+        target_ids: target_ids,
+        operation: "reboot",
+        params: %{},
+        starts_at: DateTime.to_iso8601(in_days(3)),
+        timezone: "Etc/UTC",
+        recurrence: nil
+      }
+    end
+
+    test "should schedule an operation on several targets", %{conn: conn, api_spec: api_spec} do
+      %{id: first} = insert(:host, heartbeat: :passing, cluster_id: nil)
+      %{id: second} = insert(:host, heartbeat: :critical, cluster_id: nil)
+
+      assert %{bulk_id: bulk_id, schedules: [first_schedule, second_schedule]} =
+               conn
+               |> bulk(bulk_body([first, second]))
+               |> json_response(201)
+               |> assert_schema("BulkOperationSchedulesV1", api_spec)
+
+      assert %{target_id: ^first, bulk_id: ^bulk_id, warnings: []} = first_schedule
+      assert %{target_id: ^second, bulk_id: ^bulk_id, warnings: [_]} = second_schedule
+    end
+
+    test "should not find unknown targets", %{conn: conn} do
+      %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)
+
+      conn
+      |> bulk(bulk_body([host_id, UUID.uuid4()]))
+      |> json_response(404)
+    end
+
+    test "should refuse an empty selection and a user without the ability", %{conn: conn} do
+      %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)
+
+      conn
+      |> bulk(bulk_body([]))
+      |> json_response(422)
+
+      conn
+      |> unprivileged()
+      |> bulk(bulk_body([host_id]))
+      |> json_response(403)
+    end
+  end
+
   describe "list, change and cancel" do
     setup %{conn: conn} do
       %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)

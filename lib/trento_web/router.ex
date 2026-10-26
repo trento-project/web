@@ -193,6 +193,7 @@ defmodule TrentoWeb.Router do
         # Every entry has a new path in the router
         get "/operation_schedules", OperationScheduleController, :index
         post "/operation_schedules", OperationScheduleController, :create
+        post "/operation_schedules/bulk", OperationScheduleController, :bulk_create
         put "/operation_schedules/:id", OperationScheduleController, :update
         delete "/operation_schedules/:id", OperationScheduleController, :delete
 

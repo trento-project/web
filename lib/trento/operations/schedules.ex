@@ -45,6 +45,31 @@ defmodule Trento.Operations.Schedules do
   end
 
   @doc """
+  Schedules the same operation on several targets of one type: one schedule
+  per target, all with the same bulk id. Every target is validated before
+  any schedule is dispatched, so an unknown target or an invalid schedule
+  saves nothing. The schedules are separate aggregates: a dispatch failing
+  half way leaves the ones already dispatched.
+  """
+  @spec create_bulk_schedules(map(), String.t(), module()) ::
+          {:ok, String.t(), [{OperationSchedule.t(), warnings()}]}
+          | {:error, :not_found}
+          | {:error, Ecto.Changeset.t()}
+          | {:error, any()}
+  def create_bulk_schedules(%{target_ids: target_ids} = attrs, actor, date_service \\ DateService) do
+    bulk_id = UUID.uuid4()
+    common = attrs |> Map.delete(:target_ids) |> Map.put(:bulk_id, bulk_id)
+
+    with {:ok, prepared} <- prepare_bulk(target_ids, common, actor, date_service),
+         :ok <- dispatch_bulk(prepared, actor) do
+      {:ok, bulk_id,
+       Enum.map(prepared, fn {schedule_id, _, warnings} ->
+         {Repo.get!(OperationSchedule, schedule_id), warnings}
+       end)}
+    end
+  end
+
+  @doc """
   Replaces the params and the timing of a schedule. The occurrence count
   restarts. Failing operation policies come back as warnings.
   """
@@ -111,6 +136,32 @@ defmodule Trento.Operations.Schedules do
       nil -> {:error, :not_found}
       schedule -> {:ok, schedule}
     end
+  end
+
+  defp prepare_bulk(target_ids, common, actor, date_service) do
+    target_ids
+    |> Enum.reduce_while({:ok, []}, fn target_id, {:ok, acc} ->
+      with {:ok, schedule} <-
+             validate(Map.put(common, :target_id, target_id), actor, date_service),
+           {:ok, warnings} <- policy_warnings(schedule) do
+        {:cont, {:ok, [{UUID.uuid4(), schedule, warnings} | acc]}}
+      else
+        error -> {:halt, error}
+      end
+    end)
+    |> case do
+      {:ok, prepared} -> {:ok, Enum.reverse(prepared)}
+      error -> error
+    end
+  end
+
+  defp dispatch_bulk(prepared, actor) do
+    Enum.reduce_while(prepared, :ok, fn {schedule_id, schedule, _}, :ok ->
+      case dispatch(schedule_command(schedule_id, schedule, actor), schedule_id) do
+        :ok -> {:cont, :ok}
+        error -> {:halt, error}
+      end
+    end)
   end
 
   defp validate(attrs, actor, date_service) do

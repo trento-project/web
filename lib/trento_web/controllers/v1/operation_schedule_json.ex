@@ -9,6 +9,16 @@ defmodule TrentoWeb.V1.OperationScheduleJSON do
   def operation_schedule(%{schedule: schedule, warnings: warnings}),
     do: Map.put(schedule(schedule), :warnings, warnings)
 
+  def bulk_operation_schedules(%{bulk_id: bulk_id, results: results}) do
+    %{
+      bulk_id: bulk_id,
+      schedules:
+        Enum.map(results, fn {schedule, warnings} ->
+          operation_schedule(%{schedule: schedule, warnings: warnings})
+        end)
+    }
+  end
+
   def schedule(%OperationSchedule{} = schedule) do
     schedule
     |> Map.take([
