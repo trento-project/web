@@ -19,6 +19,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :resource_tagging,
         :resource_untagging,
         :api_key_generation,
+        :checks_execution_settings_updated,
         :saving_smlm_settings,
         :changing_smlm_settings,
         :clearing_smlm_settings,
@@ -231,6 +232,12 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         connection_info: {TrentoWeb.V1.SettingsController, :update_api_key_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :checks_execution_settings_updated,
+        connection_info: {TrentoWeb.V1.SettingsController, :update_checks_execution_settings},
+        interesting_statuses: 200,
+        not_interesting_statuses: [400, 401, 403, 404, 409, 422, 500]
       },
       %{
         activity: :saving_smlm_settings,

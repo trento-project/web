@@ -350,6 +350,48 @@ defmodule TrentoWeb.V1.SettingsController do
     render(conn, :public_keys, %{public_keys: [certificates]})
   end
 
+  operation :get_checks_execution_settings,
+    summary: "Get the checks execution settings.",
+    tags: ["Settings"],
+    description: "Retrieves the global interval of the periodic checks executions.",
+    responses: [
+      ok:
+        {"Global checks execution interval.", "application/json",
+         Schema.ChecksExecutionSettings.Settings},
+      unauthorized: Schema.Unauthorized.response()
+    ]
+
+  def get_checks_execution_settings(conn, _params) do
+    render(conn, :checks_execution_settings,
+      checks_execution_settings: Settings.get_checks_execution_settings()
+    )
+  end
+
+  operation :update_checks_execution_settings,
+    summary: "Update the checks execution settings.",
+    tags: ["Settings"],
+    description: "Changes the global interval of the periodic checks executions.",
+    request_body:
+      {"New global checks execution interval.", "application/json",
+       Schema.ChecksExecutionSettings.UpdateRequest},
+    responses: [
+      ok:
+        {"Global checks execution interval.", "application/json",
+         Schema.ChecksExecutionSettings.Settings},
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response(),
+      conflict: Schema.Conflict.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  def update_checks_execution_settings(conn, _params) do
+    attrs = OpenApiSpex.body_params(conn)
+
+    with {:ok, settings} <- Settings.update_checks_execution_settings(attrs) do
+      render(conn, :checks_execution_settings, checks_execution_settings: settings)
+    end
+  end
+
   operation :get_alerting_settings,
     summary: "Get alerting settings.",
     tags: ["Settings", "MCP"],

@@ -51,6 +51,10 @@ config :trento, :alerting,
   sender: nil,
   recipient: nil
 
+# Global checks execution interval, set from CHECKS_INTERVAL in runtime.exs.
+# When it holds an allowed value it wins over the saved setting.
+config :trento, :checks_execution, interval: nil
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.12.18",

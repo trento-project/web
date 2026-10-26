@@ -54,6 +54,11 @@ defmodule TrentoWeb.V1.SettingsJSON do
   def public_key(%{public_key: %{name: name, certificate_file: cert_file}}),
     do: %{name: name, content: cert_file}
 
+  def checks_execution_settings(%{
+        checks_execution_settings: %{interval: interval, enforced_from_env: enforced_from_env}
+      }),
+      do: %{interval: interval, enforced_from_env: enforced_from_env}
+
   def alerting_settings(%{
         alerting_settings: %{
           enabled: enabled,

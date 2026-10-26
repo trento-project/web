@@ -260,6 +260,8 @@ defmodule TrentoWeb.Router do
 
         # Activity Log Settings
         put "/activity_log", SettingsController, :update_activity_log_settings
+        get "/checks_execution", SettingsController, :get_checks_execution_settings
+        put "/checks_execution", SettingsController, :update_checks_execution_settings
         get "/activity_log", SettingsController, :get_activity_log_settings
 
         scope "/smlm" do

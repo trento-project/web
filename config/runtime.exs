@@ -218,14 +218,27 @@ if config_env() in [:prod, :demo] do
       depth: 99
     ]
 
+  checks_interval = System.get_env("CHECKS_INTERVAL")
+
+  if checks_interval do
+    config :trento, :checks_execution, interval: checks_interval
+  end
+
+  # Until checks run per target, a number of minutes up to 59 still drives the cron jobs
+  checks_cron_minutes =
+    case Integer.parse(checks_interval || "") do
+      {minutes, ""} when minutes in 1..59 -> minutes
+      _ -> 5
+    end
+
   config :trento, Trento.Scheduler,
     jobs: [
       # Runs every five minutes by default
       clusters_checks_execution: [
-        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
+        schedule: "*/#{checks_cron_minutes} * * * *"
       ],
       hosts_checks_execution: [
-        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
+        schedule: "*/#{checks_cron_minutes} * * * *"
       ],
       prune_discovery_events: [
         schedule: System.get_env("PRUNE_EVENTS_INTERVAL", "0 0 * * *"),

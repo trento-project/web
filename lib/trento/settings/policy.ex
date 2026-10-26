@@ -17,6 +17,7 @@ defmodule Trento.Settings.Policy do
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
+    ChecksExecutionSettings,
     SmlmSettings
   }
 
@@ -32,7 +33,8 @@ defmodule Trento.Settings.Policy do
     get_alerting_settings: Trento.Settings.AlertingSettings,
     create_alerting_settings: Trento.Settings.AlertingSettings,
     update_alerting_settings: Trento.Settings.AlertingSettings,
-    test_alerting_settings: Trento.Settings.AlertingSettings
+    test_alerting_settings: Trento.Settings.AlertingSettings,
+    update_checks_execution_settings: Trento.Settings.ChecksExecutionSettings
   }
 
   def authorize(:update_api_key_settings, %User{} = user, ApiKeySettings),
@@ -49,6 +51,11 @@ defmodule Trento.Settings.Policy do
            ] do
     has_global_ability?(user) or has_smlm_settings_change_ability?(user)
   end
+
+  def authorize(:update_checks_execution_settings, %User{} = user, ChecksExecutionSettings),
+    do:
+      has_global_ability?(user) or
+        user_has_ability?(user, %{name: "all", resource: "checks_execution_settings"})
 
   def authorize(action, %User{} = user, AlertingSettings)
       when action in [

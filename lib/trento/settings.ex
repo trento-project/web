@@ -9,10 +9,13 @@ defmodule Trento.Settings do
   alias Trento.Repo
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
+  alias Trento.ChecksScheduling.Interval
+
   alias Trento.Settings.{
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
+    ChecksExecutionSettings,
     InstallationSettings,
     SmlmSettings,
     SSOCertificatesSettings
@@ -234,6 +237,54 @@ defmodule Trento.Settings do
         |> AlertingSettings.changeset(alerting_settings)
         |> Repo.update()
       end
+    end
+  end
+
+  @doc """
+  Returns the global checks execution interval. CHECKS_INTERVAL, when it holds
+  an allowed value, wins over the saved one. Without both, 5 minutes.
+  """
+  @spec get_checks_execution_settings() :: ChecksExecutionSettings.t()
+  def get_checks_execution_settings do
+    case checks_interval_from_env() do
+      {:ok, interval} ->
+        %ChecksExecutionSettings{interval: interval, enforced_from_env: true}
+
+      :error ->
+        Repo.one(ChecksExecutionSettings.base_query()) ||
+          %ChecksExecutionSettings{interval: Interval.default()}
+    end
+  end
+
+  @spec update_checks_execution_settings(%{interval: String.t()}) ::
+          {:ok, ChecksExecutionSettings.t()}
+          | {:error, :checks_execution_settings_enforced}
+          | {:error, Ecto.Changeset.t()}
+  def update_checks_execution_settings(attrs) do
+    case checks_interval_from_env() do
+      {:ok, _} ->
+        {:error, :checks_execution_settings_enforced}
+
+      :error ->
+        (Repo.one(ChecksExecutionSettings.base_query()) || %ChecksExecutionSettings{})
+        |> ChecksExecutionSettings.changeset(attrs)
+        |> Repo.insert_or_update()
+    end
+  end
+
+  defp checks_interval_from_env do
+    case Application.get_env(:trento, :checks_execution, [])[:interval] do
+      nil ->
+        :error
+
+      value ->
+        with :error <- Interval.parse(value) do
+          Logger.warning(
+            "CHECKS_INTERVAL #{inspect(value)} is not an allowed interval, using the saved one"
+          )
+
+          :error
+        end
     end
   end
 
