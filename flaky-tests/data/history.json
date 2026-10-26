@@ -1,73 +1,5 @@
 [
   {
-    "timestamp": "2026-09-05T23:37:10Z",
-    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
-    "run_id": "33989854832",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 11
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.05116
-      },
-      {
-        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
-        "score": 0.05001
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
-        "score": 0.05001
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
-        "score": 0.05001
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
-        "score": 0.05001
-      },
-      {
-        "name": "should have a correct link to each host::HANA database details The hosts table shows the attached hosts to this HANA database should have a correct link to each host",
-        "score": 0.02501
-      },
-      {
-        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
-        "score": 0.02501
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-06T19:17:20Z",
     "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
     "run_id": "34053615483",
@@ -5770,5 +5702,49 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-25T21:47:41Z",
+    "commit": "c658fbeda8c8b9264ed2a264e18512eb266f75fa",
+    "run_id": "40237148177",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 20
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.1029
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.09651
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should allow to deregister a host after clean up confirmation & restore it::Hosts Overview Deregistration Clean-up button should deregister a host should allow to deregister a host after clean up confirmation & restore it",
+        "score": 0.02501
+      },
+      {
+        "name": "should be able to create a new user with deleted user username and email::Users Delete user should be able to create a new user with deleted user username and email",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark database data as stale when an agent composing the database stops reporting::Databases Overview Stale data should mark database data as stale when an agent composing the database stops reporting",
+        "score": 0.02501
+      },
+      {
+        "name": "should preserve filters in the upgradable packages view::SUSE Multi-Linux Manager overviews Persistent filters should preserve filters in the upgradable packages view",
+        "score": 0.02501
+      },
+      {
+        "name": "should preserve filters when the activity log sidebar entry is clicked from the activity log view::Activity Log page Filtering should preserve filters when the activity log sidebar entry is clicked from the activity log view",
+        "score": 0.02501
+      }
+    ]
   }
 ]
