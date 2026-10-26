@@ -126,6 +126,15 @@ const SCHEDULABLE_OPERATIONS = [
 export const isSchedulable = (operation) =>
   SCHEDULABLE_OPERATIONS.includes(operation);
 
+// The operations menu stays open while an operation runs, so that the user can
+// schedule. A request now is refused with this error.
+export const ALREADY_RUNNING_ERRORS = [
+  {
+    detail: 'Another operation is already running for this target',
+    metadata: [],
+  },
+];
+
 export const getOperationLabel = (operation) =>
   get(OPERATION_LABELS, operation, 'unknown');
 

@@ -24,9 +24,9 @@ import {
   PACEMAKER_DISABLE,
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
-  OPERATION_NOT_ALLOWED_CLUSTER,
   getOperationLabel,
   isSchedulable,
+  ALREADY_RUNNING_ERRORS,
 } from '@lib/operations';
 
 import { formatDateTime } from '@lib/timezones';
@@ -87,6 +87,7 @@ function ClusterDetails({
   const [currentOperationHost, setCurrentOperationHost] = useState(undefined);
   const [operationParams, setOperationParams] = useState(undefined);
   const [editingSchedule, setEditingSchedule] = useState(null);
+  const [alreadyRunning, setAlreadyRunning] = useState(null);
 
   const closeOperationModal = () =>
     setOperationModalOpen((prevState) => ({ ...prevState, open: false }));
@@ -185,6 +186,12 @@ function ClusterDetails({
             onCancel={onCleanForbiddenOperation}
             errors={operationForbiddenErrors}
           />
+          <OperationForbiddenModal
+            operation={getOperationLabel(alreadyRunning)}
+            isOpen={!!alreadyRunning}
+            onCancel={() => setAlreadyRunning(null)}
+            errors={ALREADY_RUNNING_ERRORS}
+          />
           <SimpleAcceptanceOperationModal
             operation={operationModalOpen.operation}
             descriptionResolverArgs={getOperationModalDescriptionArgs(
@@ -205,7 +212,11 @@ function ClusterDetails({
                   schedule
                 );
               } else {
-                requestOperation(operationModalOpen.operation);
+                if (runningOperationName && !operationForbidden) {
+                  setAlreadyRunning(operationModalOpen.operation);
+                } else {
+                  requestOperation(operationModalOpen.operation);
+                }
               }
               closeOperationModal();
             }}
@@ -252,8 +263,6 @@ function ClusterDetails({
             {operationsEnabled && (
               <OperationsButton
                 userAbilities={userAbilities}
-                disabled={!someHostHeartbeatPassing}
-                disabledTooltip={OPERATION_NOT_ALLOWED_CLUSTER}
                 operations={clusterOperations}
               />
             )}
