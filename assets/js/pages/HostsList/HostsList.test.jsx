@@ -3,7 +3,16 @@
 
 import React from 'react';
 import { Link } from 'react-router';
-import { act, screen, waitFor, within } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
+import MockAdapter from 'axios-mock-adapter';
+import { networkClient } from '@lib/network';
+import { waiveOperationDisclaimer } from '@lib/operations';
 import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -192,6 +201,68 @@ describe('HostsLists component', () => {
       expect(
         within(rows[1]).getByRole('img', { name: /health/i })
       ).not.toHaveAttribute('data-stale');
+    });
+  });
+
+  describe('bulk scheduling', () => {
+    const axiosMock = new MockAdapter(networkClient);
+
+    beforeEach(() => {
+      global.config.operationsEnabled = true;
+    });
+
+    afterEach(() => {
+      delete global.config.operationsEnabled;
+      axiosMock.reset();
+    });
+
+    it('should schedule a reboot on the selected hosts', async () => {
+      waiveOperationDisclaimer();
+      const user = userEvent.setup();
+      const [host1, host2, host3] = hostFactory.buildList(3);
+      const state = {
+        ...defaultInitialState,
+        hostsList: { hosts: [host1, host2, host3] },
+        user: {
+          abilities: [{ name: 'all', resource: 'all' }],
+          timezone: 'Etc/UTC',
+        },
+      };
+      axiosMock
+        .onPost('/api/v1/operation_schedules/bulk')
+        .reply(201, { bulk_id: 'bulk-id', schedules: [] });
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+      renderWithRouter(StatefulHostsList);
+
+      expect(
+        screen.getByRole('button', { name: 'Schedule Reboot' })
+      ).toBeDisabled();
+
+      await user.click(screen.getByLabelText(`Select ${host1.hostname}`));
+      await user.click(screen.getByLabelText(`Select ${host3.hostname}`));
+      await user.click(screen.getByRole('button', { name: 'Schedule Reboot' }));
+
+      expect(screen.getByText('Schedule Reboot host on 2 hosts')).toBeVisible();
+
+      fireEvent.change(screen.getByLabelText('Date'), {
+        target: { value: '2026-11-20' },
+      });
+      fireEvent.change(screen.getByLabelText('Start Time'), {
+        target: { value: '03:00' },
+      });
+      await user.click(screen.getByRole('button', { name: 'Schedule' }));
+
+      await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        target_type: 'host',
+        target_ids: [host1.id, host3.id],
+        operation: 'reboot',
+        params: {},
+        starts_at: '2026-11-20T03:00:00.000Z',
+        timezone: 'Etc/UTC',
+        recurrence: null,
+      });
     });
   });
 
