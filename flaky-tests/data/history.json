@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-09-06T19:17:20Z",
-    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
-    "run_id": "34053615483",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-06T19:18:16Z",
     "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
     "run_id": "34053615483",
@@ -5743,6 +5727,26 @@
       },
       {
         "name": "should preserve filters when the activity log sidebar entry is clicked from the activity log view::Activity Log page Filtering should preserve filters when the activity log sidebar entry is clicked from the activity log view",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-26T22:34:42Z",
+    "commit": "68c837d629744e19a1da0c34f76ab67def00d0a1",
+    "run_id": "40413500023",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 42,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
         "score": 0.02501
       }
     ]
