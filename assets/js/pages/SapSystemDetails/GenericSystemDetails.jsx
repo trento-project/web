@@ -72,6 +72,7 @@ import {
   systemHostsTableConfiguration,
   getSystemInstancesTableConfiguration,
 } from './tableConfigs';
+import OperationSchedules from '@common/OperationSchedules';
 
 const SR_INACTIVE = 'INACTIVE';
 
@@ -133,6 +134,9 @@ export function GenericSystemDetails({
   onInstanceCleanUp = noop,
   onRequestOperation = noop,
   onScheduleOperation = noop,
+  operationSchedules = [],
+  onUpdateSchedule = noop,
+  onCancelSchedule = noop,
   onCleanForbiddenOperation = noop,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
@@ -142,6 +146,7 @@ export function GenericSystemDetails({
   const [currentOperationInstance, setCurrentOperationInstance] =
     useState(undefined);
   const [currentOperationSite, setCurrentOperationSite] = useState(undefined);
+  const [editingSchedule, setEditingSchedule] = useState(null);
 
   if (!system) {
     return <div>Not Found</div>;
@@ -327,6 +332,55 @@ export function GenericSystemDetails({
         }}
         onCancel={() => {
           setOperationModelOpen(closeOperationModal);
+        }}
+      />
+      <SimpleAcceptanceOperationModal
+        operation={editingSchedule?.operation}
+        descriptionResolverArgs={{
+          instanceNumber: editingSchedule?.params?.instance_number,
+          sid: system.sid,
+        }}
+        isOpen={
+          !!editingSchedule &&
+          instanceStartStopOperations.includes(editingSchedule.operation)
+        }
+        schedulable
+        timezone={userTimezone}
+        initialSchedule={editingSchedule}
+        onRequest={(_params, schedule) => {
+          onUpdateSchedule(editingSchedule.id, {
+            params: editingSchedule.params,
+            ...schedule,
+          });
+          setEditingSchedule(null);
+        }}
+        onCancel={() => setEditingSchedule(null)}
+        onCancelSchedule={() => {
+          onCancelSchedule(editingSchedule.id);
+          setEditingSchedule(null);
+        }}
+      />
+      <SapStartStopOperationModal
+        key={editingSchedule?.id}
+        operation={editingSchedule?.operation}
+        sid={system.sid}
+        type={type}
+        site={editingSchedule?.params?.site || null}
+        isOpen={
+          !!editingSchedule &&
+          startStopOperations.includes(editingSchedule.operation)
+        }
+        schedulable
+        timezone={userTimezone}
+        initialSchedule={editingSchedule}
+        onRequest={(params, schedule) => {
+          onUpdateSchedule(editingSchedule.id, { params, ...schedule });
+          setEditingSchedule(null);
+        }}
+        onCancel={() => setEditingSchedule(null)}
+        onCancelSchedule={() => {
+          onCancelSchedule(editingSchedule.id);
+          setEditingSchedule(null);
         }}
       />
       <div className="flex flex-wrap">
@@ -569,6 +623,13 @@ export function GenericSystemDetails({
           );
         })}
       </div>
+
+      <OperationSchedules
+        schedules={operationSchedules}
+        timezone={userTimezone}
+        onEdit={setEditingSchedule}
+        onCancel={onCancelSchedule}
+      />
 
       <div className="mt-8">
         <div>

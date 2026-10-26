@@ -39,6 +39,7 @@ import {
 
 import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
 import useScheduleOperation from '@hooks/useScheduleOperation';
+import useOperationSchedules from '@hooks/useOperationSchedules';
 
 import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
@@ -115,6 +116,14 @@ export function ClusterDetailsPage() {
   );
 
   const runningOperation = useSelector(getRunningOperation(clusterID));
+  const {
+    schedules: operationSchedules,
+    refresh: refreshSchedules,
+    updateSchedule,
+    cancelSchedule,
+  } = useOperationSchedules(clusterID, {
+    refreshKey: runningOperation?.operation ?? null,
+  });
 
   if (!cluster) {
     return <div>Loading...</div>;
@@ -129,7 +138,12 @@ export function ClusterDetailsPage() {
     <ClusterDetails
       clusterID={clusterID}
       inExceptionWindow={!!checksSchedule?.in_exception_window}
-      onScheduleOperation={scheduleOperation}
+      onScheduleOperation={(target, schedule) =>
+        scheduleOperation(target, schedule).then(refreshSchedules)
+      }
+      operationSchedules={operationSchedules}
+      onUpdateSchedule={updateSchedule}
+      onCancelSchedule={cancelSchedule}
       clusterName={getClusterName(cluster)}
       details={cluster.details}
       hasSelectedChecks={hasSelectedChecks}
