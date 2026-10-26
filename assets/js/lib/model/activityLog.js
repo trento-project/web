@@ -168,6 +168,21 @@ export const CLUSTER_HOST_OPERATION_REQUESTED =
 export const SAP_SYSTEM_OPERATION_REQUESTED = 'sap_system_operation_requested';
 export const DATABASE_OPERATION_REQUESTED = 'database_operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
+export const OPERATION_SCHEDULED = 'operation_scheduled';
+export const OPERATION_SCHEDULE_CHANGED = 'operation_schedule_changed';
+export const OPERATION_SCHEDULE_CANCELLED = 'operation_schedule_cancelled';
+export const SCHEDULED_OPERATION_REQUESTED = 'scheduled_operation_requested';
+export const SCHEDULED_OPERATION_REQUEST_FAILED =
+  'scheduled_operation_request_failed';
+export const CHECKS_EXECUTION_SETTINGS_UPDATED =
+  'checks_execution_settings_updated';
+
+const SCHEDULED_REQUEST_FAILURE_REASONS = {
+  not_available: 'Trento was not available at the scheduled time',
+  policies: 'the operation policies did not pass',
+  already_running: 'another operation was running',
+  target_not_found: 'the target is gone',
+};
 
 // Check Customization
 const CHECK_CUSTOMIZATION_APPLIED = 'check_customization_applied';
@@ -392,6 +407,11 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Activity Log Settings Updated',
     message: (_entry) => `Activity log settings were updated`,
     resource: (_entry) => 'Activity Log Settings',
+  },
+  [CHECKS_EXECUTION_SETTINGS_UPDATED]: {
+    label: 'Checks Execution Settings Updated',
+    message: (_entry) => 'Checks execution settings were updated',
+    resource: (_entry) => 'Checks Execution Settings',
   },
   // Host events
   [HEARTBEAT_FAILED]: {
@@ -824,6 +844,38 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
     resource: databaseResourceType,
+  },
+  [OPERATION_SCHEDULED]: {
+    label: 'Operation Scheduled',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} scheduled`,
+    resource: operationResourceType,
+  },
+  [OPERATION_SCHEDULE_CHANGED]: {
+    label: 'Operation Schedule Changed',
+    message: ({ metadata }) =>
+      `Schedule of operation ${getOperationLabel(metadata.operation)} changed`,
+    resource: operationResourceType,
+  },
+  [OPERATION_SCHEDULE_CANCELLED]: {
+    label: 'Operation Schedule Cancelled',
+    message: ({ metadata }) =>
+      `Schedule of operation ${getOperationLabel(metadata.operation)} cancelled`,
+    resource: operationResourceType,
+  },
+  [SCHEDULED_OPERATION_REQUESTED]: {
+    label: 'Scheduled Operation Requested',
+    message: ({ metadata }) =>
+      `Scheduled operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: operationResourceType,
+  },
+  [SCHEDULED_OPERATION_REQUEST_FAILED]: {
+    label: 'Scheduled Operation Request Failed',
+    message: ({ metadata }) =>
+      `Scheduled operation ${getOperationLabel(metadata.operation)} not requested: ${
+        SCHEDULED_REQUEST_FAILURE_REASONS[metadata.reason] || metadata.reason
+      }`,
+    resource: operationResourceType,
   },
   [OPERATION_COMPLETED]: {
     label: 'Operation Completed',
