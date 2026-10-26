@@ -99,7 +99,8 @@ defmodule Trento.Clusters.Cluster do
     RegisterOfflineClusterHost,
     RegisterOnlineClusterHost,
     RollUpCluster,
-    SelectChecks
+    SelectChecks,
+    UpdateClusterChecksSchedule
   }
 
   alias Trento.Domain.Events.{
@@ -112,6 +113,7 @@ defmodule Trento.Clusters.Cluster do
   alias Trento.Clusters.Events.{
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterChecksScheduleUpdated,
     ClusterDataMarkedInSync,
     ClusterDataMarkedStale,
     ClusterDeregistered,
@@ -156,6 +158,8 @@ defmodule Trento.Clusters.Cluster do
     field :offline_hosts, {:array, :string}, default: []
     field :stale_hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
+    field :checks_interval, :string
+    field :checks_exception_window, :map
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
 
@@ -429,6 +433,14 @@ defmodule Trento.Clusters.Cluster do
     %ChecksSelected{
       cluster_id: cluster_id,
       checks: selected_checks
+    }
+  end
+
+  def execute(%Cluster{cluster_id: cluster_id}, %UpdateClusterChecksSchedule{} = command) do
+    %ClusterChecksScheduleUpdated{
+      cluster_id: cluster_id,
+      interval: command.interval,
+      exception_window: command.exception_window
     }
   end
 
@@ -742,6 +754,14 @@ defmodule Trento.Clusters.Cluster do
     %Cluster{
       cluster
       | selected_checks: selected_checks
+    }
+  end
+
+  def apply(%Cluster{} = cluster, %ClusterChecksScheduleUpdated{} = event) do
+    %Cluster{
+      cluster
+      | checks_interval: event.interval,
+        checks_exception_window: event.exception_window
     }
   end
 

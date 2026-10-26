@@ -91,6 +91,7 @@ defmodule Trento.Hosts.Host do
     RollUpHost,
     SelectHostChecks,
     UpdateHeartbeat,
+    UpdateHostChecksSchedule,
     UpdateProvider,
     UpdateSaptuneStatus,
     UpdateSlesSubscriptions
@@ -100,6 +101,7 @@ defmodule Trento.Hosts.Host do
     HeartbeatFailed,
     HeartbeatSucceeded,
     HostChecksHealthChanged,
+    HostChecksScheduleUpdated,
     HostChecksSelected,
     HostDeregistered,
     HostDeregistrationRequested,
@@ -146,6 +148,8 @@ defmodule Trento.Hosts.Host do
 
     field :rolling_up, :boolean, default: false
     field :selected_checks, {:array, :string}, default: []
+    field :checks_interval, :string
+    field :checks_exception_window, :map
     field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_one :saptune_status, SaptuneStatus
@@ -520,6 +524,14 @@ defmodule Trento.Hosts.Host do
     }
   end
 
+  def execute(%Host{host_id: host_id}, %UpdateHostChecksSchedule{} = command) do
+    %HostChecksScheduleUpdated{
+      host_id: host_id,
+      interval: command.interval,
+      exception_window: command.exception_window
+    }
+  end
+
   def execute(
         %Host{
           host_id: host_id
@@ -792,6 +804,14 @@ defmodule Trento.Hosts.Host do
     %Host{
       host
       | selected_checks: selected_checks
+    }
+  end
+
+  def apply(%Host{} = host, %HostChecksScheduleUpdated{} = event) do
+    %Host{
+      host
+      | checks_interval: event.interval,
+        checks_exception_window: event.exception_window
     }
   end
 
