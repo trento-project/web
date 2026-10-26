@@ -113,18 +113,6 @@ config :trento, Trento.Mailer,
     depth: 99
   ]
 
-if !IEx.started?() do
-  config :trento, Trento.Scheduler,
-    jobs: [
-      clusters_checks_execution: [
-        schedule: {:extended, "@hourly"}
-      ],
-      hosts_checks_execution: [
-        schedule: {:extended, "@hourly"}
-      ]
-    ]
-end
-
 amqp_connection =
   if System.get_env("USE_LOCAL_RABBIT_TLS") do
     "amqps://trento:trento@localhost:5671?certfile=container_fixtures/rabbitmq/certs/client_web.trento.local_certificate.pem&keyfile=container_fixtures/rabbitmq/certs/client_web.trento.local_key.pem&verify=verify_peer&cacertfile=container_fixtures/rabbitmq/certs/ca_certificate.pem"

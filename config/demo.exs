@@ -13,14 +13,11 @@ config :swoosh, local: false
 # Do not print debug messages in production
 # config :logger, level: :info
 
+# Hourly checks executions, which also keeps the setting read only in the demo
+config :trento, :checks_execution, interval: "1h"
+
 config :trento, Trento.Scheduler,
   jobs: [
-    clusters_checks_execution: [
-      schedule: {:extended, "@hourly"}
-    ],
-    hosts_checks_execution: [
-      schedule: {:extended, "@hourly"}
-    ],
     heartbeat_fake: [
       schedule: {:extended, "*/5"},
       task: {Trento.Heartbeats.Faker, :send_heartbeats, []},

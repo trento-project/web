@@ -81,6 +81,27 @@ defmodule TrentoWeb.V1.ChecksScheduleControllerTest do
     |> json_response(422)
   end
 
+  test "should refuse a manual checks execution during the exception window", %{conn: conn} do
+    # Event sourced: the window is projected in its own read model
+    %{id: host_id} = insert(:host, selected_checks: ["check_1"])
+
+    Trento.Repo.insert!(%Trento.ChecksScheduling.Projections.TargetSettingsReadModel{
+      target_id: host_id,
+      target_type: "host",
+      exception_window: %{
+        "starts_at" => DateTime.utc_now() |> DateTime.add(-10, :minute) |> DateTime.to_iso8601(),
+        "timezone" => "Etc/UTC",
+        "duration_minutes" => 60,
+        "recurrence" => nil
+      }
+    })
+
+    assert %{"errors" => [%{"detail" => "Checks cannot be executed during exception window"}]} =
+             conn
+             |> post("/api/v1/hosts/#{host_id}/checks/request_execution")
+             |> json_response(422)
+  end
+
   test "should not find an unknown target", %{conn: conn} do
     conn
     |> get("/api/v1/clusters/#{UUID.uuid4()}/checks/schedule")

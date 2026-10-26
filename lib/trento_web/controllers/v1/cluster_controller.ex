@@ -101,7 +101,8 @@ defmodule TrentoWeb.V1.ClusterController do
     display_text: "Request checks execution for a cluster"
 
   def request_checks_execution(conn, %{cluster_id: cluster_id}) do
-    with :ok <- Clusters.request_checks_execution(cluster_id) do
+    with :ok <- outside_exception_window(cluster_id),
+         :ok <- Clusters.request_checks_execution(cluster_id) do
       conn
       |> put_status(:accepted)
       |> json(%{})
@@ -284,6 +285,12 @@ defmodule TrentoWeb.V1.ClusterController do
   end
 
   def get_policy_resource(_), do: ClusterReadModel
+
+  defp outside_exception_window(cluster_id) do
+    if Trento.ChecksScheduling.in_exception_window?(cluster_id),
+      do: {:error, :in_exception_window},
+      else: :ok
+  end
 
   def get_operation_cluster(%{
         assigns: %{operation: operation},
