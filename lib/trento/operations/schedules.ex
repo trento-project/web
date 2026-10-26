@@ -13,7 +13,7 @@ defmodule Trento.Operations.Schedules do
   import Ecto.Query, only: [from: 2]
 
   alias Trento.Operations.{OperationSchedule, Requests}
-  alias Trento.Operations.Commands.ScheduleOperation
+  alias Trento.Operations.Commands.{ChangeOperationSchedule, ScheduleOperation}
   alias Trento.Repo
   alias Trento.Support.{CommandedUtils, DateService}
 
@@ -34,6 +34,27 @@ defmodule Trento.Operations.Schedules do
          {:ok, warnings} <- policy_warnings(schedule),
          schedule_id = UUID.uuid4(),
          :ok <- dispatch(schedule_command(schedule_id, schedule, actor), schedule_id) do
+      {:ok, Repo.get!(OperationSchedule, schedule_id), warnings}
+    end
+  end
+
+  @doc """
+  Replaces the params and the timing of a schedule. The occurrence count
+  restarts. Failing operation policies come back as warnings.
+  """
+  @spec update_schedule(String.t(), map(), String.t(), module()) ::
+          {:ok, OperationSchedule.t(), warnings()}
+          | {:error, :not_found}
+          | {:error, Ecto.Changeset.t()}
+          | {:error, any()}
+  def update_schedule(schedule_id, attrs, actor, date_service \\ DateService) do
+    with {:ok, current} <- get_schedule(schedule_id),
+         {:ok, schedule} <-
+           current
+           |> OperationSchedule.update_changeset(attrs, date_service.utc_now())
+           |> Ecto.Changeset.apply_action(:update),
+         {:ok, warnings} <- policy_warnings(schedule),
+         :ok <- dispatch(change_command(schedule, actor), schedule_id) do
       {:ok, Repo.get!(OperationSchedule, schedule_id), warnings}
     end
   end
@@ -76,6 +97,18 @@ defmodule Trento.Operations.Schedules do
       recurrence: OperationSchedule.recurrence(schedule),
       next_run_at: schedule.next_run_at,
       bulk_id: schedule.bulk_id,
+      actor: actor
+    })
+  end
+
+  defp change_command(%OperationSchedule{} = schedule, actor) do
+    ChangeOperationSchedule.new!(%{
+      schedule_id: schedule.id,
+      params: schedule.params,
+      starts_at: schedule.starts_at,
+      timezone: schedule.timezone,
+      recurrence: OperationSchedule.recurrence(schedule),
+      next_run_at: schedule.next_run_at,
       actor: actor
     })
   end

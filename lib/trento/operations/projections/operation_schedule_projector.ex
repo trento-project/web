@@ -13,7 +13,9 @@ defmodule Trento.Operations.Projections.OperationScheduleProjector do
     name: "operation_schedule_projector",
     consistency: :strong
 
-  alias Trento.Operations.Events.OperationScheduled
+  alias Trento.Operations.Events.{OperationScheduleChanged, OperationScheduled}
+  import Ecto.Query, only: [from: 2]
+
   alias Trento.Operations.OperationSchedule
 
   project(%OperationScheduled{} = event, fn multi ->
@@ -38,6 +40,29 @@ defmodule Trento.Operations.Projections.OperationScheduleProjector do
       )
     )
   end)
+
+  project(%OperationScheduleChanged{schedule_id: schedule_id} = event, fn multi ->
+    changes =
+      Map.merge(recurrence_fields(event.recurrence), %{
+        params: event.params || %{},
+        starts_at: event.starts_at,
+        timezone: event.timezone,
+        next_run_at: event.next_run_at,
+        occurrences: 0
+      })
+
+    update(multi, schedule_id, changes)
+  end)
+
+  # update_all, so that fields going back to their default value are written too
+  defp update(multi, schedule_id, changes) do
+    Ecto.Multi.update_all(
+      multi,
+      :operation_schedule,
+      from(s in OperationSchedule, where: s.id == ^schedule_id),
+      set: Map.to_list(Map.put(changes, :updated_at, DateTime.utc_now()))
+    )
+  end
 
   @doc false
   def recurrence_fields(nil),

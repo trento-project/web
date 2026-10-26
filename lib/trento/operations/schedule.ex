@@ -12,8 +12,8 @@ defmodule Trento.Operations.Schedule do
 
   require Logger
 
-  alias Trento.Operations.Commands.ScheduleOperation
-  alias Trento.Operations.Events.OperationScheduled
+  alias Trento.Operations.Commands.{ChangeOperationSchedule, ScheduleOperation}
+  alias Trento.Operations.Events.{OperationScheduleChanged, OperationScheduled}
 
   @required_fields []
 
@@ -40,6 +40,24 @@ defmodule Trento.Operations.Schedule do
   def execute(%__MODULE__{}, %ScheduleOperation{}),
     do: {:error, :operation_schedule_already_exists}
 
+  def execute(%__MODULE__{schedule_id: nil}, _), do: {:error, :operation_schedule_not_found}
+
+  def execute(%__MODULE__{} = schedule, %ChangeOperationSchedule{} = command) do
+    %OperationScheduleChanged{
+      schedule_id: schedule.schedule_id,
+      target_type: schedule.target_type,
+      target_id: schedule.target_id,
+      operation: schedule.operation,
+      params: command.params,
+      starts_at: command.starts_at,
+      timezone: command.timezone,
+      recurrence: command.recurrence,
+      next_run_at: command.next_run_at,
+      bulk_id: schedule.bulk_id,
+      actor: command.actor
+    }
+  end
+
   def apply(%__MODULE__{} = schedule, %OperationScheduled{} = event) do
     %__MODULE__{
       schedule
@@ -55,6 +73,18 @@ defmodule Trento.Operations.Schedule do
         occurrences: 0,
         bulk_id: event.bulk_id,
         created_by: event.actor
+    }
+  end
+
+  def apply(%__MODULE__{} = schedule, %OperationScheduleChanged{} = event) do
+    %__MODULE__{
+      schedule
+      | params: event.params,
+        starts_at: event.starts_at,
+        timezone: event.timezone,
+        recurrence: event.recurrence,
+        next_run_at: event.next_run_at,
+        occurrences: 0
     }
   end
 end

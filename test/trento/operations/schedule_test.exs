@@ -1,8 +1,8 @@
 defmodule Trento.Operations.ScheduleTest do
   use Trento.AggregateCase, aggregate: Trento.Operations.Schedule, async: true
 
-  alias Trento.Operations.Commands.ScheduleOperation
-  alias Trento.Operations.Events.OperationScheduled
+  alias Trento.Operations.Commands.{ChangeOperationSchedule, ScheduleOperation}
+  alias Trento.Operations.Events.{OperationScheduleChanged, OperationScheduled}
   alias Trento.Operations.Schedule
 
   defp schedule_command(schedule_id) do
@@ -61,6 +61,61 @@ defmodule Trento.Operations.ScheduleTest do
       [struct(OperationScheduled, Map.from_struct(command))],
       command,
       {:error, :operation_schedule_already_exists}
+    )
+  end
+
+  test "should change a schedule and restart its occurrences" do
+    schedule_id = UUID.uuid4()
+    %ScheduleOperation{target_id: target_id} = command = schedule_command(schedule_id)
+    scheduled = struct(OperationScheduled, Map.from_struct(command))
+
+    assert_events_and_state(
+      [scheduled],
+      ChangeOperationSchedule.new!(%{
+        schedule_id: schedule_id,
+        params: %{},
+        starts_at: ~U[2026-11-10 04:00:00.000000Z],
+        timezone: "Europe/Berlin",
+        recurrence: nil,
+        next_run_at: ~U[2026-11-10 04:00:00.000000Z],
+        actor: "operator"
+      }),
+      [
+        %OperationScheduleChanged{
+          schedule_id: schedule_id,
+          target_type: "host",
+          target_id: target_id,
+          operation: "reboot",
+          params: %{},
+          starts_at: ~U[2026-11-10 04:00:00.000000Z],
+          timezone: "Europe/Berlin",
+          recurrence: nil,
+          next_run_at: ~U[2026-11-10 04:00:00.000000Z],
+          bulk_id: nil,
+          actor: "operator"
+        }
+      ],
+      fn state ->
+        assert %Schedule{
+                 next_run_at: ~U[2026-11-10 04:00:00.000000Z],
+                 recurrence: nil,
+                 occurrences: 0
+               } =
+                 state
+      end
+    )
+  end
+
+  test "should not change an unknown schedule" do
+    assert_error(
+      ChangeOperationSchedule.new!(%{
+        schedule_id: UUID.uuid4(),
+        starts_at: ~U[2026-11-10 04:00:00.000000Z],
+        timezone: "Etc/UTC",
+        next_run_at: ~U[2026-11-10 04:00:00.000000Z],
+        actor: "operator"
+      }),
+      {:error, :operation_schedule_not_found}
     )
   end
 end
