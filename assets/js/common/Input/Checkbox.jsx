@@ -23,7 +23,7 @@ function Checkbox({
       }}
       type="checkbox"
       className={classNames(
-        'h-4 w-4 align-middle accent-jungle-green-500',
+        'h-4 w-4 align-middle',
         { 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled },
         className
       )}
