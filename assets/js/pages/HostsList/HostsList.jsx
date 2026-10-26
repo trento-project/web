@@ -9,7 +9,10 @@ import { uniqBy } from 'lodash';
 import classNames from 'classnames';
 import semver from 'semver';
 
+import BulkScheduleModal from '@common/BulkScheduleModal';
+import Button from '@common/Button';
 import CleanUpButton from '@common/CleanUpButton';
+import DisabledGuard from '@common/DisabledGuard';
 import HealthIcon from '@common/HealthIcon';
 import HostLink from '@common/HostLink';
 import PageHeader from '@common/PageHeader';
@@ -22,9 +25,13 @@ import Tooltip from '@common/Tooltip';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
+import { createBulkOperationSchedules } from '@lib/api/operationSchedules';
+import { getFromConfig } from '@lib/config';
+import { HOST_REBOOT } from '@lib/operations';
 import { STALE_ROW } from '@lib/tables';
 
 import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
+import { scheduledNotification } from '@hooks/useScheduleOperation';
 
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import DeregistrationModal from '@pages/DeregistrationModal';
@@ -35,6 +42,7 @@ import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
 import { getUserProfile } from '@state/selectors/user';
 import { hostsListSelector } from '@state/selectors/host';
 import { getInstanceID } from '@state/instances';
+import { notify } from '@state/notifications';
 
 const compareAgentVersions = (a, b) => {
   const coercedA = semver.coerce(a);
@@ -62,6 +70,10 @@ function HostsList() {
   const [searchParams, setSearchParams] = usePersistentSearchParams('hosts');
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [hostToDeregister, setHostToDeregister] = useState(undefined);
+  const [selectedHostIDs, setSelectedHostIDs] = useState([]);
+  const [bulkModalOpen, setBulkModalOpen] = useState(false);
+
+  const operationsEnabled = getFromConfig('operationsEnabled');
 
   const dispatch = useDispatch();
 
@@ -75,7 +87,55 @@ function HostsList() {
     dispatch(deregisterHost({ id, hostname }));
   };
 
+  const toggleHostSelection = (hostID) =>
+    setSelectedHostIDs((selected) =>
+      selected.includes(hostID)
+        ? selected.filter((id) => id !== hostID)
+        : [...selected, hostID]
+    );
+
+  const scheduleReboot = (schedule) => {
+    setBulkModalOpen(false);
+    createBulkOperationSchedules({
+      target_type: 'host',
+      target_ids: selectedHostIDs,
+      operation: HOST_REBOOT,
+      params: {},
+      ...schedule,
+    })
+      .then(({ data }) => {
+        dispatch(
+          scheduledNotification(
+            `Reboot scheduled on ${data.schedules.length} hosts`,
+            data.schedules.flatMap(({ warnings = [] }) => warnings)
+          )
+        );
+        setSelectedHostIDs([]);
+      })
+      .catch(() =>
+        dispatch(notify({ text: 'Unable to schedule the reboot', icon: '❌' }))
+      );
+  };
+
   const counters = getCounters(hostsData || []);
+
+  const selectionColumns = operationsEnabled
+    ? [
+        {
+          title: '',
+          key: 'id',
+          className: 'w-8',
+          render: (id, { hostname }) => (
+            <input
+              type="checkbox"
+              aria-label={`Select ${hostname}`}
+              checked={selectedHostIDs.includes(id)}
+              onChange={() => toggleHostSelection(id)}
+            />
+          ),
+        },
+      ]
+    : [];
 
   const config = {
     pagination: true,
@@ -238,6 +298,7 @@ function HostsList() {
             />
           ),
       },
+      ...selectionColumns,
     ],
   };
 
@@ -254,6 +315,33 @@ function HostsList() {
           setCleanUpModalOpen(false);
         }}
       />
+      {operationsEnabled && (
+        <>
+          <BulkScheduleModal
+            isOpen={bulkModalOpen}
+            operationLabel="Reboot host"
+            targetsLabel={`${selectedHostIDs.length} hosts`}
+            timezone={timezone}
+            onSchedule={scheduleReboot}
+            onCancel={() => setBulkModalOpen(false)}
+          />
+          <div className="flex justify-end pb-2">
+            <DisabledGuard
+              userAbilities={abilities}
+              permitted={['reboot:host']}
+            >
+              <Button
+                type="primary-white"
+                size="small"
+                disabled={selectedHostIDs.length === 0}
+                onClick={() => setBulkModalOpen(true)}
+              >
+                Schedule Reboot
+              </Button>
+            </DisabledGuard>
+          </div>
+        </>
+      )}
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
