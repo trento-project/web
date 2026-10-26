@@ -1247,6 +1247,7 @@ jobs:
       - api-docs-check
       - api-bc-check
       - test-release
+      - test-elixir-tls-handshake
     permissions:
       contents: write
       pull-requests: write
