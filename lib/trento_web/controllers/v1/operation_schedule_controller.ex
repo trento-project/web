@@ -62,6 +62,32 @@ defmodule TrentoWeb.V1.OperationScheduleController do
     end
   end
 
+  operation :bulk_create,
+    summary: "Schedule an operation on several targets.",
+    description:
+      "Schedules the same operation on several targets of one type. It creates one schedule per target, all with the same bulk_id. Schedules can only be changed and cancelled one by one.",
+    request_body:
+      {"Targets and schedule.", "application/json", Scheduling.BulkCreateOperationScheduleRequest},
+    responses: [
+      created: {"Saved schedules.", "application/json", Scheduling.BulkOperationSchedules},
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response(),
+      not_found: Schema.NotFound.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  def bulk_create(conn, _) do
+    attrs = OpenApiSpex.body_params(conn)
+    user = Pow.Plug.current_user(conn)
+
+    with :ok <- authorize(user, attrs.target_type, attrs.operation),
+         {:ok, bulk_id, results} <- Schedules.create_bulk_schedules(attrs, user.username) do
+      conn
+      |> put_status(:created)
+      |> render(:bulk_operation_schedules, bulk_id: bulk_id, results: results)
+    end
+  end
+
   operation :update,
     summary: "Change an operation schedule.",
     parameters: [

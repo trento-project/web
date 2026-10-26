@@ -41,6 +41,31 @@ defmodule Trento.Operations.Schedules do
   end
 
   @doc """
+  Schedules the same operation on several targets of one type: one schedule
+  per target, all with the same bulk id. Nothing is saved when a target is
+  unknown or the schedule is not valid. Failing policies come back as
+  warnings, per target.
+  """
+  @spec create_bulk_schedules(map(), String.t(), module()) ::
+          {:ok, String.t(), [{OperationSchedule.t(), warnings()}]}
+          | {:error, :not_found}
+          | {:error, Ecto.Changeset.t()}
+  def create_bulk_schedules(%{target_ids: target_ids} = attrs, actor, date_service \\ DateService) do
+    bulk_id = UUID.uuid4()
+    now = date_service.utc_now()
+
+    common =
+      attrs
+      |> Map.delete(:target_ids)
+      |> Map.merge(%{bulk_id: bulk_id, created_by: actor})
+
+    with {:ok, prepared} <- prepare_bulk(target_ids, common, now),
+         {:ok, schedules} <- insert_bulk(prepared, actor) do
+      {:ok, bulk_id, Enum.zip(schedules, Enum.map(prepared, &elem(&1, 1)))}
+    end
+  end
+
+  @doc """
   Replaces the params and the timing of a schedule. The occurrence count
   restarts. Failing operation policies come back as warnings.
   """
@@ -98,6 +123,50 @@ defmodule Trento.Operations.Schedules do
     case Repo.get(OperationSchedule, schedule_id) do
       nil -> {:error, :not_found}
       schedule -> {:ok, schedule}
+    end
+  end
+
+  defp prepare_bulk(target_ids, common, now) do
+    target_ids
+    |> Enum.reduce_while({:ok, []}, fn target_id, {:ok, acc} ->
+      changeset =
+        OperationSchedule.changeset(
+          %OperationSchedule{},
+          Map.put(common, :target_id, target_id),
+          now
+        )
+
+      with {:ok, schedule} <- Ecto.Changeset.apply_action(changeset, :insert),
+           {:ok, warnings} <- policy_warnings(schedule) do
+        {:cont, {:ok, [{changeset, warnings} | acc]}}
+      else
+        error -> {:halt, error}
+      end
+    end)
+    |> case do
+      {:ok, prepared} -> {:ok, Enum.reverse(prepared)}
+      error -> error
+    end
+  end
+
+  defp insert_bulk(prepared, actor) do
+    prepared
+    |> Enum.with_index()
+    |> Enum.reduce(Multi.new(), fn {{changeset, _}, index}, multi ->
+      multi
+      |> Multi.insert({:schedule, index}, changeset)
+      |> Multi.insert({:activity, index}, fn changes ->
+        ScheduleActivity.changeset("operation_scheduled", changes[{:schedule, index}], actor)
+      end)
+      |> ScheduleJobs.insert({:job, index}, {:schedule, index})
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, changes} ->
+        {:ok, Enum.map(0..(length(prepared) - 1), &changes[{:schedule, &1}])}
+
+      {:error, _, changeset, _} ->
+        {:error, changeset}
     end
   end
 
