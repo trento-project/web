@@ -35,7 +35,25 @@ defmodule Trento.Operations.Schedules do
 
     with {:ok, schedule} <- Ecto.Changeset.apply_action(changeset, :insert),
          {:ok, warnings} <- policy_warnings(schedule),
-         {:ok, %{schedule: schedule}} <- insert(changeset, actor) do
+         {:ok, %{schedule: schedule}} <- persist(changeset, "operation_scheduled", actor) do
+      {:ok, schedule, warnings}
+    end
+  end
+
+  @doc """
+  Replaces the params and the timing of a schedule. The occurrence count
+  restarts. Failing operation policies come back as warnings.
+  """
+  @spec update_schedule(String.t(), map(), String.t(), module()) ::
+          {:ok, OperationSchedule.t(), warnings()}
+          | {:error, :not_found}
+          | {:error, Ecto.Changeset.t()}
+  def update_schedule(schedule_id, attrs, actor, date_service \\ DateService) do
+    with {:ok, current} <- get_schedule(schedule_id),
+         changeset = OperationSchedule.update_changeset(current, attrs, date_service.utc_now()),
+         {:ok, schedule} <- Ecto.Changeset.apply_action(changeset, :update),
+         {:ok, warnings} <- policy_warnings(schedule),
+         {:ok, %{schedule: schedule}} <- persist(changeset, "operation_schedule_changed", actor) do
       {:ok, schedule, warnings}
     end
   end
@@ -60,12 +78,13 @@ defmodule Trento.Operations.Schedules do
     end
   end
 
-  defp insert(changeset, actor) do
+  defp persist(changeset, activity_type, actor) do
     Multi.new()
-    |> Multi.insert(:schedule, changeset)
+    |> Multi.insert_or_update(:schedule, changeset)
     |> Multi.insert(:activity, fn %{schedule: schedule} ->
-      ScheduleActivity.changeset("operation_scheduled", schedule, actor)
+      ScheduleActivity.changeset(activity_type, schedule, actor)
     end)
+    |> cancel_previous_job(changeset)
     |> ScheduleJobs.insert(:job, :schedule)
     |> Repo.transaction()
     |> case do
@@ -73,6 +92,11 @@ defmodule Trento.Operations.Schedules do
       {:error, _, changeset, _} -> {:error, changeset}
     end
   end
+
+  defp cancel_previous_job(multi, %Ecto.Changeset{data: %OperationSchedule{id: nil}}), do: multi
+
+  defp cancel_previous_job(multi, %Ecto.Changeset{data: %OperationSchedule{id: id}}),
+    do: ScheduleJobs.cancel(multi, :previous_job, id)
 
   defp policy_warnings(%OperationSchedule{} = schedule) do
     {:ok, target_type, operation} = Requests.parse(schedule.target_type, schedule.operation)
