@@ -102,6 +102,45 @@ export const getClusterOperations = (
   },
 ];
 
+export const getClustersBulkOperations = (
+  selectedClusters,
+  setBulkOperationModalOpen
+) => {
+  const openModal = (operation, params) =>
+    setBulkOperationModalOpen({
+      open: true,
+      operation,
+      params,
+      clusters: selectedClusters,
+    });
+
+  return [
+    {
+      value: 'Cluster maintenance on',
+      running: false,
+      disabled: false,
+      permitted: ['maintenance_change:cluster'],
+      onClick: () =>
+        openModal(CLUSTER_MAINTENANCE_CHANGE, { maintenance: true }),
+    },
+    {
+      value: 'Cluster maintenance off',
+      running: false,
+      disabled: false,
+      permitted: ['maintenance_change:cluster'],
+      onClick: () =>
+        openModal(CLUSTER_MAINTENANCE_CHANGE, { maintenance: false }),
+    },
+    {
+      value: 'Refresh resources',
+      running: false,
+      disabled: false,
+      permitted: ['resource_refresh:cluster'],
+      onClick: () => openModal(CLUSTER_RESOURCE_REFRESH, {}),
+    },
+  ];
+};
+
 export const getClusterHostOperations = curry(
   (
     clusterID,
