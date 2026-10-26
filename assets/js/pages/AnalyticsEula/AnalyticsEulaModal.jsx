@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
-import Input from '@common/Input';
+import { Checkbox } from '@common/Input';
 
 function AnalyticsEulaModal({ isOpen = false, onEnable, onCancel }) {
   const [checked, setChecked] = useState(false);
@@ -27,10 +27,9 @@ function AnalyticsEulaModal({ isOpen = false, onEnable, onCancel }) {
         anonymous metrics
       </a>{' '}
       to help improve Trento. This can also be managed in your Profile.
-      <div>
-        <Input
-          className="inline-block py-4 pr-2"
-          type="checkbox"
+      <div className="flex items-center py-4">
+        <Checkbox
+          className="mr-2"
           checked={checked}
           onChange={() => setChecked((prev) => !prev)}
         />

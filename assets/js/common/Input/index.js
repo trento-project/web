@@ -5,7 +5,8 @@ import Input from './Input';
 import Password from './Password';
 import Textarea from './Textarea';
 import InputNumber from './InputNumber';
+import Checkbox from './Checkbox';
 
-export { Password, Textarea, InputNumber };
+export { Password, Textarea, InputNumber, Checkbox };
 
 export default Input;

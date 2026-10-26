@@ -18,6 +18,57 @@
   }
 }
 
+/*
+ * accent-color leaves the tick color up to the browser (black on Chromium for
+ * light accents), so the checkbox is drawn explicitly to get a white tick.
+ */
+.rc-input[type='checkbox'] {
+  @apply appearance-none p-0 rounded-sm border border-gray-300 bg-white bg-center bg-no-repeat;
+
+  &:checked,
+  &:indeterminate {
+    @apply border-jungle-green-500 bg-jungle-green-500;
+  }
+
+  &:checked {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.259 3.991a1.25 1.25 0 010 1.768l-6.25 6.25a1.25 1.25 0 01-1.768 0l-2.5-2.5a1.25 1.25 0 011.768-1.768L6.125 9.358l5.366-5.366a1.25 1.25 0 011.768 0z'/%3E%3C/svg%3E");
+  }
+
+  &:indeterminate {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3E%3C/svg%3E");
+  }
+
+  &:focus-visible {
+    @apply outline-none ring-2 ring-jungle-green-500 ring-offset-1;
+  }
+
+  &:hover:not(:disabled) {
+    @apply border-jungle-green-500;
+  }
+
+  &:checked:hover:not(:disabled),
+  &:indeterminate:hover:not(:disabled) {
+    @apply opacity-80;
+  }
+
+  &:disabled {
+    @apply opacity-50;
+  }
+
+  /* forced-colors mode (e.g. Windows High Contrast): fall back to the native checkbox */
+  @media (forced-colors: active) {
+    appearance: auto;
+    &:checked,
+    &:indeterminate {
+      background-image: none;
+    }
+    &:focus-visible {
+      outline: 2px solid Highlight;
+      outline-offset: 2px;
+    }
+  }
+}
+
 .rc-input-disabled {
   @apply bg-gray-50;
 }

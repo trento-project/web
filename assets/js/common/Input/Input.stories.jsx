@@ -163,13 +163,6 @@ export const WithSuffixDisabled = {
   },
 };
 
-export const Checkbox = {
-  args: {
-    ...Default.args,
-    type: 'checkbox',
-  },
-};
-
 export const Date = {
   args: {
     ...Default.args,
