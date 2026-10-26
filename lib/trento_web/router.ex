@@ -191,6 +191,11 @@ defmodule TrentoWeb.Router do
       if Application.compile_env!(:trento, :operations_enabled) do
         # The operation endpoints are created using the operation Enums.
         # Every entry has a new path in the router
+        get "/operation_schedules", OperationScheduleController, :index
+        post "/operation_schedules", OperationScheduleController, :create
+        put "/operation_schedules/:id", OperationScheduleController, :update
+        delete "/operation_schedules/:id", OperationScheduleController, :delete
+
         for host_operation <- HostOperations.values() do
           post "/hosts/:id/operations/#{host_operation}", HostController, host_operation
         end
