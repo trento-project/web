@@ -26,6 +26,7 @@ import {
   CLUSTER_HOST_STOP,
   OPERATION_NOT_ALLOWED_CLUSTER,
   getOperationLabel,
+  isSchedulable,
 } from '@lib/operations';
 
 import { formatDateTime } from '@lib/timezones';
@@ -71,6 +72,7 @@ function ClusterDetails({
   userTimezone,
   onStartExecution = noop,
   onRequestOperation = noop,
+  onScheduleOperation = noop,
   onCleanForbiddenOperation = noop,
   onRequestHostOperation = noop,
   navigate = noop,
@@ -184,8 +186,22 @@ function ClusterDetails({
               operationModalOpen.operation
             )}
             isOpen={operationModalOpen.open}
-            onRequest={() => {
-              requestOperation(operationModalOpen.operation);
+            schedulable={isSchedulable(operationModalOpen.operation)}
+            timezone={userTimezone}
+            onRequest={(_params, schedule) => {
+              if (schedule) {
+                onScheduleOperation(
+                  {
+                    target_type: 'cluster',
+                    target_id: clusterID,
+                    operation: operationModalOpen.operation,
+                    params: operationParams,
+                  },
+                  schedule
+                );
+              } else {
+                requestOperation(operationModalOpen.operation);
+              }
               closeOperationModal();
             }}
             onCancel={closeOperationModal}

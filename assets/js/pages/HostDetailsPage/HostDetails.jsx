@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState, useId } from 'react';
-import { get, startCase, some } from 'lodash';
+import { get, noop, startCase, some } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -18,6 +18,7 @@ import {
   HOST_REBOOT,
   OPERATION_NOT_ALLOWED_HOST,
   getOperationLabel,
+  isSchedulable,
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { formatBytes } from '@lib/charts';
@@ -99,6 +100,7 @@ function HostDetails({
   requestOperation,
   inExceptionWindow = false,
   nextExecutionAt = undefined,
+  onScheduleOperation = noop,
   cleanForbiddenOperation,
   navigate,
   timezone,
@@ -219,8 +221,22 @@ function HostDetails({
             operation={currentOperation}
             descriptionResolverArgs={{ hostName: hostname }}
             isOpen={!!simpleOperationModalOpen}
-            onRequest={() => {
-              requestOperation(currentOperation, {});
+            schedulable={isSchedulable(currentOperation)}
+            timezone={timezone}
+            onRequest={(params, schedule) => {
+              if (schedule) {
+                onScheduleOperation(
+                  {
+                    target_type: 'host',
+                    target_id: hostID,
+                    operation: currentOperation,
+                    params,
+                  },
+                  schedule
+                );
+              } else {
+                requestOperation(currentOperation, {});
+              }
               closeOperationModal();
             }}
             onCancel={closeOperationModal}

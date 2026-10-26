@@ -26,6 +26,7 @@ import {
   getDatabaseOperations,
   getDatabaseSiteOperations,
 } from './databaseOperations';
+import useScheduleOperation from '@hooks/useScheduleOperation';
 
 const operationsEnabled = getFromConfig('operationsEnabled');
 
@@ -35,6 +36,7 @@ function DatabaseDetails() {
     getEnrichedDatabaseDetails(state, id)
   );
   const { abilities, timezone } = useSelector(getUserProfile);
+  const scheduleOperation = useScheduleOperation();
   const dispatch = useDispatch();
 
   const runningOperations = useSelector(getRunningOperationsList);
@@ -65,6 +67,7 @@ function DatabaseDetails() {
           dispatch(deregisterDatabaseInstance(instance));
         }}
         onRequestOperation={(payload) => dispatch(operationRequested(payload))}
+        onScheduleOperation={scheduleOperation}
         onCleanForbiddenOperation={(groupID) =>
           dispatch(removeRunningOperation({ groupID }))
         }
