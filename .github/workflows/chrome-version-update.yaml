@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Chrome version update
+
+on:
+  schedule:
+    - cron: "17 7 1 * *" # Runs on the 1st of every month at 07:17 Europe/Madrid
+      timezone: "Europe/Madrid"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update-chrome-version:
+    name: Update pinned Chrome version
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Get latest stable Chrome version
+        id: stable
+        uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
+        with:
+          chrome-version: stable
+      - name: Compare with pinned version
+        id: versions
+        env:
+          LATEST: ${{ steps.stable.outputs.chrome-version }}
+        run: |
+          current="$(cat test/e2e/.chrome-version)"
+          {
+            echo "current=$current"
+            echo "changed=$([[ "$current" != "$LATEST" ]] && echo true || echo false)"
+          } >> "$GITHUB_OUTPUT"
+          echo "$LATEST" > test/e2e/.chrome-version
+      - name: Import GPG key
+        if: steps.versions.outputs.changed == 'true'
+        id: import-gpg
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
+        with:
+          gpg_private_key: ${{ secrets.TRENTOBOT_GPG_KEY }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Create pull request
+        if: steps.versions.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.TRENTOBOT_GH_PAT }}
+          branch: chore/chrome-update
+          labels: chore
+          committer: ${{ steps.import-gpg.outputs.name }} <${{ steps.import-gpg.outputs.email }}>
+          author: ${{ steps.import-gpg.outputs.name }} <${{ steps.import-gpg.outputs.email }}>
+          commit-message: "Bump Chrome to ${{ steps.stable.outputs.chrome-version }}"
+          title: "Bump Chrome to ${{ steps.stable.outputs.chrome-version }}"
+          body: |
+            Automated update of the Chrome version pinned for the Cypress e2e tests.
+
+            - Previous: `${{ steps.versions.outputs.current }}`
+            - New (stable): `${{ steps.stable.outputs.chrome-version }}`

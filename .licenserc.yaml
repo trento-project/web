@@ -23,6 +23,7 @@ header:
     - ".github/CODEOWNERS"
     - ".github/dependabot.yml"
     - ".tool-versions"
+    - "test/e2e/.chrome-version"
     - "LICENSE"
     - "VERSION"
     - "assets/vendor/**"
