@@ -24,7 +24,6 @@ env:
   MIX_ENV: dev
   DEFAULT_NUM_CONTAINERS: 100
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
-  CHROME_VERSION: "156.0.8078.47" # https://googlechromelabs.github.io/chrome-for-testing
 
 jobs:
   setup-matrix-env:
@@ -216,11 +215,14 @@ jobs:
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
+      - name: Read pinned Chrome version
+        id: chrome-version
+        run: echo "version=$(tr -d '[:space:]' < test/e2e/.chrome-version)" >> "$GITHUB_OUTPUT"
       - name: Setup Chrome
         id: setup-chrome
         uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
         with:
-          chrome-version: ${{ env.CHROME_VERSION }}
+          chrome-version: ${{ steps.chrome-version.outputs.version }}
       - name: Cypress run
         uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:

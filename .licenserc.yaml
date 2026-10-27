@@ -28,6 +28,7 @@ header:
     - "assets/vendor/**"
     - "mix.lock"
     - "packaging/suse/rpm/trento-web.spec"
+    - "test/e2e/.chrome-version"
 
   language:
     JavaScript:
