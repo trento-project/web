@@ -1,0 +1,144 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: E2E Tests
+
+on:
+  workflow_call:
+    inputs:
+      chrome-version:
+        description: "Chrome version to test against. Defaults to the one pinned in test/e2e/.chrome-version"
+        type: string
+        required: false
+        default: ""
+
+env:
+  PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
+
+jobs:
+  prepare:
+    name: Prepare toolchain
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      ELIXIR_DEV: ${{ steps.toolchain.outputs.ELIXIR_DEV }}
+      ERLANG_DEV: ${{ steps.toolchain.outputs.ERLANG_DEV }}
+      NODEJS_DEV: ${{ env.NODEJS_VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compute OTP/Elixir toolchain
+        id: toolchain
+        uses: trento-project/.github/actions/elixir-toolchain@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
+      - name: Gather versions
+        uses: endorama/asdf-parse-tool-versions@115a5df5884438dfd08a3a21e9c9efdf06dd907e # v1.7.0
+
+  e2e:
+    name: E2E Tests
+    needs: [prepare]
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2, 3, 4, 5, 6, 7, 8]
+    env:
+      MIX_ENV: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Set up Elixir and restore cached dependencies
+        id: mix-cache
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
+        with:
+          otp-version: ${{ needs.prepare.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.prepare.outputs.ELIXIR_DEV }}
+          build-deps: "true"
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v6
+        with:
+          node-version: ${{ needs.prepare.outputs.NODEJS_DEV }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Install NPM dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: cd assets && npm ci
+      - name: Retrieve E2E NPM Cached Dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
+        id: npm-e2e-cache
+        with:
+          path: |
+            test/e2e/node_modules
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Install E2E NPM dependencies
+        if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
+        run: cd test/e2e && npm ci
+      - name: Check Eslint and JS Code Format
+        run: cd test/e2e && npm run lint && npm run format:check
+      - name: "Docker compose dependencies"
+        uses: isbang/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          compose-flags: "--profile wanda"
+          down-flags: "--volumes"
+      - name: Mix setup
+        run: mix setup
+      - name: Run trento detached
+        run: mix phx.server &
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
+        with:
+          repo: trento-project/photofinish
+          tag: ${{ env.PHOTOFINISH_VERSION }}
+          cache: enable
+          chmod: 0755
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
+      - name: Resolve Chrome version
+        id: chrome-version
+        env:
+          INPUT_CHROME_VERSION: ${{ inputs.chrome-version }}
+        run: |
+          set -euo pipefail
+          version="${INPUT_CHROME_VERSION:-$(cat test/e2e/.chrome-version)}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
+        with:
+          chrome-version: ${{ steps.chrome-version.outputs.version }}
+      - name: Cypress run
+        uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
+        env:
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
+          SPLIT_FILE: cypress-split-timings.json
+          cypress_video: false
+        with:
+          working-directory: test/e2e
+          browser: ${{ steps.setup-chrome.outputs.chrome-path }}
+          wait-on-timeout: 30
+          config: baseUrl=http://localhost:4000,retries=1
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
+      - name: Upload cypress test screenshots
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: failure()
+        with:
+          name: e2e-screenshots-${{ matrix.containers }}
+          path: test/e2e/cypress/screenshots/

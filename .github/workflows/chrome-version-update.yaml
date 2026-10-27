@@ -1,0 +1,98 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Chrome version update
+
+on:
+  push:
+    branches: [chrome-version-auto-update] # TEMPORARY: remove before merging
+  schedule:
+    - cron: "17 7 1 * *" # Runs on the 1st of every month at 07:17 Europe/Madrid
+      timezone: "Europe/Madrid"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  resolve:
+    name: Resolve latest stable Chrome
+    runs-on: ubuntu-24.04
+    outputs:
+      current: ${{ steps.versions.outputs.current }}
+      latest: ${{ steps.versions.outputs.latest }}
+      changed: ${{ steps.versions.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Get latest stable Chrome version
+        id: stable
+        uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
+        with:
+          chrome-version: stable
+      - name: Compare with pinned version
+        id: versions
+        env:
+          LATEST: ${{ steps.stable.outputs.chrome-version }}
+        run: |
+          current="$(cat test/e2e/.chrome-version)"
+          {
+            echo "current=$current"
+            echo "latest=$LATEST"
+            echo "changed=$([[ "$current" != "$LATEST" ]] && echo true || echo false)"
+          } >> "$GITHUB_OUTPUT"
+
+  e2e:
+    name: E2E against latest stable
+    needs: [resolve]
+    if: needs.resolve.outputs.changed == 'true'
+    uses: ./.github/workflows/e2e-tests.yaml
+    with:
+      chrome-version: ${{ needs.resolve.outputs.latest }}
+
+  create-pr:
+    name: Create update PR
+    needs: [resolve, e2e]
+    if: needs.e2e.result == 'success'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Update pinned Chrome version
+        env:
+          LATEST: ${{ needs.resolve.outputs.latest }}
+        run: echo "$LATEST" > test/e2e/.chrome-version
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: chore/chrome-${{ needs.resolve.outputs.latest }}
+          sign-commits: true
+          commit-message: "Bump Chrome to ${{ needs.resolve.outputs.latest }}"
+          title: "Bump Chrome to ${{ needs.resolve.outputs.latest }}"
+          body: |
+            Automated update of the Chrome version pinned for the Cypress e2e tests.
+
+            - Previous: `${{ needs.resolve.outputs.current }}`
+            - New (stable): `${{ needs.resolve.outputs.latest }}`
+
+            The e2e tests already passed with this version in [this run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+            Checks do not run automatically on this PR because it was created with `GITHUB_TOKEN`.
+
+  notify-failure:
+    name: Notify e2e failure
+    needs: [resolve, e2e]
+    if: needs.e2e.result == 'failure'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Send Slack alert
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+        with:
+          webhook: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ":warning: E2E tests fail with Chrome ${{ needs.resolve.outputs.latest }}, no update PR created. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"
