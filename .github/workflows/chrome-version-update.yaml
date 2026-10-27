@@ -4,6 +4,8 @@
 name: Chrome version update
 
 on:
+  push:
+    branches: [chrome-version-auto-update] # TEMPORARY: remove before merging
   schedule:
     - cron: "17 7 1 * *" # Runs on the 1st of every month at 07:17 Europe/Madrid
       timezone: "Europe/Madrid"
