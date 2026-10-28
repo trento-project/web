@@ -24,6 +24,8 @@ import {
   apiLoginAndCreateSession,
   apiAcceptAnalyticsEula,
   getLoginCredentials,
+  stopAgentsHeartbeat,
+  waitForHeartbeatsExpired,
 } from '../pageObject/base_po';
 
 // Alternatively you can use CommonJS syntax:
@@ -33,6 +35,9 @@ import {
 before(() => {
   Cypress.session.clearAllSavedSessions();
   if (!Cypress.expose('SSO_INTEGRATION_TESTS')) {
+    // Avoid leaking heartbeats from previous specs
+    stopAgentsHeartbeat();
+    waitForHeartbeatsExpired();
     apiLoginAndCreateSession();
     getLoginCredentials().then(({ username, password }) =>
       apiAcceptAnalyticsEula(username, password)
