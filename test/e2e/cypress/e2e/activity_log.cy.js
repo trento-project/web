@@ -19,13 +19,15 @@ context('Activity Log page', () => {
       basePage.clickActivityLogNavigationItem();
       activityLogPage.validateUrl(`/activity_log?${defaultSeverity}`);
       activityLogPage.pageTitleIsCorrectlyDisplayed('Activity Log');
-      activityLogPage.activityLogEndpointIsCalledOnlyOnce();
+      activityLogPage.waitForActivityLogRequest();
+      activityLogPage.activityLogEndpointHasBeenCalledTimes(1);
     });
 
     it('should not load the page twice', () => {
       basePage.visit();
       basePage.clickActivityLogNavigationItem5Times();
-      activityLogPage.activityLogEndpointIsCalledOnlyOnce();
+      activityLogPage.waitForActivityLogRequest();
+      activityLogPage.activityLogEndpointHasBeenCalledTimes(1);
     });
   });
 
@@ -115,31 +117,34 @@ context('Activity Log page', () => {
     });
 
     it('should preserve filters when coming back to activity log view', () => {
+      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
+
       activityLogPage.visit();
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickFilterTypeButton();
       activityLogPage.selectFilterTypeOption('Login Attempt');
       activityLogPage.clickApplyFiltersButton();
-
+      activityLogPage.waitForActivityLogRequest();
+      activityLogPage.validateUrl(expectedUrl);
       activityLogPage.goNavigationMenuItem('Dashboard');
       activityLogPage.pageTitleIsCorrectlyDisplayed('At a glance');
       activityLogPage.clickActivityLogNavigationItem();
-
-      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
     it('should preserve filters when the activity log sidebar entry is clicked from the activity log view', () => {
+      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
+
       activityLogPage.visit();
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickFilterTypeButton();
       activityLogPage.selectFilterTypeOption('Login Attempt');
       activityLogPage.clickApplyFiltersButton();
-
-      activityLogPage.clickActivityLogNavigationItem();
-      // initial load and change of filters
-      activityLogPage.activityLogEndpointIsCalledTimes(2);
-
-      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.validateUrl(expectedUrl);
+      activityLogPage.clickActivityLogNavigationItem();
+      activityLogPage.validateUrl(expectedUrl);
+      activityLogPage.activityLogEndpointHasBeenCalledTimes(2);
     });
   });
 
