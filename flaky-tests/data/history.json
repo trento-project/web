@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-07T21:07:08Z",
-    "commit": "8d36773b2cff2ace6581b5120ddf729d5de419f4",
-    "run_id": "34160659032",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-07T21:08:13Z",
     "commit": "8d36773b2cff2ace6581b5120ddf729d5de419f4",
     "run_id": "34160659032",
@@ -5717,5 +5706,45 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-27T22:56:51Z",
+    "commit": "65432fa9d84665fba3610ec06b3afc4851d0f0cc",
+    "run_id": "40598595992",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 17
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve filters when the activity log sidebar entry is clicked from the activity log view::Activity Log page Filtering should preserve filters when the activity log sidebar entry is clicked from the activity log view",
+        "score": 0.2448
+      },
+      {
+        "name": "should have a correct link to each host::HANA database details The hosts table shows the attached hosts to this HANA database should have a correct link to each host",
+        "score": 0.1238
+      },
+      {
+        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.04892
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.04653
+      },
+      {
+        "name": "should be able to create a new user with deleted user username and email::Users Delete user should be able to create a new user with deleted user username and email",
+        "score": 0.02501
+      },
+      {
+        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
+        "score": 0.02501
+      }
+    ]
   }
 ]
