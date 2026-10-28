@@ -114,7 +114,7 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
               "operation_id" => Faker.UUID.v4()
             }
           ],
-          "failed_operations" => [
+          "failed_requests" => [
             %{
               "cluster_id" => Faker.UUID.v4(),
               "name" => "failed-cluster",

@@ -451,7 +451,7 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
           %{cluster_id: cluster_id_2, operation_id: operation_id_2},
           %{cluster_id: unknown_cluster_id, operation_id: unknown_operation_id}
         ],
-        failed_operations: [
+        failed_requests: [
           %{cluster_id: failed_cluster_id, reason: ":amqp_error"},
           %{cluster_id: unknown_failed_cluster_id, reason: ":amqp_error"}
         ]
@@ -465,7 +465,7 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
                   %{cluster_id: cluster_id_2, operation_id: operation_id_2, name: name_2},
                   %{cluster_id: unknown_cluster_id, operation_id: unknown_operation_id}
                 ],
-                failed_operations: [
+                failed_requests: [
                   %{cluster_id: failed_cluster_id, reason: ":amqp_error", name: failed_name},
                   %{cluster_id: unknown_failed_cluster_id, reason: ":amqp_error"}
                 ]

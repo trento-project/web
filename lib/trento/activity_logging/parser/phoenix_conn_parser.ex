@@ -296,7 +296,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     %{
       "bulk_operation_id" => bulk_operation_id,
       "operations" => operations,
-      "failed_operations" => failed_operations
+      "failed_requests" => failed_requests
     } = Jason.decode!(resp_body)
 
     resource_id_field = get_operation_resource_id_field(activity)
@@ -310,8 +310,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         Enum.map(operations, fn %{"resource_id" => resource_id, "operation_id" => operation_id} ->
           Map.put(%{operation_id: operation_id}, resource_id_field, resource_id)
         end),
-      failed_operations:
-        Enum.map(failed_operations, fn %{"resource_id" => resource_id, "reason" => reason} ->
+      failed_requests:
+        Enum.map(failed_requests, fn %{"resource_id" => resource_id, "reason" => reason} ->
           Map.put(%{reason: reason}, resource_id_field, resource_id)
         end)
     }
