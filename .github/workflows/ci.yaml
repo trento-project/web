@@ -1293,6 +1293,9 @@ jobs:
       !contains(needs.*.result, 'failure') &&
       !contains(needs.*.result, 'cancelled') &&
       github.event_name == 'pull_request' &&
+      needs.test-e2e.result == 'success' &&
+      needs.test-regression.result == 'success' &&
+      needs.test-integration.result == 'success' &&
       github.event.pull_request.user.login == 'trentobot' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.head_ref == 'chore/bump-chrome'
@@ -1338,4 +1341,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.TRENTOBOT_GH_PAT }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr merge --squash "$PR_URL"
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: gh pr merge --squash --match-head-commit "$HEAD_SHA" "$PR_URL"
