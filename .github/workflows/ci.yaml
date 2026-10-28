@@ -28,7 +28,6 @@ env:
   NODEJS_BC: "20.20.0"
   OPENAPI_DIFF_VERSION: "2.1.7" # https://github.com/OpenAPITools/openapi-diff/releases
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
-  CHROME_VERSION: "156.0.8078.47" # https://googlechromelabs.github.io/chrome-for-testing
   K3S_VERSION: "v1.36.1+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
   CERT_MANAGER_VERSION: "v1.20.2" # https://github.com/cert-manager/cert-manager/releases
   HELM_VERSION: "v4.2.0" # https://github.com/helm/helm/releases
@@ -662,11 +661,14 @@ jobs:
           set -euo pipefail
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
+      - name: Read pinned Chrome version
+        id: chrome-version
+        run: echo "version=$(tr -d '[:space:]' < test/e2e/.chrome-version)" >> "$GITHUB_OUTPUT"
       - name: Setup Chrome
         id: setup-chrome
         uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
         with:
-          chrome-version: ${{ env.CHROME_VERSION }}
+          chrome-version: ${{ steps.chrome-version.outputs.version }}
       - name: Cypress run
         uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
@@ -780,11 +782,14 @@ jobs:
           set -euo pipefail
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
+      - name: Read pinned Chrome version
+        id: chrome-version
+        run: echo "version=$(tr -d '[:space:]' < test/e2e/.chrome-version)" >> "$GITHUB_OUTPUT"
       - name: Setup Chrome
         id: setup-chrome
         uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
         with:
-          chrome-version: ${{ env.CHROME_VERSION }}
+          chrome-version: ${{ steps.chrome-version.outputs.version }}
       - name: Cypress run
         uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
@@ -934,11 +939,14 @@ jobs:
         run: mix setup
       - name: Run trento detached
         run: mix phx.server &
+      - name: Read pinned Chrome version
+        id: chrome-version
+        run: echo "version=$(tr -d '[:space:]' < test/e2e/.chrome-version)" >> "$GITHUB_OUTPUT"
       - name: Setup Chrome
         id: setup-chrome
         uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
         with:
-          chrome-version: ${{ env.CHROME_VERSION }}
+          chrome-version: ${{ steps.chrome-version.outputs.version }}
       - name: Cypress run
         uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
         env:
@@ -1277,3 +1285,61 @@ jobs:
       pull-requests: write
       issues: write
     uses: trento-project/.github/.github/workflows/dependabot-auto-merge.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
+
+  chrome-bump-auto-merge:
+    name: Approve and merge Chrome version bump PRs
+    if: >
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled') &&
+      github.event_name == 'pull_request' &&
+      needs.test-e2e.result == 'success' &&
+      needs.test-regression.result == 'success' &&
+      needs.test-integration.result == 'success' &&
+      github.event.pull_request.user.login == 'trentobot' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'chore/bump-chrome'
+    needs:
+      - codespell
+      - license-headers
+      - static-code-analysis-js
+      - static-code-analysis-elixir
+      - test-javascript
+      - test-elixir
+      - test-e2e
+      - test-regression
+      - test-integration
+      - api-docs-check
+      - api-bc-check
+      - test-release
+      - test-elixir-tls-handshake
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Ensure only the pinned Chrome version changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          set -euo pipefail
+          changed_files="$(gh pr diff "$PR_URL" --name-only)"
+          if [[ "$changed_files" != "test/e2e/.chrome-version" ]]; then
+            echo "::error::Unexpected files changed in Chrome bump PR:"
+            echo "$changed_files"
+            exit 1
+          fi
+      # trentobot can't approve its own PR, so github-actions[bot] approves it
+      - name: Approve
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr review --approve "$PR_URL"
+      # Merging with trentobot's PAT, unlike GITHUB_TOKEN, triggers the push workflows on main
+      - name: Merge
+        env:
+          GH_TOKEN: ${{ secrets.TRENTOBOT_GH_PAT }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: gh pr merge --squash --match-head-commit "$HEAD_SHA" "$PR_URL"

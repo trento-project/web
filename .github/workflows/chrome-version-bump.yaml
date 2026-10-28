@@ -1,0 +1,93 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Chrome version bump
+
+# Pins test/e2e/.chrome-version to the current Chrome for Testing Stable release
+# and opens (or updates) a PR as trentobot when it changes.
+# The PR is approved and merged by the `chrome-bump-auto-merge` job in ci.yaml
+# once all CI jobs succeed.
+
+on:
+  schedule:
+    - cron: "0 6 1,15 * *"
+      timezone: "Europe/Madrid"
+
+concurrency:
+  group: ${{ github.workflow }}
+
+permissions:
+  contents: read
+
+env:
+  CHROME_VERSION_FILE: test/e2e/.chrome-version
+
+jobs:
+  bump-chrome:
+    name: Bump pinned Chrome version
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Read pinned Chrome version
+        id: current
+        run: echo "version=$(tr -d '[:space:]' < "$CHROME_VERSION_FILE")" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Chrome stable
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
+        with:
+          chrome-version: stable
+
+      - name: Check if stable is newer than pinned
+        id: compare
+        env:
+          PINNED: ${{ steps.current.outputs.version }}
+          STABLE: ${{ steps.setup-chrome.outputs.chrome-version }}
+        run: |
+          newest="$(printf '%s\n%s\n' "$PINNED" "$STABLE" | sort -V | tail -n1)"
+          if [[ "$STABLE" != "$PINNED" && "$newest" == "$STABLE" ]]; then
+            echo "newer=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "newer=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update pinned Chrome version
+        if: steps.compare.outputs.newer == 'true'
+        env:
+          STABLE: ${{ steps.setup-chrome.outputs.chrome-version }}
+        run: echo "$STABLE" > "$CHROME_VERSION_FILE"
+
+      - name: Import GPG key
+        id: import-gpg
+        if: steps.compare.outputs.newer == 'true'
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
+        with:
+          gpg_private_key: ${{ secrets.TRENTOBOT_GPG_KEY }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Create or update pull request
+        if: steps.compare.outputs.newer == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.TRENTOBOT_GH_PAT }}
+          committer: ${{ steps.import-gpg.outputs.name }} <${{ steps.import-gpg.outputs.email }}>
+          author: ${{ steps.import-gpg.outputs.name }} <${{ steps.import-gpg.outputs.email }}>
+          branch: chore/bump-chrome
+          delete-branch: true
+          add-paths: ${{ env.CHROME_VERSION_FILE }}
+          commit-message: Bump Chrome for Testing to ${{ steps.setup-chrome.outputs.chrome-version }}
+          title: Bump Chrome for Testing from ${{ steps.current.outputs.version }} to ${{ steps.setup-chrome.outputs.chrome-version }}
+          body: |
+            Updates the Chrome version used by the E2E tests to the current [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing) Stable release.
+
+            | | Version |
+            |---|---|
+            | Current | `${{ steps.current.outputs.version }}` |
+            | Stable | `${{ steps.setup-chrome.outputs.chrome-version }}` |
+
+            This PR is approved and merged automatically if all CI checks pass.
+
+            _Created by the `${{ github.workflow }}` workflow._
