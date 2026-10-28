@@ -119,7 +119,10 @@ defmodule TrentoWeb.SessionController do
 
   def callback(%{body_params: body_params} = conn, %{"provider" => provider}) do
     params = Map.drop(body_params, ["session_params"])
-    session_params = Map.get(body_params, "session_params")
+
+    session_params = body_params
+      |> Map.get("session_params", %{})
+      |> Map.put(:state, body_params["state"])
 
     conn
     |> Conn.put_private(:pow_assent_session_params, session_params)
