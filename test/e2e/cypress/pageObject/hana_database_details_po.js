@@ -279,10 +279,12 @@ const hostHasExpectedWorkingLink = (host) => {
   const hostNameCellSelector = hostsTableHostNameCell(host.Name);
   const hostNameSelector = `${hostNameCellSelector} a`;
   const expectedHref = `/hosts/${host.AgentId}`;
-  cy.get(hostNameSelector).should('have.attr', 'href', expectedHref);
-  cy.get(hostNameSelector).click();
+  cy.get(hostNameSelector).should('have.attr', 'href', expectedHref).click();
   basePage.validateUrl(expectedHref);
-  return basePage.goBack();
+  basePage.pageTitleIsCorrectlyDisplayed(`Host Details: ${host.Name}`);
+  basePage.goBack();
+  validatePageUrl();
+  return basePage.pageTitleIsCorrectlyDisplayed('HANA Database Details');
 };
 
 export const eachAttachedHostHasExpectedValues = () =>
