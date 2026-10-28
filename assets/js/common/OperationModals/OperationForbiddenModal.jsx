@@ -20,7 +20,7 @@ const urlTypes = {
 
 const findBulkResource = (metadata) => find(metadata, 'bulk_operation');
 
-const formatError = (error, metadata, onCancel) => {
+const formatError = (error, metadata) => {
   // find {i} entries in the text splitting the whole content
   const parts = split(error, replacePattern);
 
@@ -34,9 +34,10 @@ const formatError = (error, metadata, onCancel) => {
       return id ? (
         <Link
           className="text-jungle-green-500 hover:opacity-75"
-          onClick={onCancel}
           key={id}
           to={`/${urlTypes[type]}/${id}`}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           {label}
         </Link>
@@ -48,14 +49,14 @@ const formatError = (error, metadata, onCancel) => {
   });
 };
 
-const renderErrors = (errors, onCancel) =>
+const renderErrors = (errors) =>
   map(errors, ({ detail, metadata }) => (
     <li key={detail} className="text-sm">
-      {formatError(detail, metadata, onCancel)}
+      {formatError(detail, metadata)}
     </li>
   ));
 
-const renderBulkErrors = (errors, onCancel) => {
+const renderBulkErrors = (errors) => {
   const errorsByResource = groupBy(
     errors,
     ({ metadata }) => findBulkResource(metadata)?.id
@@ -68,13 +69,14 @@ const renderBulkErrors = (errors, onCancel) => {
       <li key={id} className="text-sm">
         <Link
           className="text-jungle-green-500 hover:opacity-75"
-          onClick={onCancel}
           to={`/${urlTypes[type]}/${id}`}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           {label}
         </Link>
         <ul className="list-[circle] list-inside ml-6 mt-1 space-y-1">
-          {renderErrors(resourceErrors, onCancel)}
+          {renderErrors(resourceErrors)}
         </ul>
       </li>
     );
@@ -105,9 +107,7 @@ function OperationForbiddenModal({
         Some of the following pre-requisites are not met:
       </p>
       <ul className="list-disc list-inside space-y-1 mb-1 max-h-60 overflow-y-auto">
-        {isBulkOperation
-          ? renderBulkErrors(errors, onCancel)
-          : renderErrors(errors, onCancel)}
+        {isBulkOperation ? renderBulkErrors(errors) : renderErrors(errors)}
       </ul>
       <div className="flex justify-start gap-2 mt-4">
         <Button

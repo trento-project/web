@@ -232,32 +232,5 @@ describe('OperationForbiddenModal', () => {
         `/hosts/${otherID}`
       );
     });
-
-    it('should run onCancel when a resource link is clicked', async () => {
-      const user = userEvent.setup();
-      const mockOnCancel = jest.fn();
-      const { id, hostname } = hostFactory.build();
-
-      await act(() =>
-        renderWithRouter(
-          <OperationForbiddenModal
-            operation="My operation"
-            errors={[
-              {
-                detail: 'error1',
-                metadata: [
-                  { id, label: hostname, type: 'host', bulk_operation: true },
-                ],
-              },
-            ]}
-            isOpen
-            onCancel={mockOnCancel}
-          />
-        )
-      );
-
-      await user.click(screen.getByRole('link', { name: hostname }));
-      expect(mockOnCancel).toHaveBeenCalled();
-    });
   });
 });
