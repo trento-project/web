@@ -43,11 +43,11 @@ jobs:
       - name: Check if stable is newer than pinned
         id: compare
         env:
-          CURRENT: ${{ steps.current.outputs.version }}
-          LATEST: ${{ steps.setup-chrome.outputs.chrome-version }}
+          PINNED: ${{ steps.current.outputs.version }}
+          STABLE: ${{ steps.setup-chrome.outputs.chrome-version }}
         run: |
-          newest="$(printf '%s\n%s\n' "$CURRENT" "$LATEST" | sort -V | tail -n1)"
-          if [[ "$LATEST" != "$CURRENT" && "$newest" == "$LATEST" ]]; then
+          newest="$(printf '%s\n%s\n' "$PINNED" "$STABLE" | sort -V | tail -n1)"
+          if [[ "$STABLE" != "$PINNED" && "$newest" == "$STABLE" ]]; then
             echo "newer=true" >> "$GITHUB_OUTPUT"
           else
             echo "newer=false" >> "$GITHUB_OUTPUT"
@@ -56,8 +56,8 @@ jobs:
       - name: Update pinned Chrome version
         if: steps.compare.outputs.newer == 'true'
         env:
-          LATEST: ${{ steps.setup-chrome.outputs.chrome-version }}
-        run: echo "$LATEST" > "$CHROME_VERSION_FILE"
+          STABLE: ${{ steps.setup-chrome.outputs.chrome-version }}
+        run: echo "$STABLE" > "$CHROME_VERSION_FILE"
 
       - name: Import GPG key
         id: import-gpg
