@@ -320,7 +320,7 @@ function Table({
                       key="selection"
                       scope="col"
                       className={classNames(
-                        'w-10 pl-5 border-b bg-gray-100',
+                        'w-10 pl-5 text-left border-b bg-gray-100',
                         headerClassName
                       )}
                     >
