@@ -159,11 +159,11 @@ export function* requestBulkOperation({ payload }) {
 
   try {
     const {
-      data: { operations, failed_operations: failedOperations },
+      data: { operations, failed_requests: failedRequests },
     } = yield call(request, targetGroupIDs, operation, params);
-    const requestedText = `${operations.length + failedOperations.length} ${label}`;
-    const failedText = failedOperations.length
-      ? ` (${failedOperations.length} failed)`
+    const requestedText = `${operations.length + failedRequests.length} ${label}`;
+    const failedText = failedRequests.length
+      ? ` (${failedRequests.length} failed)`
       : '';
     yield put(
       notify({
