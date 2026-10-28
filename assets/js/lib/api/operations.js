@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { isEmpty } from 'lodash';
+
 import { networkClient, post } from '@lib/network';
 
 // eslint-disable-next-line no-undef
@@ -17,7 +19,7 @@ export const requestClusterOperation = (clusterID, operation, params) =>
 export const requestClusterBulkOperation = (clusterIDs, operation, params) =>
   post(`/clusters/operations/${operation}`, {
     cluster_ids: clusterIDs,
-    ...(params && { params }),
+    ...(!isEmpty(params) && { params }),
   });
 
 export const requestSapSystemOperation = (sapSystemID, operation, params) =>
