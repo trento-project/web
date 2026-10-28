@@ -512,7 +512,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
                    %{"resource_id" => ^cluster_id_1},
                    %{"resource_id" => ^cluster_id_2}
                  ],
-                 "failed_operations" => []
+                 "failed_requests" => []
                } = resp
 
         assert %{assigns: %{cluster: [%{id: ^cluster_id_1}, %{id: ^cluster_id_2}]}} =

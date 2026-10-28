@@ -23,7 +23,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.BulkOperationAccepted do
             operation_id: "123e4567-e89b-12d3-a456-426614174000"
           }
         ],
-        failed_operations: [
+        failed_requests: [
           %{
             resource_id: "d2b3c4d5-e6f7-8901-bcde-f12345678901",
             reason: ":amqp_error"
@@ -44,7 +44,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.BulkOperationAccepted do
             required: [:resource_id, :operation_id]
           }
         },
-        failed_operations: %Schema{
+        failed_requests: %Schema{
           type: :array,
           items: %Schema{
             type: :object,
@@ -57,7 +57,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.BulkOperationAccepted do
           }
         }
       },
-      required: [:bulk_operation_id, :operations, :failed_operations]
+      required: [:bulk_operation_id, :operations, :failed_requests]
     },
     struct?: false
   )

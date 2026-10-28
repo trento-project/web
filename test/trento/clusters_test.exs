@@ -1386,7 +1386,7 @@ defmodule Trento.ClustersTest do
         OperationsPublisher, "requests", %OperationRequested{} -> {:error, :amqp_error}
       end)
 
-      assert {:error, :bulk_operation_failed} =
+      assert {:error, :bulk_operation_request_failed} =
                Clusters.request_bulk_operation(:cluster_maintenance_change, cluster_ids, %{})
     end
 

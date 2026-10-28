@@ -70,7 +70,7 @@ defmodule Trento.Support.OperationsHelperTest do
                end)
     end
 
-    test "should continue after an error and return the failed operations" do
+    test "should continue after an error and return the failed requests" do
       operation_id_a = UUID.uuid4()
       operation_id_c = UUID.uuid4()
 
@@ -87,7 +87,7 @@ defmodule Trento.Support.OperationsHelperTest do
     end
 
     test "should return an error when all the requests fail" do
-      assert {:error, :bulk_operation_failed} ==
+      assert {:error, :bulk_operation_request_failed} ==
                OperationsHelper.reduce_bulk_operation_request(["a", "b"], fn
                  "a" -> {:error, :foo}
                  "b" -> {:error, :bar}
