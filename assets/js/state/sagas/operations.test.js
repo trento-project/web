@@ -381,7 +381,7 @@ describe('operations saga', () => {
 
       axiosMock.onPost(clusterBulkOperationRequestURL(operation)).reply(202, {
         operations: [{ resource_id: clusterID1 }, { resource_id: clusterID2 }],
-        failed_operations: [],
+        failed_requests: [],
       });
 
       const dispatched = await recordSaga(requestBulkOperation, {
@@ -397,7 +397,7 @@ describe('operations saga', () => {
       ]);
     });
 
-    it('should report the failed operations in a cluster bulk operation', async () => {
+    it('should report the failed requests in a cluster bulk operation', async () => {
       const bulkOperationID = CLUSTER_BULK_OPERATION_ID;
       const operation = CLUSTER_RESOURCE_REFRESH;
       const label = getOperationLabel(operation);
@@ -415,7 +415,7 @@ describe('operations saga', () => {
           { resource_id: passingClusterID1 },
           { resource_id: passingClusterID2 },
         ],
-        failed_operations: [{ resource_id: failingClusterID }],
+        failed_requests: [{ resource_id: failingClusterID }],
       });
 
       const dispatched = await recordSaga(requestBulkOperation, {
