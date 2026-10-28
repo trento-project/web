@@ -385,7 +385,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
           %{"resource_id" => resource_id_2, "operation_id" => operation_id_2}
         ]
 
-        failed_operations = [%{"resource_id" => failed_resource_id, "reason" => ":amqp_error"}]
+        failed_requests = [%{"resource_id" => failed_resource_id, "reason" => ":amqp_error"}]
 
         assert %{
                  correlation_id: bulk_operation_id,
@@ -396,7 +396,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                    %{:operation_id => operation_id_1, resource_field => resource_id_1},
                    %{:operation_id => operation_id_2, resource_field => resource_id_2}
                  ],
-                 failed_operations: [
+                 failed_requests: [
                    %{:reason => ":amqp_error", resource_field => failed_resource_id}
                  ]
                } ==
@@ -409,7 +409,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                          Jason.encode!(%{
                            bulk_operation_id: bulk_operation_id,
                            operations: operations,
-                           failed_operations: failed_operations
+                           failed_requests: failed_requests
                          }),
                        assigns: %{bulk_operation: operation}
                    }

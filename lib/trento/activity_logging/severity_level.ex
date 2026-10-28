@@ -141,7 +141,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "cluster_operation_requested" => :info,
     "cluster_bulk_operation_requested" => %{
       type: :key,
-      key: :failed_operations,
+      key: :failed_requests,
       condition: :non_empty_list
     },
     "host_operation_requested" => :info,
