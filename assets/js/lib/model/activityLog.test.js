@@ -277,7 +277,7 @@ describe('activityLog', () => {
         metadata: {
           operation: CLUSTER_MAINTENANCE_CHANGE,
           operations: [{}, {}],
-          failed_operations: [{}],
+          failed_requests: [{}],
         },
       };
 
