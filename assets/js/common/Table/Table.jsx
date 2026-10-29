@@ -394,7 +394,6 @@ function Table({
                         wrapCollapsedRowInCell={wrapCollapsedRowInCell}
                         renderCells={renderCells}
                         columns={columns}
-                        colSpan={columns.length + (selectable ? 1 : 0)}
                         selectable={selectable}
                         selected={isSelected(key)}
                         onSelect={() => toggleRow(key)}

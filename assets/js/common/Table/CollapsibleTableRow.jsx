@@ -14,7 +14,6 @@ function CollapsibleTableRow({
   collapsibleDetailRenderer,
   wrapCollapsedRowInCell = true,
   renderCells = () => {},
-  colSpan = 1,
   className,
   collapsedRowClassName,
   selectable = false,
@@ -22,7 +21,8 @@ function CollapsibleTableRow({
   onSelect = noop,
 }) {
   const [rowExpanded, toggleRow] = useState(false);
-  const collapsibleRowSpan = collapsibleDetailRenderer ? colSpan + 1 : colSpan;
+  const collapsibleRowSpan =
+    columns.length + (selectable ? 1 : 0) + (collapsibleDetailRenderer ? 1 : 0);
   const collapsibleItem =
     collapsibleDetailRenderer &&
     collapsibleDetailRenderer(item, { columns, rowExpanded, renderCells });

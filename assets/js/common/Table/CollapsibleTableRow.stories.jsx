@@ -29,10 +29,6 @@ export default {
       description: 'Function to render cells for the row',
       action: 'renderCells',
     },
-    colSpan: {
-      description: 'Number of columns to span',
-      control: { type: 'text' },
-    },
     className: {
       description: 'Additional CSS classes applied to the component',
       control: { type: 'text' },
@@ -84,7 +80,6 @@ export const Default = {
     collapsibleDetailRenderer: defaultCollapsibleDetailRenderer,
     wrapCollapsedRowInCell: true,
     renderCells: defaultRenderCells,
-    colSpan: 3,
     className: 'bg-white',
     collapsedRowClassName: 'bg-gray-50',
   },
