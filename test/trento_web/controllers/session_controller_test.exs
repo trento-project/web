@@ -615,6 +615,132 @@ defmodule TrentoWeb.SessionControllerTest do
     end
   end
 
+  describe "callback endpoint state verification" do
+    defmodule TestHTTPAdapter do
+      @moduledoc false
+      @behaviour Assent.HTTPAdapter
+
+      alias Assent.HTTPAdapter.HTTPResponse
+
+      @impl true
+      def request(:post, "https://provider.example.com/oauth/token", _body, _headers, _opts),
+        do: json_response(%{"access_token" => "access_token", "token_type" => "bearer"})
+
+      def request(:get, "https://provider.example.com/api/user", _body, _headers, _opts),
+        do:
+          json_response(%{
+            "sub" => "sso_user",
+            "username" => "sso_user",
+            "email" => "sso_user@trento.com"
+          })
+
+      defp json_response(body),
+        do:
+          {:ok,
+           %HTTPResponse{
+             status: 200,
+             headers: [{"content-type", "application/json"}],
+             body: Jason.encode!(body)
+           }}
+    end
+
+    setup do
+      oauth2_config = Application.fetch_env!(:trento, :oauth2)
+      pow_assent_config = Application.fetch_env!(:trento, :pow_assent)
+
+      Application.put_env(:trento, :oauth2,
+        enabled: true,
+        callback_url: "http://localhost:4000/auth/oauth2_callback"
+      )
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          oauth2_local: [
+            strategy: Assent.Strategy.OAuth2,
+            client_id: "trento-web",
+            client_secret: "secret",
+            auth_method: :client_secret_post,
+            base_url: "https://provider.example.com",
+            authorize_url: "/oauth/authorize",
+            token_url: "/oauth/token",
+            user_url: "/api/user",
+            http_adapter: TestHTTPAdapter
+          ]
+        ]
+      )
+
+      stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_671_715_992 end)
+      Application.put_env(:trento, :checks_service, base_url: "http://localhost:4001")
+      stub(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
+
+      on_exit(fn ->
+        Application.put_env(:trento, :oauth2, oauth2_config)
+        Application.put_env(:trento, :pow_assent, pow_assent_config)
+        Application.delete_env(:trento, :checks_service)
+      end)
+    end
+
+    defp authorize(conn) do
+      conn = get(conn, ~p"/")
+
+      [_, login_url] = Regex.run(~r/ssoLoginUrl: '([^']*)'/, html_response(conn, 200))
+
+      %{"state" => state} =
+        login_url
+        |> URI.parse()
+        |> Map.fetch!(:query)
+        |> URI.decode_query()
+
+      {recycle(conn), state}
+    end
+
+    test "should log in when the returned state matches the one stored by the authorize request",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn
+      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+    end
+
+    test "should not log in when the returned state differs from the one stored by the authorize request",
+         %{conn: conn} do
+      {conn, _state} = authorize(conn)
+
+      conn
+      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => "forged"})
+      |> json_response(500)
+    end
+
+    test "should not log in when no authorize request was made, even if the request carries session params",
+         %{conn: conn} do
+      conn
+      |> post(~p"/api/session/oauth2_local/callback", %{
+        "code" => "valid",
+        "state" => "forged",
+        "session_params" => %{"state" => "forged"}
+      })
+      |> json_response(500)
+    end
+
+    test "should not accept the stored state a second time", %{conn: conn} do
+      {conn, state} = authorize(conn)
+
+      conn =
+        post(conn, ~p"/api/session/oauth2_local/callback", %{
+          "code" => "valid",
+          "state" => "forged"
+        })
+
+      conn
+      |> recycle()
+      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => state})
+      |> json_response(500)
+    end
+  end
+
   describe "saml_callback endpoint" do
     setup %{conn: conn} = context do
       Samly.State.init(Samly.State.ETS)
