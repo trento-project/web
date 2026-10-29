@@ -41,15 +41,24 @@ export default {
       description: 'CSS classes for the collapsed row',
       control: { type: 'text' },
     },
+    selectable: {
+      description: 'Whether to render a selection checkbox cell',
+      control: { type: 'boolean' },
+    },
+    selected: {
+      description: 'Whether the row is currently selected',
+      control: { type: 'boolean' },
+    },
+    onSelect: {
+      description: 'Function called when the row checkbox is toggled',
+      action: 'onSelect',
+    },
   },
 };
 
 const defaultRenderCells = (columns, item) =>
   columns.map((column) => (
-    <td
-      key={column.key}
-      className="border-b border-gray-200 bg-white px-4 py-2"
-    >
+    <td key={column.key} className="border-b border-gray-200 px-4 py-2">
       {item[column.key]}
     </td>
   ));
@@ -76,7 +85,22 @@ export const Default = {
     wrapCollapsedRowInCell: true,
     renderCells: defaultRenderCells,
     colSpan: 3,
-    className: '',
+    className: 'bg-white',
     collapsedRowClassName: 'bg-gray-50',
+  },
+};
+
+export const Selectable = {
+  args: {
+    ...Default.args,
+    selectable: true,
+    selected: false,
+  },
+};
+
+export const Selected = {
+  args: {
+    ...Selectable.args,
+    selected: true,
   },
 };
