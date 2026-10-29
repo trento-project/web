@@ -1,61 +1,5 @@
 [
   {
-    "timestamp": "2026-09-08T00:44:30Z",
-    "commit": "8d36773b2cff2ace6581b5120ddf729d5de419f4",
-    "run_id": "34163445609",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.2163
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.2163
-      },
-      {
-        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
-        "score": 0.1913
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
-        "score": 0.1913
-      },
-      {
-        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
-        "score": 0.1913
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
-        "score": 0.1663
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
-        "score": 0.1663
-      },
-      {
-        "name": "should mark cluster data as sync when the agent starts reporting data again::HANA cluster details Stale data should mark cluster data as sync when the agent starts reporting data again",
-        "score": 0.02501
-      },
-      {
-        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
-        "score": 0.02501
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.02501
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-08T20:06:17Z",
     "commit": "ff6559d304b4e7ff49d513c232ebeed94215e364",
     "run_id": "34271341538",
@@ -5746,5 +5690,49 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-28T23:13:40Z",
+    "commit": "ea34f494389dda1905a2f29386c89bdc083e7b09",
+    "run_id": "40785835221",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 98,
+      "failed_runs": 14
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.09426
+      },
+      {
+        "name": "should have a correct link to each host::HANA database details The hosts table shows the attached hosts to this HANA database should have a correct link to each host",
+        "score": 0.07456
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.06780
+      },
+      {
+        "name": "should preserve the selected items per page when reloading clusters view::Clusters Overview Persistent filters should preserve the selected items per page when reloading clusters view",
+        "score": 0.06271
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should start autorefresh ticker::Activity Log page Autorefresh should start autorefresh ticker",
+        "score": 0.05001
+      }
+    ]
   }
 ]
