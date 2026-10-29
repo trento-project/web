@@ -327,6 +327,211 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     end
   end
 
+  describe "cluster bulk operations" do
+    bulk_operation_scenarios = [
+      %{
+        operation: "cluster_maintenance_change",
+        arguments: %{"params" => %{"maintenance" => true}},
+        ability: "maintenance_change"
+      },
+      %{
+        operation: "cluster_resource_refresh",
+        arguments: %{},
+        ability: "resource_refresh"
+      }
+    ]
+
+    for %{operation: operation, arguments: arguments, ability: ability} <-
+          bulk_operation_scenarios do
+      @operation operation
+      @arguments arguments
+      @ability ability
+
+      test "should respond with 422 if the cluster ids are missing or empty for #{@operation}", %{
+        conn: conn
+      } do
+        for body <- [@arguments, Map.put(@arguments, "cluster_ids", [])] do
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/clusters/operations/#{@operation}", body)
+          |> json_response(:unprocessable_entity)
+        end
+      end
+
+      test "should respond with 404 if any cluster is not found for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: cluster_id} = insert(:cluster)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id)
+        missing_cluster_id = UUID.uuid4()
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/clusters/operations/#{@operation}",
+            Map.put(@arguments, "cluster_ids", [cluster_id, missing_cluster_id])
+          )
+          |> json_response(:not_found)
+
+        assert_schema(resp, "NotFoundV1", api_spec)
+
+        assert %{
+                 "errors" => [
+                   %{"detail" => "Clusters not found: " <> ^missing_cluster_id <> "."}
+                 ]
+               } = resp
+      end
+
+      test "should respond with 404 if a cluster is deregistered for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: cluster_id} = insert(:cluster, deregistered_at: DateTime.utc_now())
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/clusters/operations/#{@operation}",
+          Map.put(@arguments, "cluster_ids", [cluster_id])
+        )
+        |> json_response(:not_found)
+        |> assert_schema("NotFoundV1", api_spec)
+      end
+
+      test "should respond with 403 if any cluster is not authorized for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: authorized_cluster_id} = insert(:cluster)
+        insert(:host, heartbeat: :passing, cluster_id: authorized_cluster_id)
+        %{id: unauthorized_cluster_id, name: unauthorized_cluster_name} = insert(:cluster)
+        insert(:host, heartbeat: :critical, cluster_id: unauthorized_cluster_id)
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/clusters/operations/#{@operation}",
+            Map.put(@arguments, "cluster_ids", [authorized_cluster_id, unauthorized_cluster_id])
+          )
+          |> json_response(:forbidden)
+
+        assert_schema(resp, "ForbiddenV1", api_spec)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" =>
+                       "Trento agent is not currently running in any of the hosts in the cluster",
+                     "metadata" => [
+                       %{
+                         "id" => ^unauthorized_cluster_id,
+                         "label" => ^unauthorized_cluster_name,
+                         "type" => "cluster",
+                         "bulk_operation" => true
+                       }
+                     ]
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should respond with 500 on messaging error for #{@operation}", %{conn: conn} do
+        %{id: cluster_id} = insert(:cluster)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/clusters/operations/#{@operation}",
+            Map.put(@arguments, "cluster_ids", [cluster_id])
+          )
+          |> json_response(:internal_server_error)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Something went wrong.",
+                     "title" => "Internal Server Error"
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should perform bulk #{@operation} operation when the user has #{@ability}:cluster ability",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: cluster_id_1} = insert(:cluster)
+        %{id: cluster_id_2} = insert(:cluster)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id_1)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id_2)
+
+        %{id: user_id} = insert(:user)
+
+        %{id: ability_id} = insert(:ability, name: @ability, resource: "cluster")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          2,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        posted_conn =
+          conn
+          |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/clusters/operations/#{@operation}",
+            Map.put(@arguments, "cluster_ids", [cluster_id_1, cluster_id_2])
+          )
+
+        resp = json_response(posted_conn, :accepted)
+
+        assert_schema(resp, "BulkOperationAcceptedV1", api_spec)
+
+        assert %{
+                 "operations" => [
+                   %{"resource_id" => ^cluster_id_1},
+                   %{"resource_id" => ^cluster_id_2}
+                 ],
+                 "failed_requests" => []
+               } = resp
+
+        assert %{assigns: %{cluster: [%{id: ^cluster_id_1}, %{id: ^cluster_id_2}]}} =
+                 posted_conn
+      end
+    end
+
+    test "should respond with 422 if cluster maintenance change bulk does not receive params", %{
+      conn: conn
+    } do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/clusters/operations/cluster_maintenance_change", %{
+        "cluster_ids" => [UUID.uuid4()]
+      })
+      |> json_response(:unprocessable_entity)
+    end
+  end
+
   describe "cluster host operations" do
     test "should return not found if the operation on unmapped operation", %{
       conn: conn,
@@ -970,7 +1175,14 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
           post(
             conn,
             "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/cluster_host_stop"
-          )
+          ),
+          post(conn, "/api/v1/clusters/operations/cluster_maintenance_change", %{
+            "cluster_ids" => [cluster_id],
+            "params" => %{"maintenance" => true}
+          }),
+          post(conn, "/api/v1/clusters/operations/cluster_resource_refresh", %{
+            "cluster_ids" => [cluster_id]
+          })
         ],
         fn conn ->
           conn

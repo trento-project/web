@@ -1260,6 +1260,31 @@ defmodule Trento.ClustersTest do
     end
   end
 
+  describe "get_clusters_by_ids/1" do
+    test "should return an empty list when no ids match" do
+      insert(:cluster)
+
+      assert [] == Clusters.get_clusters_by_ids([UUID.uuid4()])
+      assert [] == Clusters.get_clusters_by_ids([])
+    end
+
+    test "should return only the requested registered clusters" do
+      [%{id: cluster_id_1}, %{id: cluster_id_2}] = expected_clusters = insert_list(2, :cluster)
+      %{id: deregistered_cluster_id} = insert(:cluster, deregistered_at: DateTime.utc_now())
+      insert(:cluster)
+
+      clusters =
+        Clusters.get_clusters_by_ids([
+          cluster_id_1,
+          cluster_id_2,
+          deregistered_cluster_id,
+          UUID.uuid4()
+        ])
+
+      assert expected_clusters == clusters
+    end
+  end
+
   describe "request_operation/3" do
     operations = [
       %{
@@ -1326,6 +1351,50 @@ defmodule Trento.ClustersTest do
     test "should return operation_not_found if the given operation does not exist" do
       assert {:error, :operation_not_found} =
                Clusters.request_operation(:unknown, UUID.uuid4(), %{})
+    end
+  end
+
+  describe "request_bulk_operation/3" do
+    for operation <- [:cluster_maintenance_change, :cluster_resource_refresh] do
+      @operation operation
+
+      test "should request #{@operation} operation on every cluster" do
+        %{id: cluster_id_1} = insert(:cluster)
+        %{id: cluster_id_2} = insert(:cluster)
+        insert(:host, cluster_id: cluster_id_1, heartbeat: :passing)
+        insert(:host, cluster_id: cluster_id_2, heartbeat: :passing)
+
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+          OperationsPublisher, "requests", %OperationRequested{} -> :ok
+        end)
+
+        assert {:ok, _bulk_operation_id,
+                [
+                  %{resource_id: ^cluster_id_1, operation_id: operation_id_1},
+                  %{resource_id: ^cluster_id_2, operation_id: operation_id_2}
+                ], []} =
+                 Clusters.request_bulk_operation(@operation, [cluster_id_1, cluster_id_2], %{})
+
+        refute operation_id_1 == operation_id_2
+      end
+    end
+
+    test "should return an error when all the messaging requests fail" do
+      cluster_ids = [UUID.uuid4(), UUID.uuid4()]
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+        OperationsPublisher, "requests", %OperationRequested{} -> {:error, :amqp_error}
+      end)
+
+      assert {:error, :bulk_operation_request_failed} =
+               Clusters.request_bulk_operation(:cluster_maintenance_change, cluster_ids, %{})
+    end
+
+    test "should return operation_not_found for unsupported operations" do
+      for operation <- [:unknown, :pacemaker_enable] do
+        assert {:error, :operation_not_found} =
+                 Clusters.request_bulk_operation(operation, [UUID.uuid4()], %{})
+      end
     end
   end
 
