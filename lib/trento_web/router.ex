@@ -87,12 +87,6 @@ defmodule TrentoWeb.Router do
       ]
   end
 
-  scope "/auth", TrentoWeb do
-    pipe_through :browser
-
-    get "/:provider/authorize", PageController, :sso_authorize
-  end
-
   scope "/api", TrentoWeb do
     pipe_through [:api]
 

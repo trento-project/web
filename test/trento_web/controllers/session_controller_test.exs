@@ -671,24 +671,41 @@ defmodule TrentoWeb.SessionControllerTest do
       )
 
       stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_671_715_992 end)
+      Application.put_env(:trento, :checks_service, base_url: "http://localhost:4001")
+      stub(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
 
       on_exit(fn ->
         Application.put_env(:trento, :oauth2, oauth2_config)
         Application.put_env(:trento, :pow_assent, pow_assent_config)
+        Application.delete_env(:trento, :checks_service)
       end)
     end
 
     defp authorize(conn) do
-      conn = get(conn, ~p"/auth/oauth2_local/authorize")
+      conn = get(conn, ~p"/")
+
+      [_, login_url] = Regex.run(~r/ssoLoginUrl: '([^']*)'/, html_response(conn, 200))
 
       %{"state" => state} =
-        conn
-        |> redirected_to(302)
+        login_url
         |> URI.parse()
         |> Map.fetch!(:query)
         |> URI.decode_query()
 
       {recycle(conn), state}
+    end
+
+    test "should log in when the browser loads the callback page before posting the callback",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = get(conn, ~p"/auth/oauth2_callback?#{%{"code" => "valid", "state" => state}}")
+
+      conn
+      |> recycle()
+      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
     end
 
     test "should log in when the returned state matches the one stored by the authorize request",
