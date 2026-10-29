@@ -13,12 +13,14 @@ defmodule Trento.Operations.SapSystemPolicy do
 
   alias Trento.Support.OperationsHelper
 
+  alias Trento.Operations.DatabaseInstancePolicy
+
+  alias Trento.Hosts.Projections.HostReadModel
+
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
     SapSystemReadModel
   }
-
-  alias Trento.Hosts.Projections.HostReadModel
 
   # for all operations, check the heartbeat of all the hosts composing the SAP system
   # authorize if at least one host heartbeat is passing
@@ -49,6 +51,9 @@ defmodule Trento.Operations.SapSystemPolicy do
 
   def authorize_operation(_, _, _),
     do: {:error, [OperationsHelper.build_error("Unknown operation")]}
+
+  def metadata(%SapSystemReadModel{id: id, sid: sid}),
+    do: %{id: id, label: sid, type: :sap_system}
 
   defp do_authorize_operation(
          :sap_system_start,
@@ -112,28 +117,23 @@ defmodule Trento.Operations.SapSystemPolicy do
         :ok
 
       [
-        %{
-          database_id: database_id,
-          sid: sid,
-          system_replication: "Primary",
-          system_replication_site: site
-        }
+        %{system_replication: "Primary", system_replication_site: site} = instance
         | _
       ] ->
         {:error,
          [
            OperationsHelper.build_error(
              "Database {0} primary site #{site} is not started",
-             [%{id: database_id, label: sid, type: :database}]
+             [DatabaseInstancePolicy.metadata(instance)]
            )
          ]}
 
-      [%{database_id: database_id, sid: sid} | _] ->
+      [instance | _] ->
         {:error,
          [
            OperationsHelper.build_error(
              "Database {0} is not started",
-             [%{id: database_id, label: sid, type: :database}]
+             [DatabaseInstancePolicy.metadata(instance)]
            )
          ]}
     end

@@ -13,12 +13,15 @@ defmodule Trento.Operations.DatabasePolicy do
 
   alias Trento.Support.OperationsHelper
 
+  alias Trento.Operations.ApplicationInstancePolicy
+
   alias Trento.Databases.Projections.{
     DatabaseInstanceReadModel,
     DatabaseReadModel
   }
 
   alias Trento.Hosts.Projections.HostReadModel
+  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
   # for all operations, check the heartbeat of all the hosts composing the database
   # authorize if at least one host heartbeat per system replication site is passing
@@ -39,6 +42,9 @@ defmodule Trento.Operations.DatabasePolicy do
 
   def authorize_operation(_, _, _),
     do: {:error, [OperationsHelper.build_error("Unknown operation")]}
+
+  def metadata(%DatabaseReadModel{id: id, sid: sid}),
+    do: %{id: id, label: sid, type: :database}
 
   defp filter_by_site(instances, %{site: nil}), do: instances
 
@@ -242,14 +248,12 @@ defmodule Trento.Operations.DatabasePolicy do
 
       running_instances ->
         {:error,
-         Enum.map(running_instances, fn %{
-                                          sap_system_id: app_id,
-                                          sid: sid,
+         Enum.map(running_instances, fn %ApplicationInstanceReadModel{
                                           instance_number: inst_number
-                                        } ->
+                                        } = instance ->
            OperationsHelper.build_error(
              "Instance #{inst_number} of SAP system {0} is not stopped",
-             [%{id: app_id, label: sid, type: :sap_system}]
+             [ApplicationInstancePolicy.metadata(instance)]
            )
          end)}
     end
