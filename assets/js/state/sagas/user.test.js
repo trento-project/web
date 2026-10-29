@@ -233,7 +233,7 @@ describe('user login saga', () => {
       axiosMock
         .onPost('/api/session/oidc_local/callback', {
           code: 'code',
-          session_state: 'state',
+          state: 'state',
         })
         .reply(200, credentialResponse);
 
@@ -284,7 +284,7 @@ describe('user login saga', () => {
       axiosMock
         .onPost('/api/session/oidc_local/callback', {
           code: 'bad',
-          session_state: 'bad',
+          state: 'bad',
         })
         .reply(401, {
           error: 'unauthorized',

@@ -30,6 +30,8 @@ defmodule TrentoWeb.SessionController do
 
   plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
   plug TrentoWeb.Plugs.UpdateLastLoginAtPlug when action in [:create]
+  plug :fetch_session when action in [:callback]
+  plug :load_sso_session_params when action in [:callback]
 
   require Logger
 
@@ -118,12 +120,8 @@ defmodule TrentoWeb.SessionController do
     ]
 
   def callback(%{body_params: body_params} = conn, %{"provider" => provider}) do
-    params = Map.drop(body_params, ["session_params"])
-    session_params = Map.get(body_params, "session_params")
-
     conn
-    |> Conn.put_private(:pow_assent_session_params, session_params)
-    |> PowAssentPlug.callback_upsert(provider, params, idp_redirect_uri(provider))
+    |> PowAssentPlug.callback_upsert(provider, body_params, idp_redirect_uri(provider))
     |> case do
       {:ok, conn} ->
         render(conn, "logged.json",
@@ -220,6 +218,19 @@ defmodule TrentoWeb.SessionController do
     do: Users.validate_totp(user, totp_code)
 
   defp maybe_validate_totp(_, _), do: {:error, :totp_code_missing}
+
+  defp load_sso_session_params(conn, _opts) do
+    case get_session(conn, :sso_session_params) do
+      nil ->
+        conn
+
+      session_params ->
+        conn
+        |> delete_session(:sso_session_params)
+        |> delete_session(:sso_login_url)
+        |> Conn.put_private(:pow_assent_session_params, session_params)
+    end
+  end
 
   defp idp_redirect_uri("oidc_local"), do: Application.fetch_env!(:trento, :oidc)[:callback_url]
 

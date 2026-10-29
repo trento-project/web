@@ -20,7 +20,7 @@ defmodule TrentoWeb.PageController do
     operations_enabled = Application.fetch_env!(:trento, :operations_enabled)
     ai_enabled = Trento.AI.enabled?()
 
-    {sso_enabled, callback_url, login_url, enrollment_url} = sso_details(conn)
+    {conn, {sso_enabled, callback_url, login_url, enrollment_url}} = sso_details(conn)
 
     render(conn, :index,
       check_service_base_url: check_service_base_url,
@@ -61,15 +61,15 @@ defmodule TrentoWeb.PageController do
     sso_details_for_provider(conn, sso_provider)
   end
 
-  defp sso_details_for_provider(_conn, nil), do: {false, "", "", ""}
+  defp sso_details_for_provider(conn, nil), do: {conn, {false, "", "", ""}}
 
-  defp sso_details_for_provider(_conn, :saml) do
+  defp sso_details_for_provider(conn, :saml) do
     idp_id = Application.fetch_env!(:trento, :saml)[:idp_id]
     callback_url = Application.fetch_env!(:trento, :saml)[:callback_url]
     login_url = ~p"/sso/auth/signin/#{idp_id}?target_url=#{URI.encode_www_form(callback_url)}"
     enrollment_url = ~p"/api/session/saml_local/saml_callback"
 
-    {true, callback_url, login_url, enrollment_url}
+    {conn, {true, callback_url, login_url, enrollment_url}}
   end
 
   defp sso_details_for_provider(conn, provider) do
@@ -79,12 +79,26 @@ defmodule TrentoWeb.PageController do
     %URI{path: callback_url} =
       URI.parse(full_callback_url)
 
-    {:ok, login_url, _} =
-      PowAssent.Plug.authorize_url(conn, enrollment_provider, full_callback_url)
+    {conn, login_url} =
+      case get_session(conn, :sso_login_url) do
+        nil ->
+          {:ok, login_url, conn} =
+            PowAssent.Plug.authorize_url(conn, enrollment_provider, full_callback_url)
+
+          conn =
+            conn
+            |> put_session(:sso_session_params, conn.private[:pow_assent_session_params])
+            |> put_session(:sso_login_url, login_url)
+
+          {conn, login_url}
+
+        login_url ->
+          {conn, login_url}
+      end
 
     enrollment_url = ~p"/api/session/#{enrollment_provider}/callback"
 
-    {true, callback_url, login_url, enrollment_url}
+    {conn, {true, callback_url, login_url, enrollment_url}}
   end
 
   defp get_normalized_ai_providers do
