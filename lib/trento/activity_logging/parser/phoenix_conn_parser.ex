@@ -281,6 +281,43 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
+        activity,
+        %Plug.Conn{
+          body_params: body_params,
+          resp_body: resp_body,
+          assigns: %{bulk_operation: operation}
+        }
+      )
+      when activity in [
+             :cluster_bulk_operation_requested
+           ] do
+    params = Map.get(body_params, :params, %{})
+
+    %{
+      "bulk_operation_id" => bulk_operation_id,
+      "operations" => operations,
+      "failed_operations" => failed_operations
+    } = Jason.decode!(resp_body)
+
+    resource_id_field = get_operation_resource_id_field(activity)
+
+    %{
+      correlation_id: bulk_operation_id,
+      bulk_operation_id: bulk_operation_id,
+      operation: operation,
+      params: params,
+      operations:
+        Enum.map(operations, fn %{"resource_id" => resource_id, "operation_id" => operation_id} ->
+          Map.put(%{operation_id: operation_id}, resource_id_field, resource_id)
+        end),
+      failed_operations:
+        Enum.map(failed_operations, fn %{"resource_id" => resource_id, "reason" => reason} ->
+          Map.put(%{reason: reason}, resource_id_field, resource_id)
+        end)
+    }
+  end
+
+  def get_activity_metadata(
         action,
         %Plug.Conn{
           body_params: request_body
@@ -307,7 +344,11 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
        do: :sap_system_id
 
   defp get_operation_resource_id_field(activity)
-       when activity in [:cluster_operation_requested, :cluster_host_operation_requested],
+       when activity in [
+              :cluster_operation_requested,
+              :cluster_host_operation_requested,
+              :cluster_bulk_operation_requested
+            ],
        do: :cluster_id
 
   defp get_operation_resource_id_field(:host_operation_requested), do: :host_id

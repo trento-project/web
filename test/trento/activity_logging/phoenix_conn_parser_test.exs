@@ -13,6 +13,14 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
 
   require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
 
+  @bulk_operation_scenarios [
+    %{
+      activity: :cluster_bulk_operation_requested,
+      operation: :cluster_maintenance_change,
+      resource_field: :cluster_id
+    }
+  ]
+
   describe "actor detection" do
     test "should get the actor from the request payload for login attempts", %{conn: conn} do
       scenarios = [
@@ -354,6 +362,58 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                      resp_body: Jason.encode!(%{operation_id: operation_id}),
                      assigns: %{operation: operation}
                  })
+      end
+    end
+
+    for %{activity: activity} = scenario <- @bulk_operation_scenarios do
+      @scenario scenario
+
+      test "should extract bulk operation metadata for #{activity}", %{
+        conn: %Plug.Conn{} = conn
+      } do
+        %{activity: activity, operation: operation, resource_field: resource_field} = @scenario
+
+        bulk_operation_id = Faker.UUID.v4()
+        params = %{"key" => "value"}
+
+        [resource_id_1, resource_id_2] = [Faker.UUID.v4(), Faker.UUID.v4()]
+        [operation_id_1, operation_id_2] = [Faker.UUID.v4(), Faker.UUID.v4()]
+        failed_resource_id = Faker.UUID.v4()
+
+        operations = [
+          %{"resource_id" => resource_id_1, "operation_id" => operation_id_1},
+          %{"resource_id" => resource_id_2, "operation_id" => operation_id_2}
+        ]
+
+        failed_operations = [%{"resource_id" => failed_resource_id, "reason" => ":amqp_error"}]
+
+        assert %{
+                 correlation_id: bulk_operation_id,
+                 bulk_operation_id: bulk_operation_id,
+                 operation: operation,
+                 params: params,
+                 operations: [
+                   %{:operation_id => operation_id_1, resource_field => resource_id_1},
+                   %{:operation_id => operation_id_2, resource_field => resource_id_2}
+                 ],
+                 failed_operations: [
+                   %{:reason => ":amqp_error", resource_field => failed_resource_id}
+                 ]
+               } ==
+                 PhoenixConnParser.get_activity_metadata(
+                   activity,
+                   %Plug.Conn{
+                     conn
+                     | body_params: %{params: params},
+                       resp_body:
+                         Jason.encode!(%{
+                           bulk_operation_id: bulk_operation_id,
+                           operations: operations,
+                           failed_operations: failed_operations
+                         }),
+                       assigns: %{bulk_operation: operation}
+                   }
+                 )
       end
     end
 
