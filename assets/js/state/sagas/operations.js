@@ -19,6 +19,7 @@ import {
 import {
   requestHostOperation,
   requestClusterOperation,
+  requestClusterBulkOperation,
   requestSapSystemOperation,
   requestSapInstanceOperation,
   requestClusterHostOperation,
@@ -27,6 +28,7 @@ import {
 } from '@lib/api/operations';
 import { notify } from '@state/notifications';
 import {
+  BULK_OPERATION_REQUESTED,
   OPERATION_COMPLETED,
   OPERATION_REQUESTED,
   UPDATE_RUNNING_OPERATIONS,
@@ -135,6 +137,61 @@ export function* requestOperation({ payload }) {
   }
 }
 
+const BULK_OPERATION_RESOURCES = {
+  [CLUSTER_OPERATION]: {
+    label: 'clusters',
+    request: requestClusterBulkOperation,
+  },
+};
+
+// Running bulk operations are not tracked, as they are not displayed in that state
+// anywhere. The state is only used to display forbidden requests.
+// This code could be very well a async all or a share hook, but it is here
+// to keep the logic all together.
+export function* requestBulkOperation({ payload }) {
+  const { bulkOperationID, targetGroupIDs, operation, params } = payload;
+
+  const operationName = getOperationLabel(operation);
+  const { label, request } =
+    BULK_OPERATION_RESOURCES[getOperationResourceType(operation)];
+
+  yield put(removeRunningOperation({ groupID: bulkOperationID }));
+
+  try {
+    const {
+      data: { operations, failed_operations: failedOperations },
+    } = yield call(request, targetGroupIDs, operation, params);
+    const requestedText = `${operations.length + failedOperations.length} ${label}`;
+    const failedText = failedOperations.length
+      ? ` (${failedOperations.length} failed)`
+      : '';
+    yield put(
+      notify({
+        text: `Operation ${operationName} requested for ${requestedText}${failedText}`,
+        icon: '⚙️',
+      })
+    );
+  } catch ({ response: { status, data } }) {
+    if (status === 403) {
+      yield put(
+        setForbiddenOperation({
+          groupID: bulkOperationID,
+          operation,
+          errors: data.errors,
+        })
+      );
+      return;
+    }
+
+    yield put(
+      notify({
+        text: `Operation ${operationName} request for ${label} failed`,
+        icon: '❌',
+      })
+    );
+  }
+}
+
 export function* completeOperation({ payload }) {
   const { groupID, operation, result } = payload;
 
@@ -192,5 +249,6 @@ export function* updateRunningOperations() {
 export function* watchOperationEvents() {
   yield takeEvery(OPERATION_COMPLETED, completeOperation);
   yield takeEvery(OPERATION_REQUESTED, requestOperation);
+  yield takeEvery(BULK_OPERATION_REQUESTED, requestBulkOperation);
   yield takeEvery(UPDATE_RUNNING_OPERATIONS, updateRunningOperations);
 }

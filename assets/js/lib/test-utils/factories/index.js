@@ -116,3 +116,8 @@ export const objectTreeFactory = Factory.define(() => ({
   },
   null: null,
 }));
+
+export const bulkOperationResourceFactory = Factory.define(({ sequence }) => ({
+  id: faker.string.uuid(),
+  label: `${faker.lorem.word()}-${sequence}`,
+}));

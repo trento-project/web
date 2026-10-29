@@ -6,6 +6,11 @@ import { createSlice } from '@reduxjs/toolkit';
 export const OPERATION_COMPLETED = 'OPERATION_COMPLETED';
 export const OPERATION_REQUESTED = 'OPERATION_REQUESTED';
 export const UPDATE_RUNNING_OPERATIONS = 'UPDATE_RUNNING_OPERATIONS';
+export const BULK_OPERATION_REQUESTED = 'BULK_OPERATION_REQUESTED';
+
+// IDs to identify if bulk operations are being executed. Used to identify
+// forbidden requests
+export const CLUSTER_BULK_OPERATION_ID = 'cluster_bulk_operation';
 
 export const operationCompleted = ({
   operationID,
@@ -20,6 +25,16 @@ export const operationCompleted = ({
 export const operationRequested = ({ groupID, operation, requestParams }) => ({
   type: OPERATION_REQUESTED,
   payload: { groupID, operation, requestParams },
+});
+
+export const bulkOperationRequested = ({
+  bulkOperationID,
+  targetGroupIDs,
+  operation,
+  params,
+}) => ({
+  type: BULK_OPERATION_REQUESTED,
+  payload: { bulkOperationID, targetGroupIDs, operation, params },
 });
 
 export const updateRunningOperations = () => ({
