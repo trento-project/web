@@ -142,7 +142,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
     ## Fields
     - `code`: Authorization code returned from the identity provider after user consent
     - `state`: State returned from the identity provider, it must match the one stored when the authorization started
-    - `session_state`: Deprecated, ignored
 
     ## Authentication Flow
     1. User is redirected to external IDP for authentication
@@ -175,13 +174,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
             type: :string,
             description:
               "State returned from the identity provider. Required to complete the authentication.",
-            example: "frHteBttgtW8706m7nqYC6ruYt",
-            minLength: 1
-          },
-          session_state: %OpenApiSpex.Schema{
-            type: :string,
-            description: "Deprecated, ignored. Use state instead.",
-            deprecated: true,
             example: "frHteBttgtW8706m7nqYC6ruYt",
             minLength: 1
           }
