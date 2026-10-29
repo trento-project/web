@@ -242,6 +242,9 @@ context('Host Details', () => {
     describe('"Clean up" button should deregister a host', () => {
       before(() => hostDetailsPage.stopAgentsHeartbeat());
 
+      // DEBUG
+      after(() => hostDetailsPage.logHostRegistered('after deregistration'));
+
       it('should allow to deregister a host after clean-up confirmation', () => {
         hostDetailsPage.clickCleanUpUnhealthyHostButton();
         hostDetailsPage.cleanUpModalTitleIsDisplayed();
@@ -258,6 +261,8 @@ context('Host Details', () => {
     before(() => hostDetailsPage.restoreHost());
 
     beforeEach(() => {
+      // DEBUG
+      hostDetailsPage.logHostRegistered('Forbidden actions beforeEach');
       hostDetailsPage.apiDeleteAllUsers();
       hostDetailsPage.logout();
     });

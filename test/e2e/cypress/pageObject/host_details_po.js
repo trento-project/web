@@ -673,8 +673,21 @@ export const markHdpDatabaseAsPresent = () =>
     `sap-systems-overview-${selectedHost.sapInstance.sid}-${selectedHost.sapInstance.instanceNumber}-present`
   );
 
-export const restoreHost = () =>
+export const restoreHost = () => {
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);
+  return logHostRegistered('after restoreHost');
+};
+
+// DEBUG
+export const logHostRegistered = (label) =>
+  basePage
+    .isHostRegistered(selectedHost.agentId)
+    .then((registered) =>
+      cy.task(
+        'debugLog',
+        `${label}: host ${selectedHost.hostName} registered=${registered}`
+      )
+    );
 
 export const interceptDeleteHost = () =>
   cy

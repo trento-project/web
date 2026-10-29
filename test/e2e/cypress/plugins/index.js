@@ -40,7 +40,21 @@ export default (on, config) => {
   cypressSplit(on, config);
   on('task', {
     async exec({ command, timeout = EXEC_DEFAULT_TIMEOUT }) {
-      return await execAsync(command, { timeout });
+      const result = await execAsync(command, { timeout });
+      // DEBUG: print photofinish output to CI stdout (command omitted: it contains the API key)
+      if (command.includes('photofinish')) {
+        const scenario = command.match(/collect" (\S+)/)?.[1];
+        // eslint-disable-next-line no-console
+        console.log(
+          `[DEBUG ${new Date().toISOString()}] photofinish ${scenario} stdout:\n${result.stdout}\nstderr:\n${result.stderr}`
+        );
+      }
+      return result;
+    },
+    debugLog(message) {
+      // eslint-disable-next-line no-console
+      console.log(`[DEBUG ${new Date().toISOString()}] ${message}`);
+      return null;
     },
     searchEmailInMailpit({ subject, options }) {
       return searchEmailInMailpit(subject, options);
