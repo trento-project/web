@@ -623,22 +623,25 @@ defmodule TrentoWeb.SessionControllerTest do
       alias Assent.HTTPAdapter.HTTPResponse
 
       @impl true
-      def request(:post, "https://provider.example.com/oauth/token", _body, _headers, _opts),
-        do: json_response(%{"access_token" => "access_token", "token_type" => "bearer"})
+      def request(:post, "https://provider.example.com/oauth/token", body, _headers, _opts) do
+        if body =~ "code=expired",
+          do: http_response(400, %{"error" => "invalid_grant"}),
+          else: http_response(200, %{"access_token" => "access_token", "token_type" => "bearer"})
+      end
 
       def request(:get, "https://provider.example.com/api/user", _body, _headers, _opts),
         do:
-          json_response(%{
+          http_response(200, %{
             "sub" => "sso_user",
             "username" => "sso_user",
             "email" => "sso_user@trento.com"
           })
 
-      defp json_response(body),
+      defp http_response(status, body),
         do:
           {:ok,
            %HTTPResponse{
-             status: 200,
+             status: status,
              headers: [{"content-type", "application/json"}],
              body: Jason.encode!(body)
            }}
@@ -671,10 +674,13 @@ defmodule TrentoWeb.SessionControllerTest do
       )
 
       stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_671_715_992 end)
+      Application.put_env(:trento, :checks_service, base_url: "http://localhost:4001")
+      stub(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
 
       on_exit(fn ->
         Application.put_env(:trento, :oauth2, oauth2_config)
         Application.put_env(:trento, :pow_assent, pow_assent_config)
+        Application.delete_env(:trento, :checks_service)
       end)
     end
 
@@ -689,6 +695,54 @@ defmodule TrentoWeb.SessionControllerTest do
         |> URI.decode_query()
 
       {recycle(conn), state}
+    end
+
+    defp follow_authorize(conn, path) do
+      conn = get(conn, path)
+
+      %{"state" => state} =
+        conn |> redirected_to(302) |> URI.parse() |> Map.fetch!(:query) |> URI.decode_query()
+
+      {recycle(conn), state}
+    end
+
+    test "should log in when the browser loads the callback page before posting the callback",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = get(conn, ~p"/auth/oauth2_callback?#{%{"code" => "valid", "state" => state}}")
+
+      conn
+      |> recycle()
+      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+    end
+
+    test "should log in when retrying from the login failed page after a failed callback",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = get(conn, ~p"/auth/oauth2_callback?#{%{"code" => "expired", "state" => state}}")
+      [_, retry_url] = Regex.run(~r/ssoLoginUrl: '([^']*)'/, html_response(conn, 200))
+
+      conn =
+        conn
+        |> recycle()
+        |> post(~p"/api/session/oauth2_local/callback", %{"code" => "expired", "state" => state})
+
+      assert json_response(conn, 500)
+
+      {conn, retry_state} = conn |> recycle() |> follow_authorize(retry_url)
+
+      conn =
+        get(conn, ~p"/auth/oauth2_callback?#{%{"code" => "valid", "state" => retry_state}}")
+
+      conn
+      |> recycle()
+      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => retry_state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
     end
 
     test "should log in when the returned state matches the one stored by the authorize request",
