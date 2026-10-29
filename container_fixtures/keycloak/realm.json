@@ -115,7 +115,7 @@
       "credentials": [
         {
           "temporary": false,
-          "type": "admin",
+          "type": "password",
           "value": "admin"
         }
       ]
