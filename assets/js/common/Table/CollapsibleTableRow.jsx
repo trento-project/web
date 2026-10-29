@@ -3,7 +3,10 @@
 
 import React, { useState } from 'react';
 import classNames from 'classnames';
+import { noop } from 'lodash';
 import { EOS_KEYBOARD_ARROW_DOWN } from 'eos-icons-react';
+
+import { Checkbox } from '@common/Input';
 
 function CollapsibleTableRow({
   columns,
@@ -11,12 +14,15 @@ function CollapsibleTableRow({
   collapsibleDetailRenderer,
   wrapCollapsedRowInCell = true,
   renderCells = () => {},
-  colSpan = 1,
   className,
   collapsedRowClassName,
+  selectable = false,
+  selected = false,
+  onSelect = noop,
 }) {
   const [rowExpanded, toggleRow] = useState(false);
-  const collapsibleRowSpan = collapsibleDetailRenderer ? colSpan + 1 : colSpan;
+  const collapsibleRowSpan =
+    columns.length + (selectable ? 1 : 0) + (collapsibleDetailRenderer ? 1 : 0);
   const collapsibleItem =
     collapsibleDetailRenderer &&
     collapsibleDetailRenderer(item, { columns, rowExpanded, renderCells });
@@ -24,7 +30,18 @@ function CollapsibleTableRow({
 
   return (
     <>
-      <tr className={className}>
+      <tr
+        className={classNames(className, { '!bg-jungle-green-100': selected })}
+      >
+        {selectable && (
+          <td className="pl-5 border-b border-gray-200">
+            <Checkbox
+              aria-label="Select row"
+              checked={selected}
+              onChange={onSelect}
+            />
+          </td>
+        )}
         {collapsibleDetailRenderer && (
           <td
             className={classNames(
