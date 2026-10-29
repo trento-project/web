@@ -20,7 +20,7 @@ defmodule TrentoWeb.PageController do
     operations_enabled = Application.fetch_env!(:trento, :operations_enabled)
     ai_enabled = Trento.AI.enabled?()
 
-    {sso_enabled, callback_url, login_url, enrollment_url} = sso_details(conn)
+    {sso_enabled, callback_url, login_url, enrollment_url} = sso_details()
 
     render(conn, :index,
       check_service_base_url: check_service_base_url,
@@ -42,28 +42,41 @@ defmodule TrentoWeb.PageController do
     )
   end
 
-  defp sso_details(conn) do
-    sso_provider =
-      cond do
-        Application.fetch_env!(:trento, :oidc)[:enabled] ->
-          :oidc
+  def sso_authorize(conn, %{"provider" => provider}) do
+    with sso_provider when sso_provider in [:oidc, :oauth2] <- sso_provider(),
+         ^provider <- "#{sso_provider}_local" do
+      callback_url = Application.fetch_env!(:trento, sso_provider)[:callback_url]
+      {:ok, login_url, conn} = PowAssent.Plug.authorize_url(conn, provider, callback_url)
 
-        Application.fetch_env!(:trento, :oauth2)[:enabled] ->
-          :oauth2
-
-        Application.fetch_env!(:trento, :saml)[:enabled] ->
-          :saml
-
-        true ->
-          nil
-      end
-
-    sso_details_for_provider(conn, sso_provider)
+      conn
+      |> put_session(:sso_session_params, conn.private[:pow_assent_session_params])
+      |> redirect(external: login_url)
+    else
+      _ -> send_resp(conn, :not_found, "Not Found")
+    end
   end
 
-  defp sso_details_for_provider(_conn, nil), do: {false, "", "", ""}
+  defp sso_details, do: sso_details_for_provider(sso_provider())
 
-  defp sso_details_for_provider(_conn, :saml) do
+  defp sso_provider do
+    cond do
+      Application.fetch_env!(:trento, :oidc)[:enabled] ->
+        :oidc
+
+      Application.fetch_env!(:trento, :oauth2)[:enabled] ->
+        :oauth2
+
+      Application.fetch_env!(:trento, :saml)[:enabled] ->
+        :saml
+
+      true ->
+        nil
+    end
+  end
+
+  defp sso_details_for_provider(nil), do: {false, "", "", ""}
+
+  defp sso_details_for_provider(:saml) do
     idp_id = Application.fetch_env!(:trento, :saml)[:idp_id]
     callback_url = Application.fetch_env!(:trento, :saml)[:callback_url]
     login_url = ~p"/sso/auth/signin/#{idp_id}?target_url=#{URI.encode_www_form(callback_url)}"
@@ -72,16 +85,14 @@ defmodule TrentoWeb.PageController do
     {true, callback_url, login_url, enrollment_url}
   end
 
-  defp sso_details_for_provider(conn, provider) do
+  defp sso_details_for_provider(provider) do
     full_callback_url = Application.fetch_env!(:trento, provider)[:callback_url]
     enrollment_provider = "#{provider}_local"
 
     %URI{path: callback_url} =
       URI.parse(full_callback_url)
 
-    {:ok, login_url, _} =
-      PowAssent.Plug.authorize_url(conn, enrollment_provider, full_callback_url)
-
+    login_url = ~p"/auth/#{enrollment_provider}/authorize"
     enrollment_url = ~p"/api/session/#{enrollment_provider}/callback"
 
     {true, callback_url, login_url, enrollment_url}
