@@ -79,10 +79,22 @@ defmodule TrentoWeb.PageController do
     %URI{path: callback_url} =
       URI.parse(full_callback_url)
 
-    {:ok, login_url, conn} =
-      PowAssent.Plug.authorize_url(conn, enrollment_provider, full_callback_url)
+    {conn, login_url} =
+      case get_session(conn, :sso_login_url) do
+        nil ->
+          {:ok, login_url, conn} =
+            PowAssent.Plug.authorize_url(conn, enrollment_provider, full_callback_url)
 
-    conn = put_session(conn, :sso_session_params, conn.private[:pow_assent_session_params])
+          conn =
+            conn
+            |> put_session(:sso_session_params, conn.private[:pow_assent_session_params])
+            |> put_session(:sso_login_url, login_url)
+
+          {conn, login_url}
+
+        login_url ->
+          {conn, login_url}
+      end
 
     enrollment_url = ~p"/api/session/#{enrollment_provider}/callback"
 

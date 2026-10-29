@@ -227,6 +227,7 @@ defmodule TrentoWeb.SessionController do
       session_params ->
         conn
         |> delete_session(:sso_session_params)
+        |> delete_session(:sso_login_url)
         |> Conn.put_private(:pow_assent_session_params, session_params)
     end
   end
