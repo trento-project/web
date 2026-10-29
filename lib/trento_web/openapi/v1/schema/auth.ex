@@ -186,7 +186,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
             minLength: 1
           }
         },
-        required: [:code],
+        required: [:code, :state],
         example: %{
           code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
           state: "frHteBttgtW8706m7nqYC6ruYt"
