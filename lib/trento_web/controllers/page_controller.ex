@@ -7,6 +7,8 @@ defmodule TrentoWeb.PageController do
   alias Trento.AI.LLMRegistry
   alias Trento.Settings
 
+  require Logger
+
   @version Mix.Project.config()[:version]
 
   def index(conn, _params) do
@@ -44,17 +46,25 @@ defmodule TrentoWeb.PageController do
 
   def sso_authorize(conn, %{"provider" => provider}) do
     with sso_provider when sso_provider in [:oidc, :oauth2] <- sso_provider(),
-         ^provider <- "#{sso_provider}_local" do
-      callback_url = Application.fetch_env!(:trento, sso_provider)[:callback_url]
-      {:ok, login_url, conn} = PowAssent.Plug.authorize_url(conn, provider, callback_url)
-
+         ^provider <- "#{sso_provider}_local",
+         callback_url = Application.fetch_env!(:trento, sso_provider)[:callback_url],
+         {:ok, login_url, conn} <- PowAssent.Plug.authorize_url(conn, provider, callback_url) do
       conn
       |> put_session(:sso_session_params, conn.private[:pow_assent_session_params])
       |> redirect(external: login_url)
     else
-      _ -> send_resp(conn, :not_found, "Not Found")
+      {:error, error, conn} ->
+        Logger.error("could not start the #{provider} authorization: #{format_error(error)}")
+        send_resp(conn, :bad_gateway, "Could not reach the identity provider")
+
+      _ ->
+        send_resp(conn, :not_found, "Not Found")
     end
   end
+
+  defp format_error(%Assent.ServerUnreachableError{} = error), do: Exception.message(error)
+  defp format_error(%module{}), do: inspect(module)
+  defp format_error(error), do: inspect(error)
 
   defp sso_details, do: sso_details_for_provider(sso_provider())
 
