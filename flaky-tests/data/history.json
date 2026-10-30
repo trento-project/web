@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-09-09T19:54:57Z",
-    "commit": "774bec11f798901aaa8daa6344c52cb93c3553c7",
-    "run_id": "34396546376",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 37,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 1
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-09T19:56:13Z",
     "commit": "774bec11f798901aaa8daa6344c52cb93c3553c7",
     "run_id": "34396546376",
@@ -5715,5 +5699,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-10-30T22:38:02Z",
+    "commit": "3d6b2a84242ede78109caead83aa6f2aa7f9bd0a",
+    "run_id": "41139411047",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
