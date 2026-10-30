@@ -137,11 +137,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
     Schema for external identity provider callback requests.
 
     This schema defines the structure for OAuth2/OIDC authentication flow callbacks,
-    handling the authorization code and session state returned from external identity providers.
+    handling the authorization code and state returned from external identity providers.
 
     ## Fields
     - `code`: Authorization code returned from the identity provider after user consent
-    - `session_state`: Session state parameter for additional security and session management
+    - `state`: State returned from the identity provider, it must match the one stored when the authorization started
 
     ## Authentication Flow
     1. User is redirected to external IDP for authentication
@@ -151,7 +151,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     ## Security Notes
     - Authorization codes are single-use and have short validity periods
-    - Session state helps prevent CSRF attacks
+    - State prevents CSRF attacks, a callback without the expected state is rejected
     - All parameters should be validated against the original request
     """
 
@@ -170,17 +170,18 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
             example: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
             minLength: 1
           },
-          session_state: %OpenApiSpex.Schema{
+          state: %OpenApiSpex.Schema{
             type: :string,
-            description: "Session state parameter for additional security.",
+            description:
+              "State returned from the identity provider. Required to complete the authentication.",
             example: "frHteBttgtW8706m7nqYC6ruYt",
             minLength: 1
           }
         },
-        required: [:code, :session_state],
+        required: [:code, :state],
         example: %{
           code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
-          session_state: "frHteBttgtW8706m7nqYC6ruYt"
+          state: "frHteBttgtW8706m7nqYC6ruYt"
         }
       },
       struct?: false

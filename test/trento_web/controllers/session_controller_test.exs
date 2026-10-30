@@ -18,6 +18,7 @@ defmodule TrentoWeb.SessionControllerTest do
   alias Trento.Users.User
 
   alias TrentoWeb.Auth.AssentSamlStrategy
+  alias TrentoWeb.Auth.FakeIdentityProvider
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -447,9 +448,9 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
-      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+      conn = post_callback(conn, valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -476,9 +477,9 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
-      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+      conn = post_callback(conn, valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -505,12 +506,12 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
       conn =
         conn
         |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
-        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+        |> post_callback(valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -538,9 +539,9 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
-      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+      conn = post_callback(conn, valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -574,12 +575,12 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
       conn =
         conn
         |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
-        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+        |> post_callback(valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -602,16 +603,205 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
       conn =
         conn
         |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
-        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+        |> post_callback(valid_params, "test_provider")
 
       conn
       |> json_response(401)
       |> assert_schema("UnauthorizedV1", api_spec)
+    end
+  end
+
+  describe "callback endpoint state verification" do
+    setup do
+      oauth2_config = Application.fetch_env!(:trento, :oauth2)
+      pow_assent_config = Application.fetch_env!(:trento, :pow_assent)
+
+      Application.put_env(:trento, :oauth2,
+        enabled: true,
+        callback_url: "http://localhost:4000/auth/oauth2_callback"
+      )
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          oauth2_local: [
+            strategy: Assent.Strategy.OAuth2,
+            client_id: "trento-web",
+            client_secret: "secret",
+            auth_method: :client_secret_post,
+            base_url: "https://provider.example.com",
+            authorize_url: "/oauth/authorize",
+            token_url: "/oauth/token",
+            user_url: "/api/user",
+            http_adapter: FakeIdentityProvider
+          ]
+        ]
+      )
+
+      stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_671_715_992 end)
+      Application.put_env(:trento, :checks_service, base_url: "http://localhost:4001")
+      stub(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
+
+      on_exit(fn ->
+        Application.put_env(:trento, :oauth2, oauth2_config)
+        Application.put_env(:trento, :pow_assent, pow_assent_config)
+        Application.delete_env(:trento, :checks_service)
+      end)
+    end
+
+    defp authorize(conn) do
+      conn = get(conn, ~p"/auth/oauth2_local/authorize")
+
+      %{"state" => state} =
+        conn
+        |> redirected_to(302)
+        |> URI.parse()
+        |> Map.fetch!(:query)
+        |> URI.decode_query()
+
+      {recycle(conn), state}
+    end
+
+    defp follow_authorize(conn, path) do
+      conn = get(conn, path)
+
+      %{"state" => state} =
+        conn |> redirected_to(302) |> URI.parse() |> Map.fetch!(:query) |> URI.decode_query()
+
+      {recycle(conn), state}
+    end
+
+    for {description, params} <- [
+          {"without a state", %{"code" => "valid"}},
+          {"with a null state", %{"code" => "valid", "state" => nil}},
+          {"with a non-string state", %{"code" => "valid", "state" => 123}},
+          {"carrying session params",
+           %{"code" => "valid", "state" => "forged", "session_params" => %{"state" => "forged"}}}
+        ] do
+      @params params
+
+      test "should reject a callback #{description}", %{conn: conn, api_spec: api_spec} do
+        {conn, _state} = authorize(conn)
+
+        conn
+        |> post_callback(@params)
+        |> json_response(422)
+        |> assert_schema("UnprocessableEntityV1", api_spec)
+      end
+    end
+
+    test "should not consume the stored state with a callback without a body",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = post(conn, ~p"/api/session/oauth2_local/callback")
+
+      assert json_response(conn, 422)
+
+      conn
+      |> recycle()
+      |> post_callback(%{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+    end
+
+    test "should not consume the stored state with an invalid callback",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = post_callback(conn, %{"code" => "valid", "state" => nil})
+
+      assert json_response(conn, 422)
+
+      conn
+      |> recycle()
+      |> post_callback(%{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+    end
+
+    test "should log in when the browser loads the callback page before posting the callback",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = get(conn, ~p"/auth/oauth2_callback?#{%{"code" => "valid", "state" => state}}")
+
+      conn
+      |> recycle()
+      |> post_callback(%{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+    end
+
+    test "should log in when retrying from the login failed page after a failed callback",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = get(conn, ~p"/auth/oauth2_callback?#{%{"code" => "expired", "state" => state}}")
+      [_, retry_url] = Regex.run(~r/ssoLoginUrl: '([^']*)'/, html_response(conn, 200))
+
+      conn =
+        conn
+        |> recycle()
+        |> post_callback(%{"code" => "expired", "state" => state})
+
+      assert json_response(conn, 500)
+
+      {conn, retry_state} = conn |> recycle() |> follow_authorize(retry_url)
+
+      conn =
+        get(conn, ~p"/auth/oauth2_callback?#{%{"code" => "valid", "state" => retry_state}}")
+
+      conn
+      |> recycle()
+      |> post_callback(%{"code" => "valid", "state" => retry_state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+    end
+
+    test "should log in when the returned state matches the one stored by the authorize request",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn
+      |> post_callback(%{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+    end
+
+    test "should not log in when the returned state differs from the one stored by the authorize request",
+         %{conn: conn} do
+      {conn, _state} = authorize(conn)
+
+      conn
+      |> post_callback(%{"code" => "valid", "state" => "forged"})
+      |> json_response(500)
+    end
+
+    test "should not log in when no authorize request was made", %{conn: conn} do
+      conn
+      |> post_callback(%{"code" => "valid", "state" => "forged"})
+      |> json_response(500)
+    end
+
+    test "should not accept the stored state a second time", %{conn: conn} do
+      {conn, state} = authorize(conn)
+
+      conn =
+        post_callback(conn, %{
+          "code" => "valid",
+          "state" => "forged"
+        })
+
+      conn
+      |> recycle()
+      |> post_callback(%{"code" => "valid", "state" => state})
+      |> json_response(500)
     end
   end
 
@@ -803,5 +993,11 @@ defmodule TrentoWeb.SessionControllerTest do
                 } = &1
       )
     end
+  end
+
+  defp post_callback(conn, params, provider \\ "oauth2_local") do
+    conn
+    |> put_req_header("content-type", "application/json")
+    |> post(~p"/api/session/#{provider}/callback", params)
   end
 end
