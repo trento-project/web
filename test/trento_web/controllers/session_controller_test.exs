@@ -676,6 +676,46 @@ defmodule TrentoWeb.SessionControllerTest do
       {recycle(conn), state}
     end
 
+    defp post_callback(conn, params) do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(~p"/api/session/oauth2_local/callback", params)
+    end
+
+    for {description, params} <- [
+          {"without a state", %{"code" => "valid"}},
+          {"with a null state", %{"code" => "valid", "state" => nil}},
+          {"with a non-string state", %{"code" => "valid", "state" => 123}},
+          {"carrying session params",
+           %{"code" => "valid", "state" => "forged", "session_params" => %{"state" => "forged"}}}
+        ] do
+      @params params
+
+      test "should reject a callback #{description}", %{conn: conn, api_spec: api_spec} do
+        {conn, _state} = authorize(conn)
+
+        conn
+        |> post_callback(@params)
+        |> json_response(422)
+        |> assert_schema("UnprocessableEntityV1", api_spec)
+      end
+    end
+
+    test "should not consume the stored state with an invalid callback",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = post_callback(conn, %{"code" => "valid", "state" => nil})
+
+      assert json_response(conn, 422)
+
+      conn
+      |> recycle()
+      |> post_callback(%{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+    end
+
     test "should log in when the browser loads the callback page before posting the callback",
          %{conn: conn, api_spec: api_spec} do
       {conn, state} = authorize(conn)
@@ -684,7 +724,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> recycle()
-      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => state})
+      |> post_callback(%{"code" => "valid", "state" => state})
       |> json_response(200)
       |> assert_schema("CredentialsV1", api_spec)
     end
@@ -699,7 +739,7 @@ defmodule TrentoWeb.SessionControllerTest do
       conn =
         conn
         |> recycle()
-        |> post(~p"/api/session/oauth2_local/callback", %{"code" => "expired", "state" => state})
+        |> post_callback(%{"code" => "expired", "state" => state})
 
       assert json_response(conn, 500)
 
@@ -710,7 +750,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> recycle()
-      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => retry_state})
+      |> post_callback(%{"code" => "valid", "state" => retry_state})
       |> json_response(200)
       |> assert_schema("CredentialsV1", api_spec)
     end
@@ -720,7 +760,7 @@ defmodule TrentoWeb.SessionControllerTest do
       {conn, state} = authorize(conn)
 
       conn
-      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => state})
+      |> post_callback(%{"code" => "valid", "state" => state})
       |> json_response(200)
       |> assert_schema("CredentialsV1", api_spec)
     end
@@ -730,18 +770,13 @@ defmodule TrentoWeb.SessionControllerTest do
       {conn, _state} = authorize(conn)
 
       conn
-      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => "forged"})
+      |> post_callback(%{"code" => "valid", "state" => "forged"})
       |> json_response(500)
     end
 
-    test "should not log in when no authorize request was made, even if the request carries session params",
-         %{conn: conn} do
+    test "should not log in when no authorize request was made", %{conn: conn} do
       conn
-      |> post(~p"/api/session/oauth2_local/callback", %{
-        "code" => "valid",
-        "state" => "forged",
-        "session_params" => %{"state" => "forged"}
-      })
+      |> post_callback(%{"code" => "valid", "state" => "forged"})
       |> json_response(500)
     end
 
@@ -749,14 +784,14 @@ defmodule TrentoWeb.SessionControllerTest do
       {conn, state} = authorize(conn)
 
       conn =
-        post(conn, ~p"/api/session/oauth2_local/callback", %{
+        post_callback(conn, %{
           "code" => "valid",
           "state" => "forged"
         })
 
       conn
       |> recycle()
-      |> post(~p"/api/session/oauth2_local/callback", %{"code" => "valid", "state" => state})
+      |> post_callback(%{"code" => "valid", "state" => state})
       |> json_response(500)
     end
   end
