@@ -51,7 +51,7 @@ const _loginWithSSO = (username, password) => {
     cy.origin(Cypress.expose('idp_url'), { args }, ([username, password]) => {
       cy.get('[id="username"]').type(username);
       cy.get('[id="password"]').type(password);
-      return cy.get('input').contains('Sign In').click();
+      return cy.get('[id="kc-login"]').click();
     });
     cy.url().should('contain', `/auth/${ssoType}_callback`);
     return cy.get('h1:contains("At a glance")').should('be.visible');
