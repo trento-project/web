@@ -18,6 +18,7 @@ defmodule TrentoWeb.SessionControllerTest do
   alias Trento.Users.User
 
   alias TrentoWeb.Auth.AssentSamlStrategy
+  alias TrentoWeb.Auth.FakeIdentityProvider
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -616,37 +617,6 @@ defmodule TrentoWeb.SessionControllerTest do
   end
 
   describe "callback endpoint state verification" do
-    defmodule TestHTTPAdapter do
-      @moduledoc false
-      @behaviour Assent.HTTPAdapter
-
-      alias Assent.HTTPAdapter.HTTPResponse
-
-      @impl true
-      def request(:post, "https://provider.example.com/oauth/token", body, _headers, _opts) do
-        if body =~ "code=expired",
-          do: http_response(400, %{"error" => "invalid_grant"}),
-          else: http_response(200, %{"access_token" => "access_token", "token_type" => "bearer"})
-      end
-
-      def request(:get, "https://provider.example.com/api/user", _body, _headers, _opts),
-        do:
-          http_response(200, %{
-            "sub" => "sso_user",
-            "username" => "sso_user",
-            "email" => "sso_user@trento.com"
-          })
-
-      defp http_response(status, body),
-        do:
-          {:ok,
-           %HTTPResponse{
-             status: status,
-             headers: [{"content-type", "application/json"}],
-             body: Jason.encode!(body)
-           }}
-    end
-
     setup do
       oauth2_config = Application.fetch_env!(:trento, :oauth2)
       pow_assent_config = Application.fetch_env!(:trento, :pow_assent)
@@ -668,7 +638,7 @@ defmodule TrentoWeb.SessionControllerTest do
             authorize_url: "/oauth/authorize",
             token_url: "/oauth/token",
             user_url: "/api/user",
-            http_adapter: TestHTTPAdapter
+            http_adapter: FakeIdentityProvider
           ]
         ]
       )
