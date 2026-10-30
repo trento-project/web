@@ -153,4 +153,83 @@ describe('SSO integration', () => {
       usersPage.timezoneValueIsDisplayed(timezone);
     });
   });
+
+  describe('Callback state verification', () => {
+    if (loginPage.ssoType === 'saml') {
+      return;
+    }
+
+    const callbackUrl = `/api/session/${loginPage.ssoType}_local/callback`;
+
+    beforeEach(() => {
+      loginPage.cleanBrowserData();
+      loginPage.visit();
+      loginPage.clickLoginWithSsoButton();
+    });
+
+    it('should not log in when the callback carries a different state', () => {
+      cy.intercept({ method: 'POST', url: callbackUrl, times: 1 }, (req) => {
+        req.body.state = 'forged';
+      }).as('callback');
+
+      loginPage.submitIdpCredentialsAsPlainUser();
+
+      cy.wait('@callback').its('response.statusCode').should('not.eq', 200);
+      loginPage.ssoLoginFailedIsDisplayed();
+    });
+
+    it('should not log in when the callback comes from a browser that did not start the login', () => {
+      cy.intercept({ method: 'POST', url: callbackUrl, times: 1 }, (req) =>
+        req.reply({ statusCode: 500, body: {} })
+      ).as('heldCallback');
+
+      loginPage.submitIdpCredentialsAsPlainUser();
+      cy.wait('@heldCallback');
+
+      cy.intercept('POST', callbackUrl).as('callback');
+      cy.url().then((idpCallbackUrl) => {
+        loginPage.cleanBrowserData();
+        cy.visit(idpCallbackUrl);
+      });
+
+      cy.wait('@callback').its('response.statusCode').should('not.eq', 200);
+      loginPage.ssoLoginFailedIsDisplayed();
+    });
+
+    it('should not log in when the same callback is replayed', () => {
+      cy.intercept('POST', callbackUrl).as('callback');
+
+      loginPage.submitIdpCredentialsAsPlainUser();
+
+      cy.wait('@callback').then(({ request, response }) => {
+        expect(response.statusCode).to.eq(200);
+        dashboardPage.dashboardPageIsDisplayed();
+        cy.visit(
+          `/auth/${loginPage.ssoType}_callback?${new URLSearchParams(request.body)}`
+        );
+      });
+
+      cy.wait('@callback').its('response.statusCode').should('not.eq', 200);
+      loginPage.ssoLoginFailedIsDisplayed();
+    });
+
+    it('should log in when retrying from the login failed page after a failed callback', () => {
+      cy.intercept({ method: 'POST', url: callbackUrl, times: 1 }, (req) => {
+        req.body.code = `${req.body.code}-rejected`;
+      }).as('rejectedCallback');
+
+      loginPage.submitIdpCredentialsAsPlainUser();
+
+      cy.wait('@rejectedCallback')
+        .its('response.statusCode')
+        .should('not.eq', 200);
+      loginPage.ssoLoginFailedIsDisplayed();
+
+      cy.intercept('POST', callbackUrl).as('callback');
+      loginPage.clickLoginWithSsoButton();
+
+      cy.wait('@callback').its('response.statusCode').should('eq', 200);
+      dashboardPage.dashboardPageIsDisplayed();
+    });
+  });
 });
