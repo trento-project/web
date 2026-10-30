@@ -448,9 +448,9 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
-      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+      conn = post_callback(conn, valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -477,9 +477,9 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
-      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+      conn = post_callback(conn, valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -506,12 +506,12 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
       conn =
         conn
         |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
-        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+        |> post_callback(valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -539,9 +539,9 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
-      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+      conn = post_callback(conn, valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -575,12 +575,12 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
       conn =
         conn
         |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
-        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+        |> post_callback(valid_params, "test_provider")
 
       conn
       |> json_response(200)
@@ -603,12 +603,12 @@ defmodule TrentoWeb.SessionControllerTest do
         ]
       )
 
-      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+      valid_params = %{"code" => "valid", "state" => "state"}
 
       conn =
         conn
         |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
-        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+        |> post_callback(valid_params, "test_provider")
 
       conn
       |> json_response(401)
@@ -676,12 +676,6 @@ defmodule TrentoWeb.SessionControllerTest do
       {recycle(conn), state}
     end
 
-    defp post_callback(conn, params) do
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> post(~p"/api/session/oauth2_local/callback", params)
-    end
-
     for {description, params} <- [
           {"without a state", %{"code" => "valid"}},
           {"with a null state", %{"code" => "valid", "state" => nil}},
@@ -699,6 +693,21 @@ defmodule TrentoWeb.SessionControllerTest do
         |> json_response(422)
         |> assert_schema("UnprocessableEntityV1", api_spec)
       end
+    end
+
+    test "should not consume the stored state with a callback without a body",
+         %{conn: conn, api_spec: api_spec} do
+      {conn, state} = authorize(conn)
+
+      conn = post(conn, ~p"/api/session/oauth2_local/callback")
+
+      assert json_response(conn, 422)
+
+      conn
+      |> recycle()
+      |> post_callback(%{"code" => "valid", "state" => state})
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
     end
 
     test "should not consume the stored state with an invalid callback",
@@ -984,5 +993,11 @@ defmodule TrentoWeb.SessionControllerTest do
                 } = &1
       )
     end
+  end
+
+  defp post_callback(conn, params, provider \\ "oauth2_local") do
+    conn
+    |> put_req_header("content-type", "application/json")
+    |> post(~p"/api/session/#{provider}/callback", params)
   end
 end

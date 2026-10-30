@@ -110,7 +110,7 @@ defmodule TrentoWeb.SessionController do
     security: [],
     request_body:
       {"Request containing identity provider credentials and authorization code for external authentication.",
-       "application/json", ExternalIdpCallback},
+       "application/json", ExternalIdpCallback, required: true},
     parameters: [
       provider: [
         in: :path,
