@@ -30,6 +30,13 @@ defmodule TrentoWeb.SessionController do
 
   plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
   plug TrentoWeb.Plugs.UpdateLastLoginAtPlug when action in [:create]
+
+  plug OpenApiSpex.Plug.PutApiSpec,
+       [module: TrentoWeb.OpenApi.Unversioned.ApiSpec] when action in [:callback]
+
+  plug OpenApiSpex.Plug.CastAndValidate,
+       [json_render_error_v2: true, replace_params: false] when action in [:callback]
+
   plug :fetch_session when action in [:callback]
   plug :load_sso_session_params when action in [:callback]
 
