@@ -14,21 +14,31 @@ defmodule Trento.Infrastructure.Commanded.RollUp.RollUp do
   require Logger
 
   def roll_up_aggregate(stream_id, roll_up_event, stream_archive_id) do
-    {:ok, pid} = Postgrex.start_link(Trento.EventStore.config())
+    # A dedicated connection is needed because hard deletes are enabled at session level,
+    # so it must not be shared with the EventStore pool. It is stopped afterwards to avoid
+    # leaking connections, as the caller is a long-lived event handler.
+    {:ok, pid} =
+      Trento.EventStore.config()
+      |> Keyword.put(:pool_size, 1)
+      |> Postgrex.start_link()
 
-    case Postgrex.transaction(pid, &do_rollup(stream_id, roll_up_event, stream_archive_id, &1)) do
-      {:ok, :ok} ->
-        Logger.info("Aggregate rolled-up: #{stream_id} -> #{stream_archive_id}")
+    try do
+      case Postgrex.transaction(pid, &do_rollup(stream_id, roll_up_event, stream_archive_id, &1)) do
+        {:ok, :ok} ->
+          Logger.info("Aggregate rolled-up: #{stream_id} -> #{stream_archive_id}")
 
-        :ok
+          :ok
 
-      {:error, reason} = error ->
-        Logger.error(
-          "Error while rolling up aggregate: #{stream_id}, roll-up event: #{inspect(roll_up_event)}, error: #{inspect(reason)}",
-          error: reason
-        )
+        {:error, reason} = error ->
+          Logger.error(
+            "Error while rolling up aggregate: #{stream_id}, roll-up event: #{inspect(roll_up_event)}, error: #{inspect(reason)}",
+            error: reason
+          )
 
-        error
+          error
+      end
+    after
+      GenServer.stop(pid)
     end
   end
 

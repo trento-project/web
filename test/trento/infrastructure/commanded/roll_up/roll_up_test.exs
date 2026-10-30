@@ -65,4 +65,40 @@ defmodule Trento.Infrastructure.Commanded.RollUp.RollUpTest do
 
     assert roll_up_event == Upcaster.upcast(data, %{})
   end
+
+  test "should not leak the roll-up connection pool", %{conn: conn} do
+    {:links, links_before} = Process.info(self(), :links)
+
+    for _ <- 1..3 do
+      stream_id = Faker.UUID.v4()
+      event = %TestEvent{data: "data"}
+
+      :ok =
+        Trento.EventStore.append_to_stream(
+          stream_id,
+          0,
+          [
+            %EventStore.EventData{
+              causation_id: UUID.uuid4(),
+              correlation_id: UUID.uuid4(),
+              event_type: TypeProvider.to_string(event),
+              data: event,
+              metadata: %{}
+            }
+          ],
+          conn: conn
+        )
+
+      assert :ok =
+               RollUp.roll_up_aggregate(
+                 stream_id,
+                 %TestRollUpEvent{snapshot: %{"data" => "data"}},
+                 "#{stream_id}-archived"
+               )
+    end
+
+    {:links, links_after} = Process.info(self(), :links)
+
+    assert links_after -- links_before == []
+  end
 end
