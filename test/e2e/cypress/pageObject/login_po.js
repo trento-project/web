@@ -5,7 +5,7 @@ export * from './base_po.js';
 import * as basePage from './base_po.js';
 
 // Test data
-const ssoType = Cypress.expose('SSO_TYPE') || 'oidc';
+export const ssoType = Cypress.expose('SSO_TYPE') || 'oidc';
 
 // Selectors
 const usernameInputField = 'input[autocomplete="username"]';
@@ -15,6 +15,7 @@ const totpCodeInput = '#totp-code';
 const invalidCredentialsError = 'p:contains("Invalid credentials")';
 const loginToTrentoTitle = 'h2:contains("Login to Trento")';
 const loginWithSsoButton = 'button:contains("Login with Single Sign-on")';
+const ssoLoginFailedTitle = 'h2:contains("Login Failed")';
 
 // UI Interactions
 export const typeLoginTotpCode = (totpSecret) =>
@@ -56,6 +57,23 @@ const _loginWithSSO = (username, password) => {
     return cy.get('h1:contains("At a glance")').should('be.visible');
   });
 };
+
+export const submitIdpCredentialsAsPlainUser = () =>
+  _submitIdpCredentials(
+    basePage.plainUser.username,
+    basePage.plainUser.password
+  );
+
+const _submitIdpCredentials = (username, password) =>
+  cy.origin(
+    Cypress.expose('idp_url'),
+    { args: [username, password] },
+    ([username, password]) => {
+      cy.get('[id="username"]').type(username);
+      cy.get('[id="password"]').type(password);
+      return cy.get('[id="kc-login"]').click();
+    }
+  );
 
 export const clickSubmitLoginButton = () => cy.get(submitLoginButton).click();
 
@@ -102,3 +120,6 @@ export const loginPageIsDisplayed = () =>
 
 export const invalidCredentialsErrorIsDisplayed = () =>
   cy.get(invalidCredentialsError).should('be.visible');
+
+export const ssoLoginFailedIsDisplayed = () =>
+  cy.get(ssoLoginFailedTitle).should('be.visible');
