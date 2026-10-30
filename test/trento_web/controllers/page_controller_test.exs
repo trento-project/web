@@ -69,6 +69,25 @@ defmodule TrentoWeb.PageControllerTest do
              } = URI.decode_query(query)
     end
 
+    test "should store the state in a session cookie that needs the secret key base to be read",
+         %{conn: conn} do
+      conn = get(conn, ~p"/auth/oauth2_local/authorize")
+
+      %{"state" => state} =
+        conn
+        |> redirected_to(302)
+        |> URI.parse()
+        |> Map.fetch!(:query)
+        |> URI.decode_query()
+
+      assert %{value: cookie} = conn.resp_cookies["_trento_key"]
+
+      assert {:ok, %{"sso_session_params" => %{state: ^state}}} =
+               decrypt_session(cookie, TrentoWeb.Endpoint.config(:secret_key_base))
+
+      assert :error = decrypt_session(cookie, String.duplicate("a", 64))
+    end
+
     test "should return bad gateway when the identity provider is unreachable", %{conn: conn} do
       oidc_config = Application.fetch_env!(:trento, :oidc)
       on_exit(fn -> Application.put_env(:trento, :oidc, oidc_config) end)
@@ -104,4 +123,24 @@ defmodule TrentoWeb.PageControllerTest do
       assert response(conn, 404)
     end
   end
+
+  # The salts are public, as in TrentoWeb.Endpoint
+  defp decrypt_session(cookie, secret_key_base) do
+    with {:ok, session} <-
+           Plug.Crypto.MessageEncryptor.decrypt(
+             cookie,
+             derive_key(secret_key_base, "4lMFfd1O"),
+             derive_key(secret_key_base, "dboCmt4v")
+           ) do
+      {:ok, Plug.Crypto.non_executable_binary_to_term(session)}
+    end
+  end
+
+  defp derive_key(secret_key_base, salt),
+    do:
+      Plug.Crypto.KeyGenerator.generate(secret_key_base, salt,
+        iterations: 1000,
+        length: 32,
+        digest: :sha256
+      )
 end
