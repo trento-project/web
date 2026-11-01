@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-09-10T19:46:01Z",
-    "commit": "2a9a27dfcb64b98302bc6e0e6d553050f5592c25",
-    "run_id": "34520982297",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 39,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.02501
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-10T19:47:08Z",
     "commit": "2a9a27dfcb64b98302bc6e0e6d553050f5592c25",
     "run_id": "34520982297",
@@ -5685,5 +5665,29 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-31T22:29:17Z",
+    "commit": "eec39fffc2721a8239233948dca611ff852e60b8",
+    "run_id": "41248390117",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 8
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.3203
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.2013
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      }
+    ]
   }
 ]
