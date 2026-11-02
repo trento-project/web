@@ -591,7 +591,7 @@ describe('Table component', () => {
 
       const table = screen.getByRole('table');
       const collapsibleCell = table.querySelector(
-        'tbody > tr:nth-child(1) > td:nth-child(1)'
+        'tbody > tr:nth-child(1) > td:nth-last-child(1)'
       );
       expect(screen.queryByText(content)).not.toBeVisible();
 
