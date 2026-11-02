@@ -135,11 +135,8 @@ defmodule Trento.MixProject do
       {:nimble_totp, "~> 1.0"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:pow_assent, "~> 0.4.18"},
-      # Pin assent: 0.2.13 strictly dereferences session_params.state and
-      # crashes the SSO callback because session_params is never persisted
-      # server-side. Re-bump only after page_controller/session_controller
-      # are reworked to thread session_params through Plug.Session.
-      {:assent, "== 0.2.10", override: true},
+      # pow_assent 0.4.18 still requires assent ~> 0.2.8
+      {:assent, "~> 0.3.2", override: true},
       {:samly, "~> 1.0"}
     ]
   end
