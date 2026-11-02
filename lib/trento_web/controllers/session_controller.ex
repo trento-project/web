@@ -37,7 +37,9 @@ defmodule TrentoWeb.SessionController do
   plug OpenApiSpex.Plug.PutApiSpec,
        [module: TrentoWeb.OpenApi.Unversioned.ApiSpec] when action in [:callback]
 
-  plug :validate_callback_request when action in [:callback]
+  plug OpenApiSpex.Plug.CastAndValidate,
+       [render_error: TrentoWeb.Plugs.InvalidCredentialsErrorPlug, replace_params: false]
+       when action in [:callback]
 
   require Logger
 
@@ -234,21 +236,6 @@ defmodule TrentoWeb.SessionController do
     do: Users.validate_totp(user, totp_code)
 
   defp maybe_validate_totp(_, _), do: {:error, :totp_code_missing}
-
-  defp validate_callback_request(conn, _opts) do
-    {spec, operation_lookup} = OpenApiSpex.Plug.PutApiSpec.get_spec_and_operation_lookup(conn)
-    operation = operation_lookup[open_api_operation(:callback).operationId]
-
-    case OpenApiSpex.cast_and_validate(spec, operation, conn, nil, replace_params: false) do
-      {:ok, conn} ->
-        conn
-
-      {:error, _errors} ->
-        conn
-        |> TrentoWeb.FallbackController.call({:error, :invalid_credentials})
-        |> halt()
-    end
-  end
 
   defp callback_error_name(%module{}), do: inspect(module)
   defp callback_error_name(_error), do: "unknown error"
