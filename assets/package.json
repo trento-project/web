@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@ag-ui/client": "^1.0.3",
-    "@ag-ui/core": "^0.0.59",
+    "@ag-ui/core": "^1.0.3",
     "@assistant-ui/core": "^0.3.29",
     "@assistant-ui/react": "^0.15.29",
     "@assistant-ui/react-ag-ui": "^0.0.70",
