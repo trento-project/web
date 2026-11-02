@@ -64,11 +64,13 @@ jobs:
             name: stable
           - obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
             name: rolling
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@9eeba3813dd18bf0350ba0c867ef0f3f2cc26342 # v1.13.0
     with:
       update_changelog: true
       obs_project: ${{ matrix.obs_project }}
       obs_package: ${{ vars.OBS_PACKAGE }}
+      obs_image_package: trento-web-image
+      source_ref: ${{ matrix.name == 'stable' && needs.release.outputs.version || 'main' }}
     secrets:
       gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
       obs_user: ${{ secrets.OBS_USER }}
