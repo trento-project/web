@@ -83,28 +83,28 @@ describe('SapSystemsOverviews component', () => {
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
       const mainRow = rows[0];
 
-      expect(mainRow.querySelector('td:nth-child(3)')).toHaveTextContent(sid);
-      expect(mainRow.querySelector('td:nth-child(3) > a')).toHaveAttribute(
+      expect(mainRow.querySelector('td:nth-child(2)')).toHaveTextContent(sid);
+      expect(mainRow.querySelector('td:nth-child(2) > a')).toHaveAttribute(
         'href',
         `/sap_systems/${sapSystemID}`
       );
-      expect(mainRow.querySelector('td:nth-child(4)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(3)')).toHaveTextContent(
         attachedRdbms
       );
-      expect(mainRow.querySelector('td:nth-child(4) > a')).toHaveAttribute(
+      expect(mainRow.querySelector('td:nth-child(3) > a')).toHaveAttribute(
         'href',
         `/databases/${databaseID}`
       );
-      expect(mainRow.querySelector('td:nth-child(5)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(4)')).toHaveTextContent(
         tenant
       );
-      expect(mainRow.querySelector('td:nth-child(6)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(5)')).toHaveTextContent(
         sapSystemType
       );
-      expect(mainRow.querySelector('td:nth-child(7)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(6)')).toHaveTextContent(
         dbAddress
       );
-      expect(mainRow.querySelector('td:nth-child(8)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(7)')).toHaveTextContent(
         'ENSA1'
       );
     });
@@ -145,7 +145,7 @@ describe('SapSystemsOverviews component', () => {
       expectedSapSystemTypes.forEach((expectedType, index) => {
         const rowIndex = index * 2;
         const sapSystemRow = rows[rowIndex];
-        expect(sapSystemRow.querySelector('td:nth-child(6)')).toHaveTextContent(
+        expect(sapSystemRow.querySelector('td:nth-child(5)')).toHaveTextContent(
           expectedType
         );
       });
@@ -183,7 +183,7 @@ describe('SapSystemsOverviews component', () => {
         />
       );
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
-      expect(rows[0].querySelector('td:nth-child(6)')).toHaveTextContent(
+      expect(rows[0].querySelector('td:nth-child(5)')).toHaveTextContent(
         expectedSapSystemTypes
       );
     });
@@ -327,7 +327,7 @@ describe('SapSystemsOverviews component', () => {
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
       expect(rows[0]).toHaveClass('bg-gray-100');
 
-      const healthCell = rows[0].querySelector('td:nth-child(2)');
+      const healthCell = rows[0].querySelector('td:nth-child(1)');
       const svgs = healthCell.querySelectorAll(
         '[data-testid="eos-svg-component"]'
       );
@@ -335,7 +335,9 @@ describe('SapSystemsOverviews component', () => {
 
       const table = screen.getByRole('table');
       await user.click(
-        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+        table.querySelector(
+          'tbody tr:nth-child(1) td[aria-label="collapsible-icon-cell"]'
+        )
       );
 
       const detailsRow = screen
@@ -392,7 +394,9 @@ describe('SapSystemsOverviews component', () => {
 
         const table = screen.getByRole('table');
         await user.click(
-          table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+          table.querySelector(
+            'tbody tr:nth-child(1) td[aria-label="collapsible-icon-cell"]'
+          )
         );
 
         const cleanUpButton = screen.queryAllByRole('button', {
@@ -437,7 +441,9 @@ describe('SapSystemsOverviews component', () => {
 
       const table = screen.getByRole('table');
       await user.click(
-        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+        table.querySelector(
+          'tbody tr:nth-child(1) td[aria-label="collapsible-icon-cell"]'
+        )
       );
 
       const cleanUpButtons = screen.getAllByRole('button', {

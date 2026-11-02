@@ -415,26 +415,26 @@ export const expectedSrHealthStatesAreDisplayed = () =>
 export const expectedResourcesDisplayed = () =>
   cy.wrap(availableHanaCluster.resources).each((resource, index) => {
     cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
-      .eq(1)
+      .eq(0)
       .should('contain', resource.failCount);
     cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
-      .eq(2)
+      .eq(1)
       .should('contain', resource.id);
     cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
-      .eq(3)
+      .eq(2)
       .should('contain', resource.node);
     cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
-      .eq(4)
+      .eq(3)
       .should('contain', resource.role);
     cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
-      .eq(5)
+      .eq(4)
       .should('contain', resource.status);
     cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
-      .eq(6)
+      .eq(5)
       .should('contain', resource.managed);
     return cy
       .get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
-      .eq(7)
+      .eq(6)
       .should('contain', resource.type);
   });
 
