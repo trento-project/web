@@ -24,6 +24,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Operations.ClusterBulkResourceRefreshParam
           type: :array,
           description: "Unique identifiers of the clusters on which the operation is requested.",
           minItems: 1,
+          uniqueItems: true,
           items: %Schema{type: :string, format: :uuid}
         }
       },

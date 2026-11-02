@@ -358,6 +358,21 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         end
       end
 
+      test "should respond with 422 if the cluster ids contain duplicates for #{@operation}", %{
+        conn: conn
+      } do
+        %{id: cluster_id} = insert(:cluster)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/clusters/operations/#{@operation}",
+          Map.put(@arguments, "cluster_ids", [cluster_id, cluster_id])
+        )
+        |> json_response(:unprocessable_entity)
+      end
+
       test "should respond with 404 if any cluster is not found for #{@operation}", %{
         conn: conn,
         api_spec: api_spec
