@@ -690,39 +690,39 @@ defmodule TrentoWeb.SessionControllerTest do
 
         conn
         |> post_callback(@params)
-        |> json_response(422)
-        |> assert_schema("UnprocessableEntityV1", api_spec)
+        |> json_response(401)
+        |> assert_schema("UnauthorizedV1", api_spec)
       end
     end
 
-    test "should not consume the stored state with a callback without a body",
+    test "should not accept the stored state after a callback without a body",
          %{conn: conn, api_spec: api_spec} do
       {conn, state} = authorize(conn)
 
       conn = post(conn, ~p"/api/session/oauth2_local/callback")
 
-      assert json_response(conn, 422)
+      assert json_response(conn, 401)
 
       conn
       |> recycle()
       |> post_callback(%{"code" => "valid", "state" => state})
-      |> json_response(200)
-      |> assert_schema("CredentialsV1", api_spec)
+      |> json_response(401)
+      |> assert_schema("UnauthorizedV1", api_spec)
     end
 
-    test "should not consume the stored state with an invalid callback",
+    test "should not accept the stored state after an invalid callback",
          %{conn: conn, api_spec: api_spec} do
       {conn, state} = authorize(conn)
 
       conn = post_callback(conn, %{"code" => "valid", "state" => nil})
 
-      assert json_response(conn, 422)
+      assert json_response(conn, 401)
 
       conn
       |> recycle()
       |> post_callback(%{"code" => "valid", "state" => state})
-      |> json_response(200)
-      |> assert_schema("CredentialsV1", api_spec)
+      |> json_response(401)
+      |> assert_schema("UnauthorizedV1", api_spec)
     end
 
     test "should log in when the browser loads the callback page before posting the callback",
@@ -750,7 +750,7 @@ defmodule TrentoWeb.SessionControllerTest do
         |> recycle()
         |> post_callback(%{"code" => "expired", "state" => state})
 
-      assert json_response(conn, 500)
+      assert json_response(conn, 401)
 
       {conn, retry_state} = conn |> recycle() |> follow_authorize(retry_url)
 
@@ -775,18 +775,21 @@ defmodule TrentoWeb.SessionControllerTest do
     end
 
     test "should not log in when the returned state differs from the one stored by the authorize request",
-         %{conn: conn} do
+         %{conn: conn, api_spec: api_spec} do
       {conn, _state} = authorize(conn)
 
       conn
       |> post_callback(%{"code" => "valid", "state" => "forged"})
-      |> json_response(500)
+      |> json_response(401)
+      |> assert_schema("UnauthorizedV1", api_spec)
     end
 
-    test "should not log in when no authorize request was made", %{conn: conn} do
+    test "should not log in when no authorize request was made",
+         %{conn: conn, api_spec: api_spec} do
       conn
       |> post_callback(%{"code" => "valid", "state" => "forged"})
-      |> json_response(500)
+      |> json_response(401)
+      |> assert_schema("UnauthorizedV1", api_spec)
     end
 
     test "should not accept the stored state a second time", %{conn: conn} do
@@ -801,7 +804,7 @@ defmodule TrentoWeb.SessionControllerTest do
       conn
       |> recycle()
       |> post_callback(%{"code" => "valid", "state" => state})
-      |> json_response(500)
+      |> json_response(401)
     end
   end
 
