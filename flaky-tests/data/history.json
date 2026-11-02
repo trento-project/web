@@ -1,61 +1,5 @@
 [
   {
-    "timestamp": "2026-09-11T00:08:08Z",
-    "commit": "2a9a27dfcb64b98302bc6e0e6d553050f5592c25",
-    "run_id": "34528973170",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 9
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.09160
-      },
-      {
-        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
-        "score": 0.07501
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
-        "score": 0.07501
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
-        "score": 0.07501
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
-        "score": 0.07501
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.07501
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.07501
-      },
-      {
-        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
-        "score": 0.07501
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark cluster data as sync when the agent starts reporting data again::Clusters Overview Stale data should mark cluster data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should not produce duplicate history entries when filters are applied::Hosts Overview Filter and browser navigation should not produce duplicate history entries when filters are applied",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-11T19:47:45Z",
     "commit": "9ca578586f0c066a9b40737afb5cb3a40f051f8d",
     "run_id": "34639495096",
@@ -5694,5 +5638,45 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-01T22:49:41Z",
+    "commit": "39484aec20d2b4742107b27954425d68a7b2de5d",
+    "run_id": "41359069731",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      }
+    ]
   }
 ]
