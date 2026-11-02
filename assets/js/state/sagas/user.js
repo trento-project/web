@@ -115,7 +115,7 @@ function* completeSSOEnrollment(enrollmentFunc, payload) {
 export function* performSSOEnrollment({ payload: { code, state } }) {
   yield call(completeSSOEnrollment, ssoEnrollment, {
     code,
-    session_state: state,
+    state,
   });
 }
 
