@@ -44,10 +44,10 @@ const url = '/databases';
 const sidLinks = `tbody a[href*="${url}/"]`;
 
 const hdqDatabaseCell = `tr:contains("${hdqDatabase.sid}")`;
-const hdqDatabaseRowCollapsibleCell = `${hdqDatabaseCell} > td:eq(0)`;
+const hdqDatabaseRowCollapsibleCell = `${hdqDatabaseCell} > td[aria-label="collapsible-icon-cell"]`;
 
 const hddDatabaseCell = `tr:contains("${hddDatabase.sid}")`;
-const hddDatabaseRowCollapsibleCell = `${hddDatabaseCell} > td:eq(0)`;
+const hddDatabaseRowCollapsibleCell = `${hddDatabaseCell} > td[aria-label="collapsible-icon-cell"]`;
 
 const databaseInstance1 = `a:contains("${hdqDatabase.instances[0].name}")`;
 const databaseInstance2 = `a:contains("${hdqDatabase.instances[1].name}")`;

@@ -97,7 +97,7 @@ const checkInputExpectedValue = 'input[name*="expected"]';
 const checkName = (checkNameText) =>
   `div[aria-label="accordion-header"] h3:contains("${checkNameText}")`;
 const resourcesTable = 'tbody:eq(2)';
-const resourcesRowCollapsibleCell = `${resourcesTable} td:nth-child(1)`;
+const resourcesRowCollapsibleCell = `${resourcesTable} td[aria-label="collapsible-icon-cell"]`;
 const clusterStateLabel = 'span:contains("State:")';
 const clusterStateBadge = `${clusterStateLabel} svg`;
 

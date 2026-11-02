@@ -96,7 +96,7 @@ const modifiedCheckID =
   'tbody tr td span[class="inline-flex leading-5 cursor-pointer"]';
 const modifiedResultCriticalIcon = 'svg[class="hover:opacity-75 fill-red-500"]';
 
-const checkResultCollapsibleCell = `tbody:eq(0) tr:contains('MODIFIED') td:eq(0)`;
+const checkResultCollapsibleCell = `tbody:eq(0) tr:contains('MODIFIED') td[aria-label="collapsible-icon-cell"]`;
 const unMetExpectations = '0/1 Expectations met.';
 const hostExpectationsNotMet = `tbody tr[class*="overflow-y-hidden"] span[class="text-red-500"]:contains(${unMetExpectations})`;
 const evaluationResultsStatus = `div[class="py-4"] div[class*="text-red"] span:contains('${checkStatus}')`;

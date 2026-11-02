@@ -84,9 +84,9 @@ const instancesRowsSelector =
   'tr:nth-child(odd) + tr div[class*="row-group"] div[class*="row border"]';
 const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
 const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
-const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td:first-child`;
+const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td[aria-label="collapsible-icon-cell"]`;
 const nwdSystemCell = `tr:contains("${sapSystemNwd.sid}")`;
-const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(0)`;
+const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td[aria-label="collapsible-icon-cell"]`;
 const pageTitle = 'h1:contains("SAP Systems")';
 const sidLinks = `tbody a[href*="${url}/"]`;
 
