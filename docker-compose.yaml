@@ -10,7 +10,7 @@ volumes:
 services:
   keycloak:
     profiles: [idp]
-    image: quay.io/keycloak/keycloak:25.0.2 # https://quay.io/repository/keycloak/keycloak?tab=tags
+    image: quay.io/keycloak/keycloak:26.8.1 # https://quay.io/repository/keycloak/keycloak?tab=tags
     depends_on: [postgres]
     command: ["start-dev", "--import-realm"]
     environment:
@@ -19,8 +19,8 @@ services:
       KC_DB_PASSWORD: password
       KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak"
       KC_REALM_NAME: trento
-      KEYCLOAK_ADMIN: keycloak
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: keycloak
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     ports:
       - 8081:8080
     volumes:
