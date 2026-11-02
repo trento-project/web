@@ -507,6 +507,7 @@ TrentoWeb.ActivityLogChannel.md
 TrentoWeb.Auth.AccessToken.md
 TrentoWeb.Auth.ApiKey.md
 TrentoWeb.Auth.AssentSamlStrategy.md
+TrentoWeb.Auth.FakeIdentityProvider.md
 TrentoWeb.Auth.PersonalAccessToken.md
 TrentoWeb.Auth.RefreshToken.md
 TrentoWeb.Auth.Tokens.md
@@ -554,6 +555,7 @@ TrentoWeb.Plugs.AppJWTAuthPlug.md
 TrentoWeb.Plugs.AuthenticateAPIKeyPlug.md
 TrentoWeb.Plugs.ChartsDisabledPlug.md
 TrentoWeb.Plugs.ExternalIdpGuardPlug.md
+TrentoWeb.Plugs.InvalidCredentialsErrorPlug.md
 TrentoWeb.Plugs.LoadUserPlug.md
 TrentoWeb.Plugs.NormalizeListsPlug.md
 TrentoWeb.Plugs.OperationsPolicyPlug.md

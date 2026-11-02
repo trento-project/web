@@ -1,5 +1,5 @@
 # `TrentoWeb.OpenApi.V1.Schema.Auth.Credentials`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L248)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L249)
 
 Schema for successful authentication responses.
 

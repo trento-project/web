@@ -3,6 +3,8 @@
 
 # `index`
 
+# `sso_authorize`
+
 ---
 
 *Consult [api-reference.md](api-reference.md) for complete listing*

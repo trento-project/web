@@ -4,11 +4,11 @@
 Schema for external identity provider callback requests.
 
 This schema defines the structure for OAuth2/OIDC authentication flow callbacks,
-handling the authorization code and session state returned from external identity providers.
+handling the authorization code and state returned from external identity providers.
 
 ## Fields
 - `code`: Authorization code returned from the identity provider after user consent
-- `session_state`: Session state parameter for additional security and session management
+- `state`: State returned from the identity provider, it must match the one stored when the authorization started
 
 ## Authentication Flow
 1. User is redirected to external IDP for authentication
@@ -18,7 +18,7 @@ handling the authorization code and session state returned from external identit
 
 ## Security Notes
 - Authorization codes are single-use and have short validity periods
-- Session state helps prevent CSRF attacks
+- State prevents CSRF attacks, a callback without the expected state is rejected
 - All parameters should be validated against the original request
 
 # `schema`

@@ -885,6 +885,7 @@ Uses Joken as jwt base library
 
   - [TrentoWeb.Auth.AssentSamlStrategy](TrentoWeb.Auth.AssentSamlStrategy.md): Assent strategy to handle SAML authentication
 
+  - [TrentoWeb.Auth.FakeIdentityProvider](TrentoWeb.Auth.FakeIdentityProvider.md): Assent HTTP adapter faking an OAuth2/OIDC identity provider.
   - [TrentoWeb.Auth.PersonalAccessToken](TrentoWeb.Auth.PersonalAccessToken.md): PersonalAccessToken represents a users' generated token.
 
   - [TrentoWeb.Auth.RefreshToken](TrentoWeb.Auth.RefreshToken.md):   Refresh token is the module responsible for creating a proper jwt refresh token
@@ -958,6 +959,7 @@ password, and optional TOTP code for secure login to the Trento platform.
   - [TrentoWeb.Plugs.ChartsDisabledPlug](TrentoWeb.Plugs.ChartsDisabledPlug.md):   This plug acts as a barrier for the charts endpoint, return 501 for all the requests.
   - [TrentoWeb.Plugs.ExternalIdpGuardPlug](TrentoWeb.Plugs.ExternalIdpGuardPlug.md): This plug acts as a guard for certain actions/endpoint to disable them when an external idp integration is enabled
 
+  - [TrentoWeb.Plugs.InvalidCredentialsErrorPlug](TrentoWeb.Plugs.InvalidCredentialsErrorPlug.md): Renders the invalid credentials error of the fallback controller.
   - [TrentoWeb.Plugs.LoadUserPlug](TrentoWeb.Plugs.LoadUserPlug.md): LoadUserPlug loads the stateless user from jwt from the database.
 The current user is replaced with the stateful user for subsequent plugs
 

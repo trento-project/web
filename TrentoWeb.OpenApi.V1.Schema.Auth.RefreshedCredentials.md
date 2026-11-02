@@ -1,5 +1,5 @@
 # `TrentoWeb.OpenApi.V1.Schema.Auth.RefreshedCredentials`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L314)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L315)
 
 Schema for refreshed authentication results.
 

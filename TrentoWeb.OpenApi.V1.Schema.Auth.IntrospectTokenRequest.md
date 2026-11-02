@@ -1,5 +1,5 @@
 # `TrentoWeb.OpenApi.V1.Schema.Auth.IntrospectTokenRequest`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L372)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L373)
 
 Schema for introspect token requests.
 

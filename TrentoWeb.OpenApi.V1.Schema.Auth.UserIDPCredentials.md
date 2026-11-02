@@ -1,5 +1,5 @@
 # `TrentoWeb.OpenApi.V1.Schema.Auth.UserIDPCredentials`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L190)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L191)
 
 Schema for successful IDP authentication responses.
 

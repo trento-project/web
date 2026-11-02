@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-7680EBB5.js"></script>
+    <script defer src="dist/sidebar_items-352B6BEC.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -119,7 +119,7 @@ Trento Web
 
     <section id="moduledoc">
 <p>Schema for external identity provider callback requests.</p><p>This schema defines the structure for OAuth2/OIDC authentication flow callbacks,
-handling the authorization code and session state returned from external identity providers.</p><h2 id="module-fields" class="section-heading"><a href="#module-fields" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Fields</span></h2><ul><li><code class="inline">code</code>: Authorization code returned from the identity provider after user consent</li><li><code class="inline">session_state</code>: Session state parameter for additional security and session management</li></ul><h2 id="module-authentication-flow" class="section-heading"><a href="#module-authentication-flow" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Authentication Flow</span></h2><ol><li>User is redirected to external IDP for authentication</li><li>After successful authentication, user is redirected back with authorization code</li><li>This schema validates the callback parameters</li><li>Authorization code is exchanged for access tokens</li></ol><h2 id="module-security-notes" class="section-heading"><a href="#module-security-notes" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Security Notes</span></h2><ul><li>Authorization codes are single-use and have short validity periods</li><li>Session state helps prevent CSRF attacks</li><li>All parameters should be validated against the original request</li></ul>
+handling the authorization code and state returned from external identity providers.</p><h2 id="module-fields" class="section-heading"><a href="#module-fields" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Fields</span></h2><ul><li><code class="inline">code</code>: Authorization code returned from the identity provider after user consent</li><li><code class="inline">state</code>: State returned from the identity provider, it must match the one stored when the authorization started</li></ul><h2 id="module-authentication-flow" class="section-heading"><a href="#module-authentication-flow" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Authentication Flow</span></h2><ol><li>User is redirected to external IDP for authentication</li><li>After successful authentication, user is redirected back with authorization code</li><li>This schema validates the callback parameters</li><li>Authorization code is exchanged for access tokens</li></ol><h2 id="module-security-notes" class="section-heading"><a href="#module-security-notes" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Security Notes</span></h2><ul><li>Authorization codes are single-use and have short validity periods</li><li>State prevents CSRF attacks, a callback without the expected state is rejected</li><li>All parameters should be validated against the original request</li></ul>
     </section>
 
 </div>
