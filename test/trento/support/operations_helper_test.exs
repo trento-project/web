@@ -74,16 +74,19 @@ defmodule Trento.Support.OperationsHelperTest do
       operation_id_a = UUID.uuid4()
       operation_id_c = UUID.uuid4()
 
-      assert {:ok, _bulk_operation_id,
-              [
-                %{resource_id: "a", operation_id: ^operation_id_a},
-                %{resource_id: "c", operation_id: ^operation_id_c}
-              ], [%{resource_id: "b", reason: :foo}]} =
-               OperationsHelper.reduce_bulk_operation_request(["a", "b", "c"], fn
-                 "a" -> {:ok, operation_id_a}
-                 "b" -> {:error, :foo}
-                 "c" -> {:ok, operation_id_c}
-               end)
+      {:ok, _bulk_operation_id, operations, failed} =
+        OperationsHelper.reduce_bulk_operation_request(["a", "b", "c"], fn
+          "a" -> {:ok, operation_id_a}
+          "b" -> {:error, :foo}
+          "c" -> {:ok, operation_id_c}
+        end)
+
+      assert [%{resource_id: "b", reason: :foo}] = failed
+
+      assert [
+               %{resource_id: "a", operation_id: ^operation_id_a},
+               %{resource_id: "c", operation_id: ^operation_id_c}
+             ] = operations
     end
 
     test "should return an error when all the requests fail" do

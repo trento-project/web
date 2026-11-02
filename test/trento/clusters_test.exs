@@ -1368,12 +1368,15 @@ defmodule Trento.ClustersTest do
           OperationsPublisher, "requests", %OperationRequested{} -> :ok
         end)
 
-        assert {:ok, _bulk_operation_id,
-                [
-                  %{resource_id: ^cluster_id_1, operation_id: operation_id_1},
-                  %{resource_id: ^cluster_id_2, operation_id: operation_id_2}
-                ], []} =
-                 Clusters.request_bulk_operation(@operation, [cluster_id_1, cluster_id_2], %{})
+        {:ok, _bulk_operation_id, operations, failed} =
+          Clusters.request_bulk_operation(@operation, [cluster_id_1, cluster_id_2], %{})
+
+        assert [] == failed
+
+        assert [
+                 %{resource_id: ^cluster_id_1, operation_id: operation_id_1},
+                 %{resource_id: ^cluster_id_2, operation_id: operation_id_2}
+               ] = operations
 
         refute operation_id_1 == operation_id_2
       end
