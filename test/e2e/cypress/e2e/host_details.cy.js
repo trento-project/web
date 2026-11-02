@@ -255,9 +255,8 @@ context('Host Details', () => {
   });
 
   describe('Forbidden actions', () => {
-    before(() => hostDetailsPage.restoreHost());
-
     beforeEach(() => {
+      hostDetailsPage.restoreHost();
       hostDetailsPage.apiDeleteAllUsers();
       hostDetailsPage.logout();
     });
