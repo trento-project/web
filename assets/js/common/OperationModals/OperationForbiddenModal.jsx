@@ -11,6 +11,7 @@ import Button from '@common/Button';
 import Banner from '@common/Banners';
 
 const replacePattern = /({\d+})/;
+const globalReplacePattern = new RegExp(replacePattern, 'g');
 const urlTypes = {
   cluster: 'clusters',
   database: 'databases',
@@ -19,6 +20,13 @@ const urlTypes = {
 };
 
 const findBulkResource = (metadata) => find(metadata, 'bulk_operation');
+
+const formatErrorKey = (error, metadata) =>
+  error.replace(
+    globalReplacePattern,
+    (placeholder) =>
+      get(metadata, [parseInt(placeholder.substring(1)), 'id']) ?? placeholder
+  );
 
 const formatError = (error, metadata) => {
   // find {i} entries in the text splitting the whole content
@@ -51,7 +59,7 @@ const formatError = (error, metadata) => {
 
 const renderErrors = (errors) =>
   map(errors, ({ detail, metadata }) => (
-    <li key={detail} className="text-sm">
+    <li key={formatErrorKey(detail, metadata)} className="text-sm">
       {formatError(detail, metadata)}
     </li>
   ));
