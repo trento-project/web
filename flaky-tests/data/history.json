@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-09-11T19:47:45Z",
-    "commit": "9ca578586f0c066a9b40737afb5cb3a40f051f8d",
-    "run_id": "34639495096",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 40,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-11T19:48:52Z",
     "commit": "9ca578586f0c066a9b40737afb5cb3a40f051f8d",
     "run_id": "34639495096",
@@ -5676,6 +5648,22 @@
       {
         "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-11-03T00:52:36Z",
+    "commit": "eee21e829ace0bb563318dbd8cd20c37014e7f35",
+    "run_id": "41555944246",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.09051
       }
     ]
   }
