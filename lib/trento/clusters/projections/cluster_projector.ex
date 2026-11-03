@@ -72,7 +72,8 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
         ClusterReadModel
         |> Repo.get!(cluster_id)
         |> ClusterReadModel.changeset(%{
-          deregistered_at: deregistered_at
+          deregistered_at: deregistered_at,
+          stale_at: nil
         })
 
       Ecto.Multi.update(multi, :cluster, changeset)
