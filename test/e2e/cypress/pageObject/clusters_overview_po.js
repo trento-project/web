@@ -80,7 +80,7 @@ export const hanaCluster1TagsAreDisplayed = () =>
 
 export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
   const clusterID = _clusterIdByName(clusterName);
-  const clusterNameLinkCellSelector = `${tableRows} > ${rowCells}:nth-child(2):contains("${clusterID}")`;
+  const clusterNameLinkCellSelector = `${tableRows} > ${rowCells}:nth-child(3):contains("${clusterID}")`;
   basePage.waitForInitialDataFetch();
   cy.get(tableRows).should('have.length', availableClusters.length);
   return cy.get(clusterNameLinkCellSelector).should('have.text', clusterID);
@@ -99,9 +99,9 @@ export const clustersDataIsDisplayedAsExpected = () => {
   basePage.waitForInitialDataFetch();
   cy.get(tableRows).should('have.length', availableClusters.length);
   return cy.wrap(availableClusters).each((cluster, index) => {
-    const clusterNameSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(1)`;
-    const clusterSidSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(2)`;
-    const clusterTypeSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(5)`;
+    const clusterNameSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(2)`;
+    const clusterSidSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(3)`;
+    const clusterTypeSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(6)`;
 
     cy.get(clusterNameSelector).should('have.text', cluster.name);
     cy.get(clusterSidSelector).should('have.text', cluster.sid);
@@ -126,7 +126,7 @@ export const clusterHealthIconHasExpectedClass = (clusterName, className) =>
     .get(`td:contains("${clusterName}")`)
     .parents('tr')
     .within(() =>
-      cy.get('td').eq(0).find('svg').should('have.class', className)
+      cy.get('td').eq(1).find('svg').should('have.class', className)
     );
 
 export const eachClusterTagsIsCorrectlyDisplayed = () =>
