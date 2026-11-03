@@ -59,7 +59,7 @@ const renderErrors = (errors) =>
 const renderBulkErrors = (errors) => {
   const errorsByResource = groupBy(
     errors,
-    ({ metadata }) => findBulkResource(metadata)?.id
+    ({ metadata }) => findBulkResource(metadata).id
   );
 
   return map(errorsByResource, (resourceErrors, id) => {
