@@ -1240,7 +1240,7 @@ jobs:
   obs-sync:
     name: Update OBS packages
     if: fromJSON(vars.OBS_ENABLED) && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@9eeba3813dd18bf0350ba0c867ef0f3f2cc26342 # v1.13.0
     needs:
       - static-code-analysis-elixir
       - static-code-analysis-js
@@ -1252,6 +1252,7 @@ jobs:
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
+      obs_image_package: trento-web-image
     secrets:
       gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
       obs_user: ${{ secrets.OBS_USER }}
