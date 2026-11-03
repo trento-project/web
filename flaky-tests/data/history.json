@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-09-11T19:48:52Z",
-    "commit": "9ca578586f0c066a9b40737afb5cb3a40f051f8d",
-    "run_id": "34639495096",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 29,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-12T00:09:43Z",
     "commit": "9ca578586f0c066a9b40737afb5cb3a40f051f8d",
     "run_id": "34646975813",
@@ -5666,5 +5650,16 @@
         "score": 0.09051
       }
     ]
+  },
+  {
+    "timestamp": "2026-11-03T01:12:52Z",
+    "commit": "eee21e829ace0bb563318dbd8cd20c37014e7f35",
+    "run_id": "41558232790",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
