@@ -512,7 +512,11 @@ describe('ClustersList component', () => {
       'should list the selected clusters in the $operation modal',
       async ({ operation, title }) => {
         const user = userEvent.setup();
-        const clusters = clusterFactory.buildList(3);
+        const clusters = [
+          clusterFactory.build(),
+          clusterFactory.build(),
+          clusterFactory.build({ name: null }),
+        ];
         const state = {
           ...cleanInitialState,
           clustersList: { clusters },
@@ -530,7 +534,7 @@ describe('ClustersList component', () => {
           within(firstRow).getByRole('checkbox', { name: 'Select row' })
         );
 
-        const thirdRow = screen.getByText(clusters[2].name).closest('tr');
+        const thirdRow = screen.getByText(clusters[2].id).closest('tr');
         await user.click(
           within(thirdRow).getByRole('checkbox', { name: 'Select row' })
         );
@@ -544,7 +548,7 @@ describe('ClustersList component', () => {
           within(modal)
             .getAllByRole('listitem')
             .map(({ textContent }) => textContent)
-        ).toEqual([clusters[0].name, clusters[2].name]);
+        ).toEqual([clusters[0].name, clusters[2].id]);
       }
     );
   });

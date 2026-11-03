@@ -264,7 +264,7 @@ function ClustersList({
         descriptionResolverArgs={bulkOperationModal.params}
         resources={bulkOperationModal.clusters.map(({ id, name }) => ({
           id,
-          label: name,
+          label: name || id,
         }))}
         isOpen={bulkOperationModal.open}
         onRequest={requestBulkOperation}
