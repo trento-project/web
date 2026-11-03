@@ -181,7 +181,7 @@ describe('OperationForbiddenModal', () => {
       expect(resourceLink2).toHaveAttribute('href', `/hosts/${hostID2}`);
 
       const nestedItems1 = within(
-        resourceLink1.closest('li').querySelector('ul')
+        resourceLink1.nextElementSibling
       ).getAllByRole('listitem');
       expect(nestedItems1.map((item) => item.textContent)).toEqual([
         'error1',
@@ -189,7 +189,7 @@ describe('OperationForbiddenModal', () => {
       ]);
 
       const nestedItems2 = within(
-        resourceLink2.closest('li').querySelector('ul')
+        resourceLink2.nextElementSibling
       ).getAllByRole('listitem');
       expect(nestedItems2.map((item) => item.textContent)).toEqual(['error3']);
     });
@@ -222,9 +222,9 @@ describe('OperationForbiddenModal', () => {
       );
 
       const resourceLink = screen.getByRole('link', { name: hostname });
-      const nestedItem = within(
-        resourceLink.closest('li').querySelector('ul')
-      ).getByRole('listitem');
+      const nestedItem = within(resourceLink.nextElementSibling).getByRole(
+        'listitem'
+      );
 
       expect(nestedItem.textContent).toBe(`error with ${otherHostname} link`);
       expect(within(nestedItem).getByRole('link')).toHaveAttribute(
