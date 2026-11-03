@@ -171,7 +171,8 @@ export function* requestBulkOperation({ payload }) {
         icon: '⚙️',
       })
     );
-  } catch ({ response: { status, data } }) {
+  } catch (error) {
+    const { status, data } = error?.response ?? {};
     if (status === 403) {
       yield put(
         setForbiddenOperation({

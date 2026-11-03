@@ -431,28 +431,40 @@ describe('operations saga', () => {
       ]);
     });
 
-    it('should fail requesting a bulk operation if the api request fails', async () => {
-      const bulkOperationID = CLUSTER_BULK_OPERATION_ID;
-      const operation = CLUSTER_RESOURCE_REFRESH;
-      const label = getOperationLabel(operation);
-      const targetGroupIDs = [faker.string.uuid()];
+    it.each([
+      {
+        name: '500 error',
+        mockFailure: (request) => request.reply(500, {}),
+      },
+      {
+        name: 'network error',
+        mockFailure: (request) => request.networkError(),
+      },
+    ])(
+      'should fail requesting a bulk operation if the api request fails with a $name',
+      async ({ mockFailure }) => {
+        const bulkOperationID = CLUSTER_BULK_OPERATION_ID;
+        const operation = CLUSTER_RESOURCE_REFRESH;
+        const label = getOperationLabel(operation);
+        const targetGroupIDs = [faker.string.uuid()];
 
-      axiosMock
-        .onPost(clusterBulkOperationRequestURL(operation))
-        .reply(500, {});
+        mockFailure(
+          axiosMock.onPost(clusterBulkOperationRequestURL(operation))
+        );
 
-      const dispatched = await recordSaga(requestBulkOperation, {
-        payload: { bulkOperationID, targetGroupIDs, operation },
-      });
+        const dispatched = await recordSaga(requestBulkOperation, {
+          payload: { bulkOperationID, targetGroupIDs, operation },
+        });
 
-      expect(dispatched).toEqual([
-        removeRunningOperation({ groupID: bulkOperationID }),
-        notify({
-          text: `Operation ${label} request for clusters failed`,
-          icon: '❌',
-        }),
-      ]);
-    });
+        expect(dispatched).toEqual([
+          removeRunningOperation({ groupID: bulkOperationID }),
+          notify({
+            text: `Operation ${label} request for clusters failed`,
+            icon: '❌',
+          }),
+        ]);
+      }
+    );
 
     it('should fail requesting a bulk operation if the api request is forbidden', async () => {
       const bulkOperationID = CLUSTER_BULK_OPERATION_ID;
