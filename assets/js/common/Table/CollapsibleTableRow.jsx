@@ -42,13 +42,10 @@ function CollapsibleTableRow({
             />
           </td>
         )}
+        {renderCells(columns, item)}
         {collapsibleDetailRenderer && (
           <td
-            className={classNames(
-              'border-b border-gray-200',
-              { 'pl-2': !isCollapsible },
-              { 'pl-4': isCollapsible }
-            )}
+            className="border-b border-gray-200 pr-6"
             aria-label="collapsible-icon-cell"
             onClick={() => toggleRow(!rowExpanded)}
           >
@@ -66,7 +63,6 @@ function CollapsibleTableRow({
             )}
           </td>
         )}
-        {renderCells(columns, item)}
       </tr>
       {isCollapsible && wrapCollapsedRowInCell ? (
         <tr

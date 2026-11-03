@@ -117,8 +117,8 @@ const getResourceTableConfig = (
             hidden={!rowExpanded}
             className="bg-gray-50 border-b border-gray-200"
           >
-            <td aria-label="collapsible-cell" />
             {renderCells(addInheritedBgColor(columns), child)}
+            <td aria-label="collapsible-cell" />
           </tr>
         ))
       : null,

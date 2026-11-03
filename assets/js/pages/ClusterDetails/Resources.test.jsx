@@ -30,22 +30,22 @@ describe('Resources', () => {
     expect(rows).toHaveLength(5);
 
     rows.forEach((row, index) => {
-      expect(row.querySelector('td:nth-child(2)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(1)')).toHaveTextContent(
         resources[index].fail_count
       );
-      expect(row.querySelector('td:nth-child(3)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(2)')).toHaveTextContent(
         resources[index].id
       );
-      expect(row.querySelector('td:nth-child(5)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(4)')).toHaveTextContent(
         resources[index].role
       );
-      expect(row.querySelector('td:nth-child(6)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(5)')).toHaveTextContent(
         resources[index].status
       );
-      expect(row.querySelector('td:nth-child(7)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(6)')).toHaveTextContent(
         capitalize(resources[index].managed)
       );
-      expect(row.querySelector('td:nth-child(8)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(7)')).toHaveTextContent(
         resources[index].type
       );
     });
@@ -65,19 +65,19 @@ describe('Resources', () => {
 
     [rows[0], rows[3]].forEach((row, index) => {
       const parentIndex = index * 2;
-      expect(row.querySelector('td:nth-child(3)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(2)')).toHaveTextContent(
         resources[parentIndex].parent.id
       );
-      expect(row.querySelector('td:nth-child(7)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(6)')).toHaveTextContent(
         capitalize(resources[parentIndex].parent.managed)
       );
-      expect(row.querySelector('td:nth-child(8)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(7)')).toHaveTextContent(
         resources[parentIndex].type
       );
     });
 
     [rows[1], rows[2], rows[4], rows[5]].forEach((row, index) => {
-      expect(row.querySelector('td:nth-child(3)')).toHaveTextContent(
+      expect(row.querySelector('td:nth-child(2)')).toHaveTextContent(
         resources[index].id
       );
     });
@@ -95,7 +95,7 @@ describe('Resources', () => {
 
     const locationCell = screen
       .getByRole('table')
-      .querySelector('tbody > tr > td:nth-child(4)');
+      .querySelector('tbody > tr > td:nth-child(3)');
 
     expect(locationCell).toHaveTextContent(nodename);
     expect(locationCell.querySelector('a')).toHaveAttribute(
@@ -113,7 +113,7 @@ describe('Resources', () => {
 
     const typeCell = screen
       .getByRole('table')
-      .querySelector('tbody > tr > td:nth-child(8)');
+      .querySelector('tbody > tr > td:nth-child(7)');
 
     expect(typeCell).toHaveTextContent('Group');
   });

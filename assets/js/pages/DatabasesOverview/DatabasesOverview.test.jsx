@@ -53,7 +53,7 @@ describe('DatabasesOverview component', () => {
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
       expect(rows[0]).toHaveClass('bg-gray-100');
 
-      const healthCell = rows[0].querySelector('td:nth-child(2)');
+      const healthCell = rows[0].querySelector('td:nth-child(1)');
       const svgs = healthCell.querySelectorAll(
         '[data-testid="eos-svg-component"]'
       );
@@ -61,7 +61,9 @@ describe('DatabasesOverview component', () => {
 
       const table = screen.getByRole('table');
       await user.click(
-        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+        table.querySelector(
+          'tbody tr:nth-child(1) td[aria-label="collapsible-icon-cell"]'
+        )
       );
 
       const detailsRow = screen
@@ -123,7 +125,9 @@ describe('DatabasesOverview component', () => {
 
       const table = screen.getByRole('table');
       await user.click(
-        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+        table.querySelector(
+          'tbody tr:nth-child(1) td[aria-label="collapsible-icon-cell"]'
+        )
       );
 
       const cleanUpButton = screen.queryByRole('button', { name: 'Clean up' });
@@ -162,7 +166,9 @@ describe('DatabasesOverview component', () => {
 
       const table = screen.getByRole('table');
       await user.click(
-        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+        table.querySelector(
+          'tbody tr:nth-child(1) td[aria-label="collapsible-icon-cell"]'
+        )
       );
 
       const cleanUpButton = screen.getByText('Clean up').closest('button');

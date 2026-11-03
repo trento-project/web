@@ -84,9 +84,9 @@ const instancesRowsSelector =
   'tr:nth-child(odd) + tr div[class*="row-group"] div[class*="row border"]';
 const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
 const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
-const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td:first-child`;
+const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td[aria-label="collapsible-icon-cell"]`;
 const nwdSystemCell = `tr:contains("${sapSystemNwd.sid}")`;
-const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(0)`;
+const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td[aria-label="collapsible-icon-cell"]`;
 const pageTitle = 'h1:contains("SAP Systems")';
 const sidLinks = `tbody a[href*="${url}/"]`;
 
@@ -186,7 +186,7 @@ export const eachSystemHasItsExpectedWorkingLink = () =>
 export const eachSystemHasExpectedHealth = () =>
   cy.wrap(availableSAPSystems).each(({ health: health }, index) => {
     const healthClass = healthMap[health];
-    const healthCellSelector = `tbody tr:nth-child(odd):eq(${index}) td:eq(1) svg`;
+    const healthCellSelector = `tbody tr:nth-child(odd):eq(${index}) td:eq(0) svg`;
     return cy.get(healthCellSelector).should('have.class', healthClass);
   });
 
@@ -197,14 +197,14 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
   return cy
     .wrap(availableSAPSystems)
     .each(({ attachedDatabase: attachedDatabase, type: type }, rowIndex) => {
-      cy.get(tableCell(rowIndex, 3)).should('have.text', attachedDatabase.sid);
-      cy.get(tableCell(rowIndex, 4)).should(
+      cy.get(tableCell(rowIndex, 2)).should('have.text', attachedDatabase.sid);
+      cy.get(tableCell(rowIndex, 3)).should(
         'have.text',
         attachedDatabase.tenant
       );
-      cy.get(tableCell(rowIndex, 5)).should('have.text', type);
+      cy.get(tableCell(rowIndex, 4)).should('have.text', type);
       return cy
-        .get(tableCell(rowIndex, 6))
+        .get(tableCell(rowIndex, 5))
         .should('have.text', attachedDatabase.dbAddress);
     });
 };
@@ -327,7 +327,7 @@ export const eachInstanceHasItsHostWorkingLink = () =>
 export const javaSystemIsDiscoveredCorrectly = () => {
   const javaSystemRowSelector = `tbody tr:contains('${availableJavaSystem.sid}')`;
   cy.get(javaSystemRowSelector).should('be.visible');
-  const javaSystemTypeSelector = `${javaSystemRowSelector} td:eq(5)`;
+  const javaSystemTypeSelector = `${javaSystemRowSelector} td:eq(4)`;
   cy.get(javaSystemTypeSelector).should('have.text', availableJavaSystem.type);
   return tableDisplaysExpectedAmountOfSystems(4);
 };
@@ -338,7 +338,7 @@ export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
 export const instanceHasItsStatusCorrectlyUpdated = (status, rowIndex) => {
   const healthClass = healthMap[status];
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  const sapSystemInstanceStatusBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
+  const sapSystemInstanceStatusBadge = `${sapSystemsFirstRow} td:eq(0) svg`;
   cy.get(sapSystemInstanceStatusBadge).should('have.class', healthClass);
 
   const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${

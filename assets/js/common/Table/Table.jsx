@@ -333,17 +333,6 @@ function Table({
                       />
                     </th>
                   )}
-                  {collapsibleDetailRenderer && (
-                    <th
-                      key="collapsible"
-                      scope="col"
-                      className={classNames(
-                        'w-6 border-b bg-gray-100',
-                        headerClassName
-                      )}
-                      aria-label="collapsible"
-                    />
-                  )}
                   {columns.map(
                     ({
                       title,
@@ -373,6 +362,17 @@ function Table({
                         />
                       </th>
                     )
+                  )}
+                  {collapsibleDetailRenderer && (
+                    <th
+                      key="collapsible"
+                      scope="col"
+                      className={classNames(
+                        'w-6 border-b bg-gray-100',
+                        headerClassName
+                      )}
+                      aria-label="collapsible"
+                    />
                   )}
                 </tr>
               </thead>
