@@ -19,13 +19,6 @@ defmodule Trento.Operations.SapSystemPolicyTest do
              SapSystemPolicy.authorize_operation(:unknown, sap_system, %{})
   end
 
-  test "should return the resource metadata" do
-    %{id: id, sid: sid} = sap_system = build(:sap_system)
-
-    assert %{id: id, label: sid, type: :sap_system} ==
-             SapSystemPolicy.metadata(sap_system)
-  end
-
   test "should forbid operation if any of the hosts heartbeat where the sap system is running is not passing" do
     sap_system =
       build(:sap_system,
@@ -462,6 +455,15 @@ defmodule Trento.Operations.SapSystemPolicyTest do
                SapSystemPolicy.authorize_operation(:sap_system_stop, sap_system, %{
                  instance_type: "scs"
                })
+    end
+  end
+
+  describe "metadata" do
+    test "should return the sap system metadata" do
+      %{id: id, sid: sid} = sap_system = build(:sap_system)
+
+      assert %{id: id, label: sid, type: :sap_system} ==
+               SapSystemPolicy.metadata(sap_system)
     end
   end
 

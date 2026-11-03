@@ -113,6 +113,7 @@ defmodule Trento.Operations.ClusterPolicy do
   def authorize_operation(_, _, _),
     do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
+  def metadata(%ClusterReadModel{id: id, name: nil}), do: %{id: id, label: id, type: :cluster}
   def metadata(%ClusterReadModel{id: id, name: name}), do: %{id: id, label: name, type: :cluster}
 
   defp do_authorize_operation(

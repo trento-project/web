@@ -20,13 +20,6 @@ defmodule Trento.Operations.ClusterPolicyTest do
              ClusterPolicy.authorize_operation(:unknown, cluster, %{})
   end
 
-  test "should return the resource metadata" do
-    %{id: id, name: name} = cluster = build(:cluster)
-
-    assert %{id: id, label: name, type: :cluster} ==
-             ClusterPolicy.metadata(cluster)
-  end
-
   test "should forbid cluster host operation if the host heartbeat is not passing" do
     cluster =
       %{hosts: [%{id: host_id}, _]} =
@@ -283,6 +276,22 @@ defmodule Trento.Operations.ClusterPolicyTest do
         assert {:error, [%{message: expected_error, metadata: []}]} ==
                  ClusterPolicy.authorize_operation(operation, cluster, %{host_id: host_id})
       end
+    end
+  end
+
+  describe "metadata" do
+    test "should return the cluster metadata" do
+      %{id: id, name: name} = cluster = build(:cluster)
+
+      assert %{id: id, label: name, type: :cluster} ==
+               ClusterPolicy.metadata(cluster)
+    end
+
+    test "should return the cluster id as label when the cluster name is nil" do
+      %{id: id} = cluster = build(:cluster, name: nil)
+
+      assert %{id: id, label: id, type: :cluster} ==
+               ClusterPolicy.metadata(cluster)
     end
   end
 end
