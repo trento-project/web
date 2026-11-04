@@ -274,6 +274,7 @@ function ClustersList({
         operation={getOperationLabel(bulkOperation?.operation)}
         isOpen={!!bulkOperation?.forbidden}
         errors={bulkOperation?.errors ?? []}
+        groupByResource
         onCancel={clearBulkOperation}
       />
       <div className="bg-white rounded-lg shadow">
