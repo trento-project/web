@@ -36,7 +36,11 @@ defmodule TrentoWeb.V1.ClusterController do
 
   alias Trento.Support.OperationsHelper
 
-  @cluster_bulk_operations OperationsHelper.to_bulk_operation(ClusterBulkOperations.values())
+  @bulk_actions Map.new(
+                  ClusterBulkOperations.values(),
+                  &{OperationsHelper.to_bulk_operation(&1), &1}
+                )
+  @cluster_bulk_operations Map.keys(@bulk_actions)
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
@@ -336,8 +340,10 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
-  def get_action(%{assigns: %{bulk_operation: bulk_operation}}), do: bulk_operation
-  def get_action(conn), do: Phoenix.Controller.action_name(conn)
+  def get_action(conn) do
+    action = Phoenix.Controller.action_name(conn)
+    Map.get(@bulk_actions, action, action)
+  end
 
   def get_policy_resource(_), do: ClusterReadModel
 
@@ -373,14 +379,7 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
-  def get_operation_cluster(
-        %{
-          assigns: %{bulk_operation: operation}
-        } = conn
-      )
-      when operation in ClusterBulkOperations.values() do
-    %{cluster_ids: cluster_ids} = OpenApiSpex.body_params(conn)
-
+  def get_operation_cluster(%{body_params: %{cluster_ids: cluster_ids}}) do
     clusters =
       cluster_ids
       |> Clusters.get_clusters_by_ids()

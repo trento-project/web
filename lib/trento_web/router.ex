@@ -213,8 +213,7 @@ defmodule TrentoWeb.Router do
         for cluster_bulk_operation <- ClusterBulkOperations.values() do
           post "/clusters/operations/#{cluster_bulk_operation}",
                ClusterController,
-               OperationsHelper.to_bulk_operation(cluster_bulk_operation),
-               assigns: %{bulk_operation: cluster_bulk_operation}
+               OperationsHelper.to_bulk_operation(cluster_bulk_operation)
         end
 
         for sap_system_operation <- SapSystemOperations.values() do
