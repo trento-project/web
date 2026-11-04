@@ -441,14 +441,11 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
                    %{
                      "detail" =>
                        "Trento agent is not currently running in any of the hosts in the cluster",
-                     "metadata" => [
-                       %{
-                         "id" => ^unauthorized_cluster_id,
-                         "label" => ^unauthorized_cluster_name,
-                         "type" => "cluster",
-                         "bulk_operation" => true
-                       }
-                     ]
+                     "resource" => %{
+                       "id" => ^unauthorized_cluster_id,
+                       "label" => ^unauthorized_cluster_name,
+                       "type" => "cluster"
+                     }
                    }
                  ]
                } = resp
