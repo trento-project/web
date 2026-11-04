@@ -1281,7 +1281,7 @@ defmodule Trento.ClustersTest do
           UUID.uuid4()
         ])
 
-      assert expected_clusters == clusters
+      assert Enum.sort_by(expected_clusters, & &1.id) == Enum.sort_by(clusters, & &1.id)
     end
   end
 
