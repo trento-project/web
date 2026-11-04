@@ -6,41 +6,13 @@ defmodule Trento.Operations.PolicyBehaviour do
   Behaviour of the operations policies.
   """
 
-  alias Trento.Clusters.Projections.ClusterReadModel
-
-  alias Trento.Databases.Projections.{
-    DatabaseInstanceReadModel,
-    DatabaseReadModel
-  }
-
-  alias Trento.Hosts.Projections.HostReadModel
-
-  alias Trento.SapSystems.Projections.{
-    ApplicationInstanceReadModel,
-    SapSystemReadModel
-  }
-
   alias Trento.Support.OperationsHelper
 
   @callback authorize_operation(
               operation :: atom,
-              read_model ::
-                ApplicationInstanceReadModel.t()
-                | ClusterReadModel.t()
-                | DatabaseInstanceReadModel.t()
-                | DatabaseReadModel.t()
-                | HostReadModel.t()
-                | SapSystemReadModel.t(),
+              read_model :: struct(),
               params :: map
             ) :: :ok | {:error, [OperationsHelper.forbidden_error()]}
 
-  @callback metadata(
-              read_model ::
-                ApplicationInstanceReadModel.t()
-                | ClusterReadModel.t()
-                | DatabaseInstanceReadModel.t()
-                | DatabaseReadModel.t()
-                | HostReadModel.t()
-                | SapSystemReadModel.t()
-            ) :: OperationsHelper.metadata()
+  @callback metadata(read_model :: struct()) :: OperationsHelper.metadata()
 end
