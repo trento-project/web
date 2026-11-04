@@ -26,7 +26,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.BulkOperationAccepted do
         failed_requests: [
           %{
             resource_id: "d2b3c4d5-e6f7-8901-bcde-f12345678901",
-            reason: ":amqp_error"
+            reason: ":blocked"
           }
         ]
       },
