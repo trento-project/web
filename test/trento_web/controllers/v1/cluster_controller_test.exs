@@ -354,7 +354,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         for body <- [@arguments, Map.put(@arguments, "cluster_ids", [])] do
           conn
           |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/clusters/operations/#{@operation}", body)
+          |> post("/api/v1/clusters/operations/#{@operation}/bulk", body)
           |> json_response(:unprocessable_entity)
         end
       end
@@ -368,7 +368,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> post(
-          "/api/v1/clusters/operations/#{@operation}",
+          "/api/v1/clusters/operations/#{@operation}/bulk",
           Map.put(@arguments, "cluster_ids", [cluster_id, cluster_id])
         )
         |> json_response(:unprocessable_entity)
@@ -386,7 +386,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
           conn
           |> put_req_header("content-type", "application/json")
           |> post(
-            "/api/v1/clusters/operations/#{@operation}",
+            "/api/v1/clusters/operations/#{@operation}/bulk",
             Map.put(@arguments, "cluster_ids", [cluster_id, missing_cluster_id])
           )
           |> json_response(:not_found)
@@ -410,7 +410,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> post(
-          "/api/v1/clusters/operations/#{@operation}",
+          "/api/v1/clusters/operations/#{@operation}/bulk",
           Map.put(@arguments, "cluster_ids", [cluster_id])
         )
         |> json_response(:not_found)
@@ -430,7 +430,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
           conn
           |> put_req_header("content-type", "application/json")
           |> post(
-            "/api/v1/clusters/operations/#{@operation}",
+            "/api/v1/clusters/operations/#{@operation}/bulk",
             Map.put(@arguments, "cluster_ids", [authorized_cluster_id, unauthorized_cluster_id])
           )
           |> json_response(:forbidden)
@@ -468,7 +468,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
           conn
           |> put_req_header("content-type", "application/json")
           |> post(
-            "/api/v1/clusters/operations/#{@operation}",
+            "/api/v1/clusters/operations/#{@operation}/bulk",
             Map.put(@arguments, "cluster_ids", [cluster_id])
           )
           |> json_response(:internal_server_error)
@@ -512,7 +512,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
           |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
           |> put_req_header("content-type", "application/json")
           |> post(
-            "/api/v1/clusters/operations/#{@operation}",
+            "/api/v1/clusters/operations/#{@operation}/bulk",
             Map.put(@arguments, "cluster_ids", [cluster_id_1, cluster_id_2])
           )
 
@@ -538,7 +538,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     } do
       conn
       |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/clusters/operations/cluster_maintenance_change", %{
+      |> post("/api/v1/clusters/operations/cluster_maintenance_change/bulk", %{
         "cluster_ids" => [UUID.uuid4()]
       })
       |> json_response(:unprocessable_entity)
@@ -1189,11 +1189,11 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
             conn,
             "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/cluster_host_stop"
           ),
-          post(conn, "/api/v1/clusters/operations/cluster_maintenance_change", %{
+          post(conn, "/api/v1/clusters/operations/cluster_maintenance_change/bulk", %{
             "cluster_ids" => [cluster_id],
             "params" => %{"maintenance" => true}
           }),
-          post(conn, "/api/v1/clusters/operations/cluster_resource_refresh", %{
+          post(conn, "/api/v1/clusters/operations/cluster_resource_refresh/bulk", %{
             "cluster_ids" => [cluster_id]
           })
         ],

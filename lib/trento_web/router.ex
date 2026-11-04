@@ -211,7 +211,7 @@ defmodule TrentoWeb.Router do
         end
 
         for cluster_bulk_operation <- ClusterBulkOperations.values() do
-          post "/clusters/operations/#{cluster_bulk_operation}",
+          post "/clusters/operations/#{cluster_bulk_operation}/bulk",
                ClusterController,
                OperationsHelper.to_bulk_operation(cluster_bulk_operation)
         end
