@@ -205,8 +205,10 @@ export const sapSystemStaleBannerIsDisplayed = (timeout = 20000) =>
     .findByRole('alert', { name: stalenessBannerName, timeout })
     .should('be.visible');
 
-export const sapSystemStaleBannerIsNotDisplayed = () =>
-  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
+export const sapSystemStaleBannerIsNotDisplayed = (timeout = 20000) =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout })
+    .should('not.exist');
 
 export const sapSystemInstanceRowIsMarkedAsStale = () =>
   basePage.elementIsMarkedStale(
