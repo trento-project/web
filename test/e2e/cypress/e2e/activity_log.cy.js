@@ -13,7 +13,7 @@ context('Activity Log page', () => {
     activityLogPage.interceptActivityLogEndpoint();
   });
 
-  describe('Navigation', () => {
+  describe.only('Navigation', () => {
     it('should navigate to Activity Log page', () => {
       basePage.visit();
       basePage.clickActivityLogNavigationItem();
@@ -23,11 +23,38 @@ context('Activity Log page', () => {
       activityLogPage.activityLogEndpointHasBeenCalledTimes(1);
     });
 
-    it('should not load the page twice', () => {
-      basePage.visit();
-      basePage.clickActivityLogNavigationItem5Times();
-      activityLogPage.waitForActivityLogRequest();
-      activityLogPage.activityLogEndpointHasBeenCalledTimes(1);
+    // DEBUG(activity-log-load-twice)
+    afterEach(function dumpDebug() {
+      const { title, state } = this.currentTest;
+      if (!title.startsWith('should not load the page twice')) return;
+      cy.get('@activityLogRequest.all', { log: false }).then((calls) => {
+        const requests = calls.map((c) => c.request.url.replace(/^.*\/api/, ''));
+        cy.window({ log: false }).then((win) => {
+          const dump = {
+            title,
+            state,
+            location: win.location.pathname + win.location.search,
+            storage: win.sessionStorage.getItem('trento_view_settings'),
+            requests,
+            hook: (win.__pspDebug || []).filter(
+              (e) => e.viewKey === 'activityLog'
+            ),
+          };
+          cy.task('log', `PSPDEBUG ${JSON.stringify(dump)}`, { log: false });
+        });
+      });
+    });
+
+    Cypress._.times(25, (i) => {
+      it(`should not load the page twice #${i}`, () => {
+        basePage.visit();
+        cy.window().then((win) => {
+          win.__pspDebug = [];
+        });
+        basePage.clickActivityLogNavigationItem5Times();
+        activityLogPage.waitForActivityLogRequest();
+        activityLogPage.activityLogEndpointHasBeenCalledTimes(1);
+      });
     });
   });
 

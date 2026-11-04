@@ -68,6 +68,20 @@ const usePersistentSearchParams = (viewKey, options = defaultOptions) => {
       (readViewSetting(viewKey) ??
         new URLSearchParams(defaultParams).toString());
 
+    // DEBUG(activity-log-load-twice)
+    window.__pspDebug = window.__pspDebug || [];
+    window.__pspDebug.push({
+      t: Math.round(performance.now()),
+      viewKey,
+      key: location.key,
+      search: location.search,
+      firstRun,
+      ownNavigationWas: !enteringView && !firstRun,
+      enteringView,
+      urlEmpty: isEmpty(urlParams),
+      restore: paramsToRestore || null,
+    });
+
     entry.current = {
       locationKey: location.key,
       // The params are kept as they are for as long as the location lasts, so
@@ -84,6 +98,14 @@ const usePersistentSearchParams = (viewKey, options = defaultOptions) => {
   const setPersistentSearchParams = useCallback(
     (nextInit, navigateOptions) => {
       ownNavigation.current = true;
+      // DEBUG(activity-log-load-twice)
+      window.__pspDebug = window.__pspDebug || [];
+      window.__pspDebug.push({
+        t: Math.round(performance.now()),
+        viewKey,
+        setter: String(nextInit),
+        replace: !!navigateOptions?.replace,
+      });
 
       setSearchParams(
         typeof nextInit === 'function'
@@ -101,6 +123,14 @@ const usePersistentSearchParams = (viewKey, options = defaultOptions) => {
       return;
     }
 
+    // DEBUG(activity-log-load-twice)
+    window.__pspDebug = window.__pspDebug || [];
+    window.__pspDebug.push({
+      t: Math.round(performance.now()),
+      viewKey,
+      write: withoutTransientKeys(urlParams, transientKeys),
+      key: location.key,
+    });
     writeViewSetting(viewKey, withoutTransientKeys(urlParams, transientKeys));
   }, [location]);
 

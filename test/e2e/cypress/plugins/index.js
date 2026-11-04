@@ -39,6 +39,11 @@ export default (on, config) => {
 
   cypressSplit(on, config);
   on('task', {
+    // DEBUG(activity-log-load-twice)
+    log(message) {
+      console.log(message);
+      return null;
+    },
     async exec({ command, timeout = EXEC_DEFAULT_TIMEOUT }) {
       return await execAsync(command, { timeout });
     },
