@@ -127,7 +127,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
       OperationsHelper.reduce_operation_authorizations(resources, :ok, fn resource ->
         operation
         |> policy.authorize_operation(resource, params)
-        |> with_resource_metadata(resource, policy)
+        |> with_resource(resource, policy)
       end)
 
     case result do
@@ -137,20 +137,19 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
   end
 
   defp handle_permission(policy, operation, resource, params) do
-    case policy.authorize_operation(operation, resource, params) do
+    case operation
+         |> policy.authorize_operation(resource, params)
+         |> with_resource(resource, policy) do
       :ok -> :ok
       {:error, errors} -> {:error, :forbidden, errors}
     end
   end
 
-  defp with_resource_metadata(:ok, _, _), do: :ok
+  defp with_resource(:ok, _, _), do: :ok
 
-  defp with_resource_metadata({:error, errors}, resource, policy) do
-    resource_metadata = Map.put(policy.metadata(resource), :bulk_operation, true)
+  defp with_resource({:error, errors}, resource, policy) do
+    resource_info = policy.metadata(resource)
 
-    {:error,
-     Enum.map(errors, fn error ->
-       Map.update!(error, :metadata, &Enum.concat(&1, [resource_metadata]))
-     end)}
+    {:error, Enum.map(errors, &Map.put(&1, :resource, resource_info))}
   end
 end

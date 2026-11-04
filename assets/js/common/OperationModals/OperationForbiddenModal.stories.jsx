@@ -18,6 +18,10 @@ export default {
       description: 'Authorization errors as string',
       control: { type: 'object' },
     },
+    groupByResource: {
+      description: 'Group the errors by the resource they belong to',
+      control: { type: 'boolean' },
+    },
     isOpen: {
       description: 'Modal is open',
       control: { type: 'boolean' },
@@ -40,63 +44,40 @@ export default {
   ],
 };
 
+const resource = { id: 'resource-1', label: 'Resource 1', type: 'cluster' };
+
 export const SingleOperation = {
   args: {
     operation: 'My operation',
     errors: [
-      { detail: 'Authorization error 1', metadata: [] },
+      { detail: 'Authorization error 1', metadata: [], resource },
       {
         detail: 'Authorization error 2: {0}',
-        metadata: [{ id: 1, label: 'Resource', type: 'cluster' }],
+        metadata: [{ id: 1, label: 'Other resource', type: 'cluster' }],
+        resource,
       },
     ],
   },
 };
 
-export const BulkOperation = {
+export const GroupedByResource = {
   args: {
     operation: 'My bulk operation',
+    groupByResource: true,
     errors: [
       {
         detail: 'Authorization error 1: {0}',
         metadata: [
-          {
-            id: 'resource-1',
-            label: 'Resource',
-            type: 'cluster',
-          },
-          {
-            id: 'resource-1',
-            label: 'Resource 1',
-            type: 'cluster',
-            bulk_operation: true,
-          },
+          { id: 'resource-3', label: 'Other resource', type: 'cluster' },
         ],
+        resource,
       },
-      {
-        detail: 'Authorization error 2',
-        metadata: [
-          {
-            id: 'resource-1',
-            label: 'Resource 1',
-            type: 'cluster',
-            bulk_operation: true,
-          },
-        ],
-      },
+      { detail: 'Authorization error 2', metadata: [], resource },
       {
         detail: 'Authorization error 1',
-        metadata: [
-          {
-            id: 'resource-2',
-            label: 'Resource 2',
-            type: 'cluster',
-            bulk_operation: true,
-          },
-        ],
+        metadata: [],
+        resource: { id: 'resource-2', label: 'Resource 2', type: 'cluster' },
       },
     ],
-    isOpen: true,
-    onCancel: action('onCancel'),
   },
 };

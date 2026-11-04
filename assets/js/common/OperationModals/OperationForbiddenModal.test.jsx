@@ -144,32 +144,23 @@ describe('OperationForbiddenModal', () => {
     expect(mockOnCancel).toHaveBeenCalled();
   });
 
-  describe('bulk operation', () => {
+  describe('group by resource', () => {
     it('should group the errors by resource', async () => {
       const { id: hostID1, hostname: hostname1 } = hostFactory.build();
       const { id: hostID2, hostname: hostname2 } = hostFactory.build();
-      const bulkMetadata1 = {
-        id: hostID1,
-        label: hostname1,
-        type: 'host',
-        bulk_operation: true,
-      };
-      const bulkMetadata2 = {
-        id: hostID2,
-        label: hostname2,
-        type: 'host',
-        bulk_operation: true,
-      };
+      const resource1 = { id: hostID1, label: hostname1, type: 'host' };
+      const resource2 = { id: hostID2, label: hostname2, type: 'host' };
 
       await act(() =>
         renderWithRouter(
           <OperationForbiddenModal
             operation="My operation"
             errors={[
-              { detail: 'error1', metadata: [bulkMetadata1] },
-              { detail: 'error2', metadata: [bulkMetadata1] },
-              { detail: 'error3', metadata: [bulkMetadata2] },
+              { detail: 'error1', metadata: [], resource: resource1 },
+              { detail: 'error2', metadata: [], resource: resource1 },
+              { detail: 'error3', metadata: [], resource: resource2 },
             ]}
+            groupByResource
             isOpen
           />
         )
@@ -194,6 +185,31 @@ describe('OperationForbiddenModal', () => {
       expect(nestedItems2.map((item) => item.textContent)).toEqual(['error3']);
     });
 
+    it('should not group the errors by default', async () => {
+      const { id, hostname } = hostFactory.build();
+
+      await act(() =>
+        renderWithRouter(
+          <OperationForbiddenModal
+            operation="My operation"
+            errors={[
+              {
+                detail: 'error1',
+                metadata: [],
+                resource: { id, label: hostname, type: 'host' },
+              },
+            ]}
+            isOpen
+          />
+        )
+      );
+
+      expect(
+        screen.queryByRole('link', { name: hostname })
+      ).not.toBeInTheDocument();
+      expect(screen.getAllByRole('listitem')).toHaveLength(1);
+    });
+
     it('should keep the message links inside the grouped errors', async () => {
       const { id: hostID, hostname } = hostFactory.build();
       const { id: otherID, hostname: otherHostname } = hostFactory.build();
@@ -205,17 +221,11 @@ describe('OperationForbiddenModal', () => {
             errors={[
               {
                 detail: 'error with {0} link',
-                metadata: [
-                  { id: otherID, label: otherHostname, type: 'host' },
-                  {
-                    id: hostID,
-                    label: hostname,
-                    type: 'host',
-                    bulk_operation: true,
-                  },
-                ],
+                metadata: [{ id: otherID, label: otherHostname, type: 'host' }],
+                resource: { id: hostID, label: hostname, type: 'host' },
               },
             ]}
+            groupByResource
             isOpen
           />
         )

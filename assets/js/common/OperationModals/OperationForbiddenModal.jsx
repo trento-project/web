@@ -4,7 +4,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { find, get, groupBy, map, noop, some, split } from 'lodash';
+import { get, groupBy, map, noop, split } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -18,8 +18,6 @@ const urlTypes = {
   host: 'hosts',
   sap_system: 'sap_systems',
 };
-
-const findBulkResource = (metadata) => find(metadata, 'bulk_operation');
 
 const formatErrorKey = (error, metadata) =>
   error.replace(
@@ -64,14 +62,11 @@ const renderErrors = (errors) =>
     </li>
   ));
 
-const renderBulkErrors = (errors) => {
-  const errorsByResource = groupBy(
-    errors,
-    ({ metadata }) => findBulkResource(metadata).id
-  );
+const renderGroupedErrors = (errors) => {
+  const errorsByResource = groupBy(errors, ({ resource }) => resource.id);
 
   return map(errorsByResource, (resourceErrors, id) => {
-    const { label, type } = findBulkResource(resourceErrors[0].metadata);
+    const { label, type } = resourceErrors[0].resource;
 
     return (
       <li key={id} className="text-sm">
@@ -94,13 +89,10 @@ const renderBulkErrors = (errors) => {
 function OperationForbiddenModal({
   operation,
   errors,
+  groupByResource = false,
   isOpen = false,
   onCancel = noop,
 }) {
-  const isBulkOperation = some(errors, ({ metadata }) =>
-    findBulkResource(metadata)
-  );
-
   return (
     <Modal
       className="!w-3/4 !max-w-3xl"
@@ -115,7 +107,7 @@ function OperationForbiddenModal({
         Some of the following pre-requisites are not met:
       </p>
       <ul className="list-disc list-inside space-y-1 mb-1 max-h-60 overflow-y-auto">
-        {isBulkOperation ? renderBulkErrors(errors) : renderErrors(errors)}
+        {groupByResource ? renderGroupedErrors(errors) : renderErrors(errors)}
       </ul>
       <div className="flex justify-start gap-2 mt-4">
         <Button

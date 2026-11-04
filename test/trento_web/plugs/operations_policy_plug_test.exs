@@ -89,7 +89,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
     opts = [
       policy: TestPolicy,
       operation: fn _ -> :forbidden end,
-      resource: fn _ -> %{} end
+      resource: fn _ -> %{id: 1} end
     ]
 
     init_opts = OperationsPolicyPlug.init(opts)
@@ -102,12 +102,14 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
                %{
                  "detail" => "error1",
                  "title" => "Forbidden",
-                 "metadata" => [%{"key" => "value"}]
+                 "metadata" => [%{"key" => "value"}],
+                 "resource" => %{"id" => 1, "label" => "resource1", "type" => "host"}
                },
                %{
                  "detail" => "error2",
                  "title" => "Forbidden",
-                 "metadata" => []
+                 "metadata" => [],
+                 "resource" => %{"id" => 1, "label" => "resource1", "type" => "host"}
                }
              ]
            } == resp
@@ -159,7 +161,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
              OperationsPolicyPlug.call(conn, init_opts)
   end
 
-  test "should forbid operation over a list of resources and add the resource metadata to the errors",
+  test "should forbid operation over a list of resources and add the resource to the errors",
        %{conn: conn} do
     api_spec = ApiSpec.spec()
 
@@ -189,40 +191,20 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
                %{
                  "detail" => "error1",
                  "title" => "Forbidden",
-                 "metadata" => [
-                   %{"key" => "value"},
-                   %{
-                     "id" => 2,
-                     "label" => "resource2",
-                     "type" => "host",
-                     "bulk_operation" => true
-                   }
-                 ]
+                 "metadata" => [%{"key" => "value"}],
+                 "resource" => %{"id" => 2, "label" => "resource2", "type" => "host"}
                },
                %{
                  "detail" => "error1",
                  "title" => "Forbidden",
-                 "metadata" => [
-                   %{"key" => "value"},
-                   %{
-                     "id" => 3,
-                     "label" => "resource3",
-                     "type" => "host",
-                     "bulk_operation" => true
-                   }
-                 ]
+                 "metadata" => [%{"key" => "value"}],
+                 "resource" => %{"id" => 3, "label" => "resource3", "type" => "host"}
                },
                %{
                  "detail" => "error2",
                  "title" => "Forbidden",
-                 "metadata" => [
-                   %{
-                     "id" => 4,
-                     "label" => "resource4",
-                     "type" => "host",
-                     "bulk_operation" => true
-                   }
-                 ]
+                 "metadata" => [],
+                 "resource" => %{"id" => 4, "label" => "resource4", "type" => "host"}
                }
              ]
            } == resp
