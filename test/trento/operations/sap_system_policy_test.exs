@@ -458,6 +458,15 @@ defmodule Trento.Operations.SapSystemPolicyTest do
     end
   end
 
+  describe "metadata" do
+    test "should return the sap system metadata" do
+      %{id: id, sid: sid} = sap_system = build(:sap_system)
+
+      assert %{id: id, label: sid, type: :sap_system} ==
+               SapSystemPolicy.metadata(sap_system)
+    end
+  end
+
   defp build_cluster_with_maintenance(maintenance_mode) do
     [%{id: resource_id, sid: sid}] =
       resources =

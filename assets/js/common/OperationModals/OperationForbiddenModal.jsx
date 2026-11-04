@@ -4,13 +4,14 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { get, map, noop, split } from 'lodash';
+import { get, groupBy, map, noop, split } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
 import Banner from '@common/Banners';
 
 const replacePattern = /({\d+})/;
+const globalReplacePattern = new RegExp(replacePattern, 'g');
 const urlTypes = {
   cluster: 'clusters',
   database: 'databases',
@@ -18,7 +19,14 @@ const urlTypes = {
   sap_system: 'sap_systems',
 };
 
-const formatError = (error, metadata, onCancel) => {
+const formatErrorKey = (error, metadata) =>
+  error.replace(
+    globalReplacePattern,
+    (placeholder) =>
+      get(metadata, [parseInt(placeholder.substring(1)), 'id']) ?? placeholder
+  );
+
+const formatError = (error, metadata) => {
   // find {i} entries in the text splitting the whole content
   const parts = split(error, replacePattern);
 
@@ -32,9 +40,10 @@ const formatError = (error, metadata, onCancel) => {
       return id ? (
         <Link
           className="text-jungle-green-500 hover:opacity-75"
-          onClick={onCancel}
           key={id}
           to={`/${urlTypes[type]}/${id}`}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           {label}
         </Link>
@@ -46,9 +55,41 @@ const formatError = (error, metadata, onCancel) => {
   });
 };
 
+const renderErrors = (errors) =>
+  map(errors, ({ detail, metadata }) => (
+    <li key={formatErrorKey(detail, metadata)} className="text-sm">
+      {formatError(detail, metadata)}
+    </li>
+  ));
+
+const renderGroupedErrors = (errors) => {
+  const errorsByResource = groupBy(errors, ({ resource }) => resource.id);
+
+  return map(errorsByResource, (resourceErrors, id) => {
+    const { label, type } = resourceErrors[0].resource;
+
+    return (
+      <li key={id} className="text-sm">
+        <Link
+          className="text-jungle-green-500 hover:opacity-75"
+          to={`/${urlTypes[type]}/${id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {label}
+        </Link>
+        <ul className="list-[circle] list-inside ml-6 mt-1 space-y-1">
+          {renderErrors(resourceErrors)}
+        </ul>
+      </li>
+    );
+  });
+};
+
 function OperationForbiddenModal({
   operation,
   errors,
+  groupByResource = false,
   isOpen = false,
   onCancel = noop,
 }) {
@@ -65,12 +106,8 @@ function OperationForbiddenModal({
       <p className="text-sm mb-1">
         Some of the following pre-requisites are not met:
       </p>
-      <ul className="list-disc list-inside space-y-1 mb-1">
-        {errors.map(({ detail, metadata }) => (
-          <li key={detail} className="text-sm">
-            {formatError(detail, metadata, onCancel)}
-          </li>
-        ))}
+      <ul className="list-disc list-inside space-y-1 mb-1 max-h-60 overflow-y-auto">
+        {groupByResource ? renderGroupedErrors(errors) : renderErrors(errors)}
       </ul>
       <div className="flex justify-start gap-2 mt-4">
         <Button

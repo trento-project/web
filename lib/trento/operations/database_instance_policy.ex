@@ -50,6 +50,9 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
   def authorize_operation(_, _, _),
     do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
+  def metadata(%DatabaseInstanceReadModel{database_id: database_id, sid: sid}),
+    do: %{id: database_id, label: sid, type: :database}
+
   defp get_cluster_resource_id(%ClusterReadModel{
          details: %{resources: resources}
        }) do

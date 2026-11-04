@@ -143,4 +143,104 @@ describe('OperationForbiddenModal', () => {
     await user.click(screen.getByRole('button', { name: 'Close' }));
     expect(mockOnCancel).toHaveBeenCalled();
   });
+
+  describe('group by resource', () => {
+    it('should group the errors by resource', async () => {
+      const { id: hostID1, hostname: hostname1 } = hostFactory.build();
+      const { id: hostID2, hostname: hostname2 } = hostFactory.build();
+      const resource1 = { id: hostID1, label: hostname1, type: 'host' };
+      const resource2 = { id: hostID2, label: hostname2, type: 'host' };
+
+      await act(() =>
+        renderWithRouter(
+          <OperationForbiddenModal
+            operation="My operation"
+            errors={[
+              { detail: 'error1', metadata: [], resource: resource1 },
+              { detail: 'error2', metadata: [], resource: resource1 },
+              { detail: 'error3', metadata: [], resource: resource2 },
+            ]}
+            groupByResource
+            isOpen
+          />
+        )
+      );
+
+      const resourceLink1 = screen.getByRole('link', { name: hostname1 });
+      const resourceLink2 = screen.getByRole('link', { name: hostname2 });
+      expect(resourceLink1).toHaveAttribute('href', `/hosts/${hostID1}`);
+      expect(resourceLink2).toHaveAttribute('href', `/hosts/${hostID2}`);
+
+      const nestedItems1 = within(
+        resourceLink1.nextElementSibling
+      ).getAllByRole('listitem');
+      expect(nestedItems1.map((item) => item.textContent)).toEqual([
+        'error1',
+        'error2',
+      ]);
+
+      const nestedItems2 = within(
+        resourceLink2.nextElementSibling
+      ).getAllByRole('listitem');
+      expect(nestedItems2.map((item) => item.textContent)).toEqual(['error3']);
+    });
+
+    it('should not group the errors by default', async () => {
+      const { id, hostname } = hostFactory.build();
+
+      await act(() =>
+        renderWithRouter(
+          <OperationForbiddenModal
+            operation="My operation"
+            errors={[
+              {
+                detail: 'error1',
+                metadata: [],
+                resource: { id, label: hostname, type: 'host' },
+              },
+            ]}
+            isOpen
+          />
+        )
+      );
+
+      expect(
+        screen.queryByRole('link', { name: hostname })
+      ).not.toBeInTheDocument();
+      expect(screen.getAllByRole('listitem')).toHaveLength(1);
+    });
+
+    it('should keep the message links inside the grouped errors', async () => {
+      const { id: hostID, hostname } = hostFactory.build();
+      const { id: otherID, hostname: otherHostname } = hostFactory.build();
+
+      await act(() =>
+        renderWithRouter(
+          <OperationForbiddenModal
+            operation="My operation"
+            errors={[
+              {
+                detail: 'error with {0} link',
+                metadata: [{ id: otherID, label: otherHostname, type: 'host' }],
+                resource: { id: hostID, label: hostname, type: 'host' },
+              },
+            ]}
+            groupByResource
+            isOpen
+          />
+        )
+      );
+
+      const resourceLink = screen.getByRole('link', { name: hostname });
+      const nestedItem = within(resourceLink.nextElementSibling).getByRole(
+        'listitem'
+      );
+
+      expect(nestedItem.textContent).toBe(`error with ${otherHostname} link`);
+      expect(within(nestedItem).getByRole('link')).toHaveAttribute(
+        'href',
+        `/hosts/${otherID}`
+      );
+    });
+  });
 });

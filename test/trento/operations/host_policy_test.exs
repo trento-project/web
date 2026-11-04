@@ -381,4 +381,12 @@ defmodule Trento.Operations.HostPolicyTest do
       {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
     end
   end
+
+  describe "metadata" do
+    test "should return the host metadata" do
+      %{id: id, hostname: hostname} = host = build(:host)
+
+      assert %{id: id, label: hostname, type: :host} == HostPolicy.metadata(host)
+    end
+  end
 end

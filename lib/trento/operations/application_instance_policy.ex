@@ -13,7 +13,10 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
 
   alias Trento.Support.OperationsHelper
 
+  alias Trento.Operations.DatabasePolicy
+
   alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
@@ -95,6 +98,9 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
   def authorize_operation(_, _, _),
     do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
+  def metadata(%ApplicationInstanceReadModel{sap_system_id: sap_system_id, sid: sid}),
+    do: %{id: sap_system_id, label: sid, type: :sap_system}
+
   # Message Server, start without depending on other instances
   defp other_instances_started(%ApplicationInstanceReadModel{
          features: "MESSAGESERVER" <> _
@@ -157,19 +163,14 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
        do: :ok
 
   defp database_started(%ApplicationInstanceReadModel{
-         sap_system: %{
-           database: %{
-             id: database_id,
-             sid: sid
-           }
-         }
+         sap_system: %{database: %DatabaseReadModel{} = database}
        }),
        do:
          {:error,
           [
             OperationsHelper.build_error(
               "Database {0} is not started",
-              [%{id: database_id, label: sid, type: :database}]
+              [DatabasePolicy.metadata(database)]
             )
           ]}
 

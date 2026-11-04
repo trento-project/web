@@ -278,4 +278,20 @@ defmodule Trento.Operations.ClusterPolicyTest do
       end
     end
   end
+
+  describe "metadata" do
+    test "should return the cluster metadata" do
+      %{id: id, name: name} = cluster = build(:cluster)
+
+      assert %{id: id, label: name, type: :cluster} ==
+               ClusterPolicy.metadata(cluster)
+    end
+
+    test "should return the cluster id as label when the cluster name is nil" do
+      %{id: id} = cluster = build(:cluster, name: nil)
+
+      assert %{id: id, label: id, type: :cluster} ==
+               ClusterPolicy.metadata(cluster)
+    end
+  end
 end

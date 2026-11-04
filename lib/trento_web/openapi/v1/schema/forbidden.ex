@@ -64,6 +64,16 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
                     type: "host"
                   }
                 }
+              },
+              resource: %Schema{
+                type: :object,
+                description: "Resource involved in the forbidden action",
+                additionalProperties: true,
+                example: %{
+                  id: "9876b7a8-2e1f-4b9a-8e7d-3a4b5c6d7e8f",
+                  label: "hana01",
+                  type: "host"
+                }
               }
             }
           }

@@ -281,4 +281,13 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
                %{}
              )
   end
+
+  describe "metadata" do
+    test "should return the application instance metadata" do
+      %{sap_system_id: sap_system_id, sid: sid} = instance = build(:application_instance)
+
+      assert %{id: sap_system_id, label: sid, type: :sap_system} ==
+               ApplicationInstancePolicy.metadata(instance)
+    end
+  end
 end

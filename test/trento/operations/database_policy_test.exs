@@ -741,6 +741,15 @@ defmodule Trento.Operations.DatabasePolicyTest do
     end
   end
 
+  describe "metadata" do
+    test "should return the database metadata" do
+      %{id: id, sid: sid} = database = build(:database)
+
+      assert %{id: id, label: sid, type: :database} ==
+               DatabasePolicy.metadata(database)
+    end
+  end
+
   defp build_cluster_with_maintenance(maintenance_mode) do
     clustered_sap_instances =
       build_list(1, :clustered_sap_instance)

@@ -83,6 +83,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"404")
   end
 
+  def call(conn, {:error, :not_found, reason}) do
+    conn
+    |> put_status(:not_found)
+    |> put_view(json: ErrorJSON)
+    |> render(:"404", reason: reason)
+  end
+
   def call(conn, {:error, reason})
       when reason in [
              :host_not_registered,
