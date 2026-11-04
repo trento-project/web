@@ -12,6 +12,16 @@ const noDefaultParams = {};
 
 const isEmpty = (searchParams) => Array.from(searchParams.keys()).length === 0;
 
+const OWN_NAVIGATION_STATE_KEY = 'persistentSearchParams';
+
+const isOwnNavigation = ({ state }) =>
+  state?.[OWN_NAVIGATION_STATE_KEY] === true;
+
+const markAsOwnNavigation = (navigateOptions = {}) => ({
+  ...navigateOptions,
+  state: { ...navigateOptions.state, [OWN_NAVIGATION_STATE_KEY]: true },
+});
+
 const withoutTransientKeys = (searchParams, transientKeys) => {
   const persistable = new URLSearchParams(searchParams);
 
@@ -42,21 +52,19 @@ const usePersistentSearchParams = (viewKey, options = defaultOptions) => {
   const [urlParams, setSearchParams] = useSearchParams();
   const location = useLocation();
 
-  // Entering a view is a navigation, not a mount: react router keeps the view
-  // mounted when the user navigates to it from, say, the sidebar entry of the
-  // view they are already in. The params this hook itself asked for are
-  // therefore the only ones it can tell apart from the ones an entry brings in
-  const ownNavigation = useRef(false);
-
   // The restored params are handed to the view during the very render the entry
   // happens in, before the URL catches up with them
   const entry = useRef({ locationKey: null, restoredParams: null });
 
   if (entry.current.locationKey !== location.key) {
+    // Entering a view is a navigation, not a mount: react router keeps the view
+    // mounted when the user navigates to it from, say, the sidebar entry of the
+    // view they are already in. The locations this hook itself navigated to are
+    // therefore the only ones it can tell apart from the ones an entry brings in.
+    // They are told apart by the location itself, since a user navigation can be
+    // rendered in place of a pending one of the hook
     const firstRun = entry.current.locationKey === null;
-    const enteringView = firstRun || !ownNavigation.current;
-
-    ownNavigation.current = false;
+    const enteringView = firstRun || !isOwnNavigation(location);
 
     // Params found in the URL always win over the stored ones, so the view is
     // restored only when it is entered with a bare one. A view which was never
@@ -97,7 +105,6 @@ const usePersistentSearchParams = (viewKey, options = defaultOptions) => {
 
   const setPersistentSearchParams = useCallback(
     (nextInit, navigateOptions) => {
-      ownNavigation.current = true;
       // DEBUG(activity-log-load-twice)
       window.__pspDebug = window.__pspDebug || [];
       window.__pspDebug.push({
@@ -111,7 +118,7 @@ const usePersistentSearchParams = (viewKey, options = defaultOptions) => {
         typeof nextInit === 'function'
           ? nextInit(new URLSearchParams(searchParams))
           : nextInit,
-        navigateOptions
+        markAsOwnNavigation(navigateOptions)
       );
     },
     [setSearchParams, searchParams]

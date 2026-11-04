@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { Link, MemoryRouter } from 'react-router';
+import { Link, MemoryRouter, useNavigate } from 'react-router';
 import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -34,6 +34,30 @@ const renderPersistentSearchParamsWithSidebarEntry = ({
       );
     },
   });
+
+// Exposes a navigate function which plays the role of a user navigation, such
+// as the one the sidebar entry triggers
+const renderPersistentSearchParamsWithNavigate = ({
+  route = '/hosts',
+  ...options
+} = {}) => {
+  const navigate = { current: null };
+  function Navigator() {
+    navigate.current = useNavigate();
+    return null;
+  }
+  const view = renderHook(() => usePersistentSearchParams('hosts', options), {
+    wrapper: function Wrapper({ children }) {
+      return (
+        <MemoryRouter initialEntries={[route]}>
+          <Navigator />
+          {children}
+        </MemoryRouter>
+      );
+    },
+  });
+  return { ...view, navigate };
+};
 
 const currentSearch = ({ result }) => result.current[0].toString();
 
@@ -129,5 +153,38 @@ describe('usePersistentSearchParams', () => {
     });
 
     await waitFor(() => expect(currentSearch(view)).toBe('health=critical'));
+  });
+
+  it('should restore the stored settings when the view is entered before its own navigation is rendered', async () => {
+    writeViewSetting('hosts', 'health=critical');
+
+    const view = renderPersistentSearchParamsWithNavigate({
+      route: '/hosts?health=critical',
+    });
+
+    // both navigations are rendered together, as it happens when the user
+    // clicks the sidebar entry while a navigation of the view is pending
+    act(() => {
+      view.result.current[1]('health=passing', { replace: true });
+      view.navigate.current('/hosts');
+    });
+
+    await waitFor(() => expect(currentSearch(view)).toBe('health=critical'));
+    expect(readViewSetting('hosts')).toBe('health=critical');
+  });
+
+  it('should not restore the stored settings when the view itself clears its params', async () => {
+    const view = renderPersistentSearchParams({
+      route: '/hosts?health=critical',
+    });
+
+    await waitFor(() =>
+      expect(readViewSetting('hosts')).toBe('health=critical')
+    );
+
+    act(() => view.result.current[1](''));
+
+    await waitFor(() => expect(readViewSetting('hosts')).toBe(''));
+    expect(currentSearch(view)).toBe('');
   });
 });
