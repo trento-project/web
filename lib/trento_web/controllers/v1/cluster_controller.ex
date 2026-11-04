@@ -198,7 +198,7 @@ defmodule TrentoWeb.V1.ClusterController do
       request_body:
         request_body &&
           {"Request containing parameters for the specified cluster operation.",
-           "application/json", request_body},
+           "application/json", request_body, required: true},
       responses: [
         accepted: OperationAccepted.response(),
         not_found: NotFound.response(),
@@ -242,7 +242,7 @@ defmodule TrentoWeb.V1.ClusterController do
       description: description,
       request_body:
         {"Request containing the clusters and the parameters for the specified cluster bulk operation.",
-         "application/json", request_body},
+         "application/json", request_body, required: true},
       responses: [
         accepted: BulkOperationAccepted.response(),
         not_found: NotFound.response(),

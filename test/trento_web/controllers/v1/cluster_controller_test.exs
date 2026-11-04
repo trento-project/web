@@ -190,7 +190,8 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
              api_spec: api_spec
            } do
         conn
-        |> post("/api/v1/clusters/#{UUID.uuid4()}/operations/#{@operation}")
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/clusters/#{UUID.uuid4()}/operations/#{@operation}", @arguments)
         |> json_response(:not_found)
         |> assert_schema("NotFoundV1", api_spec)
       end
