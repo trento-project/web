@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-02478B4E.js"></script>
+    <script defer src="dist/sidebar_items-70206738.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -143,6 +143,14 @@ Trento Web
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:metadata/1" data-no-tooltip="" translate="no">metadata(read_model)</a>
+
+      </div>
+
+    </div>
+
 </div>
 
   </section>
@@ -167,7 +175,7 @@ Trento Web
       <h1 class="signature" translate="no">authorize_operation(operation, read_model, params)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/operations/policy_behaviour.ex#L25" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/operations/policy_behaviour.ex#L11" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -180,15 +188,38 @@ Trento Web
 
           <pre translate="no"><span class="attribute">@callback</span> authorize_operation(
   operation :: <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">atom</a>(),
-  read_model ::
-    <a href="Trento.SapSystems.Projections.ApplicationInstanceReadModel.html#t:t/0">Trento.SapSystems.Projections.ApplicationInstanceReadModel.t</a>()
-    | <a href="Trento.Clusters.Projections.ClusterReadModel.html#t:t/0">Trento.Clusters.Projections.ClusterReadModel.t</a>()
-    | <a href="Trento.Databases.Projections.DatabaseInstanceReadModel.html#t:t/0">Trento.Databases.Projections.DatabaseInstanceReadModel.t</a>()
-    | <a href="Trento.Databases.Projections.DatabaseReadModel.html#t:t/0">Trento.Databases.Projections.DatabaseReadModel.t</a>()
-    | <a href="Trento.Hosts.Projections.HostReadModel.html#t:t/0">Trento.Hosts.Projections.HostReadModel.t</a>()
-    | <a href="Trento.SapSystems.Projections.SapSystemReadModel.html#t:t/0">Trento.SapSystems.Projections.SapSystemReadModel.t</a>(),
+  read_model :: <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">struct</a>(),
   params :: <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">map</a>()
-) :: :ok | {:error, [<a href="Trento.Support.OperationsHelper.html#t:forbidden_error/0">Trento.Support.OperationsHelper.forbidden_error</a>()]}</pre>
+) ::
+  :ok | {:error, [<a href="Trento.Support.OperationsHelper.html#t:forbidden_error/0">Trento.Support.OperationsHelper.forbidden_error</a>()]}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:metadata/1">
+
+  <div class="detail-header">
+    <a href="#c:metadata/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">metadata(read_model)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/operations/policy_behaviour.ex#L17" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> metadata(read_model :: <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">struct</a>()) :: <a href="Trento.Support.OperationsHelper.html#t:metadata/0">Trento.Support.OperationsHelper.metadata</a>()</pre>
 
       </div>
 

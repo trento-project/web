@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-02478B4E.js"></script>
+    <script defer src="dist/sidebar_items-70206738.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -119,7 +119,7 @@ Trento Web
 
     <section id="moduledoc">
 <p>This plug is responsible for authorizing operations. It falls back to <code class="inline">{:error, :forbidden}</code> if
-the resource is not authorized.</p><p>Options:</p><ul><li>policy: Operations policy implementing Trento.Operations.PolicyBehaviour</li><li>resource: Function returning the resource to be authorized. If it returns <code class="inline">nil</code> is fallen back</li><li>operation: Function returning the operation to authorize. If it returns <code class="inline">nil</code> is fallen back</li><li>params: Function returning the operation params. It returns an empty map by default.</li><li>assigns_to: Atom defining where the authorized resource is assigned in the conn once the plug finishes successfully.
+the resource is not authorized.</p><p>Options:</p><ul><li>policy: Operations policy implementing Trento.Operations.PolicyBehaviour</li><li>resource: Function returning the resource or list of resources to be authorized. If it returns <code class="inline">nil</code> is fallen back</li><li>operation: Function returning the operation to authorize. If it returns <code class="inline">nil</code> is fallen back</li><li>params: Function returning the operation params. It returns an empty map by default.</li><li>assigns_to: Atom defining where the authorized resource is assigned in the conn once the plug finishes successfully.
 It is available at <code class="inline">%{assigns: %{authorized_resource: resource}}</code>. <code class="inline">authorized_resource</code> by default</li></ul><p>The plug can be used like:</p><pre><code class="makeup elixir" translate="no"><span class="n">plug</span><span class="w"> </span><span class="nc">TrentoWeb.Plugs.OperationsPolicyPlug</span><span class="p">,</span><span class="w">
      </span><span class="p" data-group-id="group-1">[</span><span class="w">
        </span><span class="ss">policy</span><span class="p">:</span><span class="w"> </span><span class="nc">Trento.Operations.MyPolicy</span><span class="p">,</span><span class="w">
@@ -131,7 +131,7 @@ It is available at <code class="inline">%{assigns: %{authorized_resource: resour
      </span><span class="ow">when</span><span class="w"> </span><span class="n">action</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nc">HostOperations</span><span class="o">.</span><span class="n">values</span><span class="p" data-group-id="group-2">(</span><span class="p" data-group-id="group-2">)</span><span class="w">
 
 </span><span class="kd">def</span><span class="w"> </span><span class="nf">get_resource</span><span class="p" data-group-id="group-3">(</span><span class="n">conn</span><span class="p" data-group-id="group-3">)</span><span class="w"> </span><span class="k" data-group-id="group-4">do</span><span class="w">
-  </span><span class="c1"># return the resource to be authorized</span><span class="w">
+  </span><span class="c1"># return the resource or resource list to be authorized</span><span class="w">
 </span><span class="k" data-group-id="group-4">end</span><span class="w">
 
 </span><span class="kd">def</span><span class="w"> </span><span class="nf">get_operation</span><span class="p" data-group-id="group-5">(</span><span class="n">conn</span><span class="p" data-group-id="group-5">)</span><span class="w"> </span><span class="k" data-group-id="group-6">do</span><span class="w">
@@ -205,7 +205,7 @@ It is available at <code class="inline">%{assigns: %{authorized_resource: resour
       <h1 class="signature" translate="no">call(conn, opts)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/operations_policy_plug.ex#L76" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/operations_policy_plug.ex#L78" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -227,7 +227,7 @@ It is available at <code class="inline">%{assigns: %{authorized_resource: resour
       <h1 class="signature" translate="no">get_params(_)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/operations_policy_plug.ex#L98" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/operations_policy_plug.ex#L100" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -251,7 +251,7 @@ It is available at <code class="inline">%{assigns: %{authorized_resource: resour
       <h1 class="signature" translate="no">init(opts \\ [])</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/operations_policy_plug.ex#L52" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/operations_policy_plug.ex#L54" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

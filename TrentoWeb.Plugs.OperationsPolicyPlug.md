@@ -6,7 +6,7 @@ the resource is not authorized.
 
 Options:
 - policy: Operations policy implementing Trento.Operations.PolicyBehaviour
-- resource: Function returning the resource to be authorized. If it returns `nil` {:error, :not_found} is fallen back
+- resource: Function returning the resource or list of resources to be authorized. If it returns `nil` {:error, :not_found} is fallen back
 - operation: Function returning the operation to authorize. If it returns `nil` {:error, :operation_not_found} is fallen back
 - params: Function returning the operation params. It returns an empty map by default.
 - assigns_to: Atom defining where the authorized resource is assigned in the conn once the plug finishes successfully.
@@ -25,7 +25,7 @@ plug TrentoWeb.Plugs.OperationsPolicyPlug,
      when action in HostOperations.values()
 
 def get_resource(conn) do
-  # return the resource to be authorized
+  # return the resource or resource list to be authorized
 end
 
 def get_operation(conn) do

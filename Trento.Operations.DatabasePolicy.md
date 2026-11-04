@@ -5,6 +5,8 @@ DatabaseReadModel operation policies
 
 # `authorize_operation`
 
+# `metadata`
+
 ---
 
 *Consult [api-reference.md](api-reference.md) for complete listing*

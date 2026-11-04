@@ -8,15 +8,16 @@ Behaviour of the operations policies.
 ```elixir
 @callback authorize_operation(
   operation :: atom(),
-  read_model ::
-    Trento.SapSystems.Projections.ApplicationInstanceReadModel.t()
-    | Trento.Clusters.Projections.ClusterReadModel.t()
-    | Trento.Databases.Projections.DatabaseInstanceReadModel.t()
-    | Trento.Databases.Projections.DatabaseReadModel.t()
-    | Trento.Hosts.Projections.HostReadModel.t()
-    | Trento.SapSystems.Projections.SapSystemReadModel.t(),
+  read_model :: struct(),
   params :: map()
-) :: :ok | {:error, [Trento.Support.OperationsHelper.forbidden_error()]}
+) ::
+  :ok | {:error, [Trento.Support.OperationsHelper.forbidden_error()]}
+```
+
+# `metadata`
+
+```elixir
+@callback metadata(read_model :: struct()) :: Trento.Support.OperationsHelper.metadata()
 ```
 
 ---
