@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-13T19:32:10Z",
-    "commit": "df359073ae3a6e025366544e7e00e0365576ed31",
-    "run_id": "34777334945",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 30,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-13T19:32:59Z",
     "commit": "df359073ae3a6e025366544e7e00e0365576ed31",
     "run_id": "34777334945",
@@ -5601,6 +5590,22 @@
       },
       {
         "name": "should mark the application cluster health as stale when a clustered application instance agent stops reporting::Homepage Stale data should mark the application cluster health as stale when a clustered application instance agent stops reporting",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-11-04T23:32:53Z",
+    "commit": "18d33d3aedacc6b15b3e60bab36c6a3e061119d6",
+    "run_id": "41934571593",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 37,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 0.02501
       }
     ]
