@@ -139,6 +139,11 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_data_marked_stale" => :debug,
     "database_data_marked_in_sync" => :debug,
     "cluster_operation_requested" => :info,
+    "cluster_bulk_operation_requested" => %{
+      type: :key,
+      key: :failed_requests,
+      condition: :non_empty_list
+    },
     "host_operation_requested" => :info,
     "application_instance_operation_requested" => :info,
     "sap_system_operation_requested" => :info,
@@ -186,40 +191,33 @@ defmodule Trento.ActivityLog.SeverityLevel do
     end
   end
 
-  defp map_metadata_to_severity_level(mapping, metadata) do
-    keys = Map.keys(metadata)
-    condition = mapping.condition
+  defp map_metadata_to_severity_level(%{condition: :map_value_to_severity} = mapping, metadata) do
+    maybe_health_key =
+      metadata
+      |> Map.keys()
+      |> Enum.map(&Atom.to_string/1)
+      |> Enum.find(fn e -> String.ends_with?(e, mapping.key_suffix) end)
 
-    case condition do
-      :map_value_to_severity ->
-        health_key_suffix = mapping.key_suffix
+    case maybe_health_key do
+      nil ->
+        :info
 
-        maybe_health_key =
-          keys
-          |> Enum.map(&Atom.to_string/1)
-          |> Enum.find(fn e -> String.ends_with?(e, health_key_suffix) end)
+      health_key when is_binary(health_key) ->
+        health_value = metadata[String.to_existing_atom(health_key)]
+        health_value_downcased = health_value |> Atom.to_string() |> String.downcase()
+        severity_default = Map.get(mapping.values, "*")
+        Map.get(mapping.values, health_value_downcased, severity_default)
+    end
+  end
 
-        case maybe_health_key do
-          nil ->
-            :info
+  defp map_metadata_to_severity_level(%{condition: :key_exists, key: key}, metadata) do
+    if Map.has_key?(metadata, key), do: :warning, else: :info
+  end
 
-          health_key when is_binary(health_key) ->
-            health_value = metadata[String.to_existing_atom(health_key)]
-            health_value_downcased = health_value |> Atom.to_string() |> String.downcase()
-            severity_default = Map.get(mapping.values, "*")
-            Map.get(mapping.values, health_value_downcased, severity_default)
-        end
-
-      :key_exists ->
-        key = mapping.key
-
-        case key in keys do
-          true ->
-            :warning
-
-          false ->
-            :info
-        end
+  defp map_metadata_to_severity_level(%{condition: :non_empty_list, key: key}, metadata) do
+    case Map.get(metadata, key) do
+      [_ | _] -> :warning
+      _ -> :info
     end
   end
 end
