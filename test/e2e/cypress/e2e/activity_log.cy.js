@@ -13,7 +13,7 @@ context('Activity Log page', () => {
     activityLogPage.interceptActivityLogEndpoint();
   });
 
-  describe('Navigation', () => {
+  describe.only('Navigation', () => {
     it('should navigate to Activity Log page', () => {
       basePage.visit();
       basePage.clickActivityLogNavigationItem();
@@ -23,11 +23,13 @@ context('Activity Log page', () => {
       activityLogPage.activityLogEndpointHasBeenCalledTimes(1);
     });
 
-    it('should not load the page twice', () => {
-      basePage.visit();
-      basePage.clickActivityLogNavigationItem5Times();
-      activityLogPage.waitForActivityLogRequest();
-      activityLogPage.activityLogEndpointHasBeenCalledTimes(1);
+    Cypress._.times(25, (i) => {
+      it(`should not load the page twice #${i}`, () => {
+        basePage.visit();
+        basePage.clickActivityLogNavigationItem5Times();
+        activityLogPage.waitForActivityLogRequest();
+        activityLogPage.activityLogEndpointHasBeenCalledTimes(1);
+      });
     });
   });
 

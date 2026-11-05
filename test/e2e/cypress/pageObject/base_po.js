@@ -68,6 +68,8 @@ export const clickActivityLogNavigationItem = () =>
 export const clickActivityLogNavigationItem5Times = () => {
   for (let i = 0; i < 5; i++) {
     clickActivityLogNavigationItem();
+    // wait for the view to apply its filters to the url before clicking again
+    cy.location('search').should('include', 'severity=');
   }
 };
 
