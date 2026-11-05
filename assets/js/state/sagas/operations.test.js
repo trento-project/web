@@ -10,6 +10,7 @@ import { networkClient } from '@lib/network';
 import {
   SAPTUNE_SOLUTION_APPLY,
   CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
   SAP_INSTANCE_START,
   SAP_SYSTEM_START,
   PACEMAKER_ENABLE,
@@ -18,6 +19,7 @@ import {
   getOperationLabel,
 } from '@lib/operations';
 import {
+  CLUSTER_BULK_OPERATION_ID,
   removeRunningOperation,
   setRunningOperation,
   setForbiddenOperation,
@@ -26,6 +28,7 @@ import { notify } from '@state/notifications';
 
 import {
   requestOperation,
+  requestBulkOperation,
   completeOperation,
   updateRunningOperations,
 } from './operations';
@@ -36,6 +39,9 @@ const hostOperationRequestURL = (hostID, operation) =>
 
 const clusterOperationRequestURL = (clusterID, operation) =>
   `/clusters/${clusterID}/operations/${operation}`;
+
+const clusterBulkOperationRequestURL = (operation) =>
+  `/clusters/operations/${operation}`;
 
 const clusterHostOperationRequestURL = (clusterID, hostID, operation) =>
   `/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`;
@@ -361,6 +367,161 @@ describe('operations saga', () => {
         }),
       ]);
     });
+  });
+
+  describe('request bulk operation', () => {
+    const bulkResources = [
+      {
+        resource: 'clusters',
+        bulkOperationID: CLUSTER_BULK_OPERATION_ID,
+        requestURL: clusterBulkOperationRequestURL,
+        idsKey: 'cluster_ids',
+        defaultOperation: CLUSTER_RESOURCE_REFRESH,
+        successScenarios: [
+          {
+            operation: CLUSTER_MAINTENANCE_CHANGE,
+            params: { maintenance: true },
+          },
+          { operation: CLUSTER_RESOURCE_REFRESH, params: undefined },
+        ],
+      },
+    ];
+
+    describe.each(bulkResources)(
+      '$resource',
+      ({
+        resource,
+        bulkOperationID,
+        requestURL,
+        idsKey,
+        defaultOperation,
+        successScenarios,
+      }) => {
+        it.each(successScenarios)(
+          'should request a bulk operation $operation',
+          async ({ operation, params }) => {
+            const label = getOperationLabel(operation);
+            const resourceID1 = faker.string.uuid();
+            const resourceID2 = faker.string.uuid();
+            const targetGroupIDs = [resourceID1, resourceID2];
+
+            axiosMock
+              .onPost(requestURL(operation), {
+                [idsKey]: targetGroupIDs,
+                ...(params && { params }),
+              })
+              .reply(202, {
+                operations: [
+                  { resource_id: resourceID1 },
+                  { resource_id: resourceID2 },
+                ],
+                failed_requests: [],
+              });
+
+            const dispatched = await recordSaga(requestBulkOperation, {
+              payload: { bulkOperationID, targetGroupIDs, operation, params },
+            });
+
+            expect(dispatched).toEqual([
+              removeRunningOperation({ groupID: bulkOperationID }),
+              notify({
+                text: `Operation ${label} requested for 2 ${resource}`,
+                icon: '⚙️',
+              }),
+            ]);
+          }
+        );
+
+        it('should report the failed requests in a bulk operation', async () => {
+          const operation = defaultOperation;
+          const label = getOperationLabel(operation);
+          const passingResourceID1 = faker.string.uuid();
+          const passingResourceID2 = faker.string.uuid();
+          const failingResourceID = faker.string.uuid();
+          const targetGroupIDs = [
+            passingResourceID1,
+            passingResourceID2,
+            failingResourceID,
+          ];
+
+          axiosMock.onPost(requestURL(operation)).reply(202, {
+            operations: [
+              { resource_id: passingResourceID1 },
+              { resource_id: passingResourceID2 },
+            ],
+            failed_requests: [{ resource_id: failingResourceID }],
+          });
+
+          const dispatched = await recordSaga(requestBulkOperation, {
+            payload: { bulkOperationID, targetGroupIDs, operation },
+          });
+
+          expect(dispatched).toEqual([
+            removeRunningOperation({ groupID: bulkOperationID }),
+            notify({
+              text: `Operation ${label} requested for 3 ${resource} (1 failed)`,
+              icon: '⚙️',
+            }),
+          ]);
+        });
+
+        it.each([
+          {
+            name: '500 error',
+            mockFailure: (request) => request.reply(500, {}),
+          },
+          {
+            name: 'network error',
+            mockFailure: (request) => request.networkError(),
+          },
+        ])(
+          'should fail requesting a bulk operation if the api request fails with a $name',
+          async ({ mockFailure }) => {
+            const operation = defaultOperation;
+            const label = getOperationLabel(operation);
+            const targetGroupIDs = [faker.string.uuid()];
+
+            mockFailure(axiosMock.onPost(requestURL(operation)));
+
+            const dispatched = await recordSaga(requestBulkOperation, {
+              payload: { bulkOperationID, targetGroupIDs, operation },
+            });
+
+            expect(dispatched).toEqual([
+              removeRunningOperation({ groupID: bulkOperationID }),
+              notify({
+                text: `Operation ${label} request for ${resource} failed`,
+                icon: '❌',
+              }),
+            ]);
+          }
+        );
+
+        it('should fail requesting a bulk operation if the api request is forbidden', async () => {
+          const operation = defaultOperation;
+          const targetGroupIDs = [faker.string.uuid()];
+          const errors = [
+            { detail: 'error1', metadata: [{ key: 'value' }] },
+            { detail: 'error2' },
+          ];
+
+          axiosMock.onPost(requestURL(operation)).reply(403, { errors });
+
+          const dispatched = await recordSaga(requestBulkOperation, {
+            payload: { bulkOperationID, targetGroupIDs, operation },
+          });
+
+          expect(dispatched).toEqual([
+            removeRunningOperation({ groupID: bulkOperationID }),
+            setForbiddenOperation({
+              groupID: bulkOperationID,
+              operation,
+              errors,
+            }),
+          ]);
+        });
+      }
+    );
   });
 
   describe('complete operation', () => {
