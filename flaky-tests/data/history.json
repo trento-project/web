@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-09-14T00:06:12Z",
-    "commit": "df359073ae3a6e025366544e7e00e0365576ed31",
-    "run_id": "34782022295",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 16
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.5
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.5
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1104
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check execution when the correct user abilities are missing in details and settings::HANA cluster details Forbidden actions Check Execution should forbid check execution when the correct user abilities are missing in details and settings",
-        "score": 0.05001
-      },
-      {
-        "name": "should have a correct link to each host::HANA database details The hosts table shows the attached hosts to this HANA database should have a correct link to each host",
-        "score": 0.05001
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.05001
-      },
-      {
-        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
-        "score": 0.05001
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should show Nutanix cloud details correctly::Host Details Cloud details for this host should be displayed should show Nutanix cloud details correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-14T21:24:33Z",
     "commit": "7403fcbf1ce89e96adfb1fa9755aa2a5f2522e02",
     "run_id": "34895536516",
@@ -5652,6 +5592,22 @@
       {
         "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
         "score": 0.03251
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-11-05T23:31:54Z",
+    "commit": "b95c8b933e104aeecb85d9f2202432fde5de3045",
+    "run_id": "42130069019",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 34,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
       }
     ]
   }
