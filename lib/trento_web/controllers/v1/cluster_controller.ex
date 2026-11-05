@@ -233,12 +233,12 @@ defmodule TrentoWeb.V1.ClusterController do
   ]
 
   for %{
-        operation: cluster_bulk_operation,
+        operation: cluster_operation,
         summary: summary,
         description: description,
         request_body: request_body
       } <- @bulk_operations do
-    @bulk_action OperationsHelper.to_bulk_operation(cluster_bulk_operation)
+    @bulk_action OperationsHelper.to_bulk_operation(cluster_operation)
 
     operation @bulk_action,
       summary: summary,
