@@ -182,6 +182,8 @@ tests that require setting an event store.
 
 - [Trento.Operations.DatabasePolicy](Trento.Operations.DatabasePolicy.md): DatabaseReadModel operation policies
 
+- [Trento.Operations.Enums.ClusterBulkOperations](Trento.Operations.Enums.ClusterBulkOperations.md): Cluster operations that can be requested on multiple clusters at once
+
 - [Trento.Operations.Enums.ClusterHostOperations](Trento.Operations.Enums.ClusterHostOperations.md): Cluster host operations
 
 - [Trento.Operations.Enums.ClusterOperations](Trento.Operations.Enums.ClusterOperations.md): Cluster operations

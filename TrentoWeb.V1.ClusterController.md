@@ -1,6 +1,10 @@
 # `TrentoWeb.V1.ClusterController`
 [🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L4)
 
+# `bulk_cluster_maintenance_change`
+
+# `bulk_cluster_resource_refresh`
+
 # `cluster_host_start`
 
 # `cluster_host_stop`
@@ -8,6 +12,8 @@
 # `cluster_maintenance_change`
 
 # `cluster_resource_refresh`
+
+# `get_action`
 
 # `get_operation_cluster`
 

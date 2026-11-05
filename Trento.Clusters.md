@@ -42,6 +42,14 @@ Provides a set of functions to interact with clusters.
 @spec get_cluster_id_by_host_id(String.t()) :: String.t() | nil
 ```
 
+# `get_clusters_by_ids`
+
+```elixir
+@spec get_clusters_by_ids([String.t()]) :: [
+  Trento.Clusters.Projections.ClusterReadModel.t()
+]
+```
+
 # `get_sap_instances_by_host_id`
 
 ```elixir
@@ -54,6 +62,15 @@ Provides a set of functions to interact with clusters.
 
 ```elixir
 @spec maintenance?(Trento.Clusters.Projections.ClusterReadModel.t()) :: boolean()
+```
+
+# `request_bulk_operation`
+
+```elixir
+@spec request_bulk_operation(atom(), [String.t()], map()) ::
+  {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+   [%{resource_id: String.t(), reason: any()}]}
+  | {:error, any()}
 ```
 
 # `request_checks_execution`

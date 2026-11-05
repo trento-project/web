@@ -382,6 +382,7 @@ Trento.Operations.ApplicationInstancePolicy.md
 Trento.Operations.ClusterPolicy.md
 Trento.Operations.DatabaseInstancePolicy.md
 Trento.Operations.DatabasePolicy.md
+Trento.Operations.Enums.ClusterBulkOperations.md
 Trento.Operations.Enums.ClusterHostOperations.md
 Trento.Operations.Enums.ClusterOperations.md
 Trento.Operations.Enums.DatabaseOperations.md
