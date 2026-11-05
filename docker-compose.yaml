@@ -114,9 +114,12 @@ services:
       CORS_ORIGIN: "http://localhost:4000"
       AUTH_SERVER_URL: "http://host.docker.internal:4000"
     depends_on:
-      - postgres
-      - rabbitmq
-      - checks
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      checks:
+        condition: service_completed_successfully
     ports:
       - 4001:4000
     entrypoint: /bin/sh -c "/app/bin/wanda eval 'Wanda.Release.init()' && /app/bin/wanda start"
