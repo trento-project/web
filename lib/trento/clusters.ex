@@ -250,7 +250,7 @@ defmodule Trento.Clusters do
           | {:error, any}
   def request_bulk_operation(operation, cluster_ids, params)
       when operation in ClusterBulkOperations.values() do
-    OperationsHelper.reduce_bulk_operation_request(
+    OperationsHelper.do_bulk_requests(
       cluster_ids,
       &request_operation(operation, &1, params)
     )

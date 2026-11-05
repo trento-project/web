@@ -50,33 +50,36 @@ defmodule Trento.Support.OperationsHelper do
     |> reduce_operation_authorizations(acc)
   end
 
-  @spec reduce_bulk_operation_request(
+  @spec do_bulk_requests(
           resource_ids :: [String.t()],
           request_func :: (String.t() -> {:ok, String.t()} | {:error, any})
         ) ::
           {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
            [%{resource_id: String.t(), reason: any}]}
           | {:error, :bulk_operation_request_failed}
-  def reduce_bulk_operation_request(resource_ids, request_func) do
+  def do_bulk_requests(resource_ids, request_func) do
     bulk_operation_id = UUID.uuid4()
 
-    {operations, failed_requests} =
-      Enum.reduce(resource_ids, {[], []}, fn resource_id, {operations, failed} ->
+    results =
+      Enum.map(resource_ids, fn resource_id ->
         case request_func.(resource_id) do
           {:ok, operation_id} ->
-            {[%{resource_id: resource_id, operation_id: operation_id} | operations], failed}
+            {:ok, %{resource_id: resource_id, operation_id: operation_id}}
 
           {:error, reason} ->
-            {operations, [%{resource_id: resource_id, reason: reason} | failed]}
+            {:error, %{resource_id: resource_id, reason: reason}}
         end
       end)
+
+    operations = for {:ok, op} <- results, do: op
+    failed_requests = for {:error, err} <- results, do: err
 
     case {operations, failed_requests} do
       {[], [_ | _]} ->
         {:error, :bulk_operation_request_failed}
 
       _ ->
-        {:ok, bulk_operation_id, Enum.reverse(operations), Enum.reverse(failed_requests)}
+        {:ok, bulk_operation_id, operations, failed_requests}
     end
   end
 

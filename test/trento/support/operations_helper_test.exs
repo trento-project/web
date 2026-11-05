@@ -45,13 +45,13 @@ defmodule Trento.Support.OperationsHelperTest do
     end
   end
 
-  describe "reduce_bulk_operation_request" do
+  describe "do_bulk_requests" do
     test "should return a bulk operation id and the operations" do
       resource_ids = [UUID.uuid4(), UUID.uuid4(), UUID.uuid4()]
       operation_ids = Map.new(resource_ids, &{&1, UUID.uuid4()})
 
       assert {:ok, _bulk_operation_id, operations, []} =
-               OperationsHelper.reduce_bulk_operation_request(resource_ids, fn resource_id ->
+               OperationsHelper.do_bulk_requests(resource_ids, fn resource_id ->
                  {:ok, Map.fetch!(operation_ids, resource_id)}
                end)
 
@@ -65,7 +65,7 @@ defmodule Trento.Support.OperationsHelperTest do
 
     test "should return an empty operations list when there are no resources" do
       assert {:ok, _bulk_operation_id, [], []} =
-               OperationsHelper.reduce_bulk_operation_request([], fn _ ->
+               OperationsHelper.do_bulk_requests([], fn _ ->
                  flunk("request function should not be called")
                end)
     end
@@ -75,7 +75,7 @@ defmodule Trento.Support.OperationsHelperTest do
       operation_id_c = UUID.uuid4()
 
       {:ok, _bulk_operation_id, operations, failed} =
-        OperationsHelper.reduce_bulk_operation_request(["a", "b", "c"], fn
+        OperationsHelper.do_bulk_requests(["a", "b", "c"], fn
           "a" -> {:ok, operation_id_a}
           "b" -> {:error, :foo}
           "c" -> {:ok, operation_id_c}
@@ -91,7 +91,7 @@ defmodule Trento.Support.OperationsHelperTest do
 
     test "should return an error when all the requests fail" do
       assert {:error, :bulk_operation_request_failed} ==
-               OperationsHelper.reduce_bulk_operation_request(["a", "b"], fn
+               OperationsHelper.do_bulk_requests(["a", "b"], fn
                  "a" -> {:error, :foo}
                  "b" -> {:error, :bar}
                end)
