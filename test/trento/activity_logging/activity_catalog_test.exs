@@ -42,6 +42,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :activity_log_settings_update,
         :host_operation_requested,
         :cluster_operation_requested,
+        :cluster_bulk_operation_requested,
         :cluster_host_operation_requested,
         :application_instance_operation_requested,
         :sap_system_operation_requested,
@@ -381,6 +382,18 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       %{
         activity: :cluster_operation_requested,
         connection_info: {TrentoWeb.V1.ClusterController, :cluster_maintenance_change},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :cluster_bulk_operation_requested,
+        connection_info: {TrentoWeb.V1.ClusterController, :bulk_cluster_maintenance_change},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :cluster_bulk_operation_requested,
+        connection_info: {TrentoWeb.V1.ClusterController, :bulk_cluster_resource_refresh},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
