@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-14T21:43:46Z",
-    "commit": "7403fcbf1ce89e96adfb1fa9755aa2a5f2522e02",
-    "run_id": "34896492861",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-14T21:45:01Z",
     "commit": "7403fcbf1ce89e96adfb1fa9755aa2a5f2522e02",
     "run_id": "34896492861",
@@ -5605,5 +5594,53 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-06T00:17:05Z",
+    "commit": "b95c8b933e104aeecb85d9f2202432fde5de3045",
+    "run_id": "42135690175",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 8
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.06744
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark the application cluster health as stale when a clustered application instance agent stops reporting::Homepage Stale data should mark the application cluster health as stale when a clustered application instance agent stops reporting",
+        "score": 0.05001
+      },
+      {
+        "name": "should not deregister database instances if the SAP system using the database is deregistered::Databases Overview Deregistration should not deregister database instances if the SAP system using the database is deregistered",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display DB HDQ after deregistering the primary instance::Databases Overview Deregistration should not display DB HDQ after deregistering the primary instance",
+        "score": 0.05001
+      },
+      {
+        "name": "should show AWS cloud details correctly::Host Details Cloud details for this host should be displayed should show AWS cloud details correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "should update number of SLES subscriptions when a host is deregistered::About page should update number of SLES subscriptions when a host is deregistered",
+        "score": 0.05001
+      }
+    ]
   }
 ]
