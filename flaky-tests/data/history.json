@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-09-15T20:23:52Z",
-    "commit": "7403fcbf1ce89e96adfb1fa9755aa2a5f2522e02",
-    "run_id": "35017846124",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 36,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-15T20:56:38Z",
     "commit": "7403fcbf1ce89e96adfb1fa9755aa2a5f2522e02",
     "run_id": "35019492893",
@@ -5588,5 +5568,41 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-06T23:43:27Z",
+    "commit": "0f4531f3ea595cfaaf630c5e0734652b8c8c6fa6",
+    "run_id": "42313776791",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 95,
+      "failed_runs": 8
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.05453
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.05453
+      },
+      {
+        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
+        "score": 0.05001
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.02501
+      }
+    ]
   }
 ]
