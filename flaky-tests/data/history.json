@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-15T20:57:36Z",
-    "commit": "7403fcbf1ce89e96adfb1fa9755aa2a5f2522e02",
-    "run_id": "35019492893",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-16T00:39:16Z",
     "commit": "7403fcbf1ce89e96adfb1fa9755aa2a5f2522e02",
     "run_id": "35025168198",
@@ -5617,5 +5606,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-11-07T22:16:02Z",
+    "commit": "aa3226b487126b197867ea3603fdf560a4111372",
+    "run_id": "42419793953",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
