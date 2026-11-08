@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-16T20:14:22Z",
-    "commit": "c4d0023776ab87c4c47de4b2150b3944066ecbfc",
-    "run_id": "35143861021",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 35,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-16T20:15:21Z",
     "commit": "c4d0023776ab87c4c47de4b2150b3944066ecbfc",
     "run_id": "35143861021",
@@ -5540,5 +5529,57 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-07T22:45:38Z",
+    "commit": "aa3226b487126b197867ea3603fdf560a4111372",
+    "run_id": "42422106525",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 11
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.07684
+      },
+      {
+        "name": "should mark database data as stale when an agent composing the database stops reporting::HANA database details Stale data should mark database data as stale when an agent composing the database stops reporting",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::HANA database details Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.04973
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.03072
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.03072
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.02501
+      },
+      {
+        "name": "should show Red badge in instance when RED status is received::HANA database details The database layout shows all the running instances should show Red badge in instance when RED status is received",
+        "score": 0.02501
+      },
+      {
+        "name": "should start autorefresh ticker::Activity Log page Autorefresh should start autorefresh ticker",
+        "score": 0.02501
+      }
+    ]
   }
 ]
