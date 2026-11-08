@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-09-16T20:15:21Z",
-    "commit": "c4d0023776ab87c4c47de4b2150b3944066ecbfc",
-    "run_id": "35143861021",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 41,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-16T20:56:51Z",
     "commit": "c4d0023776ab87c4c47de4b2150b3944066ecbfc",
     "run_id": "35146376521",
@@ -5578,6 +5562,26 @@
       },
       {
         "name": "should start autorefresh ticker::Activity Log page Autorefresh should start autorefresh ticker",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-11-08T21:56:22Z",
+    "commit": "aa3226b487126b197867ea3603fdf560a4111372",
+    "run_id": "42527675131",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 37,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
         "score": 0.02501
       }
     ]
