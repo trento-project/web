@@ -20,6 +20,7 @@ import {
   requestHostOperation,
   requestClusterOperation,
   requestClusterBulkOperation,
+  requestHostBulkOperation,
   requestSapSystemOperation,
   requestSapInstanceOperation,
   requestClusterHostOperation,
@@ -141,6 +142,10 @@ const BULK_OPERATION_RESOURCES = {
   [CLUSTER_OPERATION]: {
     label: 'clusters',
     request: requestClusterBulkOperation,
+  },
+  [HOST_OPERATION]: {
+    label: 'hosts',
+    request: requestHostBulkOperation,
   },
 };
 
