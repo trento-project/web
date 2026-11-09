@@ -162,6 +162,31 @@ defmodule Trento.HostsTest do
     end
   end
 
+  describe "get_hosts_by_ids/1" do
+    test "should return an empty list when no ids match" do
+      insert(:host)
+
+      assert [] == Hosts.get_hosts_by_ids([UUID.uuid4()])
+      assert [] == Hosts.get_hosts_by_ids([])
+    end
+
+    test "should return only the requested registered hosts" do
+      [%{id: host_id_1}, %{id: host_id_2}] = expected_hosts = insert_list(2, :host)
+      %{id: deregistered_host_id} = insert(:host, deregistered_at: DateTime.utc_now())
+      insert(:host)
+
+      hosts =
+        Hosts.get_hosts_by_ids([
+          host_id_1,
+          host_id_2,
+          deregistered_host_id,
+          UUID.uuid4()
+        ])
+
+      assert Enum.sort_by(expected_hosts, & &1.id) == Enum.sort_by(hosts, & &1.id)
+    end
+  end
+
   describe "retrieving a host by identifier" do
     test "should not return a non existent host" do
       assert {:error, :not_found} == Hosts.by_id(Faker.UUID.v4())
@@ -373,6 +398,43 @@ defmodule Trento.HostsTest do
 
     test "should return operation_not_found if the given operation does not exist" do
       assert {:error, :operation_not_found} = Hosts.request_operation(:unknown, UUID.uuid4(), %{})
+    end
+  end
+
+  describe "request_bulk_operation/3" do
+    test "should request reboot operation on every host" do
+      host_id_1 = UUID.uuid4()
+      host_id_2 = UUID.uuid4()
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+        OperationsPublisher, "requests", %OperationRequested{} -> :ok
+      end)
+
+      assert {:ok, _bulk_operation_id,
+              [
+                %{resource_id: ^host_id_1, operation_id: operation_id_1},
+                %{resource_id: ^host_id_2, operation_id: operation_id_2}
+              ], []} = Hosts.request_bulk_operation(:reboot, [host_id_1, host_id_2], %{})
+
+      refute operation_id_1 == operation_id_2
+    end
+
+    test "should return an error when all the messaging requests fail" do
+      host_ids = [UUID.uuid4(), UUID.uuid4()]
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+        OperationsPublisher, "requests", %OperationRequested{} -> {:error, :amqp_error}
+      end)
+
+      assert {:error, :bulk_operation_request_failed} =
+               Hosts.request_bulk_operation(:reboot, host_ids, %{})
+    end
+
+    test "should return operation_not_found for unsupported operations" do
+      for operation <- [:unknown, :saptune_solution_apply] do
+        assert {:error, :operation_not_found} =
+                 Hosts.request_bulk_operation(operation, [UUID.uuid4()], %{})
+      end
     end
   end
 end

@@ -19,6 +19,7 @@ defmodule Trento.Hosts do
 
   alias Trento.Support.CommandedUtils
   alias Trento.Support.DateService
+  alias Trento.Support.OperationsHelper
 
   alias Trento.Hosts.Commands.{
     RequestHostDeregistration,
@@ -33,6 +34,7 @@ defmodule Trento.Hosts do
   alias Trento.Repo
 
   require Trento.Operations.Enums.HostOperations, as: HostOperations
+  require Trento.Operations.Enums.HostBulkOperations, as: HostBulkOperations
 
   require Logger
 
@@ -77,6 +79,13 @@ defmodule Trento.Hosts do
     |> enrich_host_read_model_query()
     |> Repo.one()
     |> Repo.preload([:sles_subscriptions, :tags])
+  end
+
+  @spec get_hosts_by_ids([String.t()]) :: [HostReadModel.t()]
+  def get_hosts_by_ids(ids) do
+    HostReadModel
+    |> where([h], h.id in ^ids and is_nil(h.deregistered_at))
+    |> Repo.all()
   end
 
   @spec get_all_sles_subscriptions :: non_neg_integer()
@@ -181,6 +190,20 @@ defmodule Trento.Hosts do
   end
 
   def request_operation(_, _, _), do: {:error, :operation_not_found}
+
+  @spec request_bulk_operation(atom(), [String.t()], map()) ::
+          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+           [%{resource_id: String.t(), reason: any}]}
+          | {:error, any}
+  def request_bulk_operation(operation, host_ids, params)
+      when operation in HostBulkOperations.values() do
+    OperationsHelper.do_bulk_requests(
+      host_ids,
+      &request_operation(operation, &1, params)
+    )
+  end
+
+  def request_bulk_operation(_, _, _), do: {:error, :operation_not_found}
 
   @spec enrich_host_read_model_query(Ecto.Query.t()) :: Ecto.Query.t()
   defp enrich_host_read_model_query(query) do
