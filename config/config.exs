@@ -176,6 +176,12 @@ config :trento, Trento.Scheduler,
   ],
   debug_logging: false
 
+config :trento, Oban,
+  repo: Trento.Repo,
+  queues: [default: 10],
+  pruner: [max_age: {7, :days}],
+  lifeline: [rescue_after: {30, :minutes}]
+
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
 
