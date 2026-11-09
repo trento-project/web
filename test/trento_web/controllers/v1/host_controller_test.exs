@@ -706,6 +706,200 @@ defmodule TrentoWeb.V1.HostControllerTest do
     |> assert_schema("ForbiddenV1", api_spec)
   end
 
+  describe "host bulk operations" do
+    bulk_operation_scenarios = [
+      %{
+        operation: "reboot",
+        arguments: %{},
+        ability: "reboot"
+      }
+    ]
+
+    for %{operation: operation, arguments: arguments, ability: ability} <-
+          bulk_operation_scenarios do
+      @operation operation
+      @arguments arguments
+      @ability ability
+
+      test "should respond with 422 if the host ids are missing or empty for #{@operation}", %{
+        conn: conn
+      } do
+        for body <- [@arguments, Map.put(@arguments, "host_ids", [])] do
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/hosts/operations/#{@operation}/bulk", body)
+          |> json_response(:unprocessable_entity)
+        end
+      end
+
+      test "should respond with 422 if the host ids contain duplicates for #{@operation}", %{
+        conn: conn
+      } do
+        %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/hosts/operations/#{@operation}/bulk",
+          Map.put(@arguments, "host_ids", [host_id, host_id])
+        )
+        |> json_response(:unprocessable_entity)
+      end
+
+      test "should respond with 404 if any host is not found for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)
+        missing_host_id = UUID.uuid4()
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/hosts/operations/#{@operation}/bulk",
+            Map.put(@arguments, "host_ids", [host_id, missing_host_id])
+          )
+          |> json_response(:not_found)
+
+        assert_schema(resp, "NotFoundV1", api_spec)
+
+        assert %{
+                 "errors" => [
+                   %{"detail" => "Hosts not found: " <> ^missing_host_id <> "."}
+                 ]
+               } = resp
+      end
+
+      test "should respond with 404 if a host is deregistered for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: host_id} =
+          insert(:host, heartbeat: :passing, cluster_id: nil, deregistered_at: DateTime.utc_now())
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/hosts/operations/#{@operation}/bulk",
+          Map.put(@arguments, "host_ids", [host_id])
+        )
+        |> json_response(:not_found)
+        |> assert_schema("NotFoundV1", api_spec)
+      end
+
+      test "should respond with 403 if any host is not authorized for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: authorized_host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)
+
+        %{id: unauthorized_host_id, hostname: unauthorized_hostname} =
+          insert(:host, heartbeat: :critical, cluster_id: nil)
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/hosts/operations/#{@operation}/bulk",
+            Map.put(@arguments, "host_ids", [authorized_host_id, unauthorized_host_id])
+          )
+          |> json_response(:forbidden)
+
+        assert_schema(resp, "ForbiddenV1", api_spec)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Trento agent is not currently running in the host",
+                     "resource" => %{
+                       "id" => ^unauthorized_host_id,
+                       "label" => ^unauthorized_hostname,
+                       "type" => "host"
+                     }
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should respond with 500 on messaging error for #{@operation}", %{conn: conn} do
+        %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/hosts/operations/#{@operation}/bulk",
+            Map.put(@arguments, "host_ids", [host_id])
+          )
+          |> json_response(:internal_server_error)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Something went wrong.",
+                     "title" => "Internal Server Error"
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should perform bulk #{@operation} operation when the user has #{@ability}:host ability",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: host_id_1} = insert(:host, heartbeat: :passing, cluster_id: nil)
+        %{id: host_id_2} = insert(:host, heartbeat: :passing, cluster_id: nil)
+
+        %{id: user_id} = insert(:user)
+
+        %{id: ability_id} = insert(:ability, name: @ability, resource: "host")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          2,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        posted_conn =
+          conn
+          |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/hosts/operations/#{@operation}/bulk",
+            Map.put(@arguments, "host_ids", [host_id_1, host_id_2])
+          )
+
+        resp = json_response(posted_conn, :accepted)
+
+        assert_schema(resp, "BulkOperationAcceptedV1", api_spec)
+
+        assert %{
+                 "operations" => [
+                   %{"resource_id" => ^host_id_1},
+                   %{"resource_id" => ^host_id_2}
+                 ],
+                 "failed_requests" => []
+               } = resp
+
+        assert %{assigns: %{host: [%{id: ^host_id_1}, %{id: ^host_id_2}]}} = posted_conn
+      end
+    end
+  end
+
   describe "query_metrics" do
     test "should execute an instant PromQL query scoped to a host", %{
       conn: conn,
