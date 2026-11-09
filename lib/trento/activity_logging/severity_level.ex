@@ -145,6 +145,11 @@ defmodule Trento.ActivityLog.SeverityLevel do
       condition: :non_empty_list
     },
     "host_operation_requested" => :info,
+    "host_bulk_operation_requested" => %{
+      type: :key,
+      key: :failed_requests,
+      condition: :non_empty_list
+    },
     "application_instance_operation_requested" => :info,
     "sap_system_operation_requested" => :info,
     "database_operation_requested" => :info,
