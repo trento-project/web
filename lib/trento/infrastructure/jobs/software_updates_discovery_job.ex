@@ -6,5 +6,12 @@ defmodule Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob do
   Discovers the available software updates of the registered hosts.
   """
 
-  use Trento.Infrastructure.Jobs.Worker, call: {Trento.SoftwareUpdates, :run_discovery}
+  use Oban.Worker, max_attempts: 1, unique: [period: :infinity, states: :incomplete]
+
+  @impl Oban.Worker
+  def perform(%Oban.Job{}) do
+    Trento.SoftwareUpdates.run_discovery()
+
+    :ok
+  end
 end

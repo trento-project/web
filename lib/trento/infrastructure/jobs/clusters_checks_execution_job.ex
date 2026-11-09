@@ -6,6 +6,12 @@ defmodule Trento.Infrastructure.Jobs.ClustersChecksExecutionJob do
   Requests a checks execution for every registered cluster with selected checks.
   """
 
-  use Trento.Infrastructure.Jobs.Worker,
-    call: {Trento.Clusters, :request_clusters_checks_execution}
+  use Oban.Worker, max_attempts: 1, unique: [period: :infinity, states: :incomplete]
+
+  @impl Oban.Worker
+  def perform(%Oban.Job{}) do
+    Trento.Clusters.request_clusters_checks_execution()
+
+    :ok
+  end
 end

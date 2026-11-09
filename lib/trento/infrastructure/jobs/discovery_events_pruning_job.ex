@@ -6,7 +6,12 @@ defmodule Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob do
   Deletes the discovery events older than `older_than` days.
   """
 
-  use Trento.Infrastructure.Jobs.Worker,
-    call: {Trento.Discovery, :prune_discovery_events},
-    args: ["older_than"]
+  use Oban.Worker, max_attempts: 1, unique: [period: :infinity, states: :incomplete]
+
+  @impl Oban.Worker
+  def perform(%Oban.Job{args: %{"older_than" => older_than}}) do
+    Trento.Discovery.prune_discovery_events(older_than)
+
+    :ok
+  end
 end

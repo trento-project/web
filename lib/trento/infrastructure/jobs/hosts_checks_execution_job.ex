@@ -6,5 +6,12 @@ defmodule Trento.Infrastructure.Jobs.HostsChecksExecutionJob do
   Requests a checks execution for every registered host with selected checks.
   """
 
-  use Trento.Infrastructure.Jobs.Worker, call: {Trento.Hosts, :request_hosts_checks_execution}
+  use Oban.Worker, max_attempts: 1, unique: [period: :infinity, states: :incomplete]
+
+  @impl Oban.Worker
+  def perform(%Oban.Job{}) do
+    Trento.Hosts.request_hosts_checks_execution()
+
+    :ok
+  end
 end
