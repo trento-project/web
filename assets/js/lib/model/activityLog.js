@@ -165,6 +165,7 @@ export const CLUSTER_OPERATION_REQUESTED = 'cluster_operation_requested';
 export const CLUSTER_BULK_OPERATION_REQUESTED =
   'cluster_bulk_operation_requested';
 export const HOST_OPERATION_REQUESTED = 'host_operation_requested';
+export const HOST_BULK_OPERATION_REQUESTED = 'host_bulk_operation_requested';
 export const CLUSTER_HOST_OPERATION_REQUESTED =
   'cluster_host_operation_requested';
 export const SAP_SYSTEM_OPERATION_REQUESTED = 'sap_system_operation_requested';
@@ -818,6 +819,17 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Host Operation Requested',
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: hostResourceType,
+  },
+  [HOST_BULK_OPERATION_REQUESTED]: {
+    label: 'Host Bulk Operation Requested',
+    message: ({ metadata }) => {
+      const failed = metadata.failed_requests?.length ?? 0;
+      const total = (metadata.operations?.length ?? 0) + failed;
+      const hostsText = total === 1 ? 'host' : 'hosts';
+      const failedText = failed ? ` (${failed} failed)` : '';
+      return `Operation ${getOperationLabel(metadata.operation)} requested on ${total} ${hostsText}${failedText}`;
+    },
     resource: hostResourceType,
   },
   [CLUSTER_HOST_OPERATION_REQUESTED]: {
