@@ -26,7 +26,6 @@ defmodule Trento.Application do
         # Start the Endpoint (http/https)
         TrentoWeb.Endpoint,
         Trento.Commanded,
-        Trento.Scheduler,
         {Oban, Jobs.oban_config()},
         Trento.EventHandlersSupervisor,
         Trento.ProjectorsSupervisor,
