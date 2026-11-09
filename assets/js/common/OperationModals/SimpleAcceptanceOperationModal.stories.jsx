@@ -6,6 +6,7 @@ import {
   CLUSTER_HOST_STOP,
   CLUSTER_MAINTENANCE_CHANGE,
   CLUSTER_RESOURCE_REFRESH,
+  HOST_REBOOT,
   PACEMAKER_DISABLE,
   PACEMAKER_ENABLE,
   SAP_INSTANCE_START,
@@ -36,6 +37,7 @@ export default {
         CLUSTER_HOST_STOP,
         CLUSTER_MAINTENANCE_CHANGE,
         CLUSTER_RESOURCE_REFRESH,
+        HOST_REBOOT,
       ],
     },
     descriptionResolverArgs: {
@@ -174,7 +176,7 @@ export const ResourceRefresh = {
 export const RebootHost = {
   args: {
     ...Default.args,
-    operation: 'reboot',
+    operation: HOST_REBOOT,
     descriptionResolverArgs: { hostName },
   },
 };
@@ -208,5 +210,14 @@ export const BulkClusterResourceRefresh = {
     ...BulkClusterMaintenanceOn.args,
     operation: CLUSTER_RESOURCE_REFRESH,
     descriptionResolverArgs: {},
+  },
+};
+
+export const BulkHostReboot = {
+  args: {
+    ...Default.args,
+    operation: HOST_REBOOT,
+    descriptionResolverArgs: {},
+    resources: bulkOperationResourceFactory.buildList(5),
   },
 };

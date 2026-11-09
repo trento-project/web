@@ -169,6 +169,12 @@ describe('SimpleAcceptanceOperationModal', () => {
         'Refresh all the resources on the following clusters:',
     },
     {
+      operation: HOST_REBOOT,
+      descriptionResolverArgs: {},
+      title: 'Reboot host',
+      expectedDescription: 'Reboot the following hosts:',
+    },
+    {
       operation: 'unknown_operation',
       descriptionResolverArgs: {},
       title: 'unknown operation',

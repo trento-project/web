@@ -81,6 +81,8 @@ const getClusterBulkMaintenanceDescription = (_operation, { maintenance }) => (
 const getClusterBulkResourceRefreshDescription = () =>
   'Refresh all the resources on the following clusters:';
 
+const getHostBulkRebootDescription = () => 'Reboot the following hosts:';
+
 const DESCRIPTION_RESOLVERS = {
   [SAP_INSTANCE_START]: getSapInstanceStartStopDescription,
   [SAP_INSTANCE_STOP]: getSapInstanceStartStopDescription,
@@ -96,6 +98,7 @@ const DESCRIPTION_RESOLVERS = {
 const BULK_DESCRIPTION_RESOLVERS = {
   [CLUSTER_MAINTENANCE_CHANGE]: getClusterBulkMaintenanceDescription,
   [CLUSTER_RESOURCE_REFRESH]: getClusterBulkResourceRefreshDescription,
+  [HOST_REBOOT]: getHostBulkRebootDescription,
 };
 
 function SimpleAcceptanceOperationModal({
