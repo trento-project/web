@@ -45,12 +45,14 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
     {id_field, context_module, getter, enriching_field} =
       Map.fetch!(@bulk_operation_enrichments, activity)
 
-    values =
-      context_module
-      |> apply(getter, [Enum.map(operations ++ failed_requests, &Map.fetch!(&1, id_field))])
-      |> Map.new(&{&1.id, Map.fetch!(&1, enriching_field)})
+    resource_ids = Enum.map(operations ++ failed_requests, &Map.fetch!(&1, id_field))
 
-    enrich_entry = &put_enriching_value(&1, id_field, enriching_field, values)
+    enrichments =
+      context_module
+      |> apply(getter, [resource_ids])
+      |> Map.new(&{&1.id, %{enriching_field => Map.fetch!(&1, enriching_field)}})
+
+    enrich_entry = fn entry -> Map.merge(entry, Map.get(enrichments, entry[id_field], %{})) end
 
     %{
       metadata
@@ -68,13 +70,6 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
       |> maybe_enrich(:sap_system, SapSystems, :sid)
       |> maybe_enrich(:user, Users, :username)
       |> elem(1)
-
-  defp put_enriching_value(operation, id_field, enriching_field, values) do
-    case Map.fetch(values, Map.fetch!(operation, id_field)) do
-      {:ok, value} -> Map.put(operation, enriching_field, value)
-      :error -> operation
-    end
-  end
 
   defp maybe_enrich({activity, metadata}, entity_reference, context_module, enriching_field) do
     enriched_metadata =
