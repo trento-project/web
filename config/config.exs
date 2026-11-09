@@ -125,49 +125,40 @@ config :trento, Trento.Heartbeats,
 # to wait before displaying the deregistration button
 config :trento, deregistration_debounce: :timer.seconds(0)
 
-config :trento, Trento.Scheduler,
-  jobs: [
+# Periodic jobs run by Oban cron, keyed by name so that runtime.exs, dev.exs and
+# demo.exs override a single schedule. See Trento.Infrastructure.Jobs.
+config :trento, Trento.Infrastructure.Jobs,
+  crontab: [
     clusters_checks_execution: [
       # Runs every five minutes
       schedule: "*/5 * * * *",
-      task: {Trento.Clusters, :request_clusters_checks_execution, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
+      worker: Trento.Infrastructure.Jobs.ClustersChecksExecutionJob
     ],
     hosts_checks_execution: [
       # Runs every five minutes
       schedule: "*/5 * * * *",
-      task: {Trento.Hosts, :request_hosts_checks_execution, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
+      worker: Trento.Infrastructure.Jobs.HostsChecksExecutionJob
     ],
-    discover_software_updates: [
+    software_updates_discovery: [
       # Runs every 12 hours. At 00:00 and 12:00
       schedule: "0 */12 * * *",
-      task: {Trento.SoftwareUpdates, :run_discovery, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
+      worker: Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob
     ],
     api_key_expiration_alert: [
       schedule: "@daily",
-      task: {Trento.Infrastructure.Alerting.Alerting, :notify_api_key_expiration, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
+      worker: Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob
     ],
     activity_log_cleaning: [
       schedule: "@daily",
-      task: {Trento.ActivityLog, :clear_expired_logs, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
+      worker: Trento.Infrastructure.Jobs.ActivityLogCleaningJob
     ],
-    prune_discovery_events: [
+    discovery_events_pruning: [
+      # Runs every day at 00:00, deleting the events older than 10 days
       schedule: "0 0 * * *",
-      task: {Trento.Discovery, :prune_discovery_events, [10]},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
+      worker: Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
+      args: %{older_than: 10}
     ]
-  ],
-  debug_logging: false
+  ]
 
 config :trento, Oban,
   repo: Trento.Repo,

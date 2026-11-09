@@ -114,14 +114,10 @@ config :trento, Trento.Mailer,
   ]
 
 if !IEx.started?() do
-  config :trento, Trento.Scheduler,
-    jobs: [
-      clusters_checks_execution: [
-        schedule: {:extended, "@hourly"}
-      ],
-      hosts_checks_execution: [
-        schedule: {:extended, "@hourly"}
-      ]
+  config :trento, Trento.Infrastructure.Jobs,
+    crontab: [
+      clusters_checks_execution: [schedule: "@hourly"],
+      hosts_checks_execution: [schedule: "@hourly"]
     ]
 end
 

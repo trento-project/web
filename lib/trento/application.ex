@@ -8,6 +8,8 @@ defmodule Trento.Application do
 
   use Application
 
+  alias Trento.Infrastructure.Jobs
+
   @impl true
   def start(_type, _args) do
     children =
@@ -25,7 +27,7 @@ defmodule Trento.Application do
         TrentoWeb.Endpoint,
         Trento.Commanded,
         Trento.Scheduler,
-        {Oban, Application.fetch_env!(:trento, Oban)},
+        {Oban, Jobs.oban_config()},
         Trento.EventHandlersSupervisor,
         Trento.ProjectorsSupervisor,
         Trento.ProcessManagersSupervisor,
@@ -43,6 +45,8 @@ defmodule Trento.Application do
         # {Trento.Worker, arg}
       ] ++
         Application.get_env(:trento, :extra_children, [])
+
+    Jobs.attach_logger()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
