@@ -5,13 +5,8 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { waiveOperationDisclaimer } from '@lib/operations';
-
 import {
-  sapSystemApplicationInstanceFactory,
-  hostFactory,
-} from '@lib/test-utils/factories';
-import {
+  waiveOperationDisclaimer,
   SAP_INSTANCE_START,
   SAP_INSTANCE_STOP,
   PACEMAKER_ENABLE,
@@ -22,6 +17,12 @@ import {
   CLUSTER_RESOURCE_REFRESH,
   HOST_REBOOT,
 } from '@lib/operations';
+
+import {
+  bulkOperationResourceFactory,
+  sapSystemApplicationInstanceFactory,
+  hostFactory,
+} from '@lib/test-utils/factories';
 
 import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
 
@@ -133,6 +134,60 @@ describe('SimpleAcceptanceOperationModal', () => {
           <SimpleAcceptanceOperationModal
             operation={operation}
             descriptionResolverArgs={descriptionResolverArgs}
+            isOpen
+          />
+        )
+      );
+
+      expect(screen.getByText(title)).toBeInTheDocument();
+      expect(screen.getByText(expectedDescription)).toBeInTheDocument();
+    }
+  );
+
+  it.each([
+    {
+      operation: CLUSTER_MAINTENANCE_CHANGE,
+      descriptionResolverArgs: { maintenance: true },
+      title: 'Maintenance change',
+      expectedDescription: (_content, element) =>
+        element.textContent ===
+        'Change maintenance state to True on the following clusters:',
+    },
+    {
+      operation: CLUSTER_MAINTENANCE_CHANGE,
+      descriptionResolverArgs: { maintenance: false },
+      title: 'Maintenance change',
+      expectedDescription: (_content, element) =>
+        element.textContent ===
+        'Change maintenance state to False on the following clusters:',
+    },
+    {
+      operation: CLUSTER_RESOURCE_REFRESH,
+      descriptionResolverArgs: {},
+      title: 'Refresh resources',
+      expectedDescription:
+        'Refresh all the resources on the following clusters:',
+    },
+    {
+      operation: 'unknown_operation',
+      descriptionResolverArgs: {},
+      title: 'unknown operation',
+      expectedDescription: 'No description available',
+    },
+  ])(
+    'should show correct bulk operation title and description for $operation',
+    async ({
+      operation,
+      title,
+      descriptionResolverArgs,
+      expectedDescription,
+    }) => {
+      await act(() =>
+        render(
+          <SimpleAcceptanceOperationModal
+            operation={operation}
+            descriptionResolverArgs={descriptionResolverArgs}
+            resources={bulkOperationResourceFactory.buildList(2)}
             isOpen
           />
         )

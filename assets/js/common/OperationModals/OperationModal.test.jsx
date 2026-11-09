@@ -6,6 +6,7 @@ import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
+import { bulkOperationResourceFactory } from '@lib/test-utils/factories';
 import { resetOperationDisclaimer } from '@lib/operations';
 import OperationModal from './OperationModal';
 
@@ -147,5 +148,29 @@ describe('OperationModal', () => {
     await user.click(screen.getByText('Proceed'));
 
     expect(screen.getByText('Request')).toBeDisabled();
+  });
+
+  it('should list the affected resources', async () => {
+    const user = userEvent.setup();
+    const resources = bulkOperationResourceFactory.buildList(3);
+
+    await act(() => render(<OperationModal isOpen resources={resources} />));
+
+    await user.click(screen.getByText('Proceed'));
+
+    expect(screen.getAllByRole('listitem')).toHaveLength(resources.length);
+    resources.forEach(({ label }) =>
+      expect(screen.getByText(label)).toBeInTheDocument()
+    );
+  });
+
+  it('should not render a resources list when there are no resources', async () => {
+    const user = userEvent.setup();
+
+    await act(() => render(<OperationModal isOpen />));
+
+    await user.click(screen.getByText('Proceed'));
+
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
   });
 });

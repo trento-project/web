@@ -12,6 +12,7 @@ import {
   SAP_INSTANCE_STOP,
 } from '@lib/operations';
 import {
+  bulkOperationResourceFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
@@ -40,6 +41,11 @@ export default {
     descriptionResolverArgs: {
       description:
         'Arguments for the description resolver function to generate the operation description',
+      control: { type: 'object' },
+    },
+    resources: {
+      description:
+        'Resources affected by the operation, with id and label. When present, the bulk description is used',
       control: { type: 'object' },
     },
     isOpen: {
@@ -170,5 +176,37 @@ export const RebootHost = {
     ...Default.args,
     operation: 'reboot',
     descriptionResolverArgs: { hostName },
+  },
+};
+
+export const BulkManyResources = {
+  args: {
+    ...Default.args,
+    operation: CLUSTER_RESOURCE_REFRESH,
+    resources: bulkOperationResourceFactory.buildList(40),
+  },
+};
+
+export const BulkClusterMaintenanceOn = {
+  args: {
+    ...Default.args,
+    operation: CLUSTER_MAINTENANCE_CHANGE,
+    descriptionResolverArgs: { maintenance: true },
+    resources: bulkOperationResourceFactory.buildList(5),
+  },
+};
+
+export const BulkClusterMaintenanceOff = {
+  args: {
+    ...BulkClusterMaintenanceOn.args,
+    descriptionResolverArgs: { maintenance: false },
+  },
+};
+
+export const BulkClusterResourceRefresh = {
+  args: {
+    ...BulkClusterMaintenanceOn.args,
+    operation: CLUSTER_RESOURCE_REFRESH,
+    descriptionResolverArgs: {},
   },
 };

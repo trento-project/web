@@ -30,8 +30,8 @@ import { getInstanceID } from '@state/instances';
 import { getUserProfile } from '@state/selectors/user';
 
 import {
-  BulkOperationModal,
   OperationForbiddenModal,
+  SimpleAcceptanceOperationModal,
 } from '@common/OperationModals';
 import OperationsButton from '@common/OperationsButton';
 import PageHeader from '@common/PageHeader';
@@ -259,7 +259,7 @@ function ClustersList({
   return (
     <>
       <PageHeader className="font-bold">Clusters</PageHeader>
-      <BulkOperationModal
+      <SimpleAcceptanceOperationModal
         operation={bulkOperationModal.operation}
         descriptionResolverArgs={bulkOperationModal.params}
         resources={bulkOperationModal.clusters.map(({ id, name }) => ({

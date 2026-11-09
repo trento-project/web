@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useEffect, useState } from 'react';
-import { noop } from 'lodash';
+import { isEmpty, noop } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -43,6 +43,7 @@ function OperationModal({
   title,
   description,
   operationText,
+  resources = [],
   requestDisabled = false,
   isOpen = false,
   onRequest = noop,
@@ -91,6 +92,13 @@ function OperationModal({
             {description}
           </p>
           {children}
+          {!isEmpty(resources) && (
+            <ul className="list-disc list-inside text-sm max-h-60 overflow-y-auto">
+              {resources.map(({ id, label }) => (
+                <li key={id}>{label}</li>
+              ))}
+            </ul>
+          )}
         </>
       )}
       <div className="flex justify-start gap-2 mt-4">
