@@ -24,6 +24,7 @@ import {
 
 import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
+import { waiveOperationDisclaimer } from '@lib/operations';
 
 import HostsList from './HostsList';
 
@@ -692,6 +693,66 @@ describe('HostsLists component', () => {
       expect(
         screen.queryByText('Tag2').children.item(0).children.item(0)
       ).toHaveClass('opacity-50');
+    });
+  });
+
+  describe('bulk operations', () => {
+    beforeAll(() => waiveOperationDisclaimer());
+
+    it('should not allow selecting hosts when operations are disabled', () => {
+      const hosts = hostFactory.buildList(2);
+      const state = { ...defaultInitialState, hostsList: { hosts } };
+
+      const [StatefulHostsList] = withState(
+        <HostsList operationsEnabled={false} />,
+        state
+      );
+
+      renderWithRouter(StatefulHostsList);
+
+      expect(
+        screen.queryByRole('checkbox', { name: 'Select row' })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should list the selected hosts in the reboot host modal', async () => {
+      const user = userEvent.setup();
+      const hosts = hostFactory.buildList(3);
+      const state = {
+        ...defaultInitialState,
+        hostsList: { hosts },
+        user: {
+          abilities: [{ name: 'all', resource: 'all' }],
+        },
+      };
+
+      const [StatefulHostsList] = withState(
+        <HostsList operationsEnabled />,
+        state
+      );
+
+      renderWithRouter(StatefulHostsList);
+
+      const firstRow = screen.getByText(hosts[0].hostname).closest('tr');
+      await user.click(
+        within(firstRow).getByRole('checkbox', { name: 'Select row' })
+      );
+
+      const thirdRow = screen.getByText(hosts[2].hostname).closest('tr');
+      await user.click(
+        within(thirdRow).getByRole('checkbox', { name: 'Select row' })
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+      await user.click(screen.getByRole('menuitem', { name: 'Reboot host' }));
+
+      const modal = screen.getByRole('dialog');
+      expect(within(modal).getByText('Reboot host')).toBeInTheDocument();
+      expect(
+        within(modal)
+          .getAllByRole('listitem')
+          .map(({ textContent }) => textContent)
+      ).toEqual([hosts[0].hostname, hosts[2].hostname]);
     });
   });
 });

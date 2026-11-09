@@ -9,9 +9,14 @@ import { uniqBy } from 'lodash';
 import classNames from 'classnames';
 import semver from 'semver';
 
+import {
+  OperationForbiddenModal,
+  SimpleAcceptanceOperationModal,
+} from '@common/OperationModals';
 import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
 import HostLink from '@common/HostLink';
+import OperationsButton from '@common/OperationsButton';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
 import ProviderLabel from '@common/ProviderLabel';
@@ -20,7 +25,9 @@ import Table from '@common/Table';
 import Tags from '@common/Tags';
 import Tooltip from '@common/Tooltip';
 
+import { getFromConfig } from '@lib/config';
 import { post, del } from '@lib/network';
+import { getOperationLabel } from '@lib/operations';
 import { agentVersionWarning } from '@lib/agent';
 import { STALE_ROW } from '@lib/tables';
 
@@ -31,7 +38,15 @@ import DeregistrationModal from '@pages/DeregistrationModal';
 import HealthSummary from '@pages/HealthSummary';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
 
+import { getHostsBulkOperations } from './hostOperations';
+
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
+import {
+  HOST_BULK_OPERATION_ID,
+  bulkOperationRequested,
+  removeRunningOperation,
+} from '@state/runningOperations';
+import { getRunningOperation } from '@state/selectors/runningOperations';
 import { getUserProfile } from '@state/selectors/user';
 import { hostsListSelector } from '@state/selectors/host';
 import { getInstanceID } from '@state/instances';
@@ -55,7 +70,7 @@ const removeTag = (tag, hostId) => {
   del(`/hosts/${hostId}/tags/${tag}`);
 };
 
-function HostsList() {
+function HostsList({ operationsEnabled = getFromConfig('operationsEnabled') }) {
   const hostsData = useSelector(hostsListSelector);
   const { abilities, timezone } = useSelector(getUserProfile);
 
@@ -63,7 +78,38 @@ function HostsList() {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [hostToDeregister, setHostToDeregister] = useState(undefined);
 
+  const [bulkOperationModal, setBulkOperationModalOpen] = useState({
+    open: false,
+    operation: undefined,
+    params: {},
+    hosts: [],
+  });
+
   const dispatch = useDispatch();
+
+  const closeBulkOperationModal = () =>
+    setBulkOperationModalOpen((prevState) => ({ ...prevState, open: false }));
+
+  const bulkOperation = useSelector(
+    getRunningOperation(HOST_BULK_OPERATION_ID)
+  );
+
+  const clearBulkOperation = () =>
+    dispatch(removeRunningOperation({ groupID: HOST_BULK_OPERATION_ID }));
+
+  const requestBulkOperation = () => {
+    const { operation, params, hosts: targetHosts } = bulkOperationModal;
+
+    dispatch(
+      bulkOperationRequested({
+        bulkOperationID: HOST_BULK_OPERATION_ID,
+        targetGroupIDs: targetHosts.map(({ id }) => id),
+        operation,
+        params,
+      })
+    );
+    closeBulkOperationModal();
+  };
 
   const openDeregistrationModal = (host) => {
     setHostToDeregister(host);
@@ -79,6 +125,7 @@ function HostsList() {
 
   const config = {
     pagination: true,
+    selectable: operationsEnabled,
     usePadding: false,
     rowClassName: ({ staleAt }) =>
       classNames({
@@ -254,6 +301,24 @@ function HostsList() {
           setCleanUpModalOpen(false);
         }}
       />
+      <SimpleAcceptanceOperationModal
+        operation={bulkOperationModal.operation}
+        descriptionResolverArgs={bulkOperationModal.params}
+        resources={bulkOperationModal.hosts.map(({ id, hostname }) => ({
+          id,
+          label: hostname,
+        }))}
+        isOpen={bulkOperationModal.open}
+        onRequest={requestBulkOperation}
+        onCancel={closeBulkOperationModal}
+      />
+      <OperationForbiddenModal
+        operation={getOperationLabel(bulkOperation?.operation)}
+        isOpen={!!bulkOperation?.forbidden}
+        errors={bulkOperation?.errors ?? []}
+        groupByResource
+        onCancel={clearBulkOperation}
+      />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
@@ -261,6 +326,17 @@ function HostsList() {
           data={hostsData}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
+          rowKey={({ id }) => id}
+          renderSelectionActions={(selectedHosts) => (
+            <OperationsButton
+              userAbilities={abilities}
+              menuPosition="bottom end"
+              operations={getHostsBulkOperations(
+                selectedHosts,
+                setBulkOperationModalOpen
+              )}
+            />
+          )}
         />
       </div>
     </>
