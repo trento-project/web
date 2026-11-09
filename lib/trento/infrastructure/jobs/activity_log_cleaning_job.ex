@@ -6,12 +6,5 @@ defmodule Trento.Infrastructure.Jobs.ActivityLogCleaningJob do
   Deletes the activity log entries older than the retention time.
   """
 
-  use Oban.Worker, max_attempts: 1, unique: [period: :infinity, states: :incomplete]
-
-  @impl Oban.Worker
-  def perform(%Oban.Job{}) do
-    Trento.ActivityLog.clear_expired_logs()
-
-    :ok
-  end
+  use Trento.Infrastructure.Jobs.Worker, call: {Trento.ActivityLog, :clear_expired_logs}
 end

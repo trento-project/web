@@ -6,12 +6,6 @@ defmodule Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob do
   Sends an alert when the API key is about to expire or expired.
   """
 
-  use Oban.Worker, max_attempts: 1, unique: [period: :infinity, states: :incomplete]
-
-  @impl Oban.Worker
-  def perform(%Oban.Job{}) do
-    Trento.Infrastructure.Alerting.Alerting.notify_api_key_expiration()
-
-    :ok
-  end
+  use Trento.Infrastructure.Jobs.Worker,
+    call: {Trento.Infrastructure.Alerting.Alerting, :notify_api_key_expiration}
 end
