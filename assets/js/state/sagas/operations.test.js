@@ -41,7 +41,7 @@ const clusterOperationRequestURL = (clusterID, operation) =>
   `/clusters/${clusterID}/operations/${operation}`;
 
 const clusterBulkOperationRequestURL = (operation) =>
-  `/clusters/operations/${operation}`;
+  `/clusters/operations/${operation}/bulk`;
 
 const clusterHostOperationRequestURL = (clusterID, hostID, operation) =>
   `/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`;

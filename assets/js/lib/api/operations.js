@@ -17,7 +17,7 @@ export const requestClusterOperation = (clusterID, operation, params) =>
   post(`/clusters/${clusterID}/operations/${operation}`, params);
 
 export const requestClusterBulkOperation = (clusterIDs, operation, params) =>
-  post(`/clusters/operations/${operation}`, {
+  post(`/clusters/operations/${operation}/bulk`, {
     cluster_ids: clusterIDs,
     ...(!isEmpty(params) && { params }),
   });
