@@ -200,7 +200,7 @@ export const allVisibleRowsAreMarkedInSync = () =>
 
 const _hostHasExpectedStatus = (host, status) =>
   cy
-    .get(`tr:contains("${host}") td:nth-child(1) svg`)
+    .get(`tr:contains("${host}") td:nth-child(2) svg`)
     .should('have.class', status);
 
 export const hostWithSapHasExpectedStatus = () =>
