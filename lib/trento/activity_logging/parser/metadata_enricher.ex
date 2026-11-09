@@ -12,6 +12,14 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
 
   alias Trento.Users.User
 
+  # activity => {id field in each bulk entry, context module, bulk getter, field used as name}
+  @bulk_operation_enrichments %{
+    cluster_bulk_operation_requested: {:cluster_id, Clusters, :get_clusters_by_ids, :name}
+    # host_bulk_operation_requested: {:host_id, Hosts, :get_hosts_by_ids, :hostname},
+    # sap_system_bulk_operation_requested: {:sap_system_id, SapSystems, :get_sap_systems_by_ids, :sid},
+    # database_bulk_operation_requested: {:database_id, Databases, :get_databases_by_ids, :sid}
+  }
+
   @spec enrich(activity :: ActivityCatalog.activity_type(), metadata :: map()) ::
           {:ok, maybe_enriched_metadata :: map()}
   def enrich(activity, metadata) do
@@ -27,6 +35,30 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
       _ ->
         {:ok, metadata}
     end
+  end
+
+  defp enrich_metadata(
+         activity,
+         %{operations: operations, failed_requests: failed_requests} = metadata
+       )
+       when is_map_key(@bulk_operation_enrichments, activity) do
+    {id_field, context_module, getter, enriching_field} =
+      Map.fetch!(@bulk_operation_enrichments, activity)
+
+    resource_ids = Enum.map(operations ++ failed_requests, &Map.fetch!(&1, id_field))
+
+    enrichments =
+      context_module
+      |> apply(getter, [resource_ids])
+      |> Map.new(&{&1.id, %{enriching_field => Map.fetch!(&1, enriching_field)}})
+
+    enrich_entry = fn entry -> Map.merge(entry, Map.get(enrichments, entry[id_field], %{})) end
+
+    %{
+      metadata
+      | operations: Enum.map(operations, enrich_entry),
+        failed_requests: Enum.map(failed_requests, enrich_entry)
+    }
   end
 
   defp enrich_metadata(activity, metadata),
