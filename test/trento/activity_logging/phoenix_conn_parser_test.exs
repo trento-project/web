@@ -411,7 +411,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                            operations: operations,
                            failed_requests: failed_requests
                          }),
-                       assigns: %{bulk_operation: operation}
+                       assigns: %{operation: operation}
                    }
                  )
       end

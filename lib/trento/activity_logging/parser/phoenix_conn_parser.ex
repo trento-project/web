@@ -285,7 +285,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         %Plug.Conn{
           body_params: body_params,
           resp_body: resp_body,
-          assigns: %{bulk_operation: operation}
+          assigns: %{operation: operation}
         }
       )
       when activity in [
