@@ -1095,6 +1095,7 @@ jobs:
       - test-e2e
       - test-integration
       - test-regression
+      - test-elixir-tls-handshake
     if: |
       (
         (github.event_name == 'push' && github.ref_name == 'main') ||
@@ -1249,6 +1250,7 @@ jobs:
       - test-e2e
       - test-integration
       - test-regression
+      - test-elixir-tls-handshake
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
