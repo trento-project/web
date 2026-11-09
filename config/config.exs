@@ -127,13 +127,6 @@ config :trento, deregistration_debounce: :timer.seconds(0)
 
 config :trento, Trento.Scheduler,
   jobs: [
-    heartbeat_check: [
-      # Runs every ten seconds
-      schedule: {:extended, "*/10"},
-      task: {Trento.Heartbeats, :dispatch_heartbeat_failed_commands, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
     clusters_checks_execution: [
       # Runs every five minutes
       schedule: "*/5 * * * *",
@@ -180,7 +173,17 @@ config :trento, Oban,
   repo: Trento.Repo,
   queues: [default: 10],
   pruner: [max_age: {7, :days}],
-  lifeline: [rescue_after: {30, :minutes}]
+  lifeline: [rescue_after: {30, :minutes}],
+  # Periodic tasks under one minute, which Oban cron does not support
+  plugins: [
+    {Trento.Infrastructure.Jobs.Plugins.Periodic,
+     tasks: [
+       heartbeat_check: [
+         every: :timer.seconds(10),
+         mfa: {Trento.Heartbeats, :dispatch_heartbeat_failed_commands, []}
+       ]
+     ]}
+  ]
 
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
