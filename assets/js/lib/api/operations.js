@@ -22,6 +22,12 @@ export const requestClusterBulkOperation = (clusterIDs, operation, params) =>
     ...(!isEmpty(params) && { params }),
   });
 
+export const requestHostBulkOperation = (hostIDs, operation, params) =>
+  post(`/hosts/operations/${operation}/bulk`, {
+    host_ids: hostIDs,
+    ...(!isEmpty(params) && { params }),
+  });
+
 export const requestSapSystemOperation = (sapSystemID, operation, params) =>
   post(`/sap_systems/${sapSystemID}/operations/${operation}`, params);
 
