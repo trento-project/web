@@ -44,6 +44,26 @@ defmodule Trento.Infrastructure.Jobs do
     |> Keyword.update(:cron, [crontab: crontab], &Keyword.put(&1, :crontab, crontab))
   end
 
+  @doc """
+  Logs the exceptions raised by the jobs, which Oban otherwise only stores in the job.
+  """
+  @spec attach_logger() :: :ok | {:error, :already_exists}
+  def attach_logger do
+    :telemetry.attach(
+      "trento-jobs-logger",
+      [:oban, :job, :exception],
+      &__MODULE__.handle_event/4,
+      nil
+    )
+  end
+
+  @doc false
+  def handle_event([:oban, :job, :exception], _measurements, meta, _config) do
+    %{job: %{worker: worker}, kind: kind, reason: reason, stacktrace: stacktrace} = meta
+
+    Logger.error("Job #{worker} failed: " <> Exception.format(kind, reason, stacktrace))
+  end
+
   defp crontab_entry({name, job}) do
     worker = Keyword.fetch!(job, :worker)
     schedule = schedule!(name, Keyword.fetch!(job, :schedule), worker)
@@ -143,25 +163,5 @@ defmodule Trento.Infrastructure.Jobs do
       nil -> :error
       day -> {:ok, day}
     end
-  end
-
-  @doc """
-  Logs the exceptions raised by the jobs, which Oban otherwise only stores in the job.
-  """
-  @spec attach_logger() :: :ok | {:error, :already_exists}
-  def attach_logger do
-    :telemetry.attach(
-      "trento-jobs-logger",
-      [:oban, :job, :exception],
-      &__MODULE__.handle_event/4,
-      nil
-    )
-  end
-
-  @doc false
-  def handle_event([:oban, :job, :exception], _measurements, meta, _config) do
-    %{job: %{worker: worker}, kind: kind, reason: reason, stacktrace: stacktrace} = meta
-
-    Logger.error("Job #{worker} failed: " <> Exception.format(kind, reason, stacktrace))
   end
 end
