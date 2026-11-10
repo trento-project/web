@@ -17,6 +17,7 @@ defmodule Trento.SettingsTest do
 
   alias Trento.ActivityLog
   alias Trento.ActivityLog.RetentionTime
+  alias Trento.Checks.Frequency
 
   alias Trento.Settings
 
@@ -24,6 +25,7 @@ defmodule Trento.SettingsTest do
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
+    ChecksFrequencySettings,
     InstallationSettings,
     SmlmSettings
   }
@@ -1069,6 +1071,110 @@ defmodule Trento.SettingsTest do
       Application.put_env(:trento, :alerting, update)
 
       assert {:ok, expected_settings} == Settings.get_alerting_settings()
+    end
+  end
+
+  describe "checks frequency settings" do
+    setup do
+      checks_frequency = Application.get_env(:trento, :checks_frequency)
+
+      on_exit(fn ->
+        Application.put_env(:trento, :checks_frequency, checks_frequency)
+      end)
+
+      Application.put_env(:trento, :checks_frequency, nil)
+    end
+
+    test "should return every 5 minutes when nothing is saved" do
+      assert {:ok,
+              %ChecksFrequencySettings{
+                frequency: %Frequency{value: 5, unit: :minute},
+                enforced_from_env: false
+              }} = Settings.get_checks_frequency_settings()
+    end
+
+    test "should save a frequency" do
+      assert {:ok,
+              %ChecksFrequencySettings{
+                frequency: %Frequency{value: 6, unit: :hour},
+                enforced_from_env: false
+              }} =
+               Settings.update_checks_frequency_settings(%{frequency: %{value: 6, unit: :hour}})
+
+      assert {:ok,
+              %ChecksFrequencySettings{
+                frequency: %Frequency{value: 6, unit: :hour},
+                enforced_from_env: false
+              }} = Settings.get_checks_frequency_settings()
+    end
+
+    test "should change the saved frequency, keeping a single row" do
+      %ChecksFrequencySettings{id: id} =
+        insert(:checks_frequency_settings, frequency: %Frequency{value: 6, unit: :hour})
+
+      assert {:ok,
+              %ChecksFrequencySettings{id: ^id, frequency: %Frequency{value: 2, unit: :week}}} =
+               Settings.update_checks_frequency_settings(%{frequency: %{value: 2, unit: :week}})
+
+      assert {:ok,
+              %ChecksFrequencySettings{id: ^id, frequency: %Frequency{value: 2, unit: :week}}} =
+               Settings.get_checks_frequency_settings()
+
+      assert [_] = Repo.all(ChecksFrequencySettings.base_query())
+    end
+
+    test "should disable the periodic checks" do
+      insert(:checks_frequency_settings, frequency: %Frequency{value: 1, unit: :hour})
+
+      assert {:ok, %ChecksFrequencySettings{frequency: nil}} =
+               Settings.update_checks_frequency_settings(%{frequency: nil})
+
+      assert {:ok, %ChecksFrequencySettings{frequency: nil, enforced_from_env: false}} =
+               Settings.get_checks_frequency_settings()
+    end
+
+    test "should refuse a frequency that is not allowed" do
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Settings.update_checks_frequency_settings(%{frequency: %{value: 2, unit: :hour}})
+
+      assert %{frequency: %{value: [_]}} = errors_on(changeset)
+
+      assert {:ok, %ChecksFrequencySettings{frequency: %Frequency{value: 5, unit: :minute}}} =
+               Settings.get_checks_frequency_settings()
+    end
+
+    test "should enforce the frequency set in the environment" do
+      insert(:checks_frequency_settings, frequency: %Frequency{value: 6, unit: :hour})
+
+      Application.put_env(
+        :trento,
+        :checks_frequency,
+        %Frequency{value: 1, unit: :week}
+      )
+
+      assert {:ok,
+              %ChecksFrequencySettings{
+                frequency: %Frequency{value: 1, unit: :week},
+                enforced_from_env: true
+              }} = Settings.get_checks_frequency_settings()
+
+      assert {:error, :checks_frequency_settings_enforced} ==
+               Settings.update_checks_frequency_settings(%{frequency: %{value: 1, unit: :hour}})
+
+      assert [%ChecksFrequencySettings{frequency: %Frequency{value: 6, unit: :hour}}] =
+               Repo.all(ChecksFrequencySettings.base_query())
+    end
+
+    test "should enforce the disabled frequency set in the environment" do
+      Application.put_env(:trento, :checks_frequency, :disabled)
+
+      assert {:ok, %ChecksFrequencySettings{frequency: nil, enforced_from_env: true}} =
+               Settings.get_checks_frequency_settings()
+
+      assert {:error, :checks_frequency_settings_enforced} ==
+               Settings.update_checks_frequency_settings(%{frequency: %{value: 5, unit: :minute}})
+
+      assert [] == Repo.all(ChecksFrequencySettings.base_query())
     end
   end
 

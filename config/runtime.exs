@@ -218,15 +218,45 @@ if config_env() in [:prod, :demo] do
       depth: 99
     ]
 
+  # CHECKS_INTERVAL takes the compact notation of a frequency, see
+  # Trento.Checks.Frequency.parse/1. An invalid value stops the boot.
+  checks_frequency =
+    case System.get_env("CHECKS_INTERVAL") do
+      nil ->
+        nil
+
+      checks_interval ->
+        case Trento.Checks.Frequency.parse(checks_interval) do
+          {:ok, frequency} ->
+            frequency
+
+          {:error, :invalid_frequency} ->
+            raise "Invalid value set for environment variable CHECKS_INTERVAL: " <>
+                    "#{inspect(checks_interval)}. Allowed values: " <>
+                    "#{Trento.Checks.Frequency.format_allowed()}, " <>
+                    "or the matching number of minutes, like 15 or 60."
+        end
+    end
+
+  config :trento, :checks_frequency, checks_frequency
+
+  # Until the checks scheduler applies the frequency, the checks execution cron jobs follow
+  # CHECKS_INTERVAL only when it is 5, 15 or 30 minutes, which a cron minute step can express.
+  # Hours, weeks and disabled keep the default of every 5 minutes.
+  checks_execution_minutes =
+    case checks_frequency do
+      %Trento.Checks.Frequency{value: minutes, unit: :minute} -> minutes
+      _ -> 5
+    end
+
   config :trento, Oban,
     cron: [
       crontab: [
-        # Runs every five minutes by default
         clusters_checks_execution:
-          {"*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *",
+          {"*/#{checks_execution_minutes} * * * *",
            Trento.Infrastructure.Jobs.ClustersChecksExecutionJob},
         hosts_checks_execution:
-          {"*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *",
+          {"*/#{checks_execution_minutes} * * * *",
            Trento.Infrastructure.Jobs.HostsChecksExecutionJob},
         discovery_events_pruning:
           {System.get_env("PRUNE_EVENTS_INTERVAL", "0 0 * * *"),

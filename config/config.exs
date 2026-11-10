@@ -51,6 +51,11 @@ config :trento, :alerting,
   sender: nil,
   recipient: nil
 
+# Global checks frequency set in the environment (CHECKS_INTERVAL), parsed in runtime.exs:
+# nil when not set, :disabled, or a %Trento.Checks.Frequency{}.
+# When set, it wins over the saved setting, which can not be changed.
+config :trento, :checks_frequency, nil
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.12.18",
