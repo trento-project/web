@@ -21,6 +21,8 @@ defmodule Trento.Checks.Frequency do
     week: [1, 2, 4]
   ]
 
+  @allowed_pairs for {unit, values} <- @allowed_values, value <- values, do: {unit, value}
+
   @unit_suffixes [minute: "m", hour: "h", week: "w"]
 
   deftype do
@@ -109,17 +111,26 @@ defmodule Trento.Checks.Frequency do
     end
   end
 
+  # Checks the current value and unit together, so that changing only one of them is
+  # validated as well
   defp validate_allowed_value(changeset) do
-    unit = get_field(changeset, :unit)
-
-    case Keyword.fetch(@allowed_values, unit) do
-      {:ok, values} ->
-        validate_inclusion(changeset, :value, values,
-          message: "must be one of #{Enum.join(values, ", ")} when the unit is #{unit}"
-        )
-
-      :error ->
+    case {get_field(changeset, :unit), get_field(changeset, :value)} do
+      {unit, value} when is_nil(unit) or is_nil(value) ->
         changeset
+
+      unit_and_value when unit_and_value in @allowed_pairs ->
+        changeset
+
+      {unit, _value} ->
+        values = Keyword.fetch!(@allowed_values, unit)
+
+        add_error(
+          changeset,
+          :value,
+          "must be one of #{Enum.join(values, ", ")} when the unit is #{unit}",
+          validation: :inclusion,
+          enum: values
+        )
     end
   end
 end

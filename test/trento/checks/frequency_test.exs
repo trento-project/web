@@ -53,6 +53,15 @@ defmodule Trento.Checks.FrequencyTest do
       end
     end
 
+    test "should refuse a saved value that is not allowed for a new unit" do
+      changeset = Frequency.changeset(%Frequency{value: 1, unit: :hour}, %{unit: :minute})
+
+      refute changeset.valid?
+
+      assert [value: {"must be one of 5, 15, 30 when the unit is minute", _}] =
+               changeset.errors
+    end
+
     test "should refuse an unknown unit" do
       assert {:error, {:validation, %{unit: ["is invalid"]}}} =
                Frequency.new(%{value: 1, unit: :day})

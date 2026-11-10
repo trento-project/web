@@ -1133,6 +1133,18 @@ defmodule Trento.SettingsTest do
                Settings.get_checks_frequency_settings()
     end
 
+    test "should refuse changing only the unit to one that does not allow the saved value" do
+      insert(:checks_frequency_settings, frequency: %Frequency{value: 1, unit: :hour})
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Settings.update_checks_frequency_settings(%{frequency: %{value: 1, unit: :minute}})
+
+      assert %{frequency: %{value: [_]}} = errors_on(changeset)
+
+      assert {:ok, %ChecksFrequencySettings{frequency: %Frequency{value: 1, unit: :hour}}} =
+               Settings.get_checks_frequency_settings()
+    end
+
     test "should refuse a frequency that is not allowed" do
       assert {:error, %Ecto.Changeset{} = changeset} =
                Settings.update_checks_frequency_settings(%{frequency: %{value: 2, unit: :hour}})
