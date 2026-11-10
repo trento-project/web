@@ -97,14 +97,18 @@ defmodule Trento.Infrastructure.Jobs do
     end
   end
 
-  defp weekdays("*" <> _ = weekday), do: weekday
-
   defp weekdays(weekday) do
-    days = weekday |> String.split(",") |> Enum.map(&weekday_element/1)
+    case String.split(weekday, ",") do
+      ["*" <> _] ->
+        weekday
 
-    if Enum.all?(days, &is_list/1),
-      do: days |> List.flatten() |> Enum.uniq() |> Enum.sort() |> Enum.join(","),
-      else: weekday
+      elements ->
+        days = Enum.map(elements, &weekday_element/1)
+
+        if Enum.all?(days, &is_list/1),
+          do: days |> List.flatten() |> Enum.uniq() |> Enum.sort() |> Enum.join(","),
+          else: weekday
+    end
   end
 
   defp weekday_element(element) do
@@ -115,6 +119,8 @@ defmodule Trento.Infrastructure.Jobs do
       first |> Range.new(last, step) |> Enum.map(&rem(&1, 7))
     end
   end
+
+  defp weekday_range(["*"]), do: {:ok, 0, 6}
 
   defp weekday_range([day]) do
     with {:ok, day} <- weekday(day), do: {:ok, day, day}
