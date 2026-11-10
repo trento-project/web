@@ -14,7 +14,15 @@ import {
 import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { renderWithRouter, withState } from '@lib/test-utils';
 import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
-import { waiveOperationDisclaimer } from '@lib/operations';
+import {
+  waiveOperationDisclaimer,
+  CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
+} from '@lib/operations';
+import {
+  CLUSTER_BULK_OPERATION_ID,
+  bulkOperationRequested,
+} from '@state/runningOperations';
 
 import {
   ASCS_ERS,
@@ -43,6 +51,7 @@ const cleanInitialState = {
   user: {
     abilities: [{ name: 'all', resource: 'all' }],
   },
+  runningOperations: {},
 };
 
 describe('ClustersList component', () => {
@@ -505,12 +514,27 @@ describe('ClustersList component', () => {
     beforeAll(() => waiveOperationDisclaimer());
 
     it.each([
-      { operation: 'Cluster maintenance on', title: 'Maintenance change' },
-      { operation: 'Cluster maintenance off', title: 'Maintenance change' },
-      { operation: 'Refresh resources', title: 'Refresh resources' },
+      {
+        operation: 'Cluster maintenance on',
+        title: 'Maintenance change',
+        expectedOperation: CLUSTER_MAINTENANCE_CHANGE,
+        expectedParams: { maintenance: true },
+      },
+      {
+        operation: 'Cluster maintenance off',
+        title: 'Maintenance change',
+        expectedOperation: CLUSTER_MAINTENANCE_CHANGE,
+        expectedParams: { maintenance: false },
+      },
+      {
+        operation: 'Refresh resources',
+        title: 'Refresh resources',
+        expectedOperation: CLUSTER_RESOURCE_REFRESH,
+        expectedParams: {},
+      },
     ])(
-      'should list the selected clusters in the $operation modal',
-      async ({ operation, title }) => {
+      'should list the selected clusters and request the $operation bulk operation',
+      async ({ operation, title, expectedOperation, expectedParams }) => {
         const user = userEvent.setup();
         const clusters = [
           clusterFactory.build(),
@@ -522,7 +546,7 @@ describe('ClustersList component', () => {
           clustersList: { clusters },
         };
 
-        const [StatefulClustersList] = withState(
+        const [StatefulClustersList, store] = withState(
           <ClustersList operationsEnabled />,
           state
         );
@@ -544,12 +568,152 @@ describe('ClustersList component', () => {
 
         const modal = screen.getByRole('dialog');
         expect(within(modal).getByText(title)).toBeInTheDocument();
-        expect(
-          within(modal)
-            .getAllByRole('listitem')
-            .map(({ textContent }) => textContent)
-        ).toEqual([clusters[0].name, clusters[2].id]);
+        const resourceList = within(modal)
+          .getAllByRole('listitem')
+          .map(({ textContent }) => textContent);
+        expect(resourceList).toEqual([clusters[0].name, clusters[2].id]);
+
+        await user.click(
+          within(modal).getByRole('button', { name: 'Request' })
+        );
+
+        expect(store.getActions()).toEqual([
+          bulkOperationRequested({
+            bulkOperationID: CLUSTER_BULK_OPERATION_ID,
+            targetGroupIDs: [clusters[0].id, clusters[2].id],
+            operation: expectedOperation,
+            params: expectedParams,
+          }),
+        ]);
+        await waitFor(() =>
+          expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+        );
       }
     );
+
+    it.each([
+      {
+        scenario: 'has no matching abilities',
+        abilities: [],
+        enabled: [],
+      },
+      {
+        scenario: 'only has the maintenance change ability',
+        abilities: [{ name: 'maintenance_change', resource: 'cluster' }],
+        enabled: ['Cluster maintenance on', 'Cluster maintenance off'],
+      },
+      {
+        scenario: 'only has the resource refresh ability',
+        abilities: [{ name: 'resource_refresh', resource: 'cluster' }],
+        enabled: ['Refresh resources'],
+      },
+    ])(
+      'should disable the operations the user is not authorized for when the user $scenario',
+      async ({ abilities, enabled }) => {
+        const user = userEvent.setup();
+        const clusters = clusterFactory.buildList(1);
+        const state = {
+          ...cleanInitialState,
+          clustersList: { clusters },
+          user: { abilities },
+        };
+
+        const [StatefulClustersList] = withState(
+          <ClustersList operationsEnabled />,
+          state
+        );
+
+        renderWithRouter(StatefulClustersList);
+
+        const row = screen.getByText(clusters[0].name).closest('tr');
+        await user.click(
+          within(row).getByRole('checkbox', { name: 'Select row' })
+        );
+
+        await user.click(screen.getByRole('button', { name: 'Operations' }));
+
+        const enabledItems = screen
+          .getAllByRole('menuitem')
+          .filter((item) => !item.disabled)
+          .map(({ textContent }) => textContent);
+
+        expect(enabledItems).toEqual(enabled);
+      }
+    );
+
+    it('should show the forbidden bulk operation errors grouped by cluster', () => {
+      const clusters = clusterFactory.buildList(2);
+      const [cluster1, cluster2] = clusters;
+      const state = {
+        ...cleanInitialState,
+        clustersList: { clusters },
+        runningOperations: {
+          [CLUSTER_BULK_OPERATION_ID]: {
+            operation: CLUSTER_MAINTENANCE_CHANGE,
+            forbidden: true,
+            errors: [
+              {
+                detail: 'error1',
+                metadata: [],
+                resource: {
+                  id: cluster1.id,
+                  label: cluster1.name,
+                  type: 'cluster',
+                },
+              },
+              {
+                detail: 'error2',
+                metadata: [],
+                resource: {
+                  id: cluster1.id,
+                  label: cluster1.name,
+                  type: 'cluster',
+                },
+              },
+              {
+                detail: 'error3',
+                metadata: [],
+                resource: {
+                  id: cluster2.id,
+                  label: cluster2.name,
+                  type: 'cluster',
+                },
+              },
+            ],
+          },
+        },
+      };
+
+      const [StatefulClustersList] = withState(
+        <ClustersList operationsEnabled />,
+        state
+      );
+
+      renderWithRouter(StatefulClustersList);
+
+      const modal = screen.getByRole('dialog');
+      expect(
+        within(modal).getByText('Operation Forbidden')
+      ).toBeInTheDocument();
+      expect(
+        within(modal).getByText(
+          'Unable to run Cluster maintenance change operation. Some pre-requisites are not met.'
+        )
+      ).toBeInTheDocument();
+
+      const link1 = within(modal).getByRole('link', { name: cluster1.name });
+      const link2 = within(modal).getByRole('link', { name: cluster2.name });
+      expect(link1).toHaveAttribute('href', `/clusters/${cluster1.id}`);
+      expect(link2).toHaveAttribute('href', `/clusters/${cluster2.id}`);
+
+      const expectedErrors1 = within(link1.nextElementSibling)
+        .getAllByRole('listitem')
+        .map(({ textContent }) => textContent);
+      const expectedErrors2 = within(link2.nextElementSibling)
+        .getAllByRole('listitem')
+        .map(({ textContent }) => textContent);
+      expect(expectedErrors1).toEqual(['error1', 'error2']);
+      expect(expectedErrors2).toEqual(['error3']);
+    });
   });
 });
