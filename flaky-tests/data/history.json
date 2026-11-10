@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-17T21:05:32Z",
-    "commit": "5e7b9d9312ad0f44d4ff4d72e7eda128170ae204",
-    "run_id": "35271402221",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-18T00:35:18Z",
     "commit": "5e7b9d9312ad0f44d4ff4d72e7eda128170ae204",
     "run_id": "35276356691",
@@ -5546,5 +5535,45 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-10T02:09:05Z",
+    "commit": "eb39bc2138f90626a923369bafe3043c16104885",
+    "run_id": "42740731440",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 9
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.06823
+      },
+      {
+        "name": "should start autorefresh ticker::Activity Log page Autorefresh should start autorefresh ticker",
+        "score": 0.06551
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.05001
+      },
+      {
+        "name": "should be able to create a new user with deleted user username and email::Users Delete user should be able to create a new user with deleted user username and email",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should preserve the selected items per page when reloading clusters view::Clusters Overview Persistent filters should preserve the selected items per page when reloading clusters view",
+        "score": 0.02501
+      }
+    ]
   }
 ]
