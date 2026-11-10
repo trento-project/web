@@ -40,6 +40,19 @@ import {
 import AlertingSettingsConfig from '@common/AlertingSettingsConfig';
 import AlertingSettingsModal from '@common/AlertingSettingsModal';
 
+import ChecksFrequencyConfig from '@common/ChecksFrequencyConfig';
+import ChecksFrequencySettingsModal from '@common/ChecksFrequencySettingsModal';
+import {
+  fetchChecksFrequencySettings,
+  updateChecksFrequencySettings,
+  setEditingChecksFrequencySettings,
+  setChecksFrequencySettingsErrors,
+} from '@state/checksFrequencySettings';
+import {
+  getChecksFrequencySettings,
+  getChecksFrequencySettingsErrors,
+} from '@state/selectors/checksFrequencySettings';
+
 import {
   useApiKeySettings,
   useSuseMultiLinuxManagerSettings,
@@ -99,6 +112,7 @@ function SettingsPage() {
 
   useEffect(() => {
     dispatch(fetchActivityLogsSettings());
+    dispatch(fetchChecksFrequencySettings());
   }, []);
 
   useEffect(() => {
@@ -119,6 +133,17 @@ function SettingsPage() {
 
   const activityLogsValidationErrors = useSelector(
     getActivityLogsSettingsErrors
+  );
+
+  const {
+    settings: checksFrequencySettings = {},
+    loading: checksFrequencySettingsLoading,
+    editing: editingChecksFrequencySettings,
+    networkError: checksFrequencySettingsNetworkError,
+  } = useSelector(getChecksFrequencySettings);
+
+  const checksFrequencyValidationErrors = useSelector(
+    getChecksFrequencySettingsErrors
   );
 
   const hasApiKey = Boolean(apiKey);
@@ -399,6 +424,47 @@ function SettingsPage() {
             loading={alertingSubmitLoading}
             onSave={submitAlertingSettings}
             onCancel={() => setAlertingSettingsModalOpen(false)}
+          />
+        </div>
+      </section>
+
+      <section>
+        <div className="pb-4">
+          <SettingsLoader
+            sectionName="Check Executions"
+            status={calculateSettingsLoaderStatus(
+              checksFrequencySettingsLoading,
+              checksFrequencySettingsNetworkError
+            )}
+            onRetry={() => dispatch(fetchChecksFrequencySettings())}
+          >
+            <ChecksFrequencyConfig
+              userAbilities={abilities}
+              enabled={checksFrequencySettings.enabled}
+              frequency={checksFrequencySettings.frequency}
+              enforcedFromEnv={checksFrequencySettings.enforced_from_env}
+              onEditClick={() =>
+                dispatch(setEditingChecksFrequencySettings(true))
+              }
+            />
+          </SettingsLoader>
+          <ChecksFrequencySettingsModal
+            key={`${JSON.stringify(
+              checksFrequencySettings
+            )}-${editingChecksFrequencySettings}`}
+            open={editingChecksFrequencySettings}
+            errors={checksFrequencyValidationErrors}
+            loading={checksFrequencySettingsLoading}
+            initialEnabled={checksFrequencySettings.enabled}
+            initialFrequency={checksFrequencySettings.frequency}
+            onSave={(payload) => {
+              dispatch(updateChecksFrequencySettings(payload));
+            }}
+            onClearErrors={() => dispatch(setChecksFrequencySettingsErrors([]))}
+            onCancel={() => {
+              dispatch(setChecksFrequencySettingsErrors([]));
+              dispatch(setEditingChecksFrequencySettings(false));
+            }}
           />
         </div>
       </section>

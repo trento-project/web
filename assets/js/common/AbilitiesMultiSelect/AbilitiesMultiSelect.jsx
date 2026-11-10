@@ -51,6 +51,7 @@ const groupedAbilities = [
       'all:smlm_settings',
       'all:activity_logs_settings',
       'all:alerting_settings',
+      'all:checks_frequency_settings',
     ],
   },
   {
