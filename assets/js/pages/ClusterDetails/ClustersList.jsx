@@ -113,6 +113,14 @@ function ClustersList({
     closeBulkOperationModal();
   };
 
+  const selectBulkOperation = (selectedClusters) => (operation, params) =>
+    setBulkOperationModalOpen({
+      open: true,
+      operation,
+      params,
+      clusters: selectedClusters,
+    });
+
   const config = {
     pagination: true,
     selectable: operationsEnabled,
@@ -290,8 +298,7 @@ function ClustersList({
               userAbilities={abilities}
               menuPosition="bottom end"
               operations={getClustersBulkOperations(
-                selectedClusters,
-                setBulkOperationModalOpen
+                selectBulkOperation(selectedClusters)
               )}
             />
           )}
