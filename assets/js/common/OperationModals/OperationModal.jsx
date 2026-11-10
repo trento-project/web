@@ -93,7 +93,10 @@ function OperationModal({
           </p>
           {children}
           {!isEmpty(resources) && (
-            <ul className="list-disc list-inside text-sm max-h-60 overflow-y-auto">
+            <ul
+              aria-label="resources"
+              className="list-disc list-inside text-sm max-h-60 overflow-y-auto"
+            >
               {resources.map(({ id, label }) => (
                 <li key={id}>{label}</li>
               ))}

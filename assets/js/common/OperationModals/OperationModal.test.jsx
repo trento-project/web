@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
@@ -158,10 +158,14 @@ describe('OperationModal', () => {
 
     await user.click(screen.getByText('Proceed'));
 
-    expect(screen.getAllByRole('listitem')).toHaveLength(resources.length);
-    resources.forEach(({ label }) =>
-      expect(screen.getByText(label)).toBeInTheDocument()
-    );
+    const expectedLabels = resources.map(({ label }) => label);
+    const renderedLabels = within(
+      screen.getByRole('list', { name: 'resources' })
+    )
+      .getAllByRole('listitem')
+      .map(({ textContent }) => textContent);
+
+    expect(renderedLabels).toEqual(expectedLabels);
   });
 
   it('should not render a resources list when there are no resources', async () => {
@@ -171,6 +175,8 @@ describe('OperationModal', () => {
 
     await user.click(screen.getByText('Proceed'));
 
-    expect(screen.queryByRole('list')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('list', { name: 'resources' })
+    ).not.toBeInTheDocument();
   });
 });
