@@ -13,17 +13,14 @@ config :swoosh, local: false
 # Do not print debug messages in production
 # config :logger, level: :info
 
-config :trento, Trento.Scheduler,
-  jobs: [
-    clusters_checks_execution: [
-      schedule: {:extended, "@hourly"}
-    ],
-    hosts_checks_execution: [
-      schedule: {:extended, "@hourly"}
-    ]
-  ]
-
 config :trento, Oban,
+  cron: [
+    crontab: [
+      clusters_checks_execution:
+        {"@hourly", Trento.Infrastructure.Jobs.ClustersChecksExecutionJob},
+      hosts_checks_execution: {"@hourly", Trento.Infrastructure.Jobs.HostsChecksExecutionJob}
+    ]
+  ],
   plugins: [
     {Trento.Infrastructure.Jobs.Plugins.Periodic,
      tasks: [

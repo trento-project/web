@@ -125,55 +125,31 @@ config :trento, Trento.Heartbeats,
 # to wait before displaying the deregistration button
 config :trento, deregistration_debounce: :timer.seconds(0)
 
-config :trento, Trento.Scheduler,
-  jobs: [
-    clusters_checks_execution: [
-      # Runs every five minutes
-      schedule: "*/5 * * * *",
-      task: {Trento.Clusters, :request_clusters_checks_execution, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    hosts_checks_execution: [
-      # Runs every five minutes
-      schedule: "*/5 * * * *",
-      task: {Trento.Hosts, :request_hosts_checks_execution, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    discover_software_updates: [
-      # Runs every 12 hours. At 00:00 and 12:00
-      schedule: "0 */12 * * *",
-      task: {Trento.SoftwareUpdates, :run_discovery, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    api_key_expiration_alert: [
-      schedule: "@daily",
-      task: {Trento.Infrastructure.Alerting.Alerting, :notify_api_key_expiration, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    activity_log_cleaning: [
-      schedule: "@daily",
-      task: {Trento.ActivityLog, :clear_expired_logs, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
-    prune_discovery_events: [
-      schedule: "0 0 * * *",
-      task: {Trento.Discovery, :prune_discovery_events, [10]},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ]
-  ],
-  debug_logging: false
-
 config :trento, Oban,
   repo: Trento.Repo,
   queues: [default: 10],
   pruner: [max_age: {7, :days}],
   lifeline: [rescue_after: {30, :minutes}],
+  # Periodic jobs, keyed by name so that runtime.exs, dev.exs and demo.exs override a
+  # single entry. See Trento.Infrastructure.Jobs.
+  cron: [
+    crontab: [
+      # Runs every five minutes
+      clusters_checks_execution:
+        {"*/5 * * * *", Trento.Infrastructure.Jobs.ClustersChecksExecutionJob},
+      # Runs every five minutes
+      hosts_checks_execution: {"*/5 * * * *", Trento.Infrastructure.Jobs.HostsChecksExecutionJob},
+      # Runs every 12 hours. At 00:00 and 12:00
+      software_updates_discovery:
+        {"0 */12 * * *", Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob},
+      api_key_expiration_alert: {"@daily", Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob},
+      activity_log_cleaning: {"@daily", Trento.Infrastructure.Jobs.ActivityLogCleaningJob},
+      # Runs every day at 00:00, deleting the events older than 10 days
+      discovery_events_pruning:
+        {"0 0 * * *", Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
+         args: %{older_than: 10}}
+    ]
+  ],
   # Periodic tasks under one minute, which Oban cron does not support
   plugins: [
     {Trento.Infrastructure.Jobs.Plugins.Periodic,

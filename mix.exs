@@ -111,7 +111,6 @@ defmodule Trento.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:pow, "~> 1.0.39"},
       {:process_tree, "~> 0.3.0", only: [:dev, :test]},
-      {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.24"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
