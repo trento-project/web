@@ -111,6 +111,14 @@ function HostsList({ operationsEnabled = getFromConfig('operationsEnabled') }) {
     closeBulkOperationModal();
   };
 
+  const selectBulkOperation = (selectedHosts) => (operation, params) =>
+    setBulkOperationModalOpen({
+      open: true,
+      operation,
+      params,
+      hosts: selectedHosts,
+    });
+
   const openDeregistrationModal = (host) => {
     setHostToDeregister(host);
     setCleanUpModalOpen(true);
@@ -332,8 +340,7 @@ function HostsList({ operationsEnabled = getFromConfig('operationsEnabled') }) {
               userAbilities={abilities}
               menuPosition="bottom end"
               operations={getHostsBulkOperations(
-                selectedHosts,
-                setBulkOperationModalOpen
+                selectBulkOperation(selectedHosts)
               )}
             />
           )}
