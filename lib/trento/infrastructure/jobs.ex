@@ -23,17 +23,10 @@ defmodule Trento.Infrastructure.Jobs do
   Schedules use the crontab syntax of Linux cron, see crontab(5), converted to what Oban
   cron accepts. The only difference: when both day of month and day of week are set, a
   run needs both to match, while Linux cron needs either. A schedule outside that syntax
-  stops the boot with an error naming the job and, when the schedule comes from an
-  environment variable (`CHECKS_INTERVAL`, `PRUNE_EVENTS_INTERVAL`), the variable.
+  stops the boot with an error naming the job.
   """
 
   require Logger
-
-  @variables %{
-    clusters_checks_execution: "CHECKS_INTERVAL",
-    hosts_checks_execution: "CHECKS_INTERVAL",
-    discovery_events_pruning: "PRUNE_EVENTS_INTERVAL"
-  }
 
   @spec oban_config() :: keyword()
   def oban_config do
@@ -75,15 +68,8 @@ defmodule Trento.Infrastructure.Jobs do
 
       {:error, reason} ->
         raise ArgumentError,
-              "invalid schedule #{inspect(schedule)} for #{name}#{variable(name)}: #{reason}. " <>
+              "invalid schedule #{inspect(schedule)} for #{name}: #{reason}. " <>
                 "Use the crontab syntax of Linux cron, see crontab(5)"
-    end
-  end
-
-  defp variable(name) do
-    case Map.fetch(@variables, name) do
-      {:ok, variable} -> " (#{variable})"
-      :error -> ""
     end
   end
 

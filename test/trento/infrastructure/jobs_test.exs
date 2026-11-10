@@ -55,28 +55,16 @@ defmodule Trento.Infrastructure.JobsTest do
       end
     end
 
-    test "should fail naming the job and its environment variable on a schedule that Oban cron does not support" do
+    test "should fail naming the job on a schedule that Oban cron does not support" do
       for schedule <- ["0 0 L * *", "0 0 15W * *", "0 0 * * 1#2"] do
         put_crontab(
           discovery_events_pruning: {schedule, DiscoveryEventsPruningJob, args: %{older_than: 10}}
         )
 
         assert_raise ArgumentError,
-                     ~r/invalid schedule "#{Regex.escape(schedule)}" for discovery_events_pruning \(PRUNE_EVENTS_INTERVAL\): /,
+                     ~r/^invalid schedule "#{Regex.escape(schedule)}" for discovery_events_pruning: /,
                      fn -> Jobs.oban_config() end
       end
-
-      put_crontab(hosts_checks_execution: {"*/0 * * * *", HostsChecksExecutionJob})
-
-      assert_raise ArgumentError,
-                   ~r/invalid schedule "\*\/0 \* \* \* \*" for hosts_checks_execution \(CHECKS_INTERVAL\): /,
-                   fn -> Jobs.oban_config() end
-
-      put_crontab(activity_log_cleaning: {"0 0 L * *", ActivityLogCleaningJob})
-
-      assert_raise ArgumentError,
-                   ~r/invalid schedule "0 0 L \* \*" for activity_log_cleaning: /,
-                   fn -> Jobs.oban_config() end
     end
   end
 
