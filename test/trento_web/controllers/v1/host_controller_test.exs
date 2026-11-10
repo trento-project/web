@@ -1022,7 +1022,8 @@ defmodule TrentoWeb.V1.HostControllerTest do
           post(conn, "/api/v1/hosts/#{host_id}/checks/request_execution", %{}),
           delete(conn, "/api/v1/hosts/#{host_id}"),
           post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{}),
-          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_change", %{})
+          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_change", %{}),
+          post(conn, "/api/v1/hosts/operations/reboot/bulk", %{"host_ids" => [host_id]})
         ],
         fn conn ->
           conn

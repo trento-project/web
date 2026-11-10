@@ -402,21 +402,25 @@ defmodule Trento.HostsTest do
   end
 
   describe "request_bulk_operation/3" do
-    test "should request reboot operation on every host" do
-      host_id_1 = UUID.uuid4()
-      host_id_2 = UUID.uuid4()
+    for operation <- [:reboot] do
+      @operation operation
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
-        OperationsPublisher, "requests", %OperationRequested{} -> :ok
-      end)
+      test "should request #{@operation} operation on every host" do
+        host_id_1 = UUID.uuid4()
+        host_id_2 = UUID.uuid4()
 
-      assert {:ok, _bulk_operation_id,
-              [
-                %{resource_id: ^host_id_1, operation_id: operation_id_1},
-                %{resource_id: ^host_id_2, operation_id: operation_id_2}
-              ], []} = Hosts.request_bulk_operation(:reboot, [host_id_1, host_id_2], %{})
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+          OperationsPublisher, "requests", %OperationRequested{} -> :ok
+        end)
 
-      refute operation_id_1 == operation_id_2
+        assert {:ok, _bulk_operation_id,
+                [
+                  %{resource_id: ^host_id_1, operation_id: operation_id_1},
+                  %{resource_id: ^host_id_2, operation_id: operation_id_2}
+                ], []} = Hosts.request_bulk_operation(@operation, [host_id_1, host_id_2], %{})
+
+        refute operation_id_1 == operation_id_2
+      end
     end
 
     test "should return an error when all the messaging requests fail" do
