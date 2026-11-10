@@ -125,46 +125,31 @@ config :trento, Trento.Heartbeats,
 # to wait before displaying the deregistration button
 config :trento, deregistration_debounce: :timer.seconds(0)
 
-# Periodic jobs run by Oban cron, keyed by name so that runtime.exs, dev.exs and
-# demo.exs override a single schedule. See Trento.Infrastructure.Jobs.
-config :trento, Trento.Infrastructure.Jobs,
-  crontab: [
-    clusters_checks_execution: [
-      # Runs every five minutes
-      schedule: "*/5 * * * *",
-      worker: Trento.Infrastructure.Jobs.ClustersChecksExecutionJob
-    ],
-    hosts_checks_execution: [
-      # Runs every five minutes
-      schedule: "*/5 * * * *",
-      worker: Trento.Infrastructure.Jobs.HostsChecksExecutionJob
-    ],
-    software_updates_discovery: [
-      # Runs every 12 hours. At 00:00 and 12:00
-      schedule: "0 */12 * * *",
-      worker: Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob
-    ],
-    api_key_expiration_alert: [
-      schedule: "@daily",
-      worker: Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob
-    ],
-    activity_log_cleaning: [
-      schedule: "@daily",
-      worker: Trento.Infrastructure.Jobs.ActivityLogCleaningJob
-    ],
-    discovery_events_pruning: [
-      # Runs every day at 00:00, deleting the events older than 10 days
-      schedule: "0 0 * * *",
-      worker: Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
-      args: %{older_than: 10}
-    ]
-  ]
-
 config :trento, Oban,
   repo: Trento.Repo,
   queues: [default: 10],
   pruner: [max_age: {7, :days}],
   lifeline: [rescue_after: {30, :minutes}],
+  # Periodic jobs, keyed by name so that runtime.exs, dev.exs and demo.exs override a
+  # single entry. See Trento.Infrastructure.Jobs.
+  cron: [
+    crontab: [
+      # Runs every five minutes
+      clusters_checks_execution:
+        {"*/5 * * * *", Trento.Infrastructure.Jobs.ClustersChecksExecutionJob},
+      # Runs every five minutes
+      hosts_checks_execution: {"*/5 * * * *", Trento.Infrastructure.Jobs.HostsChecksExecutionJob},
+      # Runs every 12 hours. At 00:00 and 12:00
+      software_updates_discovery:
+        {"0 */12 * * *", Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob},
+      api_key_expiration_alert: {"@daily", Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob},
+      activity_log_cleaning: {"@daily", Trento.Infrastructure.Jobs.ActivityLogCleaningJob},
+      # Runs every day at 00:00, deleting the events older than 10 days
+      discovery_events_pruning:
+        {"0 0 * * *", Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
+         args: %{older_than: 10}}
+    ]
+  ],
   # Periodic tasks under one minute, which Oban cron does not support
   plugins: [
     {Trento.Infrastructure.Jobs.Plugins.Periodic,

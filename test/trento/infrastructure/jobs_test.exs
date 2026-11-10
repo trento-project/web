@@ -19,19 +19,16 @@ defmodule Trento.Infrastructure.JobsTest do
       assert :ok = Oban.Config.validate(Jobs.oban_config())
     end
 
-    test "should build the crontab from the named jobs" do
+    test "should build the crontab from the named entries, keeping their options" do
       put_crontab(
-        hosts_checks_execution: [schedule: "@hourly", worker: HostsChecksExecutionJob],
-        discovery_events_pruning: [
-          schedule: "0 3 * * *",
-          worker: DiscoveryEventsPruningJob,
-          args: %{older_than: 30}
-        ]
+        hosts_checks_execution: {"@hourly", HostsChecksExecutionJob},
+        discovery_events_pruning:
+          {"0 3 * * *", DiscoveryEventsPruningJob, args: %{older_than: 30}, priority: 1}
       )
 
       assert [
                {"@hourly", HostsChecksExecutionJob},
-               {"0 3 * * *", DiscoveryEventsPruningJob, args: %{older_than: 30}}
+               {"0 3 * * *", DiscoveryEventsPruningJob, args: %{older_than: 30}, priority: 1}
              ] == Jobs.oban_config()[:cron][:crontab]
     end
 
@@ -50,7 +47,7 @@ defmodule Trento.Infrastructure.JobsTest do
             {"*/15 * * * *", "*/15 * * * *"},
             {"@daily", "@daily"}
           ] do
-        put_crontab(activity_log_cleaning: [schedule: schedule, worker: ActivityLogCleaningJob])
+        put_crontab(activity_log_cleaning: {schedule, ActivityLogCleaningJob})
 
         assert [{^expected, ActivityLogCleaningJob}] = Jobs.oban_config()[:cron][:crontab]
       end
@@ -59,11 +56,7 @@ defmodule Trento.Infrastructure.JobsTest do
     test "should fail naming the job and its environment variable on a schedule that Oban cron does not support" do
       for schedule <- ["0 0 L * *", "0 0 15W * *", "0 0 * * 1#2"] do
         put_crontab(
-          discovery_events_pruning: [
-            schedule: schedule,
-            worker: DiscoveryEventsPruningJob,
-            args: %{older_than: 10}
-          ]
+          discovery_events_pruning: {schedule, DiscoveryEventsPruningJob, args: %{older_than: 10}}
         )
 
         assert_raise ArgumentError,
@@ -71,15 +64,13 @@ defmodule Trento.Infrastructure.JobsTest do
                      fn -> Jobs.oban_config() end
       end
 
-      put_crontab(
-        hosts_checks_execution: [schedule: "*/0 * * * *", worker: HostsChecksExecutionJob]
-      )
+      put_crontab(hosts_checks_execution: {"*/0 * * * *", HostsChecksExecutionJob})
 
       assert_raise ArgumentError,
                    ~r/invalid schedule "\*\/0 \* \* \* \*" for hosts_checks_execution \(CHECKS_INTERVAL\): /,
                    fn -> Jobs.oban_config() end
 
-      put_crontab(activity_log_cleaning: [schedule: "0 0 L * *", worker: ActivityLogCleaningJob])
+      put_crontab(activity_log_cleaning: {"0 0 L * *", ActivityLogCleaningJob})
 
       assert_raise ArgumentError,
                    ~r/invalid schedule "0 0 L \* \*" for activity_log_cleaning: /,
@@ -105,9 +96,9 @@ defmodule Trento.Infrastructure.JobsTest do
   end
 
   defp put_crontab(crontab) do
-    previous = Application.get_env(:trento, Jobs)
-    on_exit(fn -> Application.put_env(:trento, Jobs, previous) end)
+    previous = Application.get_env(:trento, Oban)
+    on_exit(fn -> Application.put_env(:trento, Oban, previous) end)
 
-    Application.put_env(:trento, Jobs, Keyword.put(previous, :crontab, crontab))
+    Application.put_env(:trento, Oban, put_in(previous, [:cron, :crontab], crontab))
   end
 end

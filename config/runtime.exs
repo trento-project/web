@@ -218,20 +218,22 @@ if config_env() in [:prod, :demo] do
       depth: 99
     ]
 
-  config :trento, Trento.Infrastructure.Jobs,
-    crontab: [
-      # Runs every five minutes by default
-      clusters_checks_execution: [
-        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
-      ],
-      hosts_checks_execution: [
-        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
-      ],
-      discovery_events_pruning: [
-        schedule: System.get_env("PRUNE_EVENTS_INTERVAL", "0 0 * * *"),
-        args: %{
-          older_than: "PRUNE_EVENTS_OLDER_THAN" |> System.get_env("10") |> String.to_integer()
-        }
+  config :trento, Oban,
+    cron: [
+      crontab: [
+        # Runs every five minutes by default
+        clusters_checks_execution:
+          {"*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *",
+           Trento.Infrastructure.Jobs.ClustersChecksExecutionJob},
+        hosts_checks_execution:
+          {"*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *",
+           Trento.Infrastructure.Jobs.HostsChecksExecutionJob},
+        discovery_events_pruning:
+          {System.get_env("PRUNE_EVENTS_INTERVAL", "0 0 * * *"),
+           Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
+           args: %{
+             older_than: "PRUNE_EVENTS_OLDER_THAN" |> System.get_env("10") |> String.to_integer()
+           }}
       ]
     ]
 

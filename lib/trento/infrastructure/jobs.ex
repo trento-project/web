@@ -8,12 +8,16 @@ defmodule Trento.Infrastructure.Jobs do
   Each job runs once per schedule and ignores the result of the function it calls, so a
   failure waits for the next run. Only raised exceptions are logged, see `attach_logger/0`.
 
-  The jobs are configured by name in the `:crontab` of this module, so an environment can
-  change one schedule without repeating the others:
+  The jobs are Oban crontab entries keyed by name, so an environment can change one entry
+  without repeating the others. `oban_config/0` drops the names, which Oban does not accept:
 
-      config :trento, Trento.Infrastructure.Jobs,
-        crontab: [
-          discovery_events_pruning: [schedule: "0 3 * * *"]
+      config :trento, Oban,
+        cron: [
+          crontab: [
+            discovery_events_pruning:
+              {"0 3 * * *", Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
+               args: %{older_than: 10}}
+          ]
         ]
 
   Schedules use the crontab syntax of Linux cron, see crontab(5), converted to what Oban
@@ -33,15 +37,9 @@ defmodule Trento.Infrastructure.Jobs do
 
   @spec oban_config() :: keyword()
   def oban_config do
-    crontab =
-      :trento
-      |> Application.fetch_env!(__MODULE__)
-      |> Keyword.fetch!(:crontab)
-      |> Enum.map(&crontab_entry/1)
-
     :trento
     |> Application.fetch_env!(Oban)
-    |> Keyword.update(:cron, [crontab: crontab], &Keyword.put(&1, :crontab, crontab))
+    |> update_in([:cron, :crontab], fn crontab -> Enum.map(crontab, &crontab_entry/1) end)
   end
 
   @doc """
@@ -64,14 +62,8 @@ defmodule Trento.Infrastructure.Jobs do
     Logger.error("Job #{worker} failed: " <> Exception.format(kind, reason, stacktrace))
   end
 
-  defp crontab_entry({name, job}) do
-    worker = Keyword.fetch!(job, :worker)
-    schedule = schedule!(name, Keyword.fetch!(job, :schedule), worker)
-
-    case Keyword.fetch(job, :args) do
-      {:ok, args} -> {schedule, worker, args: args}
-      :error -> {schedule, worker}
-    end
+  defp crontab_entry({name, entry}) do
+    put_elem(entry, 0, schedule!(name, elem(entry, 0), elem(entry, 1)))
   end
 
   defp schedule!(name, schedule, worker) do
