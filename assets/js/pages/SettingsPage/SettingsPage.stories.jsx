@@ -39,6 +39,22 @@ const activityLogsSettingsSlice = createSlice({
   reducers: {},
 });
 
+const checksFrequencySettingsSlice = createSlice({
+  name: 'checksFrequencySettings',
+  initialState: {
+    settings: {
+      enabled: true,
+      frequency: { value: 5, unit: 'minute' },
+      enforced_from_env: false,
+    },
+    errors: [],
+    loading: false,
+    editing: false,
+    networkError: false,
+  },
+  reducers: {},
+});
+
 const hostListSlice = createSlice({
   name: 'hostsList',
   initialState: {
@@ -72,6 +88,7 @@ export default {
         reducer: {
           user: userSlice.reducer,
           activityLogsSettings: activityLogsSettingsSlice.reducer,
+          checksFrequencySettings: checksFrequencySettingsSlice.reducer,
           hostsList: hostListSlice.reducer,
           notifications: notificationsSlice.reducer,
         },
