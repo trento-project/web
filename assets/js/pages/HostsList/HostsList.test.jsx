@@ -719,58 +719,70 @@ describe('HostsLists component', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should list the selected hosts and request the reboot host bulk operation', async () => {
-      const user = userEvent.setup();
-      const hosts = hostFactory.buildList(3);
-      const state = {
-        ...defaultInitialState,
-        hostsList: { hosts },
-        user: {
-          abilities: [{ name: 'all', resource: 'all' }],
-        },
-      };
+    it.each([
+      {
+        operation: 'Reboot host',
+        title: 'Reboot host',
+        expectedOperation: HOST_REBOOT,
+        expectedParams: {},
+      },
+    ])(
+      'should list the selected hosts and request the $operation bulk operation',
+      async ({ operation, title, expectedOperation, expectedParams }) => {
+        const user = userEvent.setup();
+        const hosts = hostFactory.buildList(3);
+        const state = {
+          ...defaultInitialState,
+          hostsList: { hosts },
+          user: {
+            abilities: [{ name: 'all', resource: 'all' }],
+          },
+        };
 
-      const [StatefulHostsList, store] = withState(
-        <HostsList operationsEnabled />,
-        state
-      );
+        const [StatefulHostsList, store] = withState(
+          <HostsList operationsEnabled />,
+          state
+        );
 
-      renderWithRouter(StatefulHostsList);
+        renderWithRouter(StatefulHostsList);
 
-      const firstRow = screen.getByText(hosts[0].hostname).closest('tr');
-      await user.click(
-        within(firstRow).getByRole('checkbox', { name: 'Select row' })
-      );
+        const firstRow = screen.getByText(hosts[0].hostname).closest('tr');
+        await user.click(
+          within(firstRow).getByRole('checkbox', { name: 'Select row' })
+        );
 
-      const thirdRow = screen.getByText(hosts[2].hostname).closest('tr');
-      await user.click(
-        within(thirdRow).getByRole('checkbox', { name: 'Select row' })
-      );
+        const thirdRow = screen.getByText(hosts[2].hostname).closest('tr');
+        await user.click(
+          within(thirdRow).getByRole('checkbox', { name: 'Select row' })
+        );
 
-      await user.click(screen.getByRole('button', { name: 'Operations' }));
-      await user.click(screen.getByRole('menuitem', { name: 'Reboot host' }));
+        await user.click(screen.getByRole('button', { name: 'Operations' }));
+        await user.click(screen.getByRole('menuitem', { name: operation }));
 
-      const modal = screen.getByRole('dialog');
-      expect(within(modal).getByText('Reboot host')).toBeInTheDocument();
-      const resourceList = within(modal)
-        .getAllByRole('listitem')
-        .map(({ textContent }) => textContent);
-      expect(resourceList).toEqual([hosts[0].hostname, hosts[2].hostname]);
+        const modal = screen.getByRole('dialog');
+        expect(within(modal).getByText(title)).toBeInTheDocument();
+        const resourceList = within(modal)
+          .getAllByRole('listitem')
+          .map(({ textContent }) => textContent);
+        expect(resourceList).toEqual([hosts[0].hostname, hosts[2].hostname]);
 
-      await user.click(within(modal).getByRole('button', { name: 'Request' }));
+        await user.click(
+          within(modal).getByRole('button', { name: 'Request' })
+        );
 
-      expect(store.getActions()).toEqual([
-        bulkOperationRequested({
-          bulkOperationID: HOST_BULK_OPERATION_ID,
-          targetGroupIDs: [hosts[0].id, hosts[2].id],
-          operation: HOST_REBOOT,
-          params: {},
-        }),
-      ]);
-      await waitFor(() =>
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-      );
-    });
+        expect(store.getActions()).toEqual([
+          bulkOperationRequested({
+            bulkOperationID: HOST_BULK_OPERATION_ID,
+            targetGroupIDs: [hosts[0].id, hosts[2].id],
+            operation: expectedOperation,
+            params: expectedParams,
+          }),
+        ]);
+        await waitFor(() =>
+          expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+        );
+      }
+    );
 
     it.each([
       {
