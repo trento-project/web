@@ -354,6 +354,14 @@ Trento.Infrastructure.Commanded.RollUp.RollUp.html
 Trento.Infrastructure.ComponentVersions.Gen.html
 Trento.Infrastructure.ComponentVersions.html
 Trento.Infrastructure.Discovery.AMQP.Publisher.html
+Trento.Infrastructure.Jobs.ActivityLogCleaningJob.html
+Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob.html
+Trento.Infrastructure.Jobs.ClustersChecksExecutionJob.html
+Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob.html
+Trento.Infrastructure.Jobs.HostsChecksExecutionJob.html
+Trento.Infrastructure.Jobs.Plugins.Periodic.html
+Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob.html
+Trento.Infrastructure.Jobs.html
 Trento.Infrastructure.Messaging.Adapter.AMQP.Consumer.html
 Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher.html
 Trento.Infrastructure.Messaging.Adapter.AMQP.html
@@ -451,7 +459,6 @@ Trento.SapSystems.SapSystem.html
 Trento.SapSystems.Services.HealthService.html
 Trento.SapSystems.Services.HealthSummaryService.html
 Trento.SapSystems.html
-Trento.Scheduler.html
 Trento.Services.HealthService.html
 Trento.Settings.ActivityLogSettings.html
 Trento.Settings.AlertingSettings.html
@@ -614,7 +621,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-EF84BA31.js
-dist/sidebar_items-C8FC975B.js
+dist/search_data-2EC01BC6.js
+dist/sidebar_items-8F7547DB.js
 index.html
 search.html

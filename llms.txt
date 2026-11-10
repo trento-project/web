@@ -219,7 +219,6 @@ installed.
 
 - [Trento.Repo](Trento.Repo.md)
 - [Trento.Router](Trento.Router.md)
-- [Trento.Scheduler](Trento.Scheduler.md): Defines a quantum Scheduler.
 - [Trento.Settings](Trento.Settings.md): Provides a set of functions of settings related usecases.
 
 - [Trento.Settings.ActivityLogSettings](Trento.Settings.ActivityLogSettings.md): ActivityLogSettings is the STI projection of activity log related settings
@@ -761,6 +760,20 @@ delegates to `Sagents.AgentsDynamicSupervisor`.
   - [Trento.Infrastructure.ComponentVersions.Gen](Trento.Infrastructure.ComponentVersions.Gen.md): Behaviour for fetching component versions.
 
   - [Trento.Infrastructure.Discovery.AMQP.Publisher](Trento.Infrastructure.Discovery.AMQP.Publisher.md): AMQP discovery publisher
+
+  - [Trento.Infrastructure.Jobs](Trento.Infrastructure.Jobs.md): Periodic jobs run by Oban cron.
+  - [Trento.Infrastructure.Jobs.ActivityLogCleaningJob](Trento.Infrastructure.Jobs.ActivityLogCleaningJob.md): Deletes the activity log entries older than the retention time.
+
+  - [Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob](Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob.md): Sends an alert when the API key is about to expire or expired.
+
+  - [Trento.Infrastructure.Jobs.ClustersChecksExecutionJob](Trento.Infrastructure.Jobs.ClustersChecksExecutionJob.md): Requests a checks execution for every registered cluster with selected checks.
+
+  - [Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob](Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob.md): Deletes the discovery events older than `older_than` days.
+
+  - [Trento.Infrastructure.Jobs.HostsChecksExecutionJob](Trento.Infrastructure.Jobs.HostsChecksExecutionJob.md): Requests a checks execution for every registered host with selected checks.
+
+  - [Trento.Infrastructure.Jobs.Plugins.Periodic](Trento.Infrastructure.Jobs.Plugins.Periodic.md): Oban plugin that calls functions at a fixed interval, on the leader node only.
+  - [Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob](Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob.md): Discovers the available software updates of the registered hosts.
 
   - [Trento.Infrastructure.Messaging](Trento.Infrastructure.Messaging.md): Publishes messages to the message bus
 

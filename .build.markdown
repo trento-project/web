@@ -353,6 +353,14 @@ Trento.Infrastructure.Commanded.RollUp.RollUp.md
 Trento.Infrastructure.ComponentVersions.Gen.md
 Trento.Infrastructure.ComponentVersions.md
 Trento.Infrastructure.Discovery.AMQP.Publisher.md
+Trento.Infrastructure.Jobs.ActivityLogCleaningJob.md
+Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob.md
+Trento.Infrastructure.Jobs.ClustersChecksExecutionJob.md
+Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob.md
+Trento.Infrastructure.Jobs.HostsChecksExecutionJob.md
+Trento.Infrastructure.Jobs.Plugins.Periodic.md
+Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob.md
+Trento.Infrastructure.Jobs.md
 Trento.Infrastructure.Messaging.Adapter.AMQP.Consumer.md
 Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher.md
 Trento.Infrastructure.Messaging.Adapter.AMQP.md
@@ -450,7 +458,6 @@ Trento.SapSystems.SapSystem.md
 Trento.SapSystems.Services.HealthService.md
 Trento.SapSystems.Services.HealthSummaryService.md
 Trento.SapSystems.md
-Trento.Scheduler.md
 Trento.Services.HealthService.md
 Trento.Settings.ActivityLogSettings.md
 Trento.Settings.AlertingSettings.md
