@@ -40,6 +40,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :sap_system_cleanup_requested,
         :database_cleanup_requested,
         :activity_log_settings_update,
+        :changing_checks_frequency_settings,
         :host_operation_requested,
         :host_bulk_operation_requested,
         :cluster_operation_requested,
@@ -299,6 +300,12 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         connection_info: {TrentoWeb.V1.SettingsController, :test_alerting_settings},
         interesting_statuses: [200, 400, 401, 403, 404, 422, 500],
         not_interesting_statuses: []
+      },
+      %{
+        activity: :changing_checks_frequency_settings,
+        connection_info: {TrentoWeb.V1.SettingsController, :update_checks_frequency_settings},
+        interesting_statuses: 200,
+        not_interesting_statuses: [400, 401, 403, 409, 422, 500]
       },
       %{
         activity: :user_creation,

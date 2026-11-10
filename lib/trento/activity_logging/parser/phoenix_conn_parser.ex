@@ -114,11 +114,15 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        :activity_log_settings_update = _action,
+        action,
         %Plug.Conn{
           body_params: request_body
         }
-      ) do
+      )
+      when action in [
+             :activity_log_settings_update,
+             :changing_checks_frequency_settings
+           ] do
     request_body
   end
 

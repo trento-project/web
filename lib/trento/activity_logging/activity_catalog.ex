@@ -236,6 +236,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {TrentoWeb.V1.HostController, :select_checks} => {:host_checks_selected, 202},
         {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
           {:activity_log_settings_update, 200},
+        {TrentoWeb.V1.SettingsController, :update_checks_frequency_settings} =>
+          {:changing_checks_frequency_settings, 200},
         {TrentoWeb.V1.HostController, :delete} => {:host_cleanup_requested, 204},
         {TrentoWeb.V1.SapSystemController, :delete_application_instance} =>
           {:sap_system_cleanup_requested, 204},
