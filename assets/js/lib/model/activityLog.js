@@ -245,6 +245,14 @@ export const resourceNameFromMetadata = (resourceType, metadata) =>
     sap_system: metadata?.sid,
   });
 
+const bulkOperationMessage = (metadata, singular, plural) => {
+  const failed = metadata.failed_requests?.length ?? 0;
+  const total = (metadata.operations?.length ?? 0) + failed;
+  const resourceText = total === 1 ? singular : plural;
+  const failedText = failed ? ` (${failed} failed)` : '';
+  return `Operation ${getOperationLabel(metadata.operation)} requested on ${total} ${resourceText}${failedText}`;
+};
+
 const userManagement = ['all:all', 'all:users'];
 
 export const ACTIVITY_TYPES_CONFIG = {
@@ -806,13 +814,8 @@ export const ACTIVITY_TYPES_CONFIG = {
   },
   [CLUSTER_BULK_OPERATION_REQUESTED]: {
     label: 'Cluster Bulk Operation Requested',
-    message: ({ metadata }) => {
-      const failed = metadata.failed_requests?.length ?? 0;
-      const total = (metadata.operations?.length ?? 0) + failed;
-      const clustersText = total === 1 ? 'cluster' : 'clusters';
-      const failedText = failed ? ` (${failed} failed)` : '';
-      return `Operation ${getOperationLabel(metadata.operation)} requested on ${total} ${clustersText}${failedText}`;
-    },
+    message: ({ metadata }) =>
+      bulkOperationMessage(metadata, 'cluster', 'clusters'),
     resource: clusterResourceType,
   },
   [HOST_OPERATION_REQUESTED]: {
@@ -823,13 +826,7 @@ export const ACTIVITY_TYPES_CONFIG = {
   },
   [HOST_BULK_OPERATION_REQUESTED]: {
     label: 'Host Bulk Operation Requested',
-    message: ({ metadata }) => {
-      const failed = metadata.failed_requests?.length ?? 0;
-      const total = (metadata.operations?.length ?? 0) + failed;
-      const hostsText = total === 1 ? 'host' : 'hosts';
-      const failedText = failed ? ` (${failed} failed)` : '';
-      return `Operation ${getOperationLabel(metadata.operation)} requested on ${total} ${hostsText}${failedText}`;
-    },
+    message: ({ metadata }) => bulkOperationMessage(metadata, 'host', 'hosts'),
     resource: hostResourceType,
   },
   [CLUSTER_HOST_OPERATION_REQUESTED]: {
