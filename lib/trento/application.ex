@@ -25,6 +25,7 @@ defmodule Trento.Application do
         TrentoWeb.Endpoint,
         Trento.Commanded,
         Trento.Scheduler,
+        {Oban, Application.fetch_env!(:trento, Oban)},
         Trento.EventHandlersSupervisor,
         Trento.ProjectorsSupervisor,
         Trento.ProcessManagersSupervisor,

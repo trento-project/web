@@ -20,13 +20,18 @@ config :trento, Trento.Scheduler,
     ],
     hosts_checks_execution: [
       schedule: {:extended, "@hourly"}
-    ],
-    heartbeat_fake: [
-      schedule: {:extended, "*/5"},
-      task: {Trento.Heartbeats.Faker, :send_heartbeats, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
     ]
+  ]
+
+config :trento, Oban,
+  plugins: [
+    {Trento.Infrastructure.Jobs.Plugins.Periodic,
+     tasks: [
+       heartbeat_fake: [
+         every: :timer.seconds(5),
+         mfa: {Trento.Heartbeats.Faker, :send_heartbeats, []}
+       ]
+     ]}
   ]
 
 config :trento, Trento.Infrastructure.Prometheus,

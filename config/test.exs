@@ -131,12 +131,7 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
     ]
   ]
 
-config :trento, Trento.Scheduler,
-  jobs: [
-    heartbeat_check: [
-      state: :inactive
-    ]
-  ]
+config :trento, Oban, testing: :manual
 
 config :trento, Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler,
   max_stream_version: 10
