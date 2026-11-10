@@ -102,6 +102,32 @@ export const getClusterOperations = (
   },
 ];
 
+export const getClustersBulkOperations = (onOperationSelected) => [
+  {
+    value: 'Cluster maintenance on',
+    running: false,
+    disabled: false,
+    permitted: ['maintenance_change:cluster'],
+    onClick: () =>
+      onOperationSelected(CLUSTER_MAINTENANCE_CHANGE, { maintenance: true }),
+  },
+  {
+    value: 'Cluster maintenance off',
+    running: false,
+    disabled: false,
+    permitted: ['maintenance_change:cluster'],
+    onClick: () =>
+      onOperationSelected(CLUSTER_MAINTENANCE_CHANGE, { maintenance: false }),
+  },
+  {
+    value: 'Refresh resources',
+    running: false,
+    disabled: false,
+    permitted: ['resource_refresh:cluster'],
+    onClick: () => onOperationSelected(CLUSTER_RESOURCE_REFRESH, {}),
+  },
+];
+
 export const getClusterHostOperations = curry(
   (
     clusterID,

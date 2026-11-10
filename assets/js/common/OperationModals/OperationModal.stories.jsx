@@ -3,6 +3,8 @@
 
 import { action } from 'storybook/actions';
 
+import { bulkOperationResourceFactory } from '@lib/test-utils/factories';
+
 import OperationModal from './OperationModal';
 
 export default {
@@ -29,6 +31,11 @@ export default {
     description: {
       description: 'Description text for the modal',
       control: { type: 'text' },
+    },
+    resources: {
+      description:
+        'Resources affected by the operation, with id and label, listed below the content',
+      control: { type: 'object' },
     },
     requestDisabled: {
       description: 'Whether the request button is disabled',
@@ -67,5 +74,14 @@ export const Default = {
     ),
     onRequest: action('onRequest'),
     onCancel: action('onCancel'),
+  },
+};
+
+export const WithResources = {
+  args: {
+    ...Default.args,
+    description: 'The operation will be applied to the following resources:',
+    children: undefined,
+    resources: bulkOperationResourceFactory.buildList(5),
   },
 };
