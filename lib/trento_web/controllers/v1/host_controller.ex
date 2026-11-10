@@ -464,14 +464,12 @@ defmodule TrentoWeb.V1.HostController do
            Hosts.request_bulk_operation(operation, host_ids, %{}) do
       conn
       |> put_status(:accepted)
-      |> json(%{
+      |> put_view(json: TrentoWeb.V1.OperationJSON)
+      |> render(:bulk_operation_accepted,
         bulk_operation_id: bulk_operation_id,
         operations: operations,
-        failed_requests:
-          Enum.map(failed_requests, fn %{reason: reason} = failed_request ->
-            %{failed_request | reason: inspect(reason)}
-          end)
-      })
+        failed_requests: failed_requests
+      )
     end
   end
 end
