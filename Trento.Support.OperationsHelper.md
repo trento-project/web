@@ -38,6 +38,17 @@ Helper functions for operations
   | {:error, :bulk_operation_request_failed}
 ```
 
+# `ensure_all_found`
+
+```elixir
+@spec ensure_all_found(
+  resource_ids :: [String.t()],
+  resources :: [struct()],
+  label :: String.t()
+) ::
+  [struct()] | {:error, String.t()}
+```
+
 # `reduce_operation_authorizations`
 
 ```elixir

@@ -394,6 +394,7 @@ Trento.Operations.Enums.ClusterBulkOperations.md
 Trento.Operations.Enums.ClusterHostOperations.md
 Trento.Operations.Enums.ClusterOperations.md
 Trento.Operations.Enums.DatabaseOperations.md
+Trento.Operations.Enums.HostBulkOperations.md
 Trento.Operations.Enums.HostOperations.md
 Trento.Operations.Enums.SapInstanceOperations.md
 Trento.Operations.Enums.SapSystemOperations.md
@@ -593,6 +594,7 @@ TrentoWeb.V1.HealthOverviewController.md
 TrentoWeb.V1.HealthOverviewJSON.md
 TrentoWeb.V1.HostController.md
 TrentoWeb.V1.HostJSON.md
+TrentoWeb.V1.OperationJSON.md
 TrentoWeb.V1.PersonalAccessTokensController.md
 TrentoWeb.V1.ProfileController.md
 TrentoWeb.V1.ProfileJSON.md

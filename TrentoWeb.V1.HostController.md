@@ -1,11 +1,15 @@
 # `TrentoWeb.V1.HostController`
 [🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L4)
 
+# `bulk_reboot`
+
 # `delete`
 
 ```elixir
 @spec delete(Plug.Conn.t(), map()) :: Plug.Conn.t()
 ```
+
+# `get_action`
 
 # `get_operation_host`
 

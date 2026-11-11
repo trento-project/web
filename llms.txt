@@ -196,6 +196,8 @@ tests that require setting an event store.
 
 - [Trento.Operations.Enums.DatabaseOperations](Trento.Operations.Enums.DatabaseOperations.md): Database operations
 
+- [Trento.Operations.Enums.HostBulkOperations](Trento.Operations.Enums.HostBulkOperations.md): Host operations that can be requested on multiple hosts at once
+
 - [Trento.Operations.Enums.HostOperations](Trento.Operations.Enums.HostOperations.md): Host operations
 
 - [Trento.Operations.Enums.SapInstanceOperations](Trento.Operations.Enums.SapInstanceOperations.md): SAP instance operations
@@ -1019,6 +1021,7 @@ to receive personal broadcasts
   - [TrentoWeb.V1.HealthOverviewJSON](TrentoWeb.V1.HealthOverviewJSON.md)
   - [TrentoWeb.V1.HostController](TrentoWeb.V1.HostController.md)
   - [TrentoWeb.V1.HostJSON](TrentoWeb.V1.HostJSON.md)
+  - [TrentoWeb.V1.OperationJSON](TrentoWeb.V1.OperationJSON.md)
   - [TrentoWeb.V1.PersonalAccessTokensController](TrentoWeb.V1.PersonalAccessTokensController.md)
   - [TrentoWeb.V1.ProfileController](TrentoWeb.V1.ProfileController.md)
   - [TrentoWeb.V1.ProfileJSON](TrentoWeb.V1.ProfileJSON.md)

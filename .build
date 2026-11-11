@@ -395,6 +395,7 @@ Trento.Operations.Enums.ClusterBulkOperations.html
 Trento.Operations.Enums.ClusterHostOperations.html
 Trento.Operations.Enums.ClusterOperations.html
 Trento.Operations.Enums.DatabaseOperations.html
+Trento.Operations.Enums.HostBulkOperations.html
 Trento.Operations.Enums.HostOperations.html
 Trento.Operations.Enums.SapInstanceOperations.html
 Trento.Operations.Enums.SapSystemOperations.html
@@ -594,6 +595,7 @@ TrentoWeb.V1.HealthOverviewController.html
 TrentoWeb.V1.HealthOverviewJSON.html
 TrentoWeb.V1.HostController.html
 TrentoWeb.V1.HostJSON.html
+TrentoWeb.V1.OperationJSON.html
 TrentoWeb.V1.PersonalAccessTokensController.html
 TrentoWeb.V1.ProfileController.html
 TrentoWeb.V1.ProfileJSON.html
@@ -621,7 +623,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-2EC01BC6.js
-dist/sidebar_items-8F7547DB.js
+dist/search_data-18116E2D.js
+dist/sidebar_items-339F29C1.js
 index.html
 search.html

@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-8F7547DB.js"></script>
+    <script defer src="dist/sidebar_items-339F29C1.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -175,6 +175,14 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#ensure_all_found/3" data-no-tooltip="" translate="no">ensure_all_found(resource_ids, resources, label)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#reduce_operation_authorizations/2" data-no-tooltip="" translate="no">reduce_operation_authorizations(authorizations, acc \\ :ok)</a>
 
       </div>
@@ -296,7 +304,7 @@ Trento Web
       <h1 class="signature" translate="no">build_error(message, metadata \\ [])</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/operations_helper.ex#L87" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/operations_helper.ex#L102" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -343,6 +351,39 @@ Trento Web
   {:ok, <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>(), [%{resource_id: <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>(), operation_id: <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()}],
    [%{resource_id: <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>(), reason: <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">any</a>()}]}
   | {:error, :bulk_operation_request_failed}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="ensure_all_found/3">
+
+  <div class="detail-header">
+    <a href="#ensure_all_found/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ensure_all_found(resource_ids, resources, label)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/operations_helper.ex#L91" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> ensure_all_found(
+  resource_ids :: [<a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()],
+  resources :: [<a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">struct</a>()],
+  label :: <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()
+) ::
+  [<a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">struct</a>()] | {:error, <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()}</pre>
 
       </div>
 
@@ -424,7 +465,7 @@ Trento Web
       <h1 class="signature" translate="no">to_bulk_operation(operations)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/operations_helper.ex#L90" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/operations_helper.ex#L105" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

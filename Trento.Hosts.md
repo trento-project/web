@@ -38,6 +38,12 @@ Provides a set of functions to interact with hosts.
   Trento.Hosts.Projections.HostReadModel.t() | nil
 ```
 
+# `get_hosts_by_ids`
+
+```elixir
+@spec get_hosts_by_ids([String.t()]) :: [Trento.Hosts.Projections.HostReadModel.t()]
+```
+
 # `get_hosts_for_prometheus_targets`
 
 ```elixir
@@ -48,6 +54,15 @@ Provides a set of functions to interact with hosts.
 
 Returns all hosts that are configured for Prometheus pull mode.
 Hosts with prometheus_mode set to :push are excluded as they push metrics directly.
+
+# `request_bulk_operation`
+
+```elixir
+@spec request_bulk_operation(atom(), [String.t()], map()) ::
+  {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+   [%{resource_id: String.t(), reason: any()}]}
+  | {:error, any()}
+```
 
 # `request_checks_execution`
 
