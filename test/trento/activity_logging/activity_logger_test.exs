@@ -304,6 +304,72 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     end
   end
 
+  describe "changing checks frequency detection" do
+    defp change_checks_frequency(conn, checks_frequency) do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/settings/checks_frequency", checks_frequency)
+    end
+
+    test "should not log a failing change of the checks frequency",
+         %{conn: conn, user: %{id: user_id}} do
+      conn
+      |> with_token(user_id)
+      |> change_checks_frequency(%{enabled: true, frequency: %{value: 2, unit: "hour"}})
+      |> json_response(422)
+
+      wait_for_tasks_completion()
+
+      assert [] = Trento.Repo.all(ActivityLog)
+    end
+
+    test "should log a successful change of the checks frequency",
+         %{conn: conn, user: %{id: user_id, username: username}} do
+      conn
+      |> with_token(user_id)
+      |> change_checks_frequency(%{enabled: false, frequency: %{value: 6, unit: "hour"}})
+      |> json_response(200)
+
+      wait_for_tasks_completion()
+
+      assert [
+               %ActivityLog{
+                 type: "changing_checks_frequency_settings",
+                 actor: ^username,
+                 metadata: %{
+                   "enabled" => false,
+                   "frequency" => %{"value" => 6, "unit" => "hour"}
+                 }
+               }
+             ] = Trento.Repo.all(ActivityLog)
+    end
+
+    test "should log the resulting settings of a partial change of the checks frequency",
+         %{conn: conn, user: %{id: user_id}} do
+      insert(:checks_frequency_settings,
+        enabled: false,
+        frequency: %Trento.Checks.Frequency{value: 6, unit: :hour}
+      )
+
+      conn
+      |> with_token(user_id)
+      |> change_checks_frequency(%{enabled: true})
+      |> json_response(200)
+
+      wait_for_tasks_completion()
+
+      assert [
+               %ActivityLog{
+                 type: "changing_checks_frequency_settings",
+                 metadata: %{
+                   "enabled" => true,
+                   "frequency" => %{"value" => 6, "unit" => "hour"}
+                 }
+               }
+             ] = Trento.Repo.all(ActivityLog)
+    end
+  end
+
   describe "checks selection request activity detection" do
     defp select_checks(conn, component_id, component_type, checks) do
       conn

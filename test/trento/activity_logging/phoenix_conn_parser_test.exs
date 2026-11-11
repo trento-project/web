@@ -114,6 +114,24 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       end
     end
 
+    test "should extract the resulting settings as metadata when changing the checks frequency",
+         %{conn: %Plug.Conn{} = conn} do
+      assert %{"enabled" => true, "frequency" => %{"value" => 6, "unit" => "hour"}} ==
+               PhoenixConnParser.get_activity_metadata(
+                 :changing_checks_frequency_settings,
+                 %Plug.Conn{
+                   conn
+                   | body_params: %{enabled: true},
+                     resp_body:
+                       Jason.encode!(%{
+                         enabled: true,
+                         frequency: %{value: 6, unit: "hour"},
+                         enforced_from_env: false
+                       })
+                 }
+               )
+    end
+
     test "should extract component id when requesting checks execution", %{
       conn: %Plug.Conn{} = conn
     } do

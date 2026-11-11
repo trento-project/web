@@ -1280,13 +1280,26 @@ defmodule Trento.SettingsTest do
                Repo.all(ChecksFrequencySettings.base_query())
     end
 
+    test "should enforce the disabled frequency set in the environment, ignoring the saved one" do
+      insert(:checks_frequency_settings, frequency: %Frequency{value: 6, unit: :hour})
+
+      Application.put_env(:trento, :checks_frequency, :disabled)
+
+      assert {:ok,
+              %ChecksFrequencySettings{
+                enabled: false,
+                frequency: nil,
+                enforced_from_env: true
+              }} = Settings.get_checks_frequency_settings()
+    end
+
     test "should enforce the disabled frequency set in the environment" do
       Application.put_env(:trento, :checks_frequency, :disabled)
 
       assert {:ok,
               %ChecksFrequencySettings{
                 enabled: false,
-                frequency: %Frequency{value: 5, unit: :minute},
+                frequency: nil,
                 enforced_from_env: true
               }} = Settings.get_checks_frequency_settings()
 

@@ -249,9 +249,9 @@ defmodule Trento.Settings do
 
   @doc """
   Returns the global checks frequency settings: whether the checks run periodically, and how
-  often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
-  disables the checks when it is `disabled`. When neither is set, the checks run every
-  5 minutes.
+  often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one. When
+  it is `disabled`, the checks do not run and there is no frequency. When neither is set, the
+  checks run every 5 minutes.
   """
   @spec get_checks_frequency_settings() :: {:ok, ChecksFrequencySettings.t()}
   def get_checks_frequency_settings do
@@ -260,12 +260,7 @@ defmodule Trento.Settings do
         {:ok, get_current_checks_frequency_settings()}
 
       :disabled ->
-        {:ok,
-         %ChecksFrequencySettings{
-           enabled: false,
-           frequency: Frequency.default(),
-           enforced_from_env: true
-         }}
+        {:ok, %ChecksFrequencySettings{enabled: false, frequency: nil, enforced_from_env: true}}
 
       %Frequency{} = frequency ->
         {:ok,

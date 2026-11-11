@@ -455,6 +455,56 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  operation :get_checks_frequency_settings,
+    summary: "Get checks frequency settings.",
+    tags: ["Settings", "MCP"],
+    description:
+      "Retrieves whether and how often the checks run periodically on every target, such as hosts and clusters, and whether the settings are enforced from the environment.",
+    responses: [
+      ok:
+        {"The checks frequency settings.", "application/json",
+         Schema.Platform.ChecksFrequencySettings},
+      unauthorized: Schema.Unauthorized.response()
+    ]
+
+  ai_tool :settings_get_checks_frequency, display_text: "Get checks frequency settings"
+
+  def get_checks_frequency_settings(conn, _params) do
+    with {:ok, settings} <- Settings.get_checks_frequency_settings() do
+      conn
+      |> put_status(:ok)
+      |> render(:checks_frequency_settings, checks_frequency_settings: settings)
+    end
+  end
+
+  operation :update_checks_frequency_settings,
+    summary: "Update checks frequency settings.",
+    description:
+      "Changes whether the checks run periodically on every target, such as hosts and clusters, how often, or both. A field that is not sent keeps its value: when the periodic runs are disabled, the frequency is kept, and the checks can still be started manually. Refused when the settings are enforced from the environment.",
+    tags: ["Settings"],
+    request_body:
+      {"Whether the checks run periodically, how often, or both.", "application/json",
+       Schema.Platform.UpdateChecksFrequencySettingsRequest},
+    responses: [
+      ok:
+        {"The saved checks frequency settings.", "application/json",
+         Schema.Platform.ChecksFrequencySettings},
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response(),
+      conflict: Schema.Conflict.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  def update_checks_frequency_settings(conn, _params) do
+    checks_frequency_body = OpenApiSpex.body_params(conn)
+
+    with {:ok, settings} <- Settings.update_checks_frequency_settings(checks_frequency_body) do
+      conn
+      |> put_status(:ok)
+      |> render(:checks_frequency_settings, checks_frequency_settings: settings)
+    end
+  end
+
   def get_action(%{private: %{phoenix_action: action}})
       when action in [
              :patch_smlm_settings,

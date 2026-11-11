@@ -122,6 +122,12 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     request_body
   end
 
+  def get_activity_metadata(:changing_checks_frequency_settings, %Plug.Conn{resp_body: resp_body}) do
+    resp_body
+    |> Jason.decode!()
+    |> Map.take(["enabled", "frequency"])
+  end
+
   def get_activity_metadata(
         action,
         %Plug.Conn{

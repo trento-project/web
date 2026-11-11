@@ -8,6 +8,7 @@ defmodule Trento.Settings.PolicyTest do
   alias Trento.Settings.ActivityLogSettings
   alias Trento.Settings.AlertingSettings
   alias Trento.Settings.ApiKeySettings
+  alias Trento.Settings.ChecksFrequencySettings
   alias Trento.Settings.SmlmSettings
 
   alias Trento.Settings.Policy
@@ -145,6 +146,38 @@ defmodule Trento.Settings.PolicyTest do
       refute Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
       refute Policy.authorize(:test_alerting_settings, user, AlertingSettings)
+    end
+  end
+
+  describe "checks frequency settings authorization" do
+    test "should allow changing the checks frequency if the user has all:all ability" do
+      user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+
+      assert Policy.authorize(:update_checks_frequency_settings, user, ChecksFrequencySettings)
+    end
+
+    test "should allow changing the checks frequency if the user has all:checks_frequency_settings ability" do
+      user = %User{abilities: [%Ability{name: "all", resource: "checks_frequency_settings"}]}
+
+      assert Policy.authorize(:update_checks_frequency_settings, user, ChecksFrequencySettings)
+    end
+
+    test "should allow getting the checks frequency if the user has no abilities" do
+      user = %User{abilities: []}
+
+      assert Policy.authorize(:get_checks_frequency_settings, user, ChecksFrequencySettings)
+    end
+
+    test "should not allow changing the checks frequency for other abilities" do
+      user = %User{abilities: [%Ability{name: "all", resource: "activity_logs_settings"}]}
+
+      refute Policy.authorize(:update_checks_frequency_settings, user, ChecksFrequencySettings)
+    end
+
+    test "should not allow changing the checks frequency if the user has no abilities" do
+      user = %User{abilities: []}
+
+      refute Policy.authorize(:update_checks_frequency_settings, user, ChecksFrequencySettings)
     end
   end
 
