@@ -284,6 +284,9 @@ defmodule TrentoWeb.Router do
         put "/activity_log", SettingsController, :update_activity_log_settings
         get "/activity_log", SettingsController, :get_activity_log_settings
 
+        # Checks Frequency Settings
+        get "/checks_frequency", SettingsController, :get_checks_frequency_settings
+
         scope "/smlm" do
           get "/", SettingsController, :get_smlm_settings
           post "/", SettingsController, :save_smlm_settings

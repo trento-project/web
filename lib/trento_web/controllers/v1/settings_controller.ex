@@ -455,6 +455,28 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  operation :get_checks_frequency_settings,
+    summary: "Get checks frequency settings.",
+    tags: ["Settings", "MCP"],
+    description:
+      "Retrieves whether and how often the checks run periodically on every target, such as hosts and clusters, and whether the settings are enforced from the environment.",
+    responses: [
+      ok:
+        {"The checks frequency settings.", "application/json",
+         Schema.Platform.ChecksFrequencySettings},
+      unauthorized: Schema.Unauthorized.response()
+    ]
+
+  ai_tool :settings_get_checks_frequency, display_text: "Get checks frequency settings"
+
+  def get_checks_frequency_settings(conn, _params) do
+    with {:ok, settings} <- Settings.get_checks_frequency_settings() do
+      conn
+      |> put_status(:ok)
+      |> render(:checks_frequency_settings, checks_frequency_settings: settings)
+    end
+  end
+
   def get_action(%{private: %{phoenix_action: action}})
       when action in [
              :patch_smlm_settings,

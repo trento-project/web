@@ -11,6 +11,8 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   import Trento.Support.Helpers.AlertingSettingsHelper
   import Mox
 
+  alias Trento.Checks.Frequency
+
   setup_all :setup_api_spec_v1
   setup :setup_user
 
@@ -941,6 +943,40 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     end
   end
 
+  describe "ChecksFrequencySettings" do
+    test "should return the saved frequency", %{conn: conn, api_spec: api_spec} do
+      insert(:checks_frequency_settings, frequency: %Frequency{value: 6, unit: :hour})
+
+      resp =
+        conn
+        |> get(~p"/api/v1/settings/checks_frequency")
+        |> json_response(:ok)
+        |> assert_response_schema("ChecksFrequencySettingsV1", api_spec)
+
+      assert %{enabled: true, frequency: %{value: 6, unit: :hour}, enforced_from_env: false} ==
+               resp
+    end
+
+    test "should return the kept frequency when the periodic checks are disabled", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert(:checks_frequency_settings,
+        enabled: false,
+        frequency: %Frequency{value: 6, unit: :hour}
+      )
+
+      resp =
+        conn
+        |> get(~p"/api/v1/settings/checks_frequency")
+        |> json_response(:ok)
+        |> assert_response_schema("ChecksFrequencySettingsV1", api_spec)
+
+      assert %{enabled: false, frequency: %{value: 6, unit: :hour}, enforced_from_env: false} ==
+               resp
+    end
+  end
+
   describe "forbidden response" do
     setup %{conn: conn} do
       %{id: unprivileged_user_id} = insert(:user)
@@ -1110,6 +1146,8 @@ defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
   import Trento.Support.Helpers.AbilitiesTestHelper
   import Trento.Support.Helpers.AlertingSettingsHelper
 
+  alias Trento.Checks.Frequency
+
   setup_all :setup_api_spec_v1
   setup :setup_user
 
@@ -1147,6 +1185,33 @@ defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
                    }
                  ]
                } == resp
+      end
+    end
+  end
+
+  describe "Checks frequency settings enforced from env" do
+    setup do
+      checks_frequency = Application.get_env(:trento, :checks_frequency)
+
+      on_exit(fn ->
+        Application.put_env(:trento, :checks_frequency, checks_frequency)
+      end)
+    end
+
+    test "should return the frequency set in the environment", %{conn: conn, api_spec: api_spec} do
+      for {env_value, enabled, frequency} <- [
+            {%Frequency{value: 1, unit: :week}, true, %{value: 1, unit: :week}},
+            {:disabled, false, %{value: 5, unit: :minute}}
+          ] do
+        Application.put_env(:trento, :checks_frequency, env_value)
+
+        resp =
+          conn
+          |> get(~p"/api/v1/settings/checks_frequency")
+          |> json_response(:ok)
+          |> assert_response_schema("ChecksFrequencySettingsV1", api_spec)
+
+        assert %{enabled: enabled, frequency: frequency, enforced_from_env: true} == resp
       end
     end
   end

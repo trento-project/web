@@ -7,6 +7,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  require Trento.Checks.Enums.FrequencyUnit, as: FrequencyUnit
+
   defmodule ApiKeySettings do
     @moduledoc false
     OpenApiSpex.schema(
@@ -506,6 +508,78 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           enabled: true,
           sender_email: "noreply@example.com",
           recipient_email: "admin@example.com"
+        }
+      },
+      struct?: false
+    )
+  end
+
+  defmodule ChecksFrequency do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "ChecksFrequencyV1",
+        description:
+          "How often the checks run periodically on every target, such as hosts and clusters.",
+        type: :object,
+        additionalProperties: false,
+        example: %{
+          value: 5,
+          unit: "minute"
+        },
+        properties: %{
+          value: %Schema{
+            type: :integer,
+            description:
+              "Number of units between two runs: 5, 15 or 30 minutes, 1, 6, 12 or 24 hours, or 1, 2 or 4 weeks.",
+            minimum: 1
+          },
+          unit: %Schema{
+            type: :string,
+            description: "The unit of the value.",
+            enum: FrequencyUnit.values()
+          }
+        },
+        required: [:value, :unit]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule ChecksFrequencySettings do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "ChecksFrequencySettingsV1",
+        description:
+          "The global checks frequency settings: whether the checks run periodically, how often, and whether the settings are enforced from the environment.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          enabled: %Schema{
+            type: :boolean,
+            description:
+              "Whether the checks run periodically. When false, the frequency is kept for when they are enabled again.",
+            example: true
+          },
+          frequency: ChecksFrequency,
+          enforced_from_env: %Schema{
+            type: :boolean,
+            description:
+              "True when the settings are enforced from the environment, which then can not be changed.",
+            example: false
+          }
+        },
+        required: [:enabled, :frequency, :enforced_from_env],
+        example: %{
+          enabled: true,
+          frequency: %{
+            value: 5,
+            unit: "minute"
+          },
+          enforced_from_env: false
         }
       },
       struct?: false

@@ -74,4 +74,19 @@ defmodule TrentoWeb.V1.SettingsJSON do
         smtp_username: smtp_username,
         enforced_from_env: enforced_from_env
       }
+
+  def checks_frequency_settings(%{
+        checks_frequency_settings: %{
+          enabled: enabled,
+          frequency: frequency,
+          enforced_from_env: enforced_from_env
+        }
+      }),
+      do: %{
+        enabled: enabled,
+        frequency: checks_frequency(frequency),
+        enforced_from_env: enforced_from_env
+      }
+
+  defp checks_frequency(%{value: value, unit: unit}), do: %{value: value, unit: unit}
 end

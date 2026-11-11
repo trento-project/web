@@ -6,6 +6,8 @@ defmodule TrentoWeb.V1.SettingsJSONTest do
 
   import Trento.Factory
 
+  alias Trento.Checks.Frequency
+  alias Trento.Settings.ChecksFrequencySettings
   alias TrentoWeb.V1.SettingsJSON
 
   describe "renders smlm.json" do
@@ -33,6 +35,23 @@ defmodule TrentoWeb.V1.SettingsJSONTest do
 
       assert expected ==
                SettingsJSON.alerting_settings(%{alerting_settings: settings})
+    end
+  end
+
+  describe "Checks frequency settings template/view" do
+    test "should render whether the checks run periodically, the frequency and whether it is enforced from env" do
+      settings = %ChecksFrequencySettings{
+        id: Faker.UUID.v4(),
+        type: :checks_frequency_settings,
+        enabled: true,
+        frequency: %Frequency{value: 6, unit: :hour},
+        enforced_from_env: true,
+        inserted_at: DateTime.utc_now(),
+        updated_at: DateTime.utc_now()
+      }
+
+      assert %{enabled: true, frequency: %{value: 6, unit: :hour}, enforced_from_env: true} ==
+               SettingsJSON.checks_frequency_settings(%{checks_frequency_settings: settings})
     end
   end
 end
