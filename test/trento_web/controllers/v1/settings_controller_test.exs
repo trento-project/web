@@ -7,6 +7,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
   import Trento.Factory
   import OpenApiSpex.TestAssertions
+  import Phoenix.ChannelTest
   import Trento.Support.Helpers.AbilitiesTestHelper
   import Trento.Support.Helpers.AlertingSettingsHelper
   import Mox
@@ -1097,6 +1098,36 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
                  }
                ]
              } == resp
+    end
+
+    test "should broadcast the saved settings", %{conn: conn} do
+      insert(:checks_frequency_settings, frequency: %Frequency{value: 6, unit: :hour})
+      TrentoWeb.Endpoint.subscribe("monitoring:settings")
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch(~p"/api/v1/settings/checks_frequency", %{enabled: false})
+      |> json_response(:ok)
+
+      assert_broadcast "checks_frequency_settings_updated", %{
+        enabled: false,
+        frequency: %{value: 6, unit: :hour},
+        enforced_from_env: false
+      }
+    end
+
+    test "should not broadcast a refused change", %{conn: conn} do
+      TrentoWeb.Endpoint.subscribe("monitoring:settings")
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch(~p"/api/v1/settings/checks_frequency", %{
+        enabled: true,
+        frequency: %{value: 2, unit: "hour"}
+      })
+      |> json_response(:unprocessable_entity)
+
+      refute_broadcast "checks_frequency_settings_updated", _
     end
 
     test "should refuse a null frequency", %{conn: conn, api_spec: api_spec} do
