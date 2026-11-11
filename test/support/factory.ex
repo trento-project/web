@@ -382,7 +382,7 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_registered_event_make_hana(event, attrs \\ []) do
+  def cluster_registered_event_make_hana(event, attrs \\ %{}) do
     event
     |> struct!(
       type: ClusterType.hana_scale_up(),
@@ -392,7 +392,7 @@ defmodule Trento.Factory do
     |> merge_attributes(attrs)
   end
 
-  def cluster_registered_event_make_ascs_ers(event, attrs \\ []) do
+  def cluster_registered_event_make_ascs_ers(event, attrs \\ %{}) do
     event
     |> struct!(
       type: ClusterType.ascs_ers(),
@@ -436,7 +436,7 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_details_updated_event_make_hana(event, attrs \\ []) do
+  def cluster_details_updated_event_make_hana(event, attrs \\ %{}) do
     event
     |> struct!(
       type: ClusterType.hana_scale_up(),
@@ -445,7 +445,7 @@ defmodule Trento.Factory do
     |> merge_attributes(attrs)
   end
 
-  def cluster_details_updated_event_make_ascs_ers(event, attrs \\ []) do
+  def cluster_details_updated_event_make_ascs_ers(event, attrs \\ %{}) do
     event
     |> struct!(
       type: ClusterType.ascs_ers(),
@@ -621,8 +621,11 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_factory do
-    type = Enum.random([ClusterType.hana_scale_up(), ClusterType.ascs_ers()])
+  def cluster_factory(attrs) do
+    type =
+      Map.get_lazy(attrs, :type, fn ->
+        Enum.random([ClusterType.hana_scale_up(), ClusterType.ascs_ers()])
+      end)
 
     %ClusterReadModel{
       id: Faker.UUID.v4(),
@@ -631,23 +634,37 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       type: type,
       health: Enum.random(Health.values()),
-      health_details:
-        case type do
-          ClusterType.hana_scale_up() -> build(:hana_cluster_health_details_projection)
-          ClusterType.ascs_ers() -> build(:ascs_ers_cluster_health_details_projection)
-        end,
+      health_details: cluster_health_details_projection(type),
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
-      details:
-        case type do
-          ClusterType.hana_scale_up() -> build(:hana_cluster_details)
-          ClusterType.ascs_ers() -> build(:ascs_ers_cluster_details)
-        end,
+      details: cluster_details_payload(type),
       state: :S_IDLE,
       stale_at: nil
     }
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
   end
 
-  def cluster_make_hana(cluster, args \\ []) do
+  defp cluster_health_details_projection(type)
+       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
+       do: build(:hana_cluster_health_details_projection)
+
+  defp cluster_health_details_projection(ClusterType.ascs_ers()),
+    do: build(:ascs_ers_cluster_health_details_projection)
+
+  defp cluster_health_details_projection(_), do: nil
+
+  defp cluster_details_payload(type)
+       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
+       do: payload_map(build(:hana_cluster_details))
+
+  defp cluster_details_payload(ClusterType.ascs_ers()),
+    do: payload_map(build(:ascs_ers_cluster_details))
+
+  defp cluster_details_payload(_), do: %{}
+
+  defp payload_map(value), do: value |> Jason.encode!() |> Jason.decode!(keys: :atoms)
+
+  def cluster_make_hana(cluster, args \\ %{}) do
     cluster
     |> struct!(
       type: Enum.random([ClusterType.hana_scale_up(), ClusterType.hana_scale_out()]),
@@ -656,12 +673,12 @@ defmodule Trento.Factory do
         build_list(1, :clustered_sap_instance,
           resource_type: SapInstanceResourceType.sap_hana_topology()
         ),
-      details: build(:hana_cluster_details)
+      details: payload_map(build(:hana_cluster_details))
     )
     |> merge_attributes(args)
   end
 
-  def cluster_make_ascs_ers(cluster, args \\ []) do
+  def cluster_make_ascs_ers(cluster, args \\ %{}) do
     cluster
     |> struct!(
       type: ClusterType.ascs_ers(),
@@ -670,12 +687,12 @@ defmodule Trento.Factory do
         build_list(1, :clustered_sap_instance,
           resource_type: SapInstanceResourceType.sap_instance()
         ),
-      details: build(:ascs_ers_cluster_details)
+      details: payload_map(build(:ascs_ers_cluster_details))
     )
     |> merge_attributes(args)
   end
 
-  def cluster_make_unknown(cluster, args \\ []) do
+  def cluster_make_unknown(cluster, args \\ %{}) do
     cluster
     |> struct!(
       type: ClusterType.unknown(),
