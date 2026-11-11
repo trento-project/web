@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-18T20:26:49Z",
-    "commit": "1098db2757f49b5ce65e3f22e2367759d9ef8404",
-    "run_id": "35388664879",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-18T20:27:58Z",
     "commit": "1098db2757f49b5ce65e3f22e2367759d9ef8404",
     "run_id": "35388664879",
@@ -5514,5 +5503,45 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-11T00:01:42Z",
+    "commit": "7a39e4aad529076e5bcb55027068f0f2531866af",
+    "run_id": "42928072556",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 98,
+      "failed_runs": 12
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.09329
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.09051
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.06938
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      }
+    ]
   }
 ]
