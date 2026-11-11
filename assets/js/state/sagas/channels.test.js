@@ -11,6 +11,7 @@ import {
 import { userUpdated } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
 import { operationCompleted } from '@state/runningOperations';
+import { setChecksFrequencySettings } from '@state/checksFrequencySettings';
 
 import { watchSocketEvents } from './channels';
 
@@ -52,6 +53,7 @@ const channels = {
   'monitoring:databases': new MockChannel(),
   'monitoring:executions': new MockChannel(),
   'monitoring:operations': new MockChannel(),
+  'monitoring:settings': new MockChannel(),
   [`users:${USER_ID}`]: new MockChannel(),
   [`activity_log:${USER_ID}`]: new MockChannel(),
 };
@@ -117,6 +119,26 @@ describe('Channels saga', () => {
     expect(dispatched).toEqual([
       setExecutionStarted({ groupID: 'group', targets: [] }),
     ]);
+  });
+
+  it('should listen to the checks frequency settings updates', async () => {
+    const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
+
+    const settings = {
+      enabled: false,
+      frequency: { value: 6, unit: 'hour' },
+      enforced_from_env: false,
+    };
+
+    channels['monitoring:settings'].emit(
+      'checks_frequency_settings_updated',
+      settings
+    );
+
+    closeSocket();
+    await saga;
+
+    expect(dispatched).toEqual([setChecksFrequencySettings(settings)]);
   });
 
   it('should listen to a specific user events', async () => {
