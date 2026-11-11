@@ -308,7 +308,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     defp change_checks_frequency(conn, checks_frequency) do
       conn
       |> put_req_header("content-type", "application/json")
-      |> put("/api/v1/settings/checks_frequency", checks_frequency)
+      |> patch("/api/v1/settings/checks_frequency", checks_frequency)
     end
 
     test "should not log a failing change of the checks frequency",

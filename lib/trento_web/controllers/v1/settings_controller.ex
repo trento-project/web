@@ -480,10 +480,10 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :update_checks_frequency_settings,
     summary: "Update checks frequency settings.",
     description:
-      "Changes whether and how often the checks run periodically on every target, such as hosts and clusters. When the periodic runs are disabled, the frequency is kept, and the checks can still be started manually. Refused when the settings are enforced from the environment.",
+      "Changes whether the checks run periodically on every target, such as hosts and clusters, how often, or both. A field that is not sent keeps its value: when the periodic runs are disabled, the frequency is kept, and the checks can still be started manually. Refused when the settings are enforced from the environment.",
     tags: ["Settings"],
     request_body:
-      {"Whether the checks run periodically, and how often.", "application/json",
+      {"Whether the checks run periodically, how often, or both.", "application/json",
        Schema.Platform.UpdateChecksFrequencySettingsRequest},
     responses: [
       ok:

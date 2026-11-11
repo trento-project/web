@@ -286,7 +286,7 @@ defmodule TrentoWeb.Router do
 
         # Checks Frequency Settings
         get "/checks_frequency", SettingsController, :get_checks_frequency_settings
-        put "/checks_frequency", SettingsController, :update_checks_frequency_settings
+        patch "/checks_frequency", SettingsController, :update_checks_frequency_settings
 
         scope "/smlm" do
           get "/", SettingsController, :get_smlm_settings

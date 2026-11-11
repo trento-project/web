@@ -601,9 +601,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       %{
         title: "UpdateChecksFrequencySettingsRequestV1",
         description:
-          "Represents the request body for changing the global checks frequency settings.",
+          "Represents the request body for changing the global checks frequency settings. A field that is not sent keeps its value.",
         type: :object,
         additionalProperties: false,
+        minProperties: 1,
         properties: %{
           enabled: %Schema{
             type: :boolean,
@@ -612,7 +613,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           },
           frequency: ChecksFrequency
         },
-        required: [:enabled, :frequency],
         example: %{
           enabled: true,
           frequency: %{

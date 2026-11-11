@@ -987,7 +987,10 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         resp =
           conn
           |> put_req_header("content-type", "application/json")
-          |> put(~p"/api/v1/settings/checks_frequency", %{enabled: enabled, frequency: frequency})
+          |> patch(~p"/api/v1/settings/checks_frequency", %{
+            enabled: enabled,
+            frequency: frequency
+          })
           |> json_response(:ok)
           |> assert_response_schema("ChecksFrequencySettingsV1", api_spec)
 
@@ -1003,7 +1006,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> put(~p"/api/v1/settings/checks_frequency", %{
+        |> patch(~p"/api/v1/settings/checks_frequency", %{
           enabled: true,
           frequency: %{value: 2, unit: "hour"}
         })
@@ -1021,38 +1024,67 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
              } == resp
     end
 
-    test "should require enabled and the frequency in the request", %{
+    test "should change only whether the checks run periodically, keeping the frequency", %{
       conn: conn,
       api_spec: api_spec
     } do
-      for {body, missing_field} <- [
-            {%{enabled: true}, "frequency"},
-            {%{frequency: %{value: 5, unit: "minute"}}, "enabled"}
-          ] do
-        resp =
-          conn
-          |> put_req_header("content-type", "application/json")
-          |> put(~p"/api/v1/settings/checks_frequency", body)
-          |> json_response(:unprocessable_entity)
-          |> assert_response_schema("UnprocessableEntityV1", api_spec)
+      insert(:checks_frequency_settings, frequency: %Frequency{value: 6, unit: :hour})
 
-        assert %{
-                 errors: [
-                   %{
-                     detail: "Missing field: #{missing_field}",
-                     source: %{pointer: "/#{missing_field}"},
-                     title: "Invalid value"
-                   }
-                 ]
-               } == resp
-      end
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch(~p"/api/v1/settings/checks_frequency", %{enabled: false})
+        |> json_response(:ok)
+        |> assert_response_schema("ChecksFrequencySettingsV1", api_spec)
+
+      assert %{enabled: false, frequency: %{value: 6, unit: :hour}, enforced_from_env: false} ==
+               resp
+    end
+
+    test "should change only the frequency, keeping the periodic checks disabled", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert(:checks_frequency_settings,
+        enabled: false,
+        frequency: %Frequency{value: 6, unit: :hour}
+      )
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch(~p"/api/v1/settings/checks_frequency", %{frequency: %{value: 2, unit: "week"}})
+        |> json_response(:ok)
+        |> assert_response_schema("ChecksFrequencySettingsV1", api_spec)
+
+      assert %{enabled: false, frequency: %{value: 2, unit: :week}, enforced_from_env: false} ==
+               resp
+    end
+
+    test "should refuse an empty request", %{conn: conn, api_spec: api_spec} do
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch(~p"/api/v1/settings/checks_frequency", %{})
+        |> json_response(:unprocessable_entity)
+        |> assert_response_schema("UnprocessableEntityV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{
+                   detail: "Object property count 0 is less than minProperties: 1",
+                   source: %{pointer: "/"},
+                   title: "Invalid value"
+                 }
+               ]
+             } == resp
     end
 
     test "should refuse a null frequency", %{conn: conn, api_spec: api_spec} do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> put(~p"/api/v1/settings/checks_frequency", %{enabled: false, frequency: nil})
+        |> patch(~p"/api/v1/settings/checks_frequency", %{enabled: false, frequency: nil})
         |> json_response(:unprocessable_entity)
         |> assert_response_schema("UnprocessableEntityV1", api_spec)
 
@@ -1230,7 +1262,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
          } do
       conn
       |> put_req_header("content-type", "application/json")
-      |> put(~p"/api/v1/settings/checks_frequency", %{
+      |> patch(~p"/api/v1/settings/checks_frequency", %{
         enabled: true,
         frequency: %{value: 1, unit: "hour"}
       })
@@ -1330,7 +1362,7 @@ defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> put(~p"/api/v1/settings/checks_frequency", %{
+        |> patch(~p"/api/v1/settings/checks_frequency", %{
           enabled: true,
           frequency: %{value: 1, unit: "hour"}
         })
