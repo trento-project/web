@@ -124,23 +124,27 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     fn multi ->
       cluster = Repo.get!(ClusterReadModel, id)
 
-      health_details =
-        type
-        |> maybe_get_default_health_details(cluster.health_details)
-        |> StructHelper.to_map()
+      params = %{
+        name: name,
+        sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
+        provider: provider,
+        type: type,
+        resources_number: resources_number,
+        hosts_number: hosts_number,
+        details: details,
+        state: state
+      }
 
-      changeset =
-        ClusterReadModel.changeset(cluster, %{
-          name: name,
-          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
-          provider: provider,
-          type: type,
-          resources_number: resources_number,
-          hosts_number: hosts_number,
-          details: details,
-          health_details: health_details,
-          state: state
-        })
+      params =
+        case maybe_get_default_health_details(type, cluster.health_details) do
+          :keep ->
+            params
+
+          health_details ->
+            Map.put(params, :health_details, StructHelper.to_map(health_details))
+        end
+
+      changeset = ClusterReadModel.changeset(cluster, params)
 
       Ecto.Multi.update(multi, :cluster, changeset)
     end
@@ -369,14 +373,27 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     |> Map.new(fn {key, value} -> {key, %{value: value}} end)
   end
 
-  defp maybe_get_default_health_details(:ascs_ers, nil),
+  defp maybe_get_default_health_details(
+         :ascs_ers,
+         %AscsErsClusterHealthDetails{} = previous_health_details
+       ),
+       do: previous_health_details
+
+  defp maybe_get_default_health_details(:ascs_ers, _),
     do: %AscsErsClusterHealthDetails{
       checks_health: %HealthValueDetails{value: Health.unknown()},
       sbd_health: %HealthValueDetails{value: Health.unknown()},
       distributed_health: %HealthValueDetails{value: Health.unknown()}
     }
 
-  defp maybe_get_default_health_details(new_type, nil)
+  defp maybe_get_default_health_details(
+         new_type,
+         %HanaClusterHealthDetails{} = previous_health_details
+       )
+       when new_type in [:hana_scale_up, :hana_scale_out],
+       do: previous_health_details
+
+  defp maybe_get_default_health_details(new_type, _)
        when new_type in [:hana_scale_up, :hana_scale_out],
        do: %HanaClusterHealthDetails{
          checks_health: %HealthValueDetails{value: Health.unknown()},
@@ -384,8 +401,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
          replication_health: %HealthValueDetails{value: Health.unknown()}
        }
 
-  defp maybe_get_default_health_details(_new_type, previous_health_details),
-    do: previous_health_details
+  defp maybe_get_default_health_details(_new_type, _previous_health_details), do: :keep
 
   defp health_details_update_query(cluster_id, value_path, value) do
     from(

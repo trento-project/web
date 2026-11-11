@@ -385,6 +385,134 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         assert exp_health_details == cluster_projection.health_details
       end
     end
+
+    @scenarios [
+      %{
+        name: "Hana to ASCS/ERS",
+        cluster_type_fn: &cluster_make_hana/1,
+        event_type_fn: &cluster_details_updated_event_make_ascs_ers/1,
+        exp_health_details_module: AscsErsClusterHealthDetails,
+        exp_health_details_fields: [:checks_health, :sbd_health, :distributed_health]
+      },
+      %{
+        name: "ASCS/ERS to Hana",
+        cluster_type_fn: &cluster_make_ascs_ers/1,
+        event_type_fn: &cluster_details_updated_event_make_hana/1,
+        exp_health_details_module: HanaClusterHealthDetails,
+        exp_health_details_fields: [:checks_health, :sbd_health, :replication_health]
+      }
+    ]
+    for scenario <- @scenarios do
+      @scenario scenario
+
+      test "should set default health details after a cluster details update from #{scenario.name}" do
+        %{id: cluster_id} =
+          :cluster
+          |> build()
+          |> @scenario.cluster_type_fn.()
+          |> insert()
+
+        event =
+          :cluster_details_updated_event
+          |> build(cluster_id: cluster_id)
+          |> @scenario.event_type_fn.()
+
+        ProjectorTestHelper.project(
+          ClusterProjector,
+          event,
+          "cluster_projector"
+        )
+
+        exp_health_details =
+          struct!(
+            @scenario.exp_health_details_module,
+            Map.new(@scenario.exp_health_details_fields, fn k ->
+              {k, %HealthValueDetails{value: Health.unknown()}}
+            end)
+          )
+
+        assert exp_health_details == Repo.get!(ClusterReadModel, cluster_id).health_details
+      end
+    end
+
+    for type_without_details <- [ClusterType.unknown(), ClusterType.hana_ascs_ers()] do
+      @type_without_details type_without_details
+
+      test "should keep health details when an established Hana cluster becomes #{type_without_details}" do
+        %{id: cluster_id, health_details: original_health_details} =
+          :cluster
+          |> build()
+          |> cluster_make_hana()
+          |> insert()
+
+        event =
+          build(:cluster_details_updated_event,
+            cluster_id: cluster_id,
+            type: @type_without_details,
+            details: nil
+          )
+
+        ProjectorTestHelper.project(
+          ClusterProjector,
+          event,
+          "cluster_projector"
+        )
+
+        assert %ClusterReadModel{
+                 type: @type_without_details,
+                 health_details: ^original_health_details
+               } = Repo.get!(ClusterReadModel, cluster_id)
+      end
+    end
+
+    test "should restore the original health details when a Hana cluster goes unknown and back" do
+      %{id: cluster_id, health_details: original_health_details} =
+        :cluster
+        |> build()
+        |> cluster_make_hana()
+        |> insert()
+
+      ProjectorTestHelper.project(
+        ClusterProjector,
+        build(:cluster_details_updated_event,
+          cluster_id: cluster_id,
+          type: ClusterType.unknown(),
+          details: nil
+        ),
+        "cluster_projector"
+      )
+
+      ProjectorTestHelper.project(
+        ClusterProjector,
+        :cluster_details_updated_event
+        |> build(cluster_id: cluster_id)
+        |> cluster_details_updated_event_make_hana(),
+        "cluster_projector"
+      )
+
+      assert original_health_details == Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
+
+    test "should keep health details on a Hana scale up to scale out change" do
+      %{id: cluster_id, health_details: original_health_details} =
+        :cluster
+        |> build()
+        |> cluster_make_hana(%{type: ClusterType.hana_scale_up()})
+        |> insert()
+
+      event =
+        :cluster_details_updated_event
+        |> build(cluster_id: cluster_id)
+        |> cluster_details_updated_event_make_hana(%{type: ClusterType.hana_scale_out()})
+
+      ProjectorTestHelper.project(
+        ClusterProjector,
+        event,
+        "cluster_projector"
+      )
+
+      assert original_health_details == Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
   end
 
   describe "Individual health change" do
