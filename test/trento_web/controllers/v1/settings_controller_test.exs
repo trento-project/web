@@ -1358,7 +1358,7 @@ defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
     test "should return the frequency set in the environment", %{conn: conn, api_spec: api_spec} do
       for {env_value, enabled, frequency} <- [
             {%Frequency{value: 1, unit: :week}, true, %{value: 1, unit: :week}},
-            {:disabled, false, %{value: 5, unit: :minute}}
+            {:disabled, false, nil}
           ] do
         Application.put_env(:trento, :checks_frequency, env_value)
 

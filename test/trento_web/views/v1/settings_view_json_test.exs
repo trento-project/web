@@ -53,5 +53,16 @@ defmodule TrentoWeb.V1.SettingsJSONTest do
       assert %{enabled: true, frequency: %{value: 6, unit: :hour}, enforced_from_env: true} ==
                SettingsJSON.checks_frequency_settings(%{checks_frequency_settings: settings})
     end
+
+    test "should render a null frequency when the environment disables the checks" do
+      settings = %ChecksFrequencySettings{
+        enabled: false,
+        frequency: nil,
+        enforced_from_env: true
+      }
+
+      assert %{enabled: false, frequency: nil, enforced_from_env: true} ==
+               SettingsJSON.checks_frequency_settings(%{checks_frequency_settings: settings})
+    end
   end
 end

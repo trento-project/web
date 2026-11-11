@@ -572,7 +572,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
               "Whether the checks run periodically. When false, the frequency is kept for when they are enabled again.",
             example: true
           },
-          frequency: ChecksFrequency,
+          frequency: %Schema{
+            description:
+              "How often the checks run periodically. Null when the environment disables the checks.",
+            nullable: true,
+            oneOf: [ChecksFrequency]
+          },
           enforced_from_env: %Schema{
             type: :boolean,
             description:

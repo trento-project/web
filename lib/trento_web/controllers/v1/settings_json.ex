@@ -84,7 +84,7 @@ defmodule TrentoWeb.V1.SettingsJSON do
       }),
       do: %{
         enabled: enabled,
-        frequency: Map.take(frequency, [:value, :unit]),
+        frequency: frequency && Map.take(frequency, [:value, :unit]),
         enforced_from_env: enforced_from_env
       }
 end
