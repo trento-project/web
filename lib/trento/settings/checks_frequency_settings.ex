@@ -5,7 +5,8 @@ defmodule Trento.Settings.ChecksFrequencySettings do
   @moduledoc """
   ChecksFrequencySettings is the STI projection of the global checks frequency.
 
-  A `nil` frequency means that the checks do not run periodically.
+  When `enabled` is false the checks do not run periodically. The frequency stays saved, so
+  enabling the checks again restores it.
   """
 
   use Ecto.Schema
@@ -19,6 +20,8 @@ defmodule Trento.Settings.ChecksFrequencySettings do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
+    field :enabled, :boolean, source: :checks_frequency_enabled
+
     embeds_one :frequency, Frequency,
       source: :checks_frequency,
       on_replace: :update
@@ -32,8 +35,9 @@ defmodule Trento.Settings.ChecksFrequencySettings do
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(settings, attrs) do
     settings
-    |> cast(attrs, [])
-    |> cast_embed(:frequency)
+    |> cast(attrs, [:enabled])
+    |> validate_required([:enabled])
+    |> cast_embed(:frequency, required: true)
     |> sti_changes()
     |> unique_constraint(:type)
   end

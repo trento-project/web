@@ -1515,6 +1515,7 @@ defmodule Trento.Factory do
   def checks_frequency_settings_factory do
     %ChecksFrequencySettings{
       type: :checks_frequency_settings,
+      enabled: true,
       frequency: %Frequency{value: 5, unit: :minute}
     }
   end

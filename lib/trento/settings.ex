@@ -61,7 +61,8 @@ defmodule Trento.Settings do
         }
 
   @type checks_frequency_setting_update_t :: %{
-          frequency: %{value: pos_integer(), unit: FrequencyUnit.t()} | nil
+          enabled: boolean(),
+          frequency: %{value: pos_integer(), unit: FrequencyUnit.t()}
         }
 
   @alerting_settings_default_env [
@@ -247,9 +248,10 @@ defmodule Trento.Settings do
   # Checks frequency settings
 
   @doc """
-  Returns the global checks frequency, a `nil` frequency meaning that the checks do not
-  run periodically. The frequency set in the environment (CHECKS_INTERVAL) wins over the
-  saved one. When neither is set, the checks run every 5 minutes.
+  Returns the global checks frequency settings: whether the checks run periodically, and how
+  often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
+  disables the checks when it is `disabled`. When neither is set, the checks run every
+  5 minutes.
   """
   @spec get_checks_frequency_settings() :: {:ok, ChecksFrequencySettings.t()}
   def get_checks_frequency_settings do
@@ -258,10 +260,16 @@ defmodule Trento.Settings do
         {:ok, get_current_checks_frequency_settings()}
 
       :disabled ->
-        {:ok, %ChecksFrequencySettings{frequency: nil, enforced_from_env: true}}
+        {:ok,
+         %ChecksFrequencySettings{
+           enabled: false,
+           frequency: Frequency.default(),
+           enforced_from_env: true
+         }}
 
       %Frequency{} = frequency ->
-        {:ok, %ChecksFrequencySettings{frequency: frequency, enforced_from_env: true}}
+        {:ok,
+         %ChecksFrequencySettings{enabled: true, frequency: frequency, enforced_from_env: true}}
     end
   end
 
@@ -269,13 +277,13 @@ defmodule Trento.Settings do
           {:ok, ChecksFrequencySettings.t()}
           | {:error, :checks_frequency_settings_enforced}
           | {:error, Ecto.Changeset.t()}
-  def update_checks_frequency_settings(%{frequency: _} = checks_frequency_settings) do
+  def update_checks_frequency_settings(%{enabled: _, frequency: _} = checks_frequency_settings) do
     case Application.get_env(:trento, :checks_frequency) do
       nil ->
         %ChecksFrequencySettings{}
         |> ChecksFrequencySettings.changeset(checks_frequency_settings)
         |> Repo.insert(
-          on_conflict: {:replace, [:frequency, :updated_at]},
+          on_conflict: {:replace, [:enabled, :frequency, :updated_at]},
           conflict_target: :type,
           returning: true
         )
@@ -362,7 +370,7 @@ defmodule Trento.Settings do
   defp get_current_checks_frequency_settings do
     case Repo.one(ChecksFrequencySettings.base_query()) do
       %ChecksFrequencySettings{} = settings -> settings
-      nil -> %ChecksFrequencySettings{frequency: Frequency.default()}
+      nil -> %ChecksFrequencySettings{enabled: true, frequency: Frequency.default()}
     end
   end
 end

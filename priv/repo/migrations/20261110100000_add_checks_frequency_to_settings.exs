@@ -6,6 +6,7 @@ defmodule Trento.Repo.Migrations.AddChecksFrequencyToSettings do
 
   def up do
     alter table(:settings) do
+      add :checks_frequency_enabled, :boolean
       add :checks_frequency, :map
     end
   end
@@ -14,6 +15,7 @@ defmodule Trento.Repo.Migrations.AddChecksFrequencyToSettings do
     execute "DELETE FROM settings WHERE type = 'checks_frequency_settings'"
 
     alter table(:settings) do
+      remove :checks_frequency_enabled
       remove :checks_frequency
     end
   end
