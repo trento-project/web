@@ -13,6 +13,14 @@ defmodule Trento.Repo.Migrations.AddChecksFrequencySettingsAbilities do
 
   def down do
     execute """
+    DELETE FROM users_abilities
+    WHERE ability_id IN (
+      SELECT id FROM abilities
+      WHERE name = 'all' AND resource = 'checks_frequency_settings'
+    )
+    """
+
+    execute """
     DELETE FROM abilities
     WHERE name = 'all' AND resource = 'checks_frequency_settings'
     """
