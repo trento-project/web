@@ -12,8 +12,8 @@ defmodule Trento.Clusters.Projections.AscsErsClusterHealthDetails do
   alias Trento.Support.HealthValueDetails
 
   deftype do
-    embeds_one :checks_health, HealthValueDetails
-    embeds_one :sbd_health, HealthValueDetails
-    embeds_one :distributed_health, HealthValueDetails
+    embeds_one :checks_health, HealthValueDetails, on_replace: :update
+    embeds_one :sbd_health, HealthValueDetails, on_replace: :update
+    embeds_one :distributed_health, HealthValueDetails, on_replace: :update
   end
 end
