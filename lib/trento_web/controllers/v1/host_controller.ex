@@ -8,6 +8,8 @@ defmodule TrentoWeb.V1.HostController do
 
   alias Trento.Repo
 
+  alias Trento.Support.OperationsHelper
+
   alias Trento.{
     Heartbeats,
     Hosts
@@ -16,6 +18,7 @@ defmodule TrentoWeb.V1.HostController do
   alias Trento.Infrastructure.Prometheus
 
   require Trento.Operations.Enums.HostOperations, as: HostOperations
+  require Trento.Operations.Enums.HostBulkOperations, as: HostBulkOperations
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -23,21 +26,31 @@ defmodule TrentoWeb.V1.HostController do
 
   alias TrentoWeb.OpenApi.V1.Schema.{
     BadRequest,
+    BulkOperationAccepted,
     Forbidden,
     NotFound,
     OperationAccepted,
     UnprocessableEntity
   }
 
-  alias TrentoWeb.OpenApi.V1.Schema.Operations.SaptuneSolutionApplyParams
+  alias TrentoWeb.OpenApi.V1.Schema.Operations.{
+    HostBulkRebootParams,
+    SaptuneSolutionApplyParams
+  }
 
   require Logger
+
+  @bulk_actions Map.new(
+                  HostBulkOperations.values(),
+                  &{OperationsHelper.to_bulk_operation(&1), &1}
+                )
+  @host_bulk_operations Map.keys(@bulk_actions)
 
   plug TrentoWeb.Plugs.LoadUserPlug when action not in [:heartbeat]
 
   plug Bodyguard.Plug.Authorize,
     policy: Trento.Hosts.Policy,
-    action: {Phoenix.Controller, :action_name},
+    action: {__MODULE__, :get_action},
     user: {Pow.Plug, :current_user},
     params: {__MODULE__, :get_policy_resource},
     fallback: TrentoWeb.FallbackController
@@ -48,10 +61,10 @@ defmodule TrentoWeb.V1.HostController do
        [
          policy: Trento.Operations.HostPolicy,
          resource: &__MODULE__.get_operation_host/1,
-         operation: &Phoenix.Controller.action_name/1,
+         operation: &__MODULE__.get_action/1,
          assigns_to: :host
        ]
-       when action in HostOperations.values()
+       when action in HostOperations.values() or action in @host_bulk_operations
 
   action_fallback TrentoWeb.FallbackController
 
@@ -274,6 +287,43 @@ defmodule TrentoWeb.V1.HostController do
     end
   end
 
+  @bulk_operations [
+    %{
+      operation: HostBulkOperations.reboot(),
+      summary: "Request host reboot bulk operation",
+      description:
+        "Request reboot operation to reboot multiple hosts at once. The request is forbidden if any of the hosts is not authorized to run the operation. Otherwise, an individual operation is requested for every host.",
+      request_body: HostBulkRebootParams
+    }
+  ]
+
+  for %{
+        operation: host_operation,
+        summary: summary,
+        description: description,
+        request_body: request_body
+      } <- @bulk_operations do
+    @bulk_action OperationsHelper.to_bulk_operation(host_operation)
+
+    operation @bulk_action,
+      summary: summary,
+      tags: ["Operations"],
+      description: description,
+      request_body:
+        {"Request containing the hosts and the parameters for the specified host bulk operation.",
+         "application/json", request_body, required: true},
+      responses: [
+        accepted: BulkOperationAccepted.response(),
+        not_found: NotFound.response(),
+        forbidden: Forbidden.response(),
+        unprocessable_entity: UnprocessableEntity.response()
+      ]
+
+    def unquote(@bulk_action)(conn, params) do
+      request_bulk_operation(conn, params)
+    end
+  end
+
   operation :query_metrics,
     summary: "Execute a PromQL query scoped to a host.",
     tags: ["Target Infrastructure", "MCP"],
@@ -367,7 +417,21 @@ defmodule TrentoWeb.V1.HostController do
     end
   end
 
+  def get_action(conn) do
+    action = Phoenix.Controller.action_name(conn)
+    Map.get(@bulk_actions, action, action)
+  end
+
   def get_policy_resource(_), do: HostReadModel
+
+  def get_operation_host(%{body_params: %{host_ids: host_ids}}) do
+    hosts =
+      host_ids
+      |> Hosts.get_hosts_by_ids()
+      |> Repo.preload([:cluster, :application_instances, :database_instances])
+
+    OperationsHelper.ensure_all_found(host_ids, hosts, "Hosts")
+  end
 
   def get_operation_host(%{params: %{id: id}}) do
     HostReadModel
@@ -384,6 +448,22 @@ defmodule TrentoWeb.V1.HostController do
       conn
       |> put_status(:accepted)
       |> json(%{operation_id: operation_id})
+    end
+  end
+
+  defp request_bulk_operation(%{assigns: %{operation: operation}} = conn, _) do
+    %{host_ids: host_ids} = OpenApiSpex.body_params(conn)
+
+    with {:ok, bulk_operation_id, operations, failed_requests} <-
+           Hosts.request_bulk_operation(operation, host_ids, %{}) do
+      conn
+      |> put_status(:accepted)
+      |> put_view(json: TrentoWeb.V1.OperationJSON)
+      |> render(:bulk_operation_accepted,
+        bulk_operation_id: bulk_operation_id,
+        operations: operations,
+        failed_requests: failed_requests
+      )
     end
   end
 end

@@ -9,6 +9,7 @@ defmodule TrentoWeb.Router do
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
   require Trento.Operations.Enums.ClusterBulkOperations, as: ClusterBulkOperations
+  require Trento.Operations.Enums.HostBulkOperations, as: HostBulkOperations
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
   require Trento.Operations.Enums.HostOperations, as: HostOperations
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
@@ -202,6 +203,12 @@ defmodule TrentoWeb.Router do
         # Every entry has a new path in the router
         for host_operation <- HostOperations.values() do
           post "/hosts/:id/operations/#{host_operation}", HostController, host_operation
+        end
+
+        for host_bulk_operation <- HostBulkOperations.values() do
+          post "/hosts/operations/#{host_bulk_operation}/bulk",
+               HostController,
+               OperationsHelper.to_bulk_operation(host_bulk_operation)
         end
 
         for cluster_operation <- ClusterOperations.values() do

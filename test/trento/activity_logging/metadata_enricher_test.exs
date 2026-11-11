@@ -471,6 +471,49 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
                 ]
               }} == MetadataEnricher.enrich(:cluster_bulk_operation_requested, metadata)
     end
+
+    test "should enrich every host bulk operation entry with the hostname" do
+      [
+        %{id: host_id_1, hostname: hostname_1},
+        %{id: host_id_2, hostname: hostname_2},
+        %{id: failed_host_id, hostname: failed_hostname}
+      ] = insert_list(3, :host)
+
+      unknown_host_id = Faker.UUID.v4()
+      unknown_failed_host_id = Faker.UUID.v4()
+
+      [operation_id_1, operation_id_2, unknown_operation_id] =
+        Enum.map(1..3, fn _ -> Faker.UUID.v4() end)
+
+      bulk_operation_id = Faker.UUID.v4()
+
+      metadata = %{
+        bulk_operation_id: bulk_operation_id,
+        operations: [
+          %{host_id: host_id_1, operation_id: operation_id_1},
+          %{host_id: host_id_2, operation_id: operation_id_2},
+          %{host_id: unknown_host_id, operation_id: unknown_operation_id}
+        ],
+        failed_requests: [
+          %{host_id: failed_host_id, reason: ":amqp_error"},
+          %{host_id: unknown_failed_host_id, reason: ":amqp_error"}
+        ]
+      }
+
+      assert {:ok,
+              %{
+                bulk_operation_id: bulk_operation_id,
+                operations: [
+                  %{host_id: host_id_1, operation_id: operation_id_1, hostname: hostname_1},
+                  %{host_id: host_id_2, operation_id: operation_id_2, hostname: hostname_2},
+                  %{host_id: unknown_host_id, operation_id: unknown_operation_id}
+                ],
+                failed_requests: [
+                  %{host_id: failed_host_id, reason: ":amqp_error", hostname: failed_hostname},
+                  %{host_id: unknown_failed_host_id, reason: ":amqp_error"}
+                ]
+              }} == MetadataEnricher.enrich(:host_bulk_operation_requested, metadata)
+    end
   end
 
   describe "metadata enrichment combination" do

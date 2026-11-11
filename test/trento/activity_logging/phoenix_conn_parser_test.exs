@@ -18,6 +18,11 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       activity: :cluster_bulk_operation_requested,
       operation: :cluster_maintenance_change,
       resource_field: :cluster_id
+    },
+    %{
+      activity: :host_bulk_operation_requested,
+      operation: :reboot,
+      resource_field: :host_id
     }
   ]
 

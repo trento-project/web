@@ -385,13 +385,7 @@ defmodule TrentoWeb.V1.ClusterController do
       |> Clusters.get_clusters_by_ids()
       |> Repo.preload(:hosts)
 
-    case cluster_ids -- Enum.map(clusters, & &1.id) do
-      [] ->
-        clusters
-
-      missing_cluster_ids ->
-        {:error, "Clusters not found: #{Enum.join(missing_cluster_ids, ", ")}."}
-    end
+    OperationsHelper.ensure_all_found(cluster_ids, clusters, "Clusters")
   end
 
   def get_operation_cluster(_), do: nil
@@ -424,14 +418,12 @@ defmodule TrentoWeb.V1.ClusterController do
            Clusters.request_bulk_operation(operation, cluster_ids, params) do
       conn
       |> put_status(:accepted)
-      |> json(%{
+      |> put_view(json: TrentoWeb.V1.OperationJSON)
+      |> render(:bulk_operation_accepted,
         bulk_operation_id: bulk_operation_id,
         operations: operations,
-        failed_requests:
-          Enum.map(failed_requests, fn %{reason: reason} = failed_request ->
-            %{failed_request | reason: inspect(reason)}
-          end)
-      })
+        failed_requests: failed_requests
+      )
     end
   end
 

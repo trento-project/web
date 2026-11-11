@@ -108,4 +108,19 @@ defmodule Trento.Support.OperationsHelperTest do
                OperationsHelper.to_bulk_operation([:maintenance, :cluster_resource_refresh])
     end
   end
+
+  describe "ensure_all_found" do
+    test "should return the resources when all the requested ids are found" do
+      resources = [%{id: "id1"}, %{id: "id2"}]
+
+      assert resources == OperationsHelper.ensure_all_found(["id1", "id2"], resources, "Hosts")
+    end
+
+    test "should return an error with the missing ids when some resources are not found" do
+      resources = [%{id: "id1"}]
+
+      assert {:error, "Hosts not found: id2, id3."} ==
+               OperationsHelper.ensure_all_found(["id1", "id2", "id3"], resources, "Hosts")
+    end
+  end
 end
