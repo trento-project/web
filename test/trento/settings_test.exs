@@ -1179,6 +1179,36 @@ defmodule Trento.SettingsTest do
       assert [_] = Repo.all(ChecksFrequencySettings.base_query())
     end
 
+    test "should enable the periodic checks again with the saved frequency" do
+      insert(:checks_frequency_settings,
+        enabled: false,
+        frequency: %Frequency{value: 6, unit: :hour}
+      )
+
+      assert {:ok,
+              %ChecksFrequencySettings{
+                enabled: true,
+                frequency: %Frequency{value: 6, unit: :hour}
+              }} = Settings.update_checks_frequency_settings(%{enabled: true})
+
+      assert {:ok,
+              %ChecksFrequencySettings{
+                enabled: true,
+                frequency: %Frequency{value: 6, unit: :hour}
+              }} = Settings.get_checks_frequency_settings()
+    end
+
+    test "should change only the frequency, with the periodic checks enabled, when nothing is saved" do
+      assert {:ok,
+              %ChecksFrequencySettings{
+                enabled: true,
+                frequency: %Frequency{value: 6, unit: :hour}
+              }} =
+               Settings.update_checks_frequency_settings(%{frequency: %{value: 6, unit: :hour}})
+
+      assert [_] = Repo.all(ChecksFrequencySettings.base_query())
+    end
+
     test "should refuse changing only the unit to one that does not allow the saved value" do
       insert(:checks_frequency_settings, frequency: %Frequency{value: 1, unit: :hour})
 

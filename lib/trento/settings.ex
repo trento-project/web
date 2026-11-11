@@ -284,20 +284,10 @@ defmodule Trento.Settings do
   def update_checks_frequency_settings(checks_frequency_settings) do
     case Application.get_env(:trento, :checks_frequency) do
       nil ->
-        %Frequency{value: value, unit: unit} = Frequency.default()
-
-        given_fields =
-          Enum.filter([:enabled, :frequency], &Map.has_key?(checks_frequency_settings, &1))
-
-        %ChecksFrequencySettings{}
-        |> ChecksFrequencySettings.changeset(
-          Map.merge(
-            %{enabled: true, frequency: %{value: value, unit: unit}},
-            checks_frequency_settings
-          )
-        )
+        %ChecksFrequencySettings{enabled: true, frequency: Frequency.default()}
+        |> ChecksFrequencySettings.changeset(checks_frequency_settings)
         |> Repo.insert(
-          on_conflict: {:replace, given_fields ++ [:updated_at]},
+          on_conflict: {:replace, Map.keys(checks_frequency_settings) ++ [:updated_at]},
           conflict_target: :type,
           returning: true
         )
