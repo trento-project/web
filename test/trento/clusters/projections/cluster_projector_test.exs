@@ -536,13 +536,16 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       test "#{scenario.name} projects its change into the read model" do
         %{health_key: health_key} = @scenario
 
-        %{id: cluster_id} = insert(:cluster)
+        %{id: cluster_id, health_details: %{^health_key => %{value: current_health}}} =
+          insert(:cluster)
+
+        expected_health = Enum.random(Health.values() -- [current_health])
 
         event =
-          %{^health_key => expected_health} =
-          build(@scenario.event_factory,
-            cluster_id: cluster_id
-          )
+          build(@scenario.event_factory, [
+            {:cluster_id, cluster_id},
+            {health_key, expected_health}
+          ])
 
         ProjectorTestHelper.project(
           ClusterProjector,
@@ -579,17 +582,19 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       test "#{scenario.name} projects its change into the read model" do
         %{health_key: health_key} = @scenario
 
-        %{id: cluster_id} =
+        %{id: cluster_id, health_details: %{^health_key => %{value: current_health}}} =
           :cluster
           |> build()
           |> @scenario.cluster_type_fn.()
           |> insert()
 
+        expected_health = Enum.random(Health.values() -- [current_health])
+
         event =
-          %{^health_key => expected_health} =
-          build(@scenario.event_factory,
-            cluster_id: cluster_id
-          )
+          build(@scenario.event_factory, [
+            {:cluster_id, cluster_id},
+            {health_key, expected_health}
+          ])
 
         ProjectorTestHelper.project(
           ClusterProjector,
