@@ -575,6 +575,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           frequency: %Schema{
             description:
               "How often the checks run periodically. Null when the environment disables the checks.",
+            type: :object,
             nullable: true,
             oneOf: [ChecksFrequency]
           },
