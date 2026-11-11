@@ -9,12 +9,24 @@ defmodule Trento.ClustersTest do
   import Mox
 
   import Trento.Factory
+  import ExUnit.CaptureLog
 
   alias Trento.Clusters
 
+  alias Trento.Clusters.Cluster
   alias Trento.Clusters.ClusterEnrichmentData
 
   alias Trento.Clusters.Projections.ClusterReadModel
+
+  alias Trento.Clusters.Projections.AscsErsClusterHealthDetails,
+    as: AscsErsClusterHealthDetailsProjection
+
+  alias Trento.Clusters.Projections.HanaClusterHealthDetails,
+    as: HanaClusterHealthDetailsProjection
+
+  alias Trento.Clusters.ValueObjects.{AscsErsClusterHealthDetails, HanaClusterHealthDetails}
+
+  alias Trento.Support.HealthValueDetails
 
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
@@ -1411,6 +1423,189 @@ defmodule Trento.ClustersTest do
                    Faker.UUID.v4()
                  )
       end
+    end
+  end
+
+  describe "backfill_health_details/1" do
+    test "should fill the health details of a Hana cluster from the aggregate" do
+      %{id: cluster_id} = insert(:cluster, type: :hana_scale_up, health_details: nil)
+
+      load_aggregate = fn ^cluster_id ->
+        %Cluster{
+          cluster_id: cluster_id,
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
+            checks_health: :passing,
+            sbd_health: :warning,
+            replication_health: :critical
+          }
+        }
+      end
+
+      assert {:ok, 1} = Clusters.backfill_health_details(load_aggregate)
+
+      assert %HanaClusterHealthDetailsProjection{
+               checks_health: %HealthValueDetails{value: :passing},
+               sbd_health: %HealthValueDetails{value: :warning},
+               replication_health: %HealthValueDetails{value: :critical}
+             } = Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
+
+    test "should fill the health details of an ASCS/ERS cluster from the aggregate" do
+      %{id: cluster_id} = insert(:cluster, type: :ascs_ers, health_details: nil)
+
+      load_aggregate = fn ^cluster_id ->
+        %Cluster{
+          cluster_id: cluster_id,
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            checks_health: :unknown,
+            sbd_health: :passing,
+            distributed_health: :critical
+          }
+        }
+      end
+
+      assert {:ok, 1} = Clusters.backfill_health_details(load_aggregate)
+
+      assert %AscsErsClusterHealthDetailsProjection{
+               checks_health: %HealthValueDetails{value: :unknown},
+               sbd_health: %HealthValueDetails{value: :passing},
+               distributed_health: %HealthValueDetails{value: :critical}
+             } = Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
+
+    test "should fill deregistered clusters too" do
+      %{id: cluster_id} =
+        insert(:cluster,
+          type: :hana_scale_out,
+          health_details: nil,
+          deregistered_at: DateTime.utc_now()
+        )
+
+      load_aggregate = fn ^cluster_id ->
+        %Cluster{
+          cluster_id: cluster_id,
+          type: :hana_scale_out,
+          health_details: %HanaClusterHealthDetails{replication_health: :passing}
+        }
+      end
+
+      assert {:ok, 1} = Clusters.backfill_health_details(load_aggregate)
+
+      assert %HanaClusterHealthDetailsProjection{
+               replication_health: %HealthValueDetails{value: :passing}
+             } = Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
+
+    test "should keep the previous family details for a cluster of unknown type" do
+      %{id: cluster_id, health_details: nil} = insert(:cluster, type: :unknown)
+
+      load_aggregate = fn ^cluster_id ->
+        %Cluster{
+          cluster_id: cluster_id,
+          type: :unknown,
+          health_details: %HanaClusterHealthDetails{replication_health: :warning}
+        }
+      end
+
+      assert {:ok, 1} = Clusters.backfill_health_details(load_aggregate)
+
+      assert %ClusterReadModel{
+               type: :unknown,
+               health_details: %HanaClusterHealthDetailsProjection{
+                 replication_health: %HealthValueDetails{value: :warning}
+               }
+             } = Repo.get!(ClusterReadModel, cluster_id)
+    end
+
+    test "should skip clusters that already have health details" do
+      %{id: cluster_id, health_details: health_details} = insert(:cluster, type: :ascs_ers)
+
+      assert {:ok, 0} =
+               Clusters.backfill_health_details(fn _ ->
+                 flunk("should not load an aggregate")
+               end)
+
+      assert health_details == Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
+
+    test "should skip an aggregate whose health details belong to the other cluster family" do
+      %{id: cluster_id} = insert(:cluster, type: :ascs_ers, health_details: nil)
+
+      assert {:ok, 0} =
+               Clusters.backfill_health_details(fn ^cluster_id ->
+                 %Cluster{
+                   cluster_id: cluster_id,
+                   type: :ascs_ers,
+                   health_details: %HanaClusterHealthDetails{replication_health: :passing}
+                 }
+               end)
+
+      assert nil == Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
+
+    test "should skip and log a cluster whose aggregate load crashes in a linked task" do
+      %{id: crashing_cluster_id} = insert(:cluster, type: :hana_scale_up, health_details: nil)
+      %{id: cluster_id} = insert(:cluster, type: :hana_scale_up, health_details: nil)
+
+      load_aggregate = fn
+        ^crashing_cluster_id ->
+          fn -> raise "aggregate cannot be loaded" end
+          |> Task.async()
+          |> Task.await()
+
+        ^cluster_id ->
+          %Cluster{
+            cluster_id: cluster_id,
+            type: :hana_scale_up,
+            health_details: %HanaClusterHealthDetails{replication_health: :passing}
+          }
+      end
+
+      log =
+        capture_log(fn ->
+          assert {:ok, 1} = Clusters.backfill_health_details(load_aggregate)
+        end)
+
+      assert log =~ crashing_cluster_id
+      assert nil == Repo.get!(ClusterReadModel, crashing_cluster_id).health_details
+
+      assert %HanaClusterHealthDetailsProjection{} =
+               Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
+
+    test "should skip and log a cluster whose aggregate load times out" do
+      %{id: cluster_id} = insert(:cluster, type: :hana_scale_up, health_details: nil)
+
+      load_aggregate = fn ^cluster_id ->
+        Process.sleep(1_000)
+
+        %Cluster{
+          cluster_id: cluster_id,
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{replication_health: :passing}
+        }
+      end
+
+      log =
+        capture_log(fn ->
+          assert {:ok, 0} = Clusters.backfill_health_details(load_aggregate, timeout: 100)
+        end)
+
+      assert log =~ cluster_id
+      assert nil == Repo.get!(ClusterReadModel, cluster_id).health_details
+    end
+
+    test "should skip clusters whose aggregate has no health details" do
+      %{id: cluster_id} = insert(:cluster, type: :hana_scale_up, health_details: nil)
+
+      assert {:ok, 0} =
+               Clusters.backfill_health_details(fn ^cluster_id ->
+                 %Cluster{cluster_id: cluster_id, health_details: nil}
+               end)
+
+      assert nil == Repo.get!(ClusterReadModel, cluster_id).health_details
     end
   end
 end

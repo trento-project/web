@@ -23,7 +23,7 @@ defmodule Trento.Release do
     migrate()
     init_event_store()
     migrate_event_store()
-    repair_projections()
+    backfill_cluster_health_details()
     init_admin_user()
     init_default_api_key()
     init_default_activity_log_retention_time()
@@ -60,10 +60,18 @@ defmodule Trento.Release do
     :ok = EventStore.Tasks.Migrate.exec(config, [])
   end
 
-  def repair_projections do
+  def backfill_cluster_health_details do
     load_app()
 
-    Mix.Tasks.RepairProjections.run([])
+    Enum.each(
+      [:postgrex, :ecto, :ssl, :eventstore, :commanded],
+      &Application.ensure_all_started/1
+    )
+
+    Trento.Repo.start_link()
+    Trento.Commanded.start_link()
+
+    {:ok, _} = Trento.Clusters.backfill_health_details()
   end
 
   def rollback(repo, version) do

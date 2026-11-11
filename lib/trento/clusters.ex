@@ -24,6 +24,20 @@ defmodule Trento.Clusters do
 
   alias Trento.Clusters.Projections.ClusterReadModel
 
+  alias Trento.Clusters.Projections.AscsErsClusterHealthDetails,
+    as: AscsErsClusterHealthDetailsProjection
+
+  alias Trento.Clusters.Projections.HanaClusterHealthDetails,
+    as: HanaClusterHealthDetailsProjection
+
+  alias Trento.Clusters.Cluster
+
+  alias Trento.Clusters.ValueObjects.{AscsErsClusterHealthDetails, HanaClusterHealthDetails}
+
+  alias Trento.Support.HealthValueDetails
+
+  @aggregate_load_timeout 60_000
+
   alias Trento.Clusters.ClusterEnrichmentData
 
   alias Trento.Clusters.Commands.SelectChecks
@@ -252,6 +266,111 @@ defmodule Trento.Clusters do
   end
 
   def request_host_operation(_, _, _), do: {:error, :operation_not_found}
+
+  @doc """
+  Fill the health details of the clusters that have none yet, from the cluster
+  aggregate state. Clusters that already have health details are not touched,
+  so running it again is safe.
+
+  Each aggregate is loaded in its own unlinked task. A cluster whose aggregate
+  cannot be loaded in time is logged and skipped, so it never stops the others.
+  """
+  @spec backfill_health_details((String.t() -> Cluster.t()), keyword()) ::
+          {:ok, non_neg_integer()}
+  def backfill_health_details(load_aggregate \\ &load_cluster_aggregate/1, opts \\ []) do
+    timeout = Keyword.get(opts, :timeout, @aggregate_load_timeout)
+    {:ok, task_supervisor} = Task.Supervisor.start_link()
+
+    backfilled =
+      from(c in ClusterReadModel, where: is_nil(c.health_details))
+      |> Repo.all()
+      |> Enum.reduce(0, fn cluster, backfilled ->
+        case load_aggregate_isolated(task_supervisor, load_aggregate, cluster.id, timeout) do
+          {:ok, %Cluster{health_details: health_details}} ->
+            backfilled + backfill_cluster_health_details(cluster, health_details)
+
+          :error ->
+            backfilled
+        end
+      end)
+
+    Supervisor.stop(task_supervisor)
+
+    Logger.info("Backfilled the health details of #{backfilled} clusters")
+
+    {:ok, backfilled}
+  end
+
+  defp load_cluster_aggregate(cluster_id),
+    do: Trento.Commanded.aggregate_state(Cluster, cluster_id, @aggregate_load_timeout)
+
+  defp load_aggregate_isolated(task_supervisor, load_aggregate, cluster_id, timeout) do
+    task = Task.Supervisor.async_nolink(task_supervisor, fn -> load_aggregate.(cluster_id) end)
+
+    case Task.yield(task, timeout) || Task.shutdown(task, :brutal_kill) do
+      {:ok, %Cluster{} = cluster} ->
+        {:ok, cluster}
+
+      {:exit, reason} ->
+        Logger.error(
+          "Could not load the aggregate of cluster #{cluster_id} to backfill its health details: #{inspect(reason)}"
+        )
+
+        :error
+
+      nil ->
+        Logger.error(
+          "Timed out loading the aggregate of cluster #{cluster_id} to backfill its health details"
+        )
+
+        :error
+    end
+  end
+
+  defp backfill_cluster_health_details(%ClusterReadModel{type: type} = cluster, health_details) do
+    if health_details_fit_type?(type, health_details) do
+      cluster
+      |> Ecto.Changeset.change(health_details: to_health_details_projection(health_details))
+      |> Repo.update!()
+
+      1
+    else
+      0
+    end
+  end
+
+  defp health_details_fit_type?(_type, nil), do: false
+
+  defp health_details_fit_type?(type, %HanaClusterHealthDetails{})
+       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
+       do: true
+
+  defp health_details_fit_type?(ClusterType.ascs_ers(), %AscsErsClusterHealthDetails{}),
+    do: true
+
+  defp health_details_fit_type?(type, _)
+       when type in [
+              ClusterType.hana_scale_up(),
+              ClusterType.hana_scale_out(),
+              ClusterType.ascs_ers()
+            ],
+       do: false
+
+  defp health_details_fit_type?(_type_without_health_details, _), do: true
+
+  defp to_health_details_projection(%HanaClusterHealthDetails{} = health_details),
+    do: struct!(HanaClusterHealthDetailsProjection, wrap_health_values(health_details))
+
+  defp to_health_details_projection(%AscsErsClusterHealthDetails{} = health_details),
+    do: struct!(AscsErsClusterHealthDetailsProjection, wrap_health_values(health_details))
+
+  defp to_health_details_projection(_), do: nil
+
+  defp wrap_health_values(health_details) do
+    health_details
+    |> Map.from_struct()
+    |> Map.new(fn {key, value} -> {key, %HealthValueDetails{value: value}} end)
+  end
 
   defp managed?(%{id: resource_id, managed: managed}, resource_id), do: managed
   defp managed?(_, _), do: false
