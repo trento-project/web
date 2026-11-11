@@ -97,6 +97,10 @@ defmodule Trento.Checks.FrequencyTest do
       assert {:ok, :disabled} == Frequency.parse("disabled")
     end
 
+    test "should parse a missing value as no frequency" do
+      assert {:ok, nil} == Frequency.parse(nil)
+    end
+
     test "should parse the compact notation of the allowed frequencies" do
       for {notation, value, unit} <- [
             {"5m", 5, :minute},

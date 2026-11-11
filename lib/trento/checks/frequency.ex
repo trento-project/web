@@ -66,9 +66,10 @@ defmodule Trento.Checks.Frequency do
   Parses the compact notation of a frequency: a value followed by `m`, `h` or `w`, like
   `5m`, `6h` or `2w`, or a plain number of minutes matching an allowed frequency, like `60`.
   The frequency goes through the same validation as the other inputs. `disabled` means
-  that the checks do not run periodically.
+  that the checks do not run periodically, and a missing value gives `nil`.
   """
-  @spec parse(String.t()) :: {:ok, t() | :disabled} | {:error, :invalid_frequency}
+  @spec parse(String.t() | nil) :: {:ok, t() | :disabled | nil} | {:error, :invalid_frequency}
+  def parse(nil), do: {:ok, nil}
   def parse("disabled"), do: {:ok, :disabled}
 
   def parse(notation) do

@@ -220,22 +220,18 @@ if config_env() in [:prod, :demo] do
 
   # CHECKS_INTERVAL takes the compact notation of a frequency, see
   # Trento.Checks.Frequency.parse/1. An invalid value stops the boot.
+  checks_interval = System.get_env("CHECKS_INTERVAL")
+
   checks_frequency =
-    case System.get_env("CHECKS_INTERVAL") do
-      nil ->
-        nil
+    case Trento.Checks.Frequency.parse(checks_interval) do
+      {:ok, frequency} ->
+        frequency
 
-      checks_interval ->
-        case Trento.Checks.Frequency.parse(checks_interval) do
-          {:ok, frequency} ->
-            frequency
-
-          {:error, :invalid_frequency} ->
-            raise "Invalid value set for environment variable CHECKS_INTERVAL: " <>
-                    "#{inspect(checks_interval)}. Allowed values: " <>
-                    "#{Trento.Checks.Frequency.format_allowed()}, " <>
-                    "or the matching number of minutes, like 15 or 60."
-        end
+      {:error, :invalid_frequency} ->
+        raise "Invalid value set for environment variable CHECKS_INTERVAL: " <>
+                "#{inspect(checks_interval)}. Allowed values: " <>
+                "#{Trento.Checks.Frequency.format_allowed()}, " <>
+                "or the matching number of minutes, like 15 or 60."
     end
 
   config :trento, :checks_frequency, checks_frequency
