@@ -69,7 +69,7 @@ describe('Checks Frequency Settings saga', () => {
       const response = { ...payload, enforced_from_env: false };
 
       axiosMock
-        .onPut('/settings/checks_frequency', payload)
+        .onPatch('/settings/checks_frequency', payload)
         .reply(200, response);
 
       const dispatched = await recordSaga(updateChecksFrequencySettings, {
@@ -97,7 +97,7 @@ describe('Checks Frequency Settings saga', () => {
         };
 
         axiosMock
-          .onPut('/settings/checks_frequency', payload)
+          .onPatch('/settings/checks_frequency', payload)
           .reply(status, { errors });
 
         const dispatched = await recordSaga(updateChecksFrequencySettings, {
@@ -114,7 +114,7 @@ describe('Checks Frequency Settings saga', () => {
     it.each([403, 404, 500, 502, 504])(
       'should have generic errors on a failed update with an empty body (%s)',
       async (status) => {
-        axiosMock.onPut('/settings/checks_frequency').reply(status);
+        axiosMock.onPatch('/settings/checks_frequency').reply(status);
 
         const dispatched = await recordSaga(updateChecksFrequencySettings, {
           payload: { enabled: false, frequency: { value: 6, unit: 'hour' } },
@@ -153,7 +153,7 @@ describe('Checks Frequency Settings saga', () => {
 
       const frequency = { value: 6, unit: 'hour' };
       axiosMock
-        .onPut('/settings/checks_frequency', { enabled: true, frequency })
+        .onPatch('/settings/checks_frequency', { enabled: true, frequency })
         .reply(200, { enabled: true, frequency, enforced_from_env: false });
 
       store.dispatch(

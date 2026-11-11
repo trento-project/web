@@ -7,4 +7,4 @@ export const getSettings = () =>
   networkClient.get(`/settings/checks_frequency`);
 
 export const updateSettings = (settings) =>
-  networkClient.put(`/settings/checks_frequency`, settings);
+  networkClient.patch(`/settings/checks_frequency`, settings);
