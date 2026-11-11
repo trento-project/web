@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-27D71145.js"></script>
+    <script defer src="dist/sidebar_items-62418BBD.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -252,9 +252,9 @@ Trento Web
       </div>
 
         <div class="summary-synopsis"><p>Returns the global checks frequency settings: whether the checks run periodically, and how
-often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
-disables the checks when it is <code class="inline">disabled</code>. When neither is set, the checks run every
-5 minutes.</p></div>
+often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one. When
+it is <code class="inline">disabled</code>, the checks do not run and there is no frequency. When neither is set, the
+checks run every 5 minutes.</p></div>
 
     </div>
 
@@ -786,9 +786,9 @@ given keeps its current value.</p></div>
       </div>
 
 <p>Returns the global checks frequency settings: whether the checks run periodically, and how
-often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
-disables the checks when it is <code class="inline">disabled</code>. When neither is set, the checks run every
-5 minutes.</p>
+often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one. When
+it is <code class="inline">disabled</code>, the checks do not run and there is no frequency. When neither is set, the
+checks run every 5 minutes.</p>
   </section>
 </section>
 <section class="detail" id="get_installation_id/0">
@@ -980,7 +980,7 @@ disables the checks when it is <code class="inline">disabled</code>. When neithe
       <h1 class="signature" translate="no">update_checks_frequency_settings(checks_frequency_settings)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L284" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L279" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

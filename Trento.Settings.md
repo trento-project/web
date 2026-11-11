@@ -138,9 +138,9 @@ Provides a set of functions of settings related usecases.
 ```
 
 Returns the global checks frequency settings: whether the checks run periodically, and how
-often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
-disables the checks when it is `disabled`. When neither is set, the checks run every
-5 minutes.
+often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one. When
+it is `disabled`, the checks do not run and there is no frequency. When neither is set, the
+checks run every 5 minutes.
 
 # `get_installation_id`
 

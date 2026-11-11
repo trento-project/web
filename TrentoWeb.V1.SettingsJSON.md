@@ -7,6 +7,8 @@
 
 # `api_key_settings`
 
+# `checks_frequency_settings`
+
 # `public_key`
 
 # `public_keys`

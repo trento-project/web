@@ -23,6 +23,8 @@
 
 # `get_api_key_settings`
 
+# `get_checks_frequency_settings`
+
 # `get_policy_resource`
 
 # `get_public_keys`
@@ -112,6 +114,8 @@
 # `update_alerting_settings`
 
 # `update_api_key_settings`
+
+# `update_checks_frequency_settings`
 
 ---
 

@@ -6,6 +6,7 @@ Policy for the Settings resource
 User with the ability all:all can perform all actions
 User with the ability all:api_key_settings can generate a new api key.
 User with the ability all:activity_logs_settings can change activity logs settings.
+User with the ability all:checks_frequency_settings can change the checks frequency.
 
 # `authorize`
 
