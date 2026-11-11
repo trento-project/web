@@ -217,6 +217,10 @@ defmodule Trento.ActivityLog.ActivityCatalog do
           {:changing_alerting_settings, 200},
         {TrentoWeb.V1.SettingsController, :test_alerting_settings} =>
           {:testing_alerting_settings, :always},
+        {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
+          {:activity_log_settings_update, 200},
+        {TrentoWeb.V1.SettingsController, :update_checks_frequency_settings} =>
+          {:changing_checks_frequency_settings, 200},
         {TrentoWeb.V1.UsersController, :create} => {:user_creation, 201},
         {TrentoWeb.V1.UsersController, :patch} => {:user_modification, 200},
         {TrentoWeb.V1.UsersController, :put} => {:user_modification, 200},
@@ -234,10 +238,6 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {TrentoWeb.V1.HostController, :request_checks_execution} =>
           {:host_checks_execution_request, 202},
         {TrentoWeb.V1.HostController, :select_checks} => {:host_checks_selected, 202},
-        {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
-          {:activity_log_settings_update, 200},
-        {TrentoWeb.V1.SettingsController, :update_checks_frequency_settings} =>
-          {:changing_checks_frequency_settings, 200},
         {TrentoWeb.V1.HostController, :delete} => {:host_cleanup_requested, 204},
         {TrentoWeb.V1.SapSystemController, :delete_application_instance} =>
           {:sap_system_cleanup_requested, 204},
