@@ -975,6 +975,97 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       assert %{enabled: false, frequency: %{value: 6, unit: :hour}, enforced_from_env: false} ==
                resp
     end
+
+    test "should save the frequency, with the periodic checks enabled or disabled", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      for {enabled, frequency, expected_frequency} <- [
+            {true, %{value: 2, unit: "week"}, %{value: 2, unit: :week}},
+            {false, %{value: 6, unit: "hour"}, %{value: 6, unit: :hour}}
+          ] do
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> put(~p"/api/v1/settings/checks_frequency", %{enabled: enabled, frequency: frequency})
+          |> json_response(:ok)
+          |> assert_response_schema("ChecksFrequencySettingsV1", api_spec)
+
+        assert %{enabled: enabled, frequency: expected_frequency, enforced_from_env: false} ==
+                 resp
+      end
+    end
+
+    test "should not save a value that is not allowed for the unit", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put(~p"/api/v1/settings/checks_frequency", %{
+          enabled: true,
+          frequency: %{value: 2, unit: "hour"}
+        })
+        |> json_response(:unprocessable_entity)
+        |> assert_response_schema("UnprocessableEntityV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{
+                   detail: "must be one of 1, 6, 12, 24 when the unit is hour",
+                   source: %{pointer: "/frequency/value"},
+                   title: "Invalid value"
+                 }
+               ]
+             } == resp
+    end
+
+    test "should require enabled and the frequency in the request", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      for {body, missing_field} <- [
+            {%{enabled: true}, "frequency"},
+            {%{frequency: %{value: 5, unit: "minute"}}, "enabled"}
+          ] do
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> put(~p"/api/v1/settings/checks_frequency", body)
+          |> json_response(:unprocessable_entity)
+          |> assert_response_schema("UnprocessableEntityV1", api_spec)
+
+        assert %{
+                 errors: [
+                   %{
+                     detail: "Missing field: #{missing_field}",
+                     source: %{pointer: "/#{missing_field}"},
+                     title: "Invalid value"
+                   }
+                 ]
+               } == resp
+      end
+    end
+
+    test "should refuse a null frequency", %{conn: conn, api_spec: api_spec} do
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put(~p"/api/v1/settings/checks_frequency", %{enabled: false, frequency: nil})
+        |> json_response(:unprocessable_entity)
+        |> assert_response_schema("UnprocessableEntityV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{
+                   detail: "null value where object expected",
+                   source: %{pointer: "/frequency"},
+                   title: "Invalid value"
+                 }
+               ]
+             } == resp
+    end
   end
 
   describe "forbidden response" do
@@ -1131,6 +1222,21 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> json_response(:forbidden)
       |> assert_schema("ForbiddenV1", api_spec)
     end
+
+    test "should return forbidden when user tries to change the checks frequency without right abilities",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put(~p"/api/v1/settings/checks_frequency", %{
+        enabled: true,
+        frequency: %{value: 1, unit: "hour"}
+      })
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+    end
   end
 end
 
@@ -1213,6 +1319,32 @@ defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
 
         assert %{enabled: enabled, frequency: frequency, enforced_from_env: true} == resp
       end
+    end
+
+    test "should fail to change the frequency when the environment sets it", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      Application.put_env(:trento, :checks_frequency, %Frequency{value: 1, unit: :week})
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put(~p"/api/v1/settings/checks_frequency", %{
+          enabled: true,
+          frequency: %{value: 1, unit: "hour"}
+        })
+        |> json_response(:conflict)
+        |> assert_response_schema("ConflictV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{
+                   title: "Conflict has occurred",
+                   detail: "Checks frequency settings can not be set, enforced by ENV."
+                 }
+               ]
+             } == resp
     end
   end
 end

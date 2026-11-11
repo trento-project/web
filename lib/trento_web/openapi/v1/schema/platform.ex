@@ -585,4 +585,35 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       struct?: false
     )
   end
+
+  defmodule UpdateChecksFrequencySettingsRequest do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "UpdateChecksFrequencySettingsRequestV1",
+        description:
+          "Represents the request body for changing the global checks frequency settings.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          enabled: %Schema{
+            type: :boolean,
+            description:
+              "Whether the checks run periodically. When false, the frequency is kept for when they are enabled again."
+          },
+          frequency: ChecksFrequency
+        },
+        required: [:enabled, :frequency],
+        example: %{
+          enabled: true,
+          frequency: %{
+            value: 6,
+            unit: "hour"
+          }
+        }
+      },
+      struct?: false
+    )
+  end
 end
