@@ -1080,6 +1080,25 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
              } == resp
     end
 
+    test "should refuse unknown fields", %{conn: conn, api_spec: api_spec} do
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch(~p"/api/v1/settings/checks_frequency", %{enabled: false, id: Faker.UUID.v4()})
+        |> json_response(:unprocessable_entity)
+        |> assert_response_schema("UnprocessableEntityV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{
+                   detail: "Unexpected field: id",
+                   source: %{pointer: "/id"},
+                   title: "Invalid value"
+                 }
+               ]
+             } == resp
+    end
+
     test "should refuse a null frequency", %{conn: conn, api_spec: api_spec} do
       resp =
         conn
