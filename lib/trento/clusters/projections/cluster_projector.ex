@@ -302,17 +302,14 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   @impl true
   def after_update(%{cluster_id: cluster_id} = event, _metadata, %{
-        health_details: {1, [health_details]}
+        health_details: {1, [cluster]}
       })
       when is_struct(event, ClusterChecksHealthChanged) or
              is_struct(event, ClusterSbdHealthChanged) or
              is_struct(event, ClusterDistributedHealthChanged) or
              is_struct(event, ClusterReplicationHealthChanged) do
     message =
-      ClusterJSON.cluster_health_details_changed(%{
-        cluster_id: cluster_id,
-        health_details: health_details
-      })
+      ClusterJSON.cluster_health_details_changed(Map.put(cluster, :cluster_id, cluster_id))
 
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_health_details_changed", message)
   end
@@ -419,7 +416,12 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
           updated_at: ^DateTime.utc_now()
         ]
       ],
-      select: c.health_details
+      select: %{
+        health_details: c.health_details,
+        type: c.type,
+        selected_checks: c.selected_checks,
+        details: c.details
+      }
     )
   end
 end

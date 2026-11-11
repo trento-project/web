@@ -110,7 +110,10 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
       data =
         ClusterJSON.cluster_health_details_changed(%{
           cluster_id: id,
-          health_details: health_details_projection
+          health_details: health_details_projection,
+          type: :hana_scale_up,
+          selected_checks: [Faker.UUID.v4()],
+          details: %{sbd_devices: [%{device: "/dev/sdb", status: "healthy"}]}
         })
 
       expected_health_details =
@@ -119,6 +122,82 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
             do: {field, %{value: Map.fetch!(health_details_projection, field).value}}
 
       assert %{cluster_id: id, health_details: expected_health_details} == data
+    end
+  end
+
+  describe "not applicable health factors" do
+    test "should render checks health as not applicable when no checks are selected" do
+      cluster = build(:cluster, type: :hana_scale_up, selected_checks: [])
+
+      assert %{health_details: %{checks_health: %{value: :not_applicable}}} =
+               ClusterJSON.cluster(%{cluster: cluster})
+    end
+
+    test "should render SBD health as not applicable when the cluster has no SBD devices" do
+      for details <- [%{sbd_devices: []}, nil] do
+        cluster = build(:cluster, type: :ascs_ers, details: details)
+
+        assert %{health_details: %{sbd_health: %{value: :not_applicable}}} =
+                 ClusterJSON.cluster(%{cluster: cluster})
+      end
+    end
+
+    test "should render the stored values when checks are selected and SBD devices exist" do
+      %{health_details: health_details} =
+        cluster =
+        build(:cluster,
+          type: :hana_scale_up,
+          selected_checks: [Faker.UUID.v4()],
+          details: %{sbd_devices: [%{device: "/dev/sdb", status: "healthy"}]}
+        )
+
+      assert %{health_details: ^health_details} = ClusterJSON.cluster(%{cluster: cluster})
+    end
+
+    test "should render nil health details for a cluster of a type without health details" do
+      cluster =
+        build(:cluster,
+          type: :unknown,
+          health_details: build(:hana_cluster_health_details_projection)
+        )
+
+      assert %{health_details: nil} = ClusterJSON.cluster(%{cluster: cluster})
+    end
+
+    test "should apply not applicable in the health details changed payload" do
+      id = Faker.UUID.v4()
+
+      %{replication_health: %{value: replication_health}} =
+        health_details = build(:hana_cluster_health_details_projection)
+
+      assert %{
+               cluster_id: ^id,
+               health_details: %{
+                 checks_health: %{value: :not_applicable},
+                 sbd_health: %{value: :not_applicable},
+                 replication_health: %{value: ^replication_health}
+               }
+             } =
+               ClusterJSON.cluster_health_details_changed(%{
+                 cluster_id: id,
+                 health_details: health_details,
+                 type: :hana_scale_up,
+                 selected_checks: [],
+                 details: %{sbd_devices: []}
+               })
+    end
+
+    test "should render nil health details in the changed payload when the row has none" do
+      id = Faker.UUID.v4()
+
+      assert %{cluster_id: ^id, health_details: nil} =
+               ClusterJSON.cluster_health_details_changed(%{
+                 cluster_id: id,
+                 health_details: nil,
+                 type: :hana_scale_up,
+                 selected_checks: [],
+                 details: nil
+               })
     end
   end
 end

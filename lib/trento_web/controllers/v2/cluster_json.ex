@@ -5,6 +5,8 @@ defmodule TrentoWeb.V2.ClusterJSON do
   alias Trento.Clusters.ValueObjects.SapInstance
   alias Trento.Support.StructHelper
 
+  @types_with_health_details [:hana_scale_up, :hana_scale_out, :ascs_ers]
+
   def clusters(%{clusters: clusters}), do: Enum.map(clusters, &cluster(%{cluster: &1}))
 
   def cluster(%{cluster: cluster}) do
@@ -15,6 +17,7 @@ defmodule TrentoWeb.V2.ClusterJSON do
     |> Map.delete(:__meta__)
     |> adapt_sids()
     |> adapt_resources()
+    |> adapt_health_details()
   end
 
   def cluster_registered(%{cluster: cluster}), do: Map.delete(cluster(%{cluster: cluster}), :tags)
@@ -34,12 +37,36 @@ defmodule TrentoWeb.V2.ClusterJSON do
 
   def cluster_health_details_changed(data) do
     data
+    |> adapt_health_details()
     |> StructHelper.to_atomized_map()
     |> Map.take([:cluster_id, :health_details])
   end
 
   def cluster_stale_changed(%{cluster: %{id: id, stale_at: stale_at}}),
     do: %{id: id, stale_at: stale_at}
+
+  defp adapt_health_details(%{type: type} = cluster)
+       when type not in @types_with_health_details,
+       do: %{cluster | health_details: nil}
+
+  defp adapt_health_details(%{health_details: nil} = cluster), do: cluster
+
+  defp adapt_health_details(
+         %{health_details: health_details, selected_checks: selected_checks, details: details} =
+           cluster
+       ) do
+    adapted_health_details =
+      health_details
+      |> maybe_not_applicable(:checks_health, selected_checks == [])
+      |> maybe_not_applicable(:sbd_health, Map.get(details || %{}, :sbd_devices) in [nil, []])
+
+    %{cluster | health_details: adapted_health_details}
+  end
+
+  defp maybe_not_applicable(health_details, field, true),
+    do: put_in(health_details, [Access.key!(field), Access.key!(:value)], :not_applicable)
+
+  defp maybe_not_applicable(health_details, _field, false), do: health_details
 
   defp adapt_sids(%{sap_instances: sap_instances} = cluster) do
     adapted_sap_instances =

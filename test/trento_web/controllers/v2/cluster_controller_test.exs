@@ -45,5 +45,31 @@ defmodule TrentoWeb.V2.ClusterControllerTest do
       |> json_response(200)
       |> assert_schema("PacemakerClustersCollectionV2", api_spec)
     end
+
+    test "should report not applicable health factors compliant with the schema", %{conn: conn} do
+      insert(:cluster,
+        type: :hana_scale_up,
+        selected_checks: [],
+        details: build(:hana_cluster_details, sbd_devices: [])
+      )
+
+      api_spec = ApiSpec.spec()
+
+      response =
+        conn
+        |> get("/api/v2/clusters")
+        |> json_response(200)
+
+      assert [
+               %{
+                 "health_details" => %{
+                   "checks_health" => %{"value" => "not_applicable"},
+                   "sbd_health" => %{"value" => "not_applicable"}
+                 }
+               }
+             ] = response
+
+      assert_schema(response, "PacemakerClustersCollectionV2", api_spec)
+    end
   end
 end
