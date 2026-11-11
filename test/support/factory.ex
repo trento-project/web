@@ -166,6 +166,7 @@ defmodule Trento.Factory do
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
+    ChecksFrequencySettings,
     InstallationSettings,
     SmlmSettings,
     SSOCertificatesSettings
@@ -174,6 +175,7 @@ defmodule Trento.Factory do
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
   alias Trento.ActivityLog.RetentionTime
   alias Trento.ActivityLog.SeverityLevel
+  alias Trento.Checks.Frequency
 
   alias Trento.Abilities.{
     Ability,
@@ -1507,6 +1509,14 @@ defmodule Trento.Factory do
     %ActivityLogSettings{
       type: :activity_log_settings,
       retention_time: build(:activity_log_retention_time)
+    }
+  end
+
+  def checks_frequency_settings_factory do
+    %ChecksFrequencySettings{
+      type: :checks_frequency_settings,
+      enabled: true,
+      frequency: %Frequency{value: 5, unit: :minute}
     }
   end
 

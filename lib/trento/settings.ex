@@ -6,6 +6,8 @@ defmodule Trento.Settings do
   Provides a set of functions of settings related usecases.
   """
 
+  alias Trento.Checks.Enums.FrequencyUnit
+  alias Trento.Checks.Frequency
   alias Trento.Repo
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
@@ -13,6 +15,7 @@ defmodule Trento.Settings do
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
+    ChecksFrequencySettings,
     InstallationSettings,
     SmlmSettings,
     SSOCertificatesSettings
@@ -55,6 +58,11 @@ defmodule Trento.Settings do
           optional(:smtp_port) => String.t() | integer,
           optional(:smtp_username) => String.t(),
           optional(:smtp_password) => String.t()
+        }
+
+  @type checks_frequency_setting_update_t :: %{
+          optional(:enabled) => boolean(),
+          optional(:frequency) => %{value: pos_integer(), unit: FrequencyUnit.t()}
         }
 
   @alerting_settings_default_env [
@@ -237,6 +245,58 @@ defmodule Trento.Settings do
     end
   end
 
+  # Checks frequency settings
+
+  @doc """
+  Returns the global checks frequency settings: whether the checks run periodically, and how
+  often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
+  disables the checks when it is `disabled`. When neither is set, the checks run every
+  5 minutes.
+  """
+  @spec get_checks_frequency_settings() :: {:ok, ChecksFrequencySettings.t()}
+  def get_checks_frequency_settings do
+    case Application.get_env(:trento, :checks_frequency) do
+      nil ->
+        {:ok, get_current_checks_frequency_settings()}
+
+      :disabled ->
+        {:ok,
+         %ChecksFrequencySettings{
+           enabled: false,
+           frequency: Frequency.default(),
+           enforced_from_env: true
+         }}
+
+      %Frequency{} = frequency ->
+        {:ok,
+         %ChecksFrequencySettings{enabled: true, frequency: frequency, enforced_from_env: true}}
+    end
+  end
+
+  @doc """
+  Changes whether the checks run periodically, the frequency, or both. A field that is not
+  given keeps its current value.
+  """
+  @spec update_checks_frequency_settings(checks_frequency_setting_update_t()) ::
+          {:ok, ChecksFrequencySettings.t()}
+          | {:error, :checks_frequency_settings_enforced}
+          | {:error, Ecto.Changeset.t()}
+  def update_checks_frequency_settings(checks_frequency_settings) do
+    case Application.get_env(:trento, :checks_frequency) do
+      nil ->
+        %ChecksFrequencySettings{enabled: true, frequency: Frequency.default()}
+        |> ChecksFrequencySettings.changeset(checks_frequency_settings)
+        |> Repo.insert(
+          on_conflict: {:replace, Map.keys(checks_frequency_settings) ++ [:updated_at]},
+          conflict_target: :type,
+          returning: true
+        )
+
+      _enforced ->
+        {:error, :checks_frequency_settings_enforced}
+    end
+  end
+
   defp alerting_settings_enforced_from_env? do
     Application.get_env(:trento, :alerting)
     |> Enum.map(fn {_key, val} -> val != nil end)
@@ -309,4 +369,12 @@ defmodule Trento.Settings do
   end
 
   defp log_error(result, _), do: result
+
+  # The saved settings, or the default of every 5 minutes when nothing is saved yet
+  defp get_current_checks_frequency_settings do
+    case Repo.one(ChecksFrequencySettings.base_query()) do
+      %ChecksFrequencySettings{} = settings -> settings
+      nil -> %ChecksFrequencySettings{enabled: true, frequency: Frequency.default()}
+    end
+  end
 end
