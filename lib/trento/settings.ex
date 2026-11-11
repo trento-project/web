@@ -61,8 +61,8 @@ defmodule Trento.Settings do
         }
 
   @type checks_frequency_setting_update_t :: %{
-          enabled: boolean(),
-          frequency: %{value: pos_integer(), unit: FrequencyUnit.t()}
+          optional(:enabled) => boolean(),
+          optional(:frequency) => %{value: pos_integer(), unit: FrequencyUnit.t()}
         }
 
   @alerting_settings_default_env [
@@ -273,15 +273,30 @@ defmodule Trento.Settings do
     end
   end
 
+  @doc """
+  Changes whether the checks run periodically, the frequency, or both. A field that is not
+  given keeps its current value.
+  """
   @spec update_checks_frequency_settings(checks_frequency_setting_update_t()) ::
           {:ok, ChecksFrequencySettings.t()}
           | {:error, :checks_frequency_settings_enforced}
           | {:error, Ecto.Changeset.t()}
-  def update_checks_frequency_settings(%{enabled: _, frequency: _} = checks_frequency_settings) do
+  def update_checks_frequency_settings(checks_frequency_settings) do
     case Application.get_env(:trento, :checks_frequency) do
       nil ->
+        %ChecksFrequencySettings{
+          enabled: enabled,
+          frequency: %Frequency{value: value, unit: unit}
+        } =
+          get_current_checks_frequency_settings()
+
         %ChecksFrequencySettings{}
-        |> ChecksFrequencySettings.changeset(checks_frequency_settings)
+        |> ChecksFrequencySettings.changeset(
+          Map.merge(
+            %{enabled: enabled, frequency: %{value: value, unit: unit}},
+            checks_frequency_settings
+          )
+        )
         |> Repo.insert(
           on_conflict: {:replace, [:enabled, :frequency, :updated_at]},
           conflict_target: :type,
