@@ -973,6 +973,313 @@ defmodule Trento.ClusterTest do
   end
 
   describe "cluster details" do
+    test "should emit the ASCS/ERS health events when a Hana cluster becomes ASCS/ERS" do
+      healthy_sbd_devices = [build(:sbd_device, status: SbdDeviceStatus.healthy())]
+
+      cluster_registered_event =
+        build(:cluster_registered_event,
+          health: Health.passing(),
+          type: ClusterType.hana_scale_up(),
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
+          details: build(:hana_cluster_details, sbd_devices: healthy_sbd_devices)
+        )
+
+      %{cluster_id: cluster_id} = cluster_registered_event
+
+      host_added_to_cluster_event = build(:host_added_to_cluster_event, cluster_id: cluster_id)
+
+      ascs_ers_details =
+        build(:ascs_ers_cluster_details,
+          sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: true),
+          sbd_devices: healthy_sbd_devices
+        )
+
+      assert_events_and_state(
+        [cluster_registered_event, host_added_to_cluster_event],
+        RegisterOnlineClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_added_to_cluster_event.host_id,
+          name: cluster_registered_event.name,
+          sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
+          provider: cluster_registered_event.provider,
+          type: ClusterType.ascs_ers(),
+          resources_number: cluster_registered_event.resources_number,
+          hosts_number: cluster_registered_event.hosts_number,
+          details: StructHelper.to_map(ascs_ers_details),
+          designated_controller: true,
+          state: cluster_registered_event.state
+        }),
+        [
+          %ClusterDetailsUpdated{
+            cluster_id: cluster_id,
+            name: cluster_registered_event.name,
+            sap_instances: cluster_registered_event.sap_instances,
+            provider: cluster_registered_event.provider,
+            type: ClusterType.ascs_ers(),
+            resources_number: cluster_registered_event.resources_number,
+            hosts_number: cluster_registered_event.hosts_number,
+            details: ascs_ers_details,
+            state: cluster_registered_event.state
+          },
+          %ClusterDistributedHealthChanged{
+            cluster_id: cluster_id,
+            distributed_health: Health.passing()
+          },
+          %ClusterSbdHealthChanged{cluster_id: cluster_id, sbd_health: Health.passing()}
+        ],
+        fn cluster ->
+          %Cluster{
+            type: :ascs_ers,
+            health_details: %AscsErsClusterHealthDetails{
+              distributed_health: :passing,
+              sbd_health: :passing
+            }
+          } = cluster
+        end
+      )
+    end
+
+    test "should emit the Hana health events when an ASCS/ERS cluster becomes Hana" do
+      healthy_sbd_devices = [build(:sbd_device, status: SbdDeviceStatus.healthy())]
+
+      cluster_registered_event =
+        build(:cluster_registered_event,
+          health: Health.passing(),
+          type: ClusterType.ascs_ers(),
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: true),
+              sbd_devices: healthy_sbd_devices
+            )
+        )
+
+      %{cluster_id: cluster_id} = cluster_registered_event
+
+      host_added_to_cluster_event = build(:host_added_to_cluster_event, cluster_id: cluster_id)
+
+      hana_details = build(:hana_cluster_details, sbd_devices: healthy_sbd_devices)
+
+      assert_events_and_state(
+        [cluster_registered_event, host_added_to_cluster_event],
+        RegisterOnlineClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_added_to_cluster_event.host_id,
+          name: cluster_registered_event.name,
+          sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
+          provider: cluster_registered_event.provider,
+          type: ClusterType.hana_scale_up(),
+          resources_number: cluster_registered_event.resources_number,
+          hosts_number: cluster_registered_event.hosts_number,
+          details: StructHelper.to_map(hana_details),
+          designated_controller: true,
+          state: cluster_registered_event.state
+        }),
+        [
+          %ClusterDetailsUpdated{
+            cluster_id: cluster_id,
+            name: cluster_registered_event.name,
+            sap_instances: cluster_registered_event.sap_instances,
+            provider: cluster_registered_event.provider,
+            type: ClusterType.hana_scale_up(),
+            resources_number: cluster_registered_event.resources_number,
+            hosts_number: cluster_registered_event.hosts_number,
+            details: hana_details,
+            state: cluster_registered_event.state
+          },
+          %ClusterReplicationHealthChanged{
+            cluster_id: cluster_id,
+            replication_health: Health.passing()
+          },
+          %ClusterSbdHealthChanged{cluster_id: cluster_id, sbd_health: Health.passing()}
+        ],
+        fn cluster ->
+          %Cluster{
+            type: :hana_scale_up,
+            health_details: %HanaClusterHealthDetails{
+              replication_health: :passing,
+              sbd_health: :passing
+            }
+          } = cluster
+        end
+      )
+    end
+
+    test "should keep health details when a Hana cluster goes unknown and back" do
+      hana_details =
+        build(:hana_cluster_details,
+          sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.healthy())]
+        )
+
+      registered_health_details = %HanaClusterHealthDetails{
+        replication_health: Health.passing(),
+        sbd_health: Health.passing()
+      }
+
+      cluster_registered_event =
+        build(:cluster_registered_event,
+          health: Health.passing(),
+          type: ClusterType.hana_scale_up(),
+          health_details: registered_health_details,
+          details: hana_details
+        )
+
+      %{cluster_id: cluster_id} = cluster_registered_event
+
+      host_added_to_cluster_event = build(:host_added_to_cluster_event, cluster_id: cluster_id)
+
+      went_unknown_event =
+        build(:cluster_details_updated_event,
+          cluster_id: cluster_id,
+          type: ClusterType.unknown(),
+          details: nil
+        )
+
+      assert_events_and_state(
+        [cluster_registered_event, host_added_to_cluster_event, went_unknown_event],
+        RegisterOnlineClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_added_to_cluster_event.host_id,
+          name: cluster_registered_event.name,
+          sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
+          provider: cluster_registered_event.provider,
+          type: ClusterType.hana_scale_up(),
+          resources_number: cluster_registered_event.resources_number,
+          hosts_number: cluster_registered_event.hosts_number,
+          details: StructHelper.to_map(hana_details),
+          designated_controller: true,
+          state: cluster_registered_event.state
+        }),
+        [
+          %ClusterDetailsUpdated{
+            cluster_id: cluster_id,
+            name: cluster_registered_event.name,
+            sap_instances: cluster_registered_event.sap_instances,
+            provider: cluster_registered_event.provider,
+            type: ClusterType.hana_scale_up(),
+            resources_number: cluster_registered_event.resources_number,
+            hosts_number: cluster_registered_event.hosts_number,
+            details: hana_details,
+            state: cluster_registered_event.state
+          }
+        ],
+        fn cluster ->
+          %Cluster{health_details: ^registered_health_details} = cluster
+        end
+      )
+    end
+
+    test "should load a stored history with a type round trip followed by an SBD health change" do
+      cluster_registered_event =
+        build(:cluster_registered_event,
+          type: ClusterType.hana_scale_up(),
+          health_details: %HanaClusterHealthDetails{replication_health: Health.passing()}
+        )
+
+      %{cluster_id: cluster_id} = cluster_registered_event
+
+      initial_events = [
+        cluster_registered_event,
+        build(:cluster_details_updated_event,
+          cluster_id: cluster_id,
+          type: ClusterType.unknown(),
+          details: nil
+        ),
+        build(:cluster_details_updated_event,
+          cluster_id: cluster_id,
+          type: ClusterType.hana_scale_up()
+        ),
+        %ClusterSbdHealthChanged{cluster_id: cluster_id, sbd_health: Health.critical()}
+      ]
+
+      assert_state(
+        initial_events,
+        %SelectChecks{cluster_id: cluster_id, checks: [Faker.UUID.v4()]},
+        fn cluster ->
+          %Cluster{
+            health_details: %HanaClusterHealthDetails{
+              replication_health: :passing,
+              sbd_health: :critical
+            }
+          } = cluster
+        end
+      )
+    end
+
+    test "should load a stored history with a family change followed by a checks health change" do
+      cluster_registered_event =
+        build(:cluster_registered_event,
+          type: ClusterType.hana_scale_up(),
+          health_details: %HanaClusterHealthDetails{replication_health: Health.passing()}
+        )
+
+      %{cluster_id: cluster_id} = cluster_registered_event
+
+      initial_events = [
+        cluster_registered_event,
+        build(:cluster_details_updated_event,
+          cluster_id: cluster_id,
+          type: ClusterType.ascs_ers(),
+          details: build(:ascs_ers_cluster_details)
+        ),
+        %ClusterChecksHealthChanged{cluster_id: cluster_id, checks_health: Health.critical()}
+      ]
+
+      assert_state(
+        initial_events,
+        %SelectChecks{cluster_id: cluster_id, checks: [Faker.UUID.v4()]},
+        fn cluster ->
+          %Cluster{
+            type: :ascs_ers,
+            health_details: %HanaClusterHealthDetails{
+              replication_health: :passing,
+              checks_health: :critical
+            }
+          } = cluster
+        end
+      )
+    end
+
+    test "should load a stored history with a family change followed by a legacy discovered health change" do
+      cluster_registered_event =
+        build(:cluster_registered_event,
+          type: ClusterType.hana_scale_up(),
+          health_details: %HanaClusterHealthDetails{replication_health: Health.passing()}
+        )
+
+      %{cluster_id: cluster_id} = cluster_registered_event
+
+      initial_events = [
+        cluster_registered_event,
+        build(:cluster_details_updated_event,
+          cluster_id: cluster_id,
+          type: ClusterType.ascs_ers(),
+          details: build(:ascs_ers_cluster_details)
+        ),
+        %ClusterDiscoveredHealthChanged{
+          cluster_id: cluster_id,
+          discovered_health: Health.critical()
+        }
+      ]
+
+      assert_state(
+        initial_events,
+        %SelectChecks{cluster_id: cluster_id, checks: [Faker.UUID.v4()]},
+        fn cluster ->
+          %Cluster{
+            type: :ascs_ers,
+            health_details: %AscsErsClusterHealthDetails{distributed_health: :critical}
+          } = cluster
+        end
+      )
+    end
+
     test "should update cluster details" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()

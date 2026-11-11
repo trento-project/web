@@ -537,7 +537,7 @@ defmodule Trento.Clusters.Cluster do
         }
       ) do
     %HanaClusterHealthDetails{} =
-      current_health_details = health_details || %HanaClusterHealthDetails{}
+      current_health_details = health_details_of_family(health_details, HanaClusterHealthDetails)
 
     %Cluster{
       cluster
@@ -555,7 +555,8 @@ defmodule Trento.Clusters.Cluster do
         }
       ) do
     %AscsErsClusterHealthDetails{} =
-      current_health_details = health_details || %AscsErsClusterHealthDetails{}
+      current_health_details =
+      health_details_of_family(health_details, AscsErsClusterHealthDetails)
 
     %Cluster{
       cluster
@@ -591,7 +592,7 @@ defmodule Trento.Clusters.Cluster do
       )
       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
     %HanaClusterHealthDetails{} =
-      current_health_details = health_details || %HanaClusterHealthDetails{}
+      current_health_details = health_details_of_family(health_details, HanaClusterHealthDetails)
 
     %Cluster{
       cluster
@@ -609,7 +610,8 @@ defmodule Trento.Clusters.Cluster do
         }
       ) do
     %AscsErsClusterHealthDetails{} =
-      current_health_details = health_details || %AscsErsClusterHealthDetails{}
+      current_health_details =
+      health_details_of_family(health_details, AscsErsClusterHealthDetails)
 
     %Cluster{
       cluster
@@ -997,6 +999,8 @@ defmodule Trento.Clusters.Cluster do
   defp maybe_emit_cluster_health_details_events(_, _), do: nil
 
   defp accumulate_cluster_health_events(cluster, health_details) do
+    cluster = drop_other_family_health_details(cluster, health_details)
+
     events = [
       maybe_emit_cluster_replication_health_changed_event(cluster, health_details),
       maybe_emit_cluster_distributed_health_changed_event(cluster, health_details),
@@ -1203,6 +1207,20 @@ defmodule Trento.Clusters.Cluster do
       key in [:checks_health, :sbd_health] and value == Health.unknown()
     end)
   end
+
+  defp health_details_of_family(%module{} = health_details, module), do: health_details
+  defp health_details_of_family(_, module), do: struct!(module)
+
+  defp drop_other_family_health_details(
+         %Cluster{health_details: %module{}} = cluster,
+         %module{}
+       ),
+       do: cluster
+
+  defp drop_other_family_health_details(%Cluster{} = cluster, %_{}),
+    do: %Cluster{cluster | health_details: nil}
+
+  defp drop_other_family_health_details(cluster, _), do: cluster
 
   defp maybe_emit_cluster_deregistered_event(
          %Cluster{cluster_id: cluster_id, hosts: []},
