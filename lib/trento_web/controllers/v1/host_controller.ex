@@ -430,13 +430,7 @@ defmodule TrentoWeb.V1.HostController do
       |> Hosts.get_hosts_by_ids()
       |> Repo.preload([:cluster, :application_instances, :database_instances])
 
-    case host_ids -- Enum.map(hosts, & &1.id) do
-      [] ->
-        hosts
-
-      missing_host_ids ->
-        {:error, "Hosts not found: #{Enum.join(missing_host_ids, ", ")}."}
-    end
+    OperationsHelper.ensure_all_found(host_ids, hosts, "Hosts")
   end
 
   def get_operation_host(%{params: %{id: id}}) do

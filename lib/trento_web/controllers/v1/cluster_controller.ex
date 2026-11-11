@@ -385,13 +385,7 @@ defmodule TrentoWeb.V1.ClusterController do
       |> Clusters.get_clusters_by_ids()
       |> Repo.preload(:hosts)
 
-    case cluster_ids -- Enum.map(clusters, & &1.id) do
-      [] ->
-        clusters
-
-      missing_cluster_ids ->
-        {:error, "Clusters not found: #{Enum.join(missing_cluster_ids, ", ")}."}
-    end
+    OperationsHelper.ensure_all_found(cluster_ids, clusters, "Clusters")
   end
 
   def get_operation_cluster(_), do: nil

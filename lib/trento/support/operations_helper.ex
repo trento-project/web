@@ -83,6 +83,21 @@ defmodule Trento.Support.OperationsHelper do
     end
   end
 
+  @spec ensure_all_found(
+          resource_ids :: [String.t()],
+          resources :: [struct()],
+          label :: String.t()
+        ) :: [struct()] | {:error, String.t()}
+  def ensure_all_found(resource_ids, resources, label) do
+    case resource_ids -- Enum.map(resources, & &1.id) do
+      [] ->
+        resources
+
+      missing_ids ->
+        {:error, "#{label} not found: #{Enum.join(missing_ids, ", ")}."}
+    end
+  end
+
   @spec build_error(message :: String.t(), metadata :: [metadata()]) :: forbidden_error
   def build_error(message, metadata \\ []), do: %{message: message, metadata: metadata}
 
