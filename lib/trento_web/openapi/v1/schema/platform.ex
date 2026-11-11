@@ -9,6 +9,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
   require Trento.Checks.Enums.FrequencyUnit, as: FrequencyUnit
 
+  alias Trento.Checks.Frequency
+
   defmodule ApiKeySettings do
     @moduledoc false
     OpenApiSpex.schema(
@@ -517,6 +519,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
   defmodule ChecksFrequency do
     @moduledoc false
 
+    # Like "5, 15, 30 minutes; 1, 6, 12, 24 hours; 1, 2, 4 weeks", from the allowed frequencies
+    @allowed_frequencies Frequency.allowed()
+                         |> Enum.chunk_by(& &1.unit)
+                         |> Enum.map_join("; ", fn [%Frequency{unit: unit} | _] = frequencies ->
+                           "#{Enum.map_join(frequencies, ", ", & &1.value)} #{unit}s"
+                         end)
+
     OpenApiSpex.schema(
       %{
         title: "ChecksFrequencyV1",
@@ -531,8 +540,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         properties: %{
           value: %Schema{
             type: :integer,
-            description:
-              "Number of units between two runs: 5, 15 or 30 minutes, 1, 6, 12 or 24 hours, or 1, 2 or 4 weeks.",
+            description: "Number of units between two runs. Allowed: #{@allowed_frequencies}.",
             minimum: 1
           },
           unit: %Schema{
