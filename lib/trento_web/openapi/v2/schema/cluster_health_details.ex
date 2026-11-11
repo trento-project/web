@@ -17,6 +17,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.ClusterHealthDetails do
       oneOf: [
         %OpenApiSpex.Schema{
           description: "Health details for clusters of type `hana_scale_up` and `hana_scale_out`",
+          type: :object,
           properties: %{
             checks_health: HealthValueDetails,
             sbd_health: HealthValueDetails,
@@ -26,6 +27,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.ClusterHealthDetails do
         },
         %OpenApiSpex.Schema{
           description: "Health details for clusters of type `ascs_ers`",
+          type: :object,
           properties: %{
             checks_health: HealthValueDetails,
             sbd_health: HealthValueDetails,

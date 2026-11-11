@@ -12,8 +12,8 @@ defmodule Trento.Clusters.Projections.HanaClusterHealthDetails do
   alias Trento.Support.HealthValueDetails
 
   deftype do
-    embeds_one :checks_health, HealthValueDetails
-    embeds_one :sbd_health, HealthValueDetails
-    embeds_one :replication_health, HealthValueDetails
+    embeds_one :checks_health, HealthValueDetails, on_replace: :update
+    embeds_one :sbd_health, HealthValueDetails, on_replace: :update
+    embeds_one :replication_health, HealthValueDetails, on_replace: :update
   end
 end
