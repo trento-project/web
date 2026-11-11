@@ -31,6 +31,18 @@ Provides a set of functions of settings related usecases.
 }
 ```
 
+# `checks_frequency_setting_update_t`
+
+```elixir
+@type checks_frequency_setting_update_t() :: %{
+  optional(:enabled) =&gt; boolean(),
+  optional(:frequency) =&gt; %{
+    value: pos_integer(),
+    unit: Trento.Checks.Enums.FrequencyUnit.t()
+  }
+}
+```
+
 # `smlm_settings_change_submission`
 
 ```elixir
@@ -118,6 +130,18 @@ Provides a set of functions of settings related usecases.
   {:ok, Trento.Settings.ApiKeySettings.t()} | {:error, any()}
 ```
 
+# `get_checks_frequency_settings`
+
+```elixir
+@spec get_checks_frequency_settings() ::
+  {:ok, Trento.Settings.ChecksFrequencySettings.t()}
+```
+
+Returns the global checks frequency settings: whether the checks run periodically, and how
+often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
+disables the checks when it is `disabled`. When neither is set, the checks run every
+5 minutes.
+
 # `get_installation_id`
 
 ```elixir
@@ -162,6 +186,18 @@ Provides a set of functions of settings related usecases.
 @spec update_api_key_settings(DateTime.t()) ::
   {:ok, Trento.Settings.ApiKeySettings.t()} | {:error, any()}
 ```
+
+# `update_checks_frequency_settings`
+
+```elixir
+@spec update_checks_frequency_settings(checks_frequency_setting_update_t()) ::
+  {:ok, Trento.Settings.ChecksFrequencySettings.t()}
+  | {:error, :checks_frequency_settings_enforced}
+  | {:error, Ecto.Changeset.t()}
+```
+
+Changes whether the checks run periodically, the frequency, or both. A field that is not
+given keeps its current value.
 
 ---
 

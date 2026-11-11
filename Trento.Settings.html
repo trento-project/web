@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-339F29C1.js"></script>
+    <script defer src="dist/sidebar_items-27D71145.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -153,6 +153,14 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#t:checks_frequency_setting_update_t/0" data-no-tooltip="" translate="no">checks_frequency_setting_update_t()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#t:smlm_settings_change_submission/0" data-no-tooltip="" translate="no">smlm_settings_change_submission()</a>
 
       </div>
@@ -239,6 +247,19 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#get_checks_frequency_settings/0" data-no-tooltip="" translate="no">get_checks_frequency_settings()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the global checks frequency settings: whether the checks run periodically, and how
+often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
+disables the checks when it is <code class="inline">disabled</code>. When neither is set, the checks run every
+5 minutes.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#get_installation_id/0" data-no-tooltip="" translate="no">get_installation_id()</a>
 
       </div>
@@ -285,6 +306,17 @@ Trento Web
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#update_checks_frequency_settings/1" data-no-tooltip="" translate="no">update_checks_frequency_settings(checks_frequency_settings)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Changes whether the checks run periodically, the frequency, or both. A field that is not
+given keeps its current value.</p></div>
+
+    </div>
+
 </div>
 
   </section>
@@ -309,7 +341,7 @@ Trento Web
       <h1 class="signature" translate="no">alerting_setting_set_t()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L40" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L43" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -345,7 +377,7 @@ Trento Web
       <h1 class="signature" translate="no">alerting_setting_update_t()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L50" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L53" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -371,6 +403,40 @@ Trento Web
 
   </section>
 </section>
+<section class="detail" id="t:checks_frequency_setting_update_t/0">
+
+  <div class="detail-header">
+    <a href="#t:checks_frequency_setting_update_t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">checks_frequency_setting_update_t()</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L63" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> checks_frequency_setting_update_t() :: %{
+  optional(:enabled) =&gt; <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">boolean</a>(),
+  optional(:frequency) =&gt; %{
+    value: <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">pos_integer</a>(),
+    unit: <a href="Trento.Checks.Enums.FrequencyUnit.html#t:t/0">Trento.Checks.Enums.FrequencyUnit.t</a>()
+  }
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="t:smlm_settings_change_submission/0">
 
   <div class="detail-header">
@@ -381,7 +447,7 @@ Trento Web
       <h1 class="signature" translate="no">smlm_settings_change_submission()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -414,7 +480,7 @@ Trento Web
       <h1 class="signature" translate="no">smlm_settings_save_submission()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L26" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L29" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -460,7 +526,7 @@ Trento Web
       <h1 class="signature" translate="no">change_activity_log_retention_period(value, unit)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L172" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L180" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -495,7 +561,7 @@ Trento Web
       <h1 class="signature" translate="no">change_smlm_settings(settings_submission, date_service \\ DateService)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L141" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L149" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -526,7 +592,7 @@ Trento Web
       <h1 class="signature" translate="no">clear_smlm_settings()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L150" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L158" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -554,7 +620,7 @@ Trento Web
       <h1 class="signature" translate="no">create_alerting_settings(alerting_settings)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L213" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L221" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -585,7 +651,7 @@ Trento Web
       <h1 class="signature" translate="no">create_api_key_settings(settings)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L80" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L88" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -614,7 +680,7 @@ Trento Web
       <h1 class="signature" translate="no">get_activity_log_settings()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L162" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L170" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -644,7 +710,7 @@ Trento Web
       <h1 class="signature" translate="no">get_alerting_settings()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L201" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L209" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -674,7 +740,7 @@ Trento Web
       <h1 class="signature" translate="no">get_api_key_settings()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L87" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L95" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -693,6 +759,38 @@ Trento Web
 
   </section>
 </section>
+<section class="detail" id="get_checks_frequency_settings/0">
+
+  <div class="detail-header">
+    <a href="#get_checks_frequency_settings/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_checks_frequency_settings()</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L257" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_checks_frequency_settings() ::
+  {:ok, <a href="Trento.Settings.ChecksFrequencySettings.html#t:t/0">Trento.Settings.ChecksFrequencySettings.t</a>()}</pre>
+
+      </div>
+
+<p>Returns the global checks frequency settings: whether the checks run periodically, and how
+often. The frequency set in the environment (CHECKS_INTERVAL) wins over the saved one, and
+disables the checks when it is <code class="inline">disabled</code>. When neither is set, the checks run every
+5 minutes.</p>
+  </section>
+</section>
 <section class="detail" id="get_installation_id/0">
 
   <div class="detail-header">
@@ -703,7 +801,7 @@ Trento Web
       <h1 class="signature" translate="no">get_installation_id()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L72" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L80" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -731,7 +829,7 @@ Trento Web
       <h1 class="signature" translate="no">get_smlm_settings()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L115" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -760,7 +858,7 @@ Trento Web
       <h1 class="signature" translate="no">get_sso_certificates()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L193" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L201" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -790,7 +888,7 @@ Trento Web
       <h1 class="signature" translate="no">save_smlm_settings(settings_submission, date_service \\ DateService)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L129" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L137" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -821,7 +919,7 @@ Trento Web
       <h1 class="signature" translate="no">update_alerting_settings(alerting_settings)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L228" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L236" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -853,7 +951,7 @@ Trento Web
       <h1 class="signature" translate="no">update_api_key_settings(expiration)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L95" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L103" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -870,6 +968,38 @@ Trento Web
       </div>
 
 
+  </section>
+</section>
+<section class="detail" id="update_checks_frequency_settings/1">
+
+  <div class="detail-header">
+    <a href="#update_checks_frequency_settings/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">update_checks_frequency_settings(checks_frequency_settings)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L284" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> update_checks_frequency_settings(<a href="#t:checks_frequency_setting_update_t/0">checks_frequency_setting_update_t</a>()) ::
+  {:ok, <a href="Trento.Settings.ChecksFrequencySettings.html#t:t/0">Trento.Settings.ChecksFrequencySettings.t</a>()}
+  | {:error, :checks_frequency_settings_enforced}
+  | {:error, <a href="https://ecto.hexdocs.pm/3.14.3/Ecto.Changeset.html#t:t/0">Ecto.Changeset.t</a>()}</pre>
+
+      </div>
+
+<p>Changes whether the checks run periodically, the frequency, or both. A field that is not
+given keeps its current value.</p>
   </section>
 </section>
 

@@ -88,6 +88,11 @@ Derived from Commanded.AggregateCase
 - [Trento.Charts.Hosts.HostMemoryChart](Trento.Charts.Hosts.HostMemoryChart.md): Represents Memory chart data for a single host
 - [Trento.Charts.SampledMetric](Trento.Charts.SampledMetric.md): Represents metric and its sample at a given time
 
+- [Trento.Checks.Enums.FrequencyUnit](Trento.Checks.Enums.FrequencyUnit.md): Type that represents the units of the checks frequency.
+
+- [Trento.Checks.Frequency](Trento.Checks.Frequency.md): How often the checks run periodically on every target, such as hosts and clusters:
+every 5, 15 or 30 minutes, every 1, 6, 12 or 24 hours, or every 1, 2 or 4 weeks.
+
 - [Trento.Commanded](Trento.Commanded.md): Trento Commanded Application
 
 - [Trento.DataCase](Trento.DataCase.md): This module defines the setup for tests requiring
@@ -223,6 +228,7 @@ installed.
 
 - [Trento.Settings.ApiKeySettings](Trento.Settings.ApiKeySettings.md): ApiKeySettings is the STI projection of api key related settings
 
+- [Trento.Settings.ChecksFrequencySettings](Trento.Settings.ChecksFrequencySettings.md): ChecksFrequencySettings is the STI projection of the global checks frequency.
 - [Trento.Settings.InstallationSettings](Trento.Settings.InstallationSettings.md): InstallationSettings is the STI projection containing installation related settings
 
 - [Trento.Settings.Policy](Trento.Settings.Policy.md): Policy for the Settings resource

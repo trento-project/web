@@ -47,6 +47,8 @@ Trento.Charts.Hosts.HostFilesystemChart.md
 Trento.Charts.Hosts.HostMemoryChart.md
 Trento.Charts.SampledMetric.md
 Trento.Charts.md
+Trento.Checks.Enums.FrequencyUnit.md
+Trento.Checks.Frequency.md
 Trento.Clusters.Cluster.md
 Trento.Clusters.ClusterEnrichmentData.md
 Trento.Clusters.Commands.CompleteChecksExecution.md
@@ -463,6 +465,7 @@ Trento.Services.HealthService.md
 Trento.Settings.ActivityLogSettings.md
 Trento.Settings.AlertingSettings.md
 Trento.Settings.ApiKeySettings.md
+Trento.Settings.ChecksFrequencySettings.md
 Trento.Settings.InstallationSettings.md
 Trento.Settings.Policy.md
 Trento.Settings.SSOCertificatesSettings.md

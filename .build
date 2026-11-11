@@ -48,6 +48,8 @@ Trento.Charts.Hosts.HostFilesystemChart.html
 Trento.Charts.Hosts.HostMemoryChart.html
 Trento.Charts.SampledMetric.html
 Trento.Charts.html
+Trento.Checks.Enums.FrequencyUnit.html
+Trento.Checks.Frequency.html
 Trento.Clusters.Cluster.html
 Trento.Clusters.ClusterEnrichmentData.html
 Trento.Clusters.Commands.CompleteChecksExecution.html
@@ -464,6 +466,7 @@ Trento.Services.HealthService.html
 Trento.Settings.ActivityLogSettings.html
 Trento.Settings.AlertingSettings.html
 Trento.Settings.ApiKeySettings.html
+Trento.Settings.ChecksFrequencySettings.html
 Trento.Settings.InstallationSettings.html
 Trento.Settings.Policy.html
 Trento.Settings.SSOCertificatesSettings.html
@@ -623,7 +626,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-18116E2D.js
-dist/sidebar_items-339F29C1.js
+dist/search_data-B8BFC5BE.js
+dist/sidebar_items-27D71145.js
 index.html
 search.html
