@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-19T20:06:22Z",
-    "commit": "4ac33f472470855c0866a4955fff4ce8681a858c",
-    "run_id": "35464767894",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-19T20:07:15Z",
     "commit": "4ac33f472470855c0866a4955fff4ce8681a858c",
     "run_id": "35464767894",
@@ -5496,6 +5485,22 @@
       {
         "name": "should allow user to partially update AI configuration::Users AI Configuration Updating AI Configuration should allow user to partially update AI configuration",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-11-12T23:29:10Z",
+    "commit": "9db21a6994fd7d2f91dbee6f61168e1a6baf3c9a",
+    "run_id": "43329244504",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 36,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
