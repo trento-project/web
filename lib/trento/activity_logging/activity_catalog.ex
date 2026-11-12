@@ -21,6 +21,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
   require Trento.Operations.Enums.ClusterBulkOperations, as: ClusterBulkOperations
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+  require Trento.Operations.Enums.DatabaseBulkOperations, as: DatabaseBulkOperations
   require Trento.Operations.Enums.HostOperations, as: HostOperations
   require Trento.Operations.Enums.HostBulkOperations, as: HostBulkOperations
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
@@ -42,6 +43,9 @@ defmodule Trento.ActivityLog.ActivityCatalog do
     {TrentoWeb.V1.ClusterController, ClusterHostOperations.values(),
      :cluster_host_operation_requested},
     {TrentoWeb.V1.DatabaseController, DatabaseOperations.values(), :database_operation_requested},
+    {TrentoWeb.V1.DatabaseController,
+     OperationsHelper.to_bulk_operation(DatabaseBulkOperations.values()),
+     :database_bulk_operation_requested},
     {TrentoWeb.V1.HostController, HostOperations.values(), :host_operation_requested},
     {TrentoWeb.V1.HostController, OperationsHelper.to_bulk_operation(HostBulkOperations.values()),
      :host_bulk_operation_requested},

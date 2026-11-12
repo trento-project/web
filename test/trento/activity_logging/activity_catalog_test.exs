@@ -49,6 +49,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :application_instance_operation_requested,
         :sap_system_operation_requested,
         :database_operation_requested,
+        :database_bulk_operation_requested,
         :ai_configuration_creation,
         :ai_configuration_modification,
         :ai_configuration_deletion
@@ -402,6 +403,18 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       %{
         activity: :cluster_bulk_operation_requested,
         connection_info: {TrentoWeb.V1.ClusterController, :bulk_cluster_resource_refresh},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :database_bulk_operation_requested,
+        connection_info: {TrentoWeb.V1.DatabaseController, :bulk_database_start},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :database_bulk_operation_requested,
+        connection_info: {TrentoWeb.V1.DatabaseController, :bulk_database_stop},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },

@@ -516,6 +516,51 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
     end
   end
 
+  describe "enriching database bulk operation requests" do
+    test "should enrich every database bulk operation entry with the sid" do
+      [
+        %{id: database_id_1, sid: sid_1},
+        %{id: database_id_2, sid: sid_2},
+        %{id: failed_database_id, sid: failed_sid}
+      ] = insert_list(3, :database)
+
+      unknown_database_id = Faker.UUID.v4()
+      unknown_failed_database_id = Faker.UUID.v4()
+
+      [operation_id_1, operation_id_2, unknown_operation_id] =
+        Enum.map(1..3, fn _ -> Faker.UUID.v4() end)
+
+      bulk_operation_id = Faker.UUID.v4()
+
+      metadata = %{
+        bulk_operation_id: bulk_operation_id,
+        operations: [
+          %{database_id: database_id_1, operation_id: operation_id_1},
+          %{database_id: database_id_2, operation_id: operation_id_2},
+          %{database_id: unknown_database_id, operation_id: unknown_operation_id}
+        ],
+        failed_requests: [
+          %{database_id: failed_database_id, reason: ":amqp_error"},
+          %{database_id: unknown_failed_database_id, reason: ":amqp_error"}
+        ]
+      }
+
+      assert {:ok,
+              %{
+                bulk_operation_id: bulk_operation_id,
+                operations: [
+                  %{database_id: database_id_1, operation_id: operation_id_1, sid: sid_1},
+                  %{database_id: database_id_2, operation_id: operation_id_2, sid: sid_2},
+                  %{database_id: unknown_database_id, operation_id: unknown_operation_id}
+                ],
+                failed_requests: [
+                  %{database_id: failed_database_id, reason: ":amqp_error", sid: failed_sid},
+                  %{database_id: unknown_failed_database_id, reason: ":amqp_error"}
+                ]
+              }} == MetadataEnricher.enrich(:database_bulk_operation_requested, metadata)
+    end
+  end
+
   describe "metadata enrichment combination" do
     for scenario <- [:hostname_is_available, :hostname_is_not_available] do
       @scenario scenario

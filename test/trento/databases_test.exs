@@ -82,6 +82,33 @@ defmodule Trento.DatabasesTest do
     end
   end
 
+  describe "get_databases_by_ids/1" do
+    test "should return an empty list when no ids match" do
+      insert(:database)
+
+      assert [] == Databases.get_databases_by_ids([UUID.uuid4()])
+      assert [] == Databases.get_databases_by_ids([])
+    end
+
+    test "should return only the requested registered databases" do
+      [%{id: database_id_1}, %{id: database_id_2}] =
+        expected_databases = insert_list(2, :database)
+
+      %{id: deregistered_database_id} = insert(:database, deregistered_at: DateTime.utc_now())
+      insert(:database)
+
+      databases =
+        Databases.get_databases_by_ids([
+          database_id_1,
+          database_id_2,
+          deregistered_database_id,
+          UUID.uuid4()
+        ])
+
+      assert Enum.sort_by(expected_databases, & &1.id) == Enum.sort_by(databases, & &1.id)
+    end
+  end
+
   describe "get_database_instances_by_id/1" do
     test "should return empty if no database instances were found" do
       assert [] == Databases.get_database_instances_by_id(UUID.uuid4())
@@ -384,6 +411,57 @@ defmodule Trento.DatabasesTest do
         assert {:error, :amqp_error} =
                  Databases.request_operation(operation, UUID.uuid4(), %{})
       end
+    end
+  end
+
+  describe "request_bulk_operation/3" do
+    for operation <- [:database_start, :database_stop] do
+      @operation operation
+
+      test "should request #{@operation} operation on every database" do
+        %{id: database_id_1} = insert(:database)
+        %{id: database_id_2} = insert(:database)
+        %{id: host_id_1} = insert(:host, heartbeat: :passing)
+        %{id: host_id_2} = insert(:host, heartbeat: :passing)
+        insert(:database_instance, database_id: database_id_1, host_id: host_id_1)
+        insert(:database_instance, database_id: database_id_2, host_id: host_id_2)
+
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+          OperationsPublisher, "requests", %OperationRequested{} -> :ok
+        end)
+
+        assert {:ok, _bulk_operation_id, operations, failed} =
+                 Databases.request_bulk_operation(
+                   @operation,
+                   [database_id_1, database_id_2],
+                   %{timeout: 300}
+                 )
+
+        assert [] == failed
+
+        assert [
+                 %{resource_id: ^database_id_1, operation_id: operation_id_1},
+                 %{resource_id: ^database_id_2, operation_id: operation_id_2}
+               ] = operations
+
+        refute operation_id_1 == operation_id_2
+      end
+    end
+
+    test "should return an error when all the messaging requests fail" do
+      database_ids = [UUID.uuid4(), UUID.uuid4()]
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+        OperationsPublisher, "requests", %OperationRequested{} -> {:error, :amqp_error}
+      end)
+
+      assert {:error, :bulk_operation_request_failed} =
+               Databases.request_bulk_operation(:database_start, database_ids, %{timeout: 300})
+    end
+
+    test "should return operation_not_found for unsupported operations" do
+      assert {:error, :operation_not_found} =
+               Databases.request_bulk_operation(:unknown, [UUID.uuid4()], %{})
     end
   end
 end
