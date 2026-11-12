@@ -36,13 +36,13 @@ function DatabasesOverview({
   loading,
   userAbilities,
   userTimezone,
+  runningOperation,
+  operationsEnabled = getFromConfig('operationsEnabled'),
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
-  operationsEnabled = getFromConfig('operationsEnabled'),
-  bulkOperation,
-  onBulkOperationRequest,
-  onBulkOperationForbiddenDismiss,
+  onOperationRequest,
+  onOperationForbiddenDismiss,
 }) {
   const [searchParams, setSearchParams] =
     usePersistentSearchParams('databases');
@@ -61,7 +61,7 @@ function DatabasesOverview({
   const requestBulkOperation = (params) => {
     const { operation, databases: targetDatabases } = bulkOperationModal;
 
-    onBulkOperationRequest({
+    onOperationRequest({
       operation,
       databases: targetDatabases,
       params,
@@ -231,11 +231,11 @@ function DatabasesOverview({
         onCancel={closeBulkOperationModal}
       />
       <OperationForbiddenModal
-        operation={getOperationLabel(bulkOperation?.operation)}
-        isOpen={!!bulkOperation?.forbidden}
-        errors={bulkOperation?.errors ?? []}
+        operation={getOperationLabel(runningOperation?.operation)}
+        isOpen={!!runningOperation?.forbidden}
+        errors={runningOperation?.errors ?? []}
         groupByResource
-        onCancel={onBulkOperationForbiddenDismiss}
+        onCancel={onOperationForbiddenDismiss}
       />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
