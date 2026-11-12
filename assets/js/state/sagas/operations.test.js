@@ -430,7 +430,7 @@ describe('operations saga', () => {
             expect(dispatched).toEqual([
               removeRunningOperation({ groupID: bulkOperationID }),
               notify({
-                text: `Operation ${label} requested for 2 ${resource}`,
+                text: `Operation ${label} requested on 2 ${resource}`,
                 icon: '⚙️',
               }),
             ]);
@@ -464,7 +464,7 @@ describe('operations saga', () => {
           expect(dispatched).toEqual([
             removeRunningOperation({ groupID: bulkOperationID }),
             notify({
-              text: `Operation ${label} requested for 3 ${resource} (1 failed)`,
+              text: `Operation ${label} requested on 3 ${resource} (1 failed)`,
               icon: '⚙️',
             }),
           ]);
@@ -553,7 +553,7 @@ describe('operations saga', () => {
       expect(dispatched).toEqual([
         removeRunningOperation({ groupID: bulkOperationID }),
         notify({
-          text: `Operation ${label} requested for 2 hosts`,
+          text: `Operation ${label} requested on 2 hosts`,
           icon: '⚙️',
         }),
       ]);
@@ -583,7 +583,7 @@ describe('operations saga', () => {
       expect(dispatched).toEqual([
         removeRunningOperation({ groupID: bulkOperationID }),
         notify({
-          text: `Operation ${label} requested for 3 hosts (1 failed)`,
+          text: `Operation ${label} requested on 3 hosts (1 failed)`,
           icon: '⚙️',
         }),
       ]);
