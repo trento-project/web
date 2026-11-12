@@ -28,6 +28,12 @@ export const requestHostBulkOperation = (hostIDs, operation, params) =>
     ...(!isEmpty(params) && { params }),
   });
 
+export const requestDatabaseBulkOperation = (databaseIDs, operation, params) =>
+  post(`/databases/operations/${operation}/bulk`, {
+    database_ids: databaseIDs,
+    ...(!isEmpty(params) && { params }),
+  });
+
 export const requestSapSystemOperation = (sapSystemID, operation, params) =>
   post(`/sap_systems/${sapSystemID}/operations/${operation}`, params);
 
