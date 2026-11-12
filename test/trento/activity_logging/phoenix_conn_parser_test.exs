@@ -23,6 +23,11 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       activity: :host_bulk_operation_requested,
       operation: :reboot,
       resource_field: :host_id
+    },
+    %{
+      activity: :database_bulk_operation_requested,
+      operation: :database_start,
+      resource_field: :database_id
     }
   ]
 
