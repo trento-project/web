@@ -10,6 +10,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
   import Trento.Factory
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
 
@@ -18,6 +19,17 @@ defmodule Trento.Operations.ClusterPolicyTest do
 
     assert {:error, [%{message: "Unknown operation", metadata: []}]} ==
              ClusterPolicy.authorize_operation(:unknown, cluster, %{})
+  end
+
+  for cluster_type <- [ClusterType.unknown(), ClusterType.hana_ascs_ers()] do
+    @cluster_type cluster_type
+    test "should forbid operations for unsupported cluster type #{@cluster_type}" do
+      cluster = build(:cluster, type: @cluster_type)
+
+      assert {:error,
+              [%{message: "Operations are not supported for this cluster type", metadata: []}]} ==
+               ClusterPolicy.authorize_operation(:cluster_maintenance_change, cluster, %{})
+    end
   end
 
   test "should forbid cluster host operation if the host heartbeat is not passing" do

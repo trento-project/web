@@ -21,6 +21,20 @@ defmodule Trento.Operations.ClusterPolicy do
 
   alias Trento.Hosts.Projections.HostReadModel
 
+  @unsupported_cluster_types [ClusterType.hana_ascs_ers(), ClusterType.unknown()]
+
+  # forbid operations for unsupported cluster types
+  def authorize_operation(_, %ClusterReadModel{type: cluster_type}, _)
+      when cluster_type in @unsupported_cluster_types,
+      do:
+        {:error,
+         [
+           OperationsHelper.build_error(
+             "Operations are not supported for this cluster type",
+             []
+           )
+         ]}
+
   # maintenance operation authorized when:
   # - cluster is in maintenance
   # - cluster resource is not managed
