@@ -65,12 +65,14 @@ function FrequencySpan({
           value={unitOptions.find((option) => option.value === unit)}
           isDisabled={disabled}
           error={error}
-          onChange={(newUnit) =>
-            onChange({
-              value: CHECKS_FREQUENCY_UNITS[newUnit][0],
-              unit: newUnit,
-            })
-          }
+          onChange={(newUnit) => {
+            if (newUnit !== unit) {
+              onChange({
+                value: CHECKS_FREQUENCY_UNITS[newUnit][0],
+                unit: newUnit,
+              });
+            }
+          }}
         />
       </div>
     </div>

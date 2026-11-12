@@ -187,6 +187,24 @@ describe('ChecksFrequencySettingsModal component', () => {
     }
   );
 
+  it('should keep the value when the current unit is selected again', async () => {
+    const user = userEvent.setup();
+    const onSave = jest.fn();
+
+    await renderModal({
+      initialFrequency: { value: 30, unit: 'minute' },
+      onSave,
+    });
+
+    await selectUnit(user, 'Minutes');
+    await user.click(screen.getByRole('button', { name: 'Save Settings' }));
+
+    expect(onSave).toHaveBeenCalledWith({
+      enabled: true,
+      frequency: { value: 30, unit: 'minute' },
+    });
+  });
+
   it('should not save while saving is in progress', async () => {
     const user = userEvent.setup();
     const onSave = jest.fn();
