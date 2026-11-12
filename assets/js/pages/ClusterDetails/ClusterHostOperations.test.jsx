@@ -87,7 +87,7 @@ describe.each([
       name: 'Node maintenance',
     },
     {
-      name: 'Enable pacemaker at boot',
+      name: 'Enable Pacemaker at boot',
       enrichedProps: enrichPropsWithSystemdUnit(
         props,
         'pacemaker.service',
@@ -95,7 +95,7 @@ describe.each([
       ),
     },
     {
-      name: 'Disable pacemaker at boot',
+      name: 'Disable Pacemaker at boot',
       enrichedProps: enrichPropsWithSystemdUnit(
         props,
         'pacemaker.service',
@@ -194,7 +194,7 @@ describe.each([
         operation: PACEMAKER_ENABLE,
         metadata: { hostID: id },
       }),
-      runningItem: 'Enable pacemaker at boot',
+      runningItem: 'Enable Pacemaker at boot',
     },
     {
       name: 'pacemaker_disable running',
@@ -203,7 +203,7 @@ describe.each([
         operation: PACEMAKER_DISABLE,
         metadata: { hostID: id },
       }),
-      runningItem: 'Disable pacemaker at boot',
+      runningItem: 'Disable Pacemaker at boot',
     },
   ];
 
@@ -391,7 +391,7 @@ describe.each([
     {
       name: 'can enable pacemaker',
       userAbilities: [{ name: 'pacemaker_enable', resource: 'cluster' }],
-      menuItem: 'Enable pacemaker at boot',
+      menuItem: 'Enable Pacemaker at boot',
       enrichedProps: enrichPropsWithSystemdUnit(
         props,
         'pacemaker.service',
@@ -402,7 +402,7 @@ describe.each([
     {
       name: 'cannot enable pacemaker',
       userAbilities: [],
-      menuItem: 'Enable pacemaker at boot',
+      menuItem: 'Enable Pacemaker at boot',
       enrichedProps: enrichPropsWithSystemdUnit(
         props,
         'pacemaker.service',
@@ -413,7 +413,7 @@ describe.each([
     {
       name: 'can disable pacemaker',
       userAbilities: [{ name: 'pacemaker_disable', resource: 'cluster' }],
-      menuItem: 'Disable pacemaker at boot',
+      menuItem: 'Disable Pacemaker at boot',
       enrichedProps: enrichPropsWithSystemdUnit(
         props,
         'pacemaker.service',
@@ -424,7 +424,7 @@ describe.each([
     {
       name: 'cannot disable pacemaker',
       userAbilities: [],
-      menuItem: 'Disable pacemaker at boot',
+      menuItem: 'Disable Pacemaker at boot',
       enrichedProps: enrichPropsWithSystemdUnit(
         props,
         'pacemaker.service',

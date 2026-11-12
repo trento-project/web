@@ -29,8 +29,8 @@ import HostDetails from './HostDetails';
 
 const axiosMock = new MockAdapter(networkClient);
 const userAbilities = [{ name: 'all', resource: 'all' }];
-const applySaptuneSolution = 'Apply Saptune Solution';
-const changeSaptuneSolution = 'Change Saptune Solution';
+const applySaptuneSolution = 'Apply Saptune solution';
+const changeSaptuneSolution = 'Change Saptune solution';
 
 describe('HostDetails component', () => {
   beforeEach(() => {
@@ -562,9 +562,9 @@ describe('HostDetails component', () => {
 
     it.each`
       scenario            | runningOperation
-      ${'Saptune apply'}  | ${{ operation: SAPTUNE_SOLUTION_APPLY, menuEntry: 'Apply Saptune Solution' }}
-      ${'Saptune change'} | ${{ operation: SAPTUNE_SOLUTION_CHANGE, menuEntry: 'Change Saptune Solution' }}
-      ${'Host reboot'}    | ${{ operation: HOST_REBOOT, menuEntry: 'Reboot Host' }}
+      ${'Saptune apply'}  | ${{ operation: SAPTUNE_SOLUTION_APPLY, menuEntry: 'Apply Saptune solution' }}
+      ${'Saptune change'} | ${{ operation: SAPTUNE_SOLUTION_CHANGE, menuEntry: 'Change Saptune solution' }}
+      ${'Host reboot'}    | ${{ operation: HOST_REBOOT, menuEntry: 'Reboot host' }}
     `(
       'should show $scenario operation running',
       async ({ runningOperation: { operation, menuEntry } }) => {
@@ -600,8 +600,8 @@ describe('HostDetails component', () => {
 
     it.each`
       operation
-      ${'Apply Saptune Solution'}
-      ${'Change Saptune Solution'}
+      ${'Apply Saptune solution'}
+      ${'Change Saptune solution'}
     `('should show $operation operation disabled', async ({ operation }) => {
       const user = userEvent.setup();
 
@@ -781,7 +781,7 @@ describe('HostDetails component', () => {
       await user.click(operationsButton);
 
       const rebootMenuItem = screen.getByRole('menuitem', {
-        name: 'Reboot Host',
+        name: 'Reboot host',
       });
 
       expect(rebootMenuItem).toBeEnabled();

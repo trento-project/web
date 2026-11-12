@@ -63,7 +63,7 @@ export const getClusterOperations = (
   someHostOnline
 ) => [
   {
-    value: 'Cluster Maintenance',
+    value: 'Cluster maintenance',
     running: isOperationRunning(
       [runningOperation],
       clusterID,
@@ -159,7 +159,7 @@ export const getClusterHostOperations = curry(
       },
     },
     {
-      value: 'Enable pacemaker at boot',
+      value: 'Enable Pacemaker at boot',
       running: isOperationRunning(
         [runningOperation],
         clusterID,
@@ -174,7 +174,7 @@ export const getClusterHostOperations = curry(
       },
     },
     {
-      value: 'Disable pacemaker at boot',
+      value: 'Disable Pacemaker at boot',
       running: isOperationRunning(
         [runningOperation],
         clusterID,

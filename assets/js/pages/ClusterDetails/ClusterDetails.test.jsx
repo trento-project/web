@@ -345,7 +345,7 @@ describe('ClusterDetails ClusterDetails component', () => {
   describe.each([
     {
       operation: CLUSTER_MAINTENANCE_CHANGE,
-      menuItemText: 'Cluster Maintenance',
+      menuItemText: 'Cluster maintenance',
       title: 'Maintenance change',
       errorMessage: 'Cluster maintenance change',
     },
@@ -571,13 +571,13 @@ describe('ClusterDetails ClusterDetails component', () => {
       {
         forbidden: true,
         operation: CLUSTER_MAINTENANCE_CHANGE,
-        label: 'Cluster Maintenance',
+        label: 'Cluster maintenance',
         abilities: [],
       },
       {
         forbidden: false,
         operation: CLUSTER_MAINTENANCE_CHANGE,
-        label: 'Cluster Maintenance',
+        label: 'Cluster maintenance',
         abilities: [{ name: 'maintenance_change', resource: 'cluster' }],
       },
       {
