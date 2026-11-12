@@ -20,6 +20,7 @@ import {
   OPERATION_COMPLETED,
   CLUSTER_BULK_OPERATION_REQUESTED,
   HOST_BULK_OPERATION_REQUESTED,
+  DATABASE_BULK_OPERATION_REQUESTED,
   TESTING_ALERTING_SETTINGS,
   CHANGING_CHECKS_FREQUENCY_SETTINGS,
   availableResourceNameKeys,
@@ -34,6 +35,7 @@ import {
   CLUSTER_MAINTENANCE_CHANGE,
   SAPTUNE_SOLUTION_APPLY,
   HOST_REBOOT,
+  DATABASE_START,
   OPERATION_REQUEST_FAILED,
 } from '@lib/operations';
 
@@ -315,6 +317,35 @@ describe('activityLog', () => {
 
       expect(toMessage(entry)).toBe(
         'Operation Reboot host requested on 3 hosts (1 failed)'
+      );
+    });
+
+    it('should resolve database bulk operation requested message', () => {
+      const entry = {
+        type: DATABASE_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: DATABASE_START,
+          operations: [{}, {}, {}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Database start requested on 3 databases'
+      );
+    });
+
+    it('should resolve database bulk operation requested message when some operation failed', () => {
+      const entry = {
+        type: DATABASE_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: DATABASE_START,
+          operations: [{}, {}],
+          failed_requests: [{}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Database start requested on 3 databases (1 failed)'
       );
     });
 
