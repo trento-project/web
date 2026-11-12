@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-09-19T19:31:08Z",
-    "commit": "4ac33f472470855c0866a4955fff4ce8681a858c",
-    "run_id": "35463835386",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 36,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.07001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-19T20:06:22Z",
     "commit": "4ac33f472470855c0866a4955fff4ce8681a858c",
     "run_id": "35464767894",
@@ -5478,5 +5458,45 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-12T01:31:47Z",
+    "commit": "d78824f6a9a61002e484200a9e4c4f4ec8416036",
+    "run_id": "43135119615",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 97,
+      "failed_runs": 14
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.1842
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05969
+      },
+      {
+        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should allow user to partially update AI configuration::Users AI Configuration Updating AI Configuration should allow user to partially update AI configuration",
+        "score": 0.02501
+      }
+    ]
   }
 ]
