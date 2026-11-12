@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 
 import { waiveOperationDisclaimer } from '@lib/operations';
-import { sapSystemFactory } from '@lib/test-utils/factories';
+import {
+  bulkOperationResourceFactory,
+  sapSystemFactory,
+} from '@lib/test-utils/factories';
 import {
   DATABASE_START,
   DATABASE_STOP,
@@ -69,6 +72,47 @@ describe('SapStartStopOperationModal', () => {
 
       expect(screen.getByText(title)).toBeInTheDocument();
       expect(screen.getByText(expectedDescription)).toBeInTheDocument();
+    }
+  );
+
+  it.each([
+    {
+      operation: DATABASE_START,
+      type: DATABASE_TYPE,
+      title: 'Start database',
+      expectedDescription: 'Start the following databases:',
+    },
+    {
+      operation: DATABASE_STOP,
+      type: DATABASE_TYPE,
+      title: 'Stop database',
+      expectedDescription: 'Stop the following databases:',
+    },
+  ])(
+    'should show the title, description and resources for $operation for bulk operation',
+    async ({ operation, type, title, expectedDescription }) => {
+      const resources = bulkOperationResourceFactory.buildList(3);
+
+      await act(() =>
+        render(
+          <SapStartStopOperationModal
+            operation={operation}
+            type={type}
+            resources={resources}
+            isOpen
+          />
+        )
+      );
+
+      expect(screen.getByText(title)).toBeInTheDocument();
+      expect(screen.getByText(expectedDescription)).toBeInTheDocument();
+
+      const items = within(
+        screen.getByRole('list', { name: 'resources' })
+      ).getAllByRole('listitem');
+      expect(items.map(({ textContent }) => textContent)).toEqual(
+        resources.map(({ label }) => label)
+      );
     }
   );
 

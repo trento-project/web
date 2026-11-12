@@ -6,10 +6,17 @@ import { Link } from 'react-router';
 import { filter } from 'lodash';
 import classNames from 'classnames';
 
+import { getFromConfig } from '@lib/config';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
+import { getOperationLabel } from '@lib/operations';
 import { STALE_ROW } from '@lib/tables';
 
 import HealthIcon from '@common/HealthIcon';
+import {
+  OperationForbiddenModal,
+  SapStartStopOperationModal,
+} from '@common/OperationModals';
+import OperationsButton from '@common/OperationsButton';
 import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
@@ -21,6 +28,7 @@ import HealthSummary from '@pages/HealthSummary';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import DatabaseItemOverview from './DatabaseItemOverview';
+import { getDatabasesBulkOperations } from './databaseOperations';
 
 function DatabasesOverview({
   databases,
@@ -28,17 +36,49 @@ function DatabasesOverview({
   loading,
   userAbilities,
   userTimezone,
+  runningOperation,
+  operationsEnabled = getFromConfig('operationsEnabled'),
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
+  onOperationRequest,
+  onOperationForbiddenDismiss,
 }) {
   const [searchParams, setSearchParams] =
     usePersistentSearchParams('databases');
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
 
+  const [bulkOperationModal, setBulkOperationModalOpen] = useState({
+    open: false,
+    operation: undefined,
+    databases: [],
+  });
+
+  const closeBulkOperationModal = () =>
+    setBulkOperationModalOpen((prevState) => ({ ...prevState, open: false }));
+
+  const requestBulkOperation = (params) => {
+    const { operation, databases: targetDatabases } = bulkOperationModal;
+
+    onOperationRequest({
+      operation,
+      databases: targetDatabases,
+      params,
+    });
+    closeBulkOperationModal();
+  };
+
+  const selectBulkOperation = (selectedDatabases) => (operation) =>
+    setBulkOperationModalOpen({
+      open: true,
+      operation,
+      databases: selectedDatabases,
+    });
+
   const config = {
     pagination: true,
+    selectable: operationsEnabled,
     usePadding: false,
     collapsedRowClassName: 'bg-gray-100',
     rowClassName: ({ staleAt }) =>
@@ -179,6 +219,24 @@ function DatabasesOverview({
           setCleanUpModalOpen(false);
         }}
       />
+      <SapStartStopOperationModal
+        operation={bulkOperationModal.operation}
+        type={DATABASE_TYPE}
+        resources={bulkOperationModal.databases.map(({ id, sid }) => ({
+          id,
+          label: sid,
+        }))}
+        isOpen={bulkOperationModal.open}
+        onRequest={requestBulkOperation}
+        onCancel={closeBulkOperationModal}
+      />
+      <OperationForbiddenModal
+        operation={getOperationLabel(runningOperation?.operation)}
+        isOpen={!!runningOperation?.forbidden}
+        errors={runningOperation?.errors ?? []}
+        groupByResource
+        onCancel={onOperationForbiddenDismiss}
+      />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
@@ -187,6 +245,15 @@ function DatabasesOverview({
           searchParams={searchParams}
           setSearchParams={setSearchParams}
           rowKey={(item, _index) => item.id}
+          renderSelectionActions={(selectedDatabases) => (
+            <OperationsButton
+              userAbilities={userAbilities}
+              menuPosition="bottom end"
+              operations={getDatabasesBulkOperations(
+                selectBulkOperation(selectedDatabases)
+              )}
+            />
+          )}
         />
       </div>
     </>

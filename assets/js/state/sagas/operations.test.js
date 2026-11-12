@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { isEmpty } from 'lodash';
 import MockAdapter from 'axios-mock-adapter';
 import { faker } from '@faker-js/faker';
 
@@ -16,12 +17,14 @@ import {
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
   DATABASE_START,
+  DATABASE_STOP,
   HOST_REBOOT,
   getOperationLabel,
 } from '@lib/operations';
 import {
   CLUSTER_BULK_OPERATION_ID,
   HOST_BULK_OPERATION_ID,
+  DATABASE_BULK_OPERATION_ID,
   removeRunningOperation,
   setRunningOperation,
   setForbiddenOperation,
@@ -47,6 +50,9 @@ const clusterBulkOperationRequestURL = (operation) =>
 
 const hostBulkOperationRequestURL = (operation) =>
   `/hosts/operations/${operation}/bulk`;
+
+const databaseBulkOperationRequestURL = (operation) =>
+  `/databases/operations/${operation}/bulk`;
 
 const clusterHostOperationRequestURL = (clusterID, hostID, operation) =>
   `/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`;
@@ -390,6 +396,25 @@ describe('operations saga', () => {
           { operation: CLUSTER_RESOURCE_REFRESH, params: undefined },
         ],
       },
+      {
+        resource: 'hosts',
+        bulkOperationID: HOST_BULK_OPERATION_ID,
+        requestURL: hostBulkOperationRequestURL,
+        idsKey: 'host_ids',
+        defaultOperation: HOST_REBOOT,
+        successScenarios: [{ operation: HOST_REBOOT, params: {} }],
+      },
+      {
+        resource: 'databases',
+        bulkOperationID: DATABASE_BULK_OPERATION_ID,
+        requestURL: databaseBulkOperationRequestURL,
+        idsKey: 'database_ids',
+        defaultOperation: DATABASE_START,
+        successScenarios: [
+          { operation: DATABASE_START, params: { timeout: 300 } },
+          { operation: DATABASE_STOP, params: { timeout: 300 } },
+        ],
+      },
     ];
 
     describe.each(bulkResources)(
@@ -413,7 +438,7 @@ describe('operations saga', () => {
             axiosMock
               .onPost(requestURL(operation), {
                 [idsKey]: targetGroupIDs,
-                ...(params && { params }),
+                ...(!isEmpty(params) && { params }),
               })
               .reply(202, {
                 operations: [
@@ -527,115 +552,6 @@ describe('operations saga', () => {
         });
       }
     );
-  });
-
-  describe('request host bulk operation', () => {
-    it('should request a host bulk operation', async () => {
-      const bulkOperationID = HOST_BULK_OPERATION_ID;
-      const operation = HOST_REBOOT;
-      const label = getOperationLabel(operation);
-      const hostID1 = faker.string.uuid();
-      const hostID2 = faker.string.uuid();
-      const targetGroupIDs = [hostID1, hostID2];
-
-      axiosMock.onPost(hostBulkOperationRequestURL(operation)).reply(202, {
-        operations: [{ resource_id: hostID1 }, { resource_id: hostID2 }],
-        failed_requests: [],
-      });
-
-      const dispatched = await recordSaga(requestBulkOperation, {
-        payload: { bulkOperationID, targetGroupIDs, operation, params: {} },
-      });
-
-      expect(JSON.parse(axiosMock.history.post.at(-1).data)).toEqual({
-        host_ids: targetGroupIDs,
-      });
-      expect(dispatched).toEqual([
-        removeRunningOperation({ groupID: bulkOperationID }),
-        notify({
-          text: `Operation ${label} requested on 2 hosts`,
-          icon: '⚙️',
-        }),
-      ]);
-    });
-
-    it('should report the failed requests in a host bulk operation', async () => {
-      const bulkOperationID = HOST_BULK_OPERATION_ID;
-      const operation = HOST_REBOOT;
-      const label = getOperationLabel(operation);
-      const passingHostID1 = faker.string.uuid();
-      const passingHostID2 = faker.string.uuid();
-      const failingHostID = faker.string.uuid();
-      const targetGroupIDs = [passingHostID1, passingHostID2, failingHostID];
-
-      axiosMock.onPost(hostBulkOperationRequestURL(operation)).reply(202, {
-        operations: [
-          { resource_id: passingHostID1 },
-          { resource_id: passingHostID2 },
-        ],
-        failed_requests: [{ resource_id: failingHostID }],
-      });
-
-      const dispatched = await recordSaga(requestBulkOperation, {
-        payload: { bulkOperationID, targetGroupIDs, operation },
-      });
-
-      expect(dispatched).toEqual([
-        removeRunningOperation({ groupID: bulkOperationID }),
-        notify({
-          text: `Operation ${label} requested on 3 hosts (1 failed)`,
-          icon: '⚙️',
-        }),
-      ]);
-    });
-
-    it('should fail requesting a host bulk operation if the api request fails', async () => {
-      const bulkOperationID = HOST_BULK_OPERATION_ID;
-      const operation = HOST_REBOOT;
-      const label = getOperationLabel(operation);
-      const targetGroupIDs = [faker.string.uuid()];
-
-      axiosMock.onPost(hostBulkOperationRequestURL(operation)).reply(500, {});
-
-      const dispatched = await recordSaga(requestBulkOperation, {
-        payload: { bulkOperationID, targetGroupIDs, operation },
-      });
-
-      expect(dispatched).toEqual([
-        removeRunningOperation({ groupID: bulkOperationID }),
-        notify({
-          text: `Operation ${label} request for hosts failed`,
-          icon: '❌',
-        }),
-      ]);
-    });
-
-    it('should fail requesting a host bulk operation if the api request is forbidden', async () => {
-      const bulkOperationID = HOST_BULK_OPERATION_ID;
-      const operation = HOST_REBOOT;
-      const targetGroupIDs = [faker.string.uuid()];
-      const errors = [
-        { detail: 'error1', metadata: [{ key: 'value' }] },
-        { detail: 'error2' },
-      ];
-
-      axiosMock
-        .onPost(hostBulkOperationRequestURL(operation))
-        .reply(403, { errors });
-
-      const dispatched = await recordSaga(requestBulkOperation, {
-        payload: { bulkOperationID, targetGroupIDs, operation },
-      });
-
-      expect(dispatched).toEqual([
-        removeRunningOperation({ groupID: bulkOperationID }),
-        setForbiddenOperation({
-          groupID: bulkOperationID,
-          operation,
-          errors,
-        }),
-      ]);
-    });
   });
 
   describe('complete operation', () => {
