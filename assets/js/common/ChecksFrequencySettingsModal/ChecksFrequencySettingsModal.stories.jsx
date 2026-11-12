@@ -39,7 +39,7 @@ export default {
     },
     onCancel: {
       description:
-        'Callback function invoked when the Cancel button is clicked or the modal is closed',
+        'Callback function invoked when the Close button is clicked or the modal is closed',
       action: 'onCancel',
     },
     onClearErrors: {
