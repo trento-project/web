@@ -19,6 +19,7 @@ import {
   AI_CONFIGURATION_DELETION,
   OPERATION_COMPLETED,
   CLUSTER_BULK_OPERATION_REQUESTED,
+  HOST_BULK_OPERATION_REQUESTED,
   TESTING_ALERTING_SETTINGS,
   availableResourceNameKeys,
   resourceNameFromMetadata,
@@ -31,6 +32,7 @@ import {
 import {
   CLUSTER_MAINTENANCE_CHANGE,
   SAPTUNE_SOLUTION_APPLY,
+  HOST_REBOOT,
   OPERATION_REQUEST_FAILED,
 } from '@lib/operations';
 
@@ -283,6 +285,35 @@ describe('activityLog', () => {
 
       expect(toMessage(entry)).toBe(
         'Operation Cluster maintenance change requested on 3 clusters (1 failed)'
+      );
+    });
+
+    it('should resolve host bulk operation requested message', () => {
+      const entry = {
+        type: HOST_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: HOST_REBOOT,
+          operations: [{}, {}, {}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Reboot host requested on 3 hosts'
+      );
+    });
+
+    it('should resolve host bulk operation requested message when some operation failed', () => {
+      const entry = {
+        type: HOST_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: HOST_REBOOT,
+          operations: [{}, {}],
+          failed_requests: [{}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Reboot host requested on 3 hosts (1 failed)'
       );
     });
 

@@ -200,7 +200,7 @@ export const allVisibleRowsAreMarkedInSync = () =>
 
 const _hostHasExpectedStatus = (host, status) =>
   cy
-    .get(`tr:contains("${host}") td:nth-child(1) svg`)
+    .get(`tr:contains("${host}") td:nth-child(2) svg`)
     .should('have.class', status);
 
 export const hostWithSapHasExpectedStatus = () =>
@@ -292,7 +292,7 @@ export const hostsTableContentsAreTheExpected = () => {
   const expectedValuesArray = availableHosts.slice(0, 10);
   return cy.wrap(expectedValuesArray).each((rowExpectedValues, rowIndex) => {
     _getTableHeaders().then((headers) =>
-      cy.wrap(headers.slice(3, 7)).each((header) => {
+      cy.wrap(headers.slice(2, 8)).each((header) => {
         const attributeName = _processAttributeName(header);
         let expectedValue = rowExpectedValues[attributeName];
         return _validateCell(header, rowIndex, expectedValue);
@@ -311,6 +311,7 @@ const _processAttributeName = (attributeHeaderName) => {
   const splittedAttribute = attributeHeaderName.toLowerCase().split(' ');
   if (splittedAttribute.length === 2)
     return splittedAttribute[0] + capitalize(splittedAttribute[1]);
+  else if (splittedAttribute[0] === 'hostname') return 'name';
   else if (splittedAttribute[0] === 'ip') return 'ipAddresses';
   else if (splittedAttribute[0] === 'cluster') return 'clusterName';
   else if (splittedAttribute[0] === 'sid') return 'sapSystemSid';

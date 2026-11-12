@@ -149,3 +149,15 @@ export const resetOperationDisclaimer = () =>
     STORAGE_OPERATION_DISCLAIMER_KEY,
     SHOW_DISCLAIMER
   );
+
+export const buildBulkOperationRequestedMessage = ({
+  operation,
+  total,
+  failed = 0,
+  singular,
+  plural,
+}) => {
+  const resourceText = total === 1 ? singular : plural;
+  const failedText = failed ? ` (${failed} failed)` : '';
+  return `Operation ${getOperationLabel(operation)} requested on ${total} ${resourceText}${failedText}`;
+};

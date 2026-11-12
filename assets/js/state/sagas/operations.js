@@ -11,6 +11,7 @@ import {
   APPLICATION_INSTANCE_OPERATION,
   CLUSTER_HOST_OPERATION,
   DATABASE_OPERATION,
+  buildBulkOperationRequestedMessage,
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
@@ -20,6 +21,7 @@ import {
   requestHostOperation,
   requestClusterOperation,
   requestClusterBulkOperation,
+  requestHostBulkOperation,
   requestSapSystemOperation,
   requestSapInstanceOperation,
   requestClusterHostOperation,
@@ -139,8 +141,14 @@ export function* requestOperation({ payload }) {
 
 const BULK_OPERATION_RESOURCES = {
   [CLUSTER_OPERATION]: {
-    label: 'clusters',
+    singular: 'cluster',
+    plural: 'clusters',
     request: requestClusterBulkOperation,
+  },
+  [HOST_OPERATION]: {
+    singular: 'host',
+    plural: 'hosts',
+    request: requestHostBulkOperation,
   },
 };
 
@@ -152,7 +160,7 @@ export function* requestBulkOperation({ payload }) {
   const { bulkOperationID, targetGroupIDs, operation, params } = payload;
 
   const operationName = getOperationLabel(operation);
-  const { label, request } =
+  const { singular, plural, request } =
     BULK_OPERATION_RESOURCES[getOperationResourceType(operation)];
 
   yield put(removeRunningOperation({ groupID: bulkOperationID }));
@@ -161,13 +169,16 @@ export function* requestBulkOperation({ payload }) {
     const {
       data: { operations, failed_requests: failedRequests },
     } = yield call(request, targetGroupIDs, operation, params);
-    const requestedText = `${operations.length + failedRequests.length} ${label}`;
-    const failedText = failedRequests.length
-      ? ` (${failedRequests.length} failed)`
-      : '';
+    const failed = failedRequests.length;
     yield put(
       notify({
-        text: `Operation ${operationName} requested for ${requestedText}${failedText}`,
+        text: buildBulkOperationRequestedMessage({
+          operation,
+          total: operations.length + failed,
+          failed,
+          singular,
+          plural,
+        }),
         icon: '⚙️',
       })
     );
@@ -186,7 +197,7 @@ export function* requestBulkOperation({ payload }) {
 
     yield put(
       notify({
-        text: `Operation ${operationName} request for ${label} failed`,
+        text: `Operation ${operationName} request for ${plural} failed`,
         icon: '❌',
       })
     );

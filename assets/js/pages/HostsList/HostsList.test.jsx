@@ -24,6 +24,11 @@ import {
 
 import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
+import { waiveOperationDisclaimer, HOST_REBOOT } from '@lib/operations';
+import {
+  HOST_BULK_OPERATION_ID,
+  bulkOperationRequested,
+} from '@state/runningOperations';
 
 import HostsList from './HostsList';
 
@@ -692,6 +697,199 @@ describe('HostsLists component', () => {
       expect(
         screen.queryByText('Tag2').children.item(0).children.item(0)
       ).toHaveClass('opacity-50');
+    });
+  });
+
+  describe('bulk operations', () => {
+    beforeAll(() => waiveOperationDisclaimer());
+
+    it('should not allow selecting hosts when operations are disabled', () => {
+      const hosts = hostFactory.buildList(2);
+      const state = { ...defaultInitialState, hostsList: { hosts } };
+
+      const [StatefulHostsList] = withState(
+        <HostsList operationsEnabled={false} />,
+        state
+      );
+
+      renderWithRouter(StatefulHostsList);
+
+      expect(
+        screen.queryByRole('checkbox', { name: 'Select row' })
+      ).not.toBeInTheDocument();
+    });
+
+    it.each([
+      {
+        operation: 'Reboot host',
+        title: 'Reboot host',
+        expectedOperation: HOST_REBOOT,
+        expectedParams: {},
+      },
+    ])(
+      'should list the selected hosts and request the $operation bulk operation',
+      async ({ operation, title, expectedOperation, expectedParams }) => {
+        const user = userEvent.setup();
+        const hosts = hostFactory.buildList(3);
+        const state = {
+          ...defaultInitialState,
+          hostsList: { hosts },
+          user: {
+            abilities: [{ name: 'all', resource: 'all' }],
+          },
+        };
+
+        const [StatefulHostsList, store] = withState(
+          <HostsList operationsEnabled />,
+          state
+        );
+
+        renderWithRouter(StatefulHostsList);
+
+        const firstRow = screen.getByText(hosts[0].hostname).closest('tr');
+        await user.click(
+          within(firstRow).getByRole('checkbox', { name: 'Select row' })
+        );
+
+        const thirdRow = screen.getByText(hosts[2].hostname).closest('tr');
+        await user.click(
+          within(thirdRow).getByRole('checkbox', { name: 'Select row' })
+        );
+
+        await user.click(screen.getByRole('button', { name: 'Operations' }));
+        await user.click(screen.getByRole('menuitem', { name: operation }));
+
+        const modal = screen.getByRole('dialog');
+        expect(within(modal).getByText(title)).toBeInTheDocument();
+        const resourceList = within(modal)
+          .getAllByRole('listitem')
+          .map(({ textContent }) => textContent);
+        expect(resourceList).toEqual([hosts[0].hostname, hosts[2].hostname]);
+
+        await user.click(
+          within(modal).getByRole('button', { name: 'Request' })
+        );
+
+        expect(store.getActions()).toEqual([
+          bulkOperationRequested({
+            bulkOperationID: HOST_BULK_OPERATION_ID,
+            targetGroupIDs: [hosts[0].id, hosts[2].id],
+            operation: expectedOperation,
+            params: expectedParams,
+          }),
+        ]);
+        await waitFor(() =>
+          expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+        );
+      }
+    );
+
+    it.each([
+      {
+        scenario: 'has no matching abilities',
+        abilities: [],
+        enabled: [],
+      },
+      {
+        scenario: 'has the reboot host ability',
+        abilities: [{ name: 'reboot', resource: 'host' }],
+        enabled: ['Reboot host'],
+      },
+    ])(
+      'should disable the operations the user is not authorized for when the user $scenario',
+      async ({ abilities, enabled }) => {
+        const user = userEvent.setup();
+        const hosts = hostFactory.buildList(1);
+        const state = {
+          ...defaultInitialState,
+          hostsList: { hosts },
+          user: { abilities },
+        };
+
+        const [StatefulHostsList] = withState(
+          <HostsList operationsEnabled />,
+          state
+        );
+
+        renderWithRouter(StatefulHostsList);
+
+        const row = screen.getByText(hosts[0].hostname).closest('tr');
+        await user.click(
+          within(row).getByRole('checkbox', { name: 'Select row' })
+        );
+
+        await user.click(screen.getByRole('button', { name: 'Operations' }));
+
+        const enabledItems = screen
+          .getAllByRole('menuitem')
+          .filter((item) => !item.disabled)
+          .map(({ textContent }) => textContent);
+
+        expect(enabledItems).toEqual(enabled);
+      }
+    );
+
+    it('should show the forbidden bulk operation errors grouped by host', () => {
+      const hosts = hostFactory.buildList(2);
+      const [host1, host2] = hosts;
+      const state = {
+        ...defaultInitialState,
+        hostsList: { hosts },
+        runningOperations: {
+          [HOST_BULK_OPERATION_ID]: {
+            operation: HOST_REBOOT,
+            forbidden: true,
+            errors: [
+              {
+                detail: 'error1',
+                metadata: [],
+                resource: { id: host1.id, label: host1.hostname, type: 'host' },
+              },
+              {
+                detail: 'error2',
+                metadata: [],
+                resource: { id: host1.id, label: host1.hostname, type: 'host' },
+              },
+              {
+                detail: 'error3',
+                metadata: [],
+                resource: { id: host2.id, label: host2.hostname, type: 'host' },
+              },
+            ],
+          },
+        },
+      };
+
+      const [StatefulHostsList] = withState(
+        <HostsList operationsEnabled />,
+        state
+      );
+
+      renderWithRouter(StatefulHostsList);
+
+      const modal = screen.getByRole('dialog');
+      expect(
+        within(modal).getByText('Operation Forbidden')
+      ).toBeInTheDocument();
+      expect(
+        within(modal).getByText(
+          'Unable to run Reboot host operation. Some pre-requisites are not met.'
+        )
+      ).toBeInTheDocument();
+
+      const link1 = within(modal).getByRole('link', { name: host1.hostname });
+      const link2 = within(modal).getByRole('link', { name: host2.hostname });
+      expect(link1).toHaveAttribute('href', `/hosts/${host1.id}`);
+      expect(link2).toHaveAttribute('href', `/hosts/${host2.id}`);
+
+      const renderedErrors1 = within(link1.nextElementSibling)
+        .getAllByRole('listitem')
+        .map(({ textContent }) => textContent);
+      const renderedErrors2 = within(link2.nextElementSibling)
+        .getAllByRole('listitem')
+        .map(({ textContent }) => textContent);
+      expect(renderedErrors1).toEqual(['error1', 'error2']);
+      expect(renderedErrors2).toEqual(['error3']);
     });
   });
 });

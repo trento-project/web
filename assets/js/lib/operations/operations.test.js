@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import {
+  buildBulkOperationRequestedMessage,
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
@@ -133,4 +134,26 @@ describe('operations disclaimer', () => {
     waiveOperationDisclaimer();
     expect(shouldShowOperationDisclaimer()).toBe(false);
   });
+});
+
+describe('buildBulkOperationRequestedMessage', () => {
+  it.each`
+    total | failed | expected
+    ${3}  | ${0}   | ${'Operation Reboot host requested on 3 hosts'}
+    ${3}  | ${1}   | ${'Operation Reboot host requested on 3 hosts (1 failed)'}
+    ${1}  | ${1}   | ${'Operation Reboot host requested on 1 host (1 failed)'}
+  `(
+    'should build the message for total $total and failed $failed',
+    ({ total, failed, expected }) => {
+      expect(
+        buildBulkOperationRequestedMessage({
+          operation: 'reboot',
+          total,
+          failed,
+          singular: 'host',
+          plural: 'hosts',
+        })
+      ).toBe(expected);
+    }
+  );
 });
