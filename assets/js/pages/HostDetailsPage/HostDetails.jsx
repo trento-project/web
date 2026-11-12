@@ -244,21 +244,21 @@ function HostDetails({
                   disabledTooltip={OPERATION_NOT_ALLOWED_HOST}
                   operations={[
                     {
-                      value: 'Reboot Host',
+                      value: 'Reboot host',
                       running: runningOperationName === HOST_REBOOT,
                       disabled: false,
                       permitted: ['reboot:host'],
                       onClick: openOperationModal(HOST_REBOOT),
                     },
                     {
-                      value: 'Apply Saptune Solution',
+                      value: 'Apply Saptune solution',
                       running: runningOperationName === SAPTUNE_SOLUTION_APPLY,
                       disabled: !sapPresent || currentlyAppliedSolution,
                       permitted: ['saptune_solution_apply:host'],
                       onClick: openOperationModal(SAPTUNE_SOLUTION_APPLY),
                     },
                     {
-                      value: 'Change Saptune Solution',
+                      value: 'Change Saptune solution',
                       running: runningOperationName === SAPTUNE_SOLUTION_CHANGE,
                       disabled: !sapPresent || !currentlyAppliedSolution,
                       permitted: ['saptune_solution_change:host'],
