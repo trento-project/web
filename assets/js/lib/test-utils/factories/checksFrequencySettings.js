@@ -15,8 +15,8 @@ export const checksFrequencyFactory = Factory.define(({ params }) => {
   };
 });
 
-export const checksFrequencySettingsFactory = Factory.define(() => ({
+export const checksFrequencySettingsFactory = Factory.define(({ params }) => ({
   enabled: true,
-  frequency: checksFrequencyFactory.build(),
+  frequency: checksFrequencyFactory.build(params.frequency ?? {}),
   enforced_from_env: false,
 }));
