@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-18T20:27:58Z",
-    "commit": "1098db2757f49b5ce65e3f22e2367759d9ef8404",
-    "run_id": "35388664879",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-19T00:05:20Z",
     "commit": "1098db2757f49b5ce65e3f22e2367759d9ef8404",
     "run_id": "35393992865",
@@ -5541,6 +5530,22 @@
       {
         "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-11-12T00:30:07Z",
+    "commit": "d78824f6a9a61002e484200a9e4c4f4ec8416036",
+    "run_id": "43127728500",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 35,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
