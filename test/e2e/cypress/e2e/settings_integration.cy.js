@@ -102,3 +102,25 @@ describe('Alerting settings from DB', () => {
     });
   });
 });
+
+describe('Check executions settings enforced from env', () => {
+  before(function () {
+    if (!Cypress.expose('CHECKS_FREQUENCY_FROM_ENV_TESTS')) {
+      // the checks frequency is not set by the environment
+      this.skip();
+    }
+  });
+
+  beforeEach(() => {
+    settingsPage.visit();
+    settingsPage.waitForRequest('checksFrequencySettingsEndpoint');
+  });
+
+  it('should be displayed correctly', () => {
+    settingsPage.checksFrequencyIsTheExpected('Disabled');
+  });
+
+  it('should have an edit button that is disabled', () => {
+    settingsPage.checksFrequencyEditButtonIsDisabled();
+  });
+});

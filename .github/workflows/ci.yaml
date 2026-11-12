@@ -883,6 +883,17 @@ jobs:
             env:
               MIX_ENV: dev
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
+          - test: checks_frequency_from_env
+            cypress_spec: |
+              cypress/e2e/settings_integration.cy.js
+            cypress_expose: CHECKS_FREQUENCY_FROM_ENV_TESTS=true
+            config_file_content: |
+              import Config
+
+              config :trento, :checks_frequency, :disabled
+            env:
+              MIX_ENV: dev
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     env: ${{ matrix.env }}
     steps:
       - name: Checkout
