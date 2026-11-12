@@ -37,12 +37,7 @@ const toGlobalErrorMessage = (errors) => upperFirst(getGlobalError(errors));
 /**
  * Value and unit selects
  */
-function FrequencySpan({
-  frequency,
-  disabled = false,
-  error = false,
-  onChange = noop,
-}) {
+function FrequencySpan({ frequency, disabled = false, onChange = noop }) {
   const unit = frequency?.unit;
 
   return (
@@ -53,7 +48,6 @@ function FrequencySpan({
           options={(CHECKS_FREQUENCY_UNITS[unit] ?? []).map(toValueOption)}
           value={frequency && toValueOption(frequency.value)}
           isDisabled={disabled}
-          error={error}
           onChange={(value) => onChange({ ...frequency, value })}
         />
       </div>
@@ -64,7 +58,6 @@ function FrequencySpan({
           options={unitOptions}
           value={unitOptions.find((option) => option.value === unit)}
           isDisabled={disabled}
-          error={error}
           onChange={(newUnit) => {
             if (newUnit !== unit) {
               onChange({
@@ -143,7 +136,6 @@ function ChecksFrequencySettingsModal({
           <FrequencySpan
             frequency={frequency}
             disabled={!enabled || loading}
-            error={Boolean(frequencyError)}
             onChange={(newFrequency) => {
               setFrequency(newFrequency);
               onClearErrors();
