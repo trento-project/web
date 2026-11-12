@@ -91,7 +91,7 @@ function OperationModal({
           <p className="text-gray-500 text-sm font-normal tracking-wide pb-3">
             {description}
           </p>
-          {children}
+
           {!isEmpty(resources) && (
             <ul
               aria-label="resources"
@@ -102,6 +102,7 @@ function OperationModal({
               ))}
             </ul>
           )}
+          {children}
         </>
       )}
       <div className="flex justify-start gap-2 mt-4">
