@@ -132,7 +132,7 @@ describe('ChecksFrequencyConfig', () => {
     await user.hover(editButton);
     expect(
       screen.getByText(
-        'Check executions settings are enforced by the CHECKS_INTERVAL environment variable'
+        'Check executions settings are enforced by environment variables'
       )
     ).toBeVisible();
   });

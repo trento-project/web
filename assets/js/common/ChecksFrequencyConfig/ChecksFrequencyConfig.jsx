@@ -13,7 +13,7 @@ import { describeChecksFrequency } from '@lib/model/checksFrequency';
 const checksFrequencySettingsPermittedFor = ['all:checks_frequency_settings'];
 
 export const ENFORCED_FROM_ENV_MESSAGE =
-  'Check executions settings are enforced by the CHECKS_INTERVAL environment variable';
+  'Check executions settings are enforced by environment variables';
 
 function FrequencyLabel({ enabled, frequency }) {
   if (!enabled) {
