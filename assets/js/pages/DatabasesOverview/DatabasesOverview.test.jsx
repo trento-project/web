@@ -454,7 +454,7 @@ describe('DatabasesOverview component', () => {
     it('should request the operation with the default timeout in seconds', async () => {
       const user = userEvent.setup();
       const databases = databaseFactory.buildList(2);
-      const onBulkOperationRequest = jest.fn();
+      const onOperationRequest = jest.fn();
 
       renderWithRouter(
         <DatabasesOverview
@@ -462,7 +462,7 @@ describe('DatabasesOverview component', () => {
           databaseInstances={[]}
           userAbilities={userAbilities}
           operationsEnabled
-          onBulkOperationRequest={onBulkOperationRequest}
+          onOperationRequest={onOperationRequest}
         />
       );
 
@@ -478,7 +478,7 @@ describe('DatabasesOverview component', () => {
 
       await user.click(within(modal).getByRole('button', { name: 'Request' }));
 
-      expect(onBulkOperationRequest).toHaveBeenCalledWith({
+      expect(onOperationRequest).toHaveBeenCalledWith({
         operation: 'database_start',
         databases: [expect.objectContaining({ id: databases[1].id })],
         params: { timeout: 300 },
@@ -488,7 +488,7 @@ describe('DatabasesOverview component', () => {
     it('should request the operation with the given timeout in seconds', async () => {
       const user = userEvent.setup();
       const databases = databaseFactory.buildList(2);
-      const onBulkOperationRequest = jest.fn();
+      const onOperationRequest = jest.fn();
 
       renderWithRouter(
         <DatabasesOverview
@@ -496,7 +496,7 @@ describe('DatabasesOverview component', () => {
           databaseInstances={[]}
           userAbilities={userAbilities}
           operationsEnabled
-          onBulkOperationRequest={onBulkOperationRequest}
+          onOperationRequest={onOperationRequest}
         />
       );
 
@@ -512,7 +512,7 @@ describe('DatabasesOverview component', () => {
 
       await user.click(within(modal).getByRole('button', { name: 'Request' }));
 
-      expect(onBulkOperationRequest).toHaveBeenCalledWith({
+      expect(onOperationRequest).toHaveBeenCalledWith({
         operation: 'database_stop',
         databases: [
           expect.objectContaining({ id: databases[0].id }),
@@ -524,7 +524,7 @@ describe('DatabasesOverview component', () => {
 
     it('should show the forbidden modal and dismiss it', async () => {
       const user = userEvent.setup();
-      const onBulkOperationForbiddenDismiss = jest.fn();
+      const onOperationForbiddenDismiss = jest.fn();
       const [database] = databaseFactory.buildList(1);
 
       renderWithRouter(
@@ -533,7 +533,7 @@ describe('DatabasesOverview component', () => {
           databaseInstances={[]}
           userAbilities={userAbilities}
           operationsEnabled
-          bulkOperation={{
+          runningOperation={{
             operation: 'database_start',
             forbidden: true,
             errors: [
@@ -548,7 +548,7 @@ describe('DatabasesOverview component', () => {
               },
             ],
           }}
-          onBulkOperationForbiddenDismiss={onBulkOperationForbiddenDismiss}
+          onOperationForbiddenDismiss={onOperationForbiddenDismiss}
         />
       );
 
@@ -557,7 +557,7 @@ describe('DatabasesOverview component', () => {
 
       await user.click(within(modal).getByRole('button', { name: 'Close' }));
 
-      expect(onBulkOperationForbiddenDismiss).toHaveBeenCalled();
+      expect(onOperationForbiddenDismiss).toHaveBeenCalled();
     });
   });
 });

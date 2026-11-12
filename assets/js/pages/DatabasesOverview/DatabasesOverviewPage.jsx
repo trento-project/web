@@ -39,7 +39,7 @@ function DatabasesOverviewPage() {
   );
   const dispatch = useDispatch();
   const { abilities, timezone } = useSelector(getUserProfile);
-  const bulkOperation = useSelector(
+  const runningOperation = useSelector(
     getRunningOperation(DATABASE_BULK_OPERATION_ID)
   );
 
@@ -50,6 +50,7 @@ function DatabasesOverviewPage() {
       databases={databases}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}
+      runningOperation={runningOperation}
       onTagAdd={(tag, databaseID) => {
         addTag(tag, databaseID);
         dispatch(addTagToDatabase({ tags: [{ value: tag }], id: databaseID }));
@@ -63,8 +64,7 @@ function DatabasesOverviewPage() {
       onInstanceCleanUp={(instance) => {
         dispatch(deregisterDatabaseInstance(instance));
       }}
-      bulkOperation={bulkOperation}
-      onBulkOperationRequest={({ operation, databases: targets, params }) => {
+      onOperationRequest={({ operation, databases: targets, params }) => {
         dispatch(
           bulkOperationRequested({
             bulkOperationID: DATABASE_BULK_OPERATION_ID,
@@ -74,7 +74,7 @@ function DatabasesOverviewPage() {
           })
         );
       }}
-      onBulkOperationForbiddenDismiss={() => {
+      onOperationForbiddenDismiss={() => {
         dispatch(
           removeRunningOperation({ groupID: DATABASE_BULK_OPERATION_ID })
         );
