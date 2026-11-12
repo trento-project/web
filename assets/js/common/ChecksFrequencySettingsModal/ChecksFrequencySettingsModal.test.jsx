@@ -53,7 +53,9 @@ describe('ChecksFrequencySettingsModal component', () => {
   it('should render the periodic checks enabled, with an editable frequency', async () => {
     await renderModal({ initialFrequency: { value: 6, unit: 'hour' } });
 
-    expect(screen.getByLabelText('checks-frequency-enabled')).toBeChecked();
+    expect(
+      screen.getByRole('switch', { name: 'Run Checks Periodically' })
+    ).toBeChecked();
     expect(screen.getByLabelText('checks-frequency-value')).toBeEnabled();
     expect(screen.getByLabelText('checks-frequency-unit')).toBeEnabled();
   });
@@ -64,7 +66,9 @@ describe('ChecksFrequencySettingsModal component', () => {
       initialFrequency: { value: 6, unit: 'hour' },
     });
 
-    expect(screen.getByLabelText('checks-frequency-enabled')).not.toBeChecked();
+    expect(
+      screen.getByRole('switch', { name: 'Run Checks Periodically' })
+    ).not.toBeChecked();
     expect(screen.getByText('6')).toBeVisible();
     expect(screen.getByText('Hours')).toBeVisible();
     expect(screen.getByLabelText('checks-frequency-value')).toBeDisabled();
@@ -136,7 +140,9 @@ describe('ChecksFrequencySettingsModal component', () => {
         onClearErrors,
       });
 
-      await user.click(screen.getByLabelText('checks-frequency-enabled'));
+      await user.click(
+        screen.getByRole('switch', { name: 'Run Checks Periodically' })
+      );
 
       expect(onClearErrors).toHaveBeenCalled();
       expect(screen.getByLabelText('checks-frequency-value')).toHaveProperty(
@@ -203,6 +209,23 @@ describe('ChecksFrequencySettingsModal component', () => {
       enabled: true,
       frequency: { value: 30, unit: 'minute' },
     });
+  });
+
+  it('should announce the errors', async () => {
+    await renderModal({
+      initialFrequency: { value: 6, unit: 'hour' },
+      errors: [
+        {
+          detail: 'must be one of 1, 6, 12, 24 when the unit is hour',
+          source: { pointer: '/frequency/value' },
+          title: 'Invalid value',
+        },
+      ],
+    });
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Must be one of 1, 6, 12, 24 when the unit is hour'
+    );
   });
 
   it('should not save while saving is in progress', async () => {
