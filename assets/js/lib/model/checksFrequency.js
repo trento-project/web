@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { has } from 'lodash';
-
 // The values the API accepts for each unit of the checks frequency
 export const CHECKS_FREQUENCY_UNITS = {
   minute: [5, 15, 30],
@@ -13,12 +11,13 @@ export const CHECKS_FREQUENCY_UNITS = {
 const isFrequency = (frequency) =>
   typeof frequency === 'object' &&
   frequency !== null &&
-  typeof frequency.value === 'number' &&
-  has(CHECKS_FREQUENCY_UNITS, frequency.unit);
+  Number.isInteger(frequency.value) &&
+  frequency.value > 0 &&
+  Object.keys(CHECKS_FREQUENCY_UNITS).includes(frequency.unit);
 
 /**
  * How often the checks run, like "Every 5 mins" or "Every 6 hours".
- * Undefined when the frequency is not valid.
+ * Undefined when the frequency is not a positive whole value with a known unit.
  *
  * @param {{value: number, unit: "minute"|"hour"|"week"}} frequency
  */

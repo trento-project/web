@@ -30,6 +30,10 @@ describe('checksFrequency', () => {
     ${{ unit: 'minute' }}
     ${{ value: '5', unit: 'minute' }}
     ${{ value: 1, unit: 'day' }}
+    ${{ value: 0, unit: 'week' }}
+    ${{ value: 1.5, unit: 'hour' }}
+    ${{ value: NaN, unit: 'minute' }}
+    ${{ value: 5, unit: 'minute.length' }}
   `('should not describe the invalid frequency $frequency', ({ frequency }) => {
     expect(describeChecksFrequency(frequency)).toBeUndefined();
   });
