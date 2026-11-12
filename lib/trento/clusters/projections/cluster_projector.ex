@@ -42,6 +42,13 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   import Trento.Clusters, only: [enrich_cluster_model: 1]
 
+  @health_details_changed_events [
+    ClusterChecksHealthChanged,
+    ClusterSbdHealthChanged,
+    ClusterDistributedHealthChanged,
+    ClusterReplicationHealthChanged
+  ]
+
   project(
     %ClusterRegistered{
       cluster_id: id,
@@ -125,6 +132,9 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     fn multi ->
       cluster = Repo.get!(ClusterReadModel, id)
 
+      # Handle the case where we switch the cluster type from :unknown
+      # and need to set the correct structure for health_details
+      # according to the new type.
       health_details =
         type
         |> maybe_get_default_health_details(cluster.health_details)
@@ -298,13 +308,10 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   end
 
   @impl true
-  def after_update(%{cluster_id: cluster_id} = event, _metadata, %{
+  def after_update(%event_module{cluster_id: cluster_id}, _metadata, %{
         health_details: {1, [health_details]}
       })
-      when is_struct(event, ClusterChecksHealthChanged) or
-             is_struct(event, ClusterSbdHealthChanged) or
-             is_struct(event, ClusterDistributedHealthChanged) or
-             is_struct(event, ClusterReplicationHealthChanged) do
+      when event_module in @health_details_changed_events do
     message =
       ClusterJSON.cluster_health_details_changed(%{
         cluster_id: cluster_id,

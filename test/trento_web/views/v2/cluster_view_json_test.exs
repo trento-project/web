@@ -98,12 +98,17 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
       name: "HANA",
       factory: :hana_cluster_health_details_projection,
       health_fields: [:checks_health, :sbd_health, :replication_health]
+    },
+    %{
+      name: "ASCS/ERS",
+      factory: :ascs_ers_cluster_health_details_projection,
+      health_fields: [:checks_health, :sbd_health, :distributed_health]
     }
   ]
   for scenario <- @scenarios do
     @scenario scenario
 
-    test "cluster_health_details_changed renders correctly" do
+    test "cluster_health_details_changed renders correctly for #{scenario.name}" do
       id = Faker.UUID.v4()
       health_details_projection = build(@scenario.factory)
 

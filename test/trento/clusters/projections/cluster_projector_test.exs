@@ -180,12 +180,12 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
   describe "ClusterDetailsUpdated" do
     @scenarios [
       %{
-        name: "'HANA cluster -> Hana cluster'",
+        name: "'HANA cluster -> HANA cluster'",
         cluster_type_fn: &cluster_make_hana/1,
         event_type_fn: &cluster_details_updated_event_make_hana/1
       },
       %{
-        name: "'Unknown cluster  -> Hana cluster'",
+        name: "'Unknown cluster  -> HANA cluster'",
         cluster_type_fn: &cluster_make_unknown/1,
         event_type_fn: &cluster_details_updated_event_make_hana/1
       },
