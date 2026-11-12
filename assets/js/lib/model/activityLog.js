@@ -171,6 +171,8 @@ export const CLUSTER_HOST_OPERATION_REQUESTED =
   'cluster_host_operation_requested';
 export const SAP_SYSTEM_OPERATION_REQUESTED = 'sap_system_operation_requested';
 export const DATABASE_OPERATION_REQUESTED = 'database_operation_requested';
+export const DATABASE_BULK_OPERATION_REQUESTED =
+  'database_bulk_operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
 
 // Check Customization
@@ -850,6 +852,12 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Database Operation Requested',
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_BULK_OPERATION_REQUESTED]: {
+    label: 'Database Bulk Operation Requested',
+    message: ({ metadata }) =>
+      operationMessageFromMetadata(metadata, 'database', 'databases'),
     resource: databaseResourceType,
   },
   [OPERATION_COMPLETED]: {
