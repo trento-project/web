@@ -34,7 +34,7 @@ context('Hosts Overview', () => {
       hostsOverviewPage.nextPageButtonIsDisabled();
     });
 
-    it('should show the ip addresses, provider and agent version data for the hosts in the 1st page', () => {
+    it('should show the hostname, ip addresses, provider, cluster, sid and agent version data for the hosts in the 1st page', () => {
       hostsOverviewPage.hostsTableContentsAreTheExpected();
     });
 
