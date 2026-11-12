@@ -178,7 +178,7 @@ defmodule TrentoWeb.V1.DatabaseController do
       request_body:
         request_body &&
           {"Request containing parameters for the specified database operation",
-           "application/json", request_body, required: true},
+           "application/json", request_body},
       responses: [
         accepted: OperationAccepted.response(),
         not_found: NotFound.response(),
