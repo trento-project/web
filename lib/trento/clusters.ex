@@ -286,8 +286,8 @@ defmodule Trento.Clusters do
       |> Repo.all()
       |> Enum.reduce(0, fn cluster, backfilled ->
         case load_aggregate_isolated(task_supervisor, load_aggregate, cluster.id, timeout) do
-          {:ok, %Cluster{health_details: health_details}} ->
-            backfilled + backfill_cluster_health_details(cluster, health_details)
+          {:ok, %Cluster{health_details: aggregate_health_details}} ->
+            backfilled + backfill_cluster_health_details(cluster, aggregate_health_details)
 
           :error ->
             backfilled
@@ -327,10 +327,15 @@ defmodule Trento.Clusters do
     end
   end
 
-  defp backfill_cluster_health_details(%ClusterReadModel{type: type} = cluster, health_details) do
-    if health_details_fit_type?(type, health_details) do
+  defp backfill_cluster_health_details(
+         %ClusterReadModel{type: type} = cluster,
+         aggregate_health_details
+       ) do
+    if fits_cluster_type?(type, aggregate_health_details) do
       cluster
-      |> Ecto.Changeset.change(health_details: to_health_details_projection(health_details))
+      |> Ecto.Changeset.change(
+        health_details: to_health_details_projection(aggregate_health_details)
+      )
       |> Repo.update!()
 
       1
@@ -339,16 +344,16 @@ defmodule Trento.Clusters do
     end
   end
 
-  defp health_details_fit_type?(_type, nil), do: false
+  defp fits_cluster_type?(_type, nil), do: false
 
-  defp health_details_fit_type?(type, %HanaClusterHealthDetails{})
+  defp fits_cluster_type?(type, %HanaClusterHealthDetails{})
        when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
        do: true
 
-  defp health_details_fit_type?(ClusterType.ascs_ers(), %AscsErsClusterHealthDetails{}),
+  defp fits_cluster_type?(ClusterType.ascs_ers(), %AscsErsClusterHealthDetails{}),
     do: true
 
-  defp health_details_fit_type?(type, _)
+  defp fits_cluster_type?(type, _)
        when type in [
               ClusterType.hana_scale_up(),
               ClusterType.hana_scale_out(),
@@ -356,7 +361,7 @@ defmodule Trento.Clusters do
             ],
        do: false
 
-  defp health_details_fit_type?(_type_without_health_details, _), do: true
+  defp fits_cluster_type?(_type_without_health_details, _), do: true
 
   defp to_health_details_projection(%HanaClusterHealthDetails{} = health_details),
     do: struct!(HanaClusterHealthDetailsProjection, wrap_health_values(health_details))
