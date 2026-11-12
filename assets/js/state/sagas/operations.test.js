@@ -16,12 +16,14 @@ import {
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
   DATABASE_START,
+  DATABASE_STOP,
   HOST_REBOOT,
   getOperationLabel,
 } from '@lib/operations';
 import {
   CLUSTER_BULK_OPERATION_ID,
   HOST_BULK_OPERATION_ID,
+  DATABASE_BULK_OPERATION_ID,
   removeRunningOperation,
   setRunningOperation,
   setForbiddenOperation,
@@ -47,6 +49,9 @@ const clusterBulkOperationRequestURL = (operation) =>
 
 const hostBulkOperationRequestURL = (operation) =>
   `/hosts/operations/${operation}/bulk`;
+
+const databaseBulkOperationRequestURL = (operation) =>
+  `/databases/operations/${operation}/bulk`;
 
 const clusterHostOperationRequestURL = (clusterID, hostID, operation) =>
   `/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`;
@@ -625,6 +630,141 @@ describe('operations saga', () => {
 
       const dispatched = await recordSaga(requestBulkOperation, {
         payload: { bulkOperationID, targetGroupIDs, operation },
+      });
+
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID: bulkOperationID }),
+        setForbiddenOperation({
+          groupID: bulkOperationID,
+          operation,
+          errors,
+        }),
+      ]);
+    });
+  });
+
+  describe('request database bulk operation', () => {
+    it('should request a database bulk operation', async () => {
+      const bulkOperationID = DATABASE_BULK_OPERATION_ID;
+      const operation = DATABASE_START;
+      const label = getOperationLabel(operation);
+      const databaseID1 = faker.string.uuid();
+      const databaseID2 = faker.string.uuid();
+      const targetGroupIDs = [databaseID1, databaseID2];
+      const params = { timeout: 300 };
+
+      axiosMock.onPost(databaseBulkOperationRequestURL(operation)).reply(202, {
+        operations: [
+          { resource_id: databaseID1 },
+          { resource_id: databaseID2 },
+        ],
+        failed_requests: [],
+      });
+
+      const dispatched = await recordSaga(requestBulkOperation, {
+        payload: { bulkOperationID, targetGroupIDs, operation, params },
+      });
+
+      expect(JSON.parse(axiosMock.history.post.at(-1).data)).toEqual({
+        database_ids: targetGroupIDs,
+        params,
+      });
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID: bulkOperationID }),
+        notify({
+          text: `Operation ${label} requested on 2 databases`,
+          icon: '⚙️',
+        }),
+      ]);
+    });
+
+    it('should report the failed requests in a database bulk operation', async () => {
+      const bulkOperationID = DATABASE_BULK_OPERATION_ID;
+      const operation = DATABASE_STOP;
+      const label = getOperationLabel(operation);
+      const passingDatabaseID1 = faker.string.uuid();
+      const passingDatabaseID2 = faker.string.uuid();
+      const failingDatabaseID = faker.string.uuid();
+      const targetGroupIDs = [
+        passingDatabaseID1,
+        passingDatabaseID2,
+        failingDatabaseID,
+      ];
+
+      axiosMock.onPost(databaseBulkOperationRequestURL(operation)).reply(202, {
+        operations: [
+          { resource_id: passingDatabaseID1 },
+          { resource_id: passingDatabaseID2 },
+        ],
+        failed_requests: [{ resource_id: failingDatabaseID }],
+      });
+
+      const dispatched = await recordSaga(requestBulkOperation, {
+        payload: {
+          bulkOperationID,
+          targetGroupIDs,
+          operation,
+          params: { timeout: 300 },
+        },
+      });
+
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID: bulkOperationID }),
+        notify({
+          text: `Operation ${label} requested on 3 databases (1 failed)`,
+          icon: '⚙️',
+        }),
+      ]);
+    });
+
+    it('should fail requesting a database bulk operation if the api request fails', async () => {
+      const bulkOperationID = DATABASE_BULK_OPERATION_ID;
+      const operation = DATABASE_START;
+      const label = getOperationLabel(operation);
+      const targetGroupIDs = [faker.string.uuid()];
+
+      axiosMock
+        .onPost(databaseBulkOperationRequestURL(operation))
+        .reply(500, {});
+
+      const dispatched = await recordSaga(requestBulkOperation, {
+        payload: {
+          bulkOperationID,
+          targetGroupIDs,
+          operation,
+          params: { timeout: 300 },
+        },
+      });
+
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID: bulkOperationID }),
+        notify({
+          text: `Operation ${label} request for databases failed`,
+          icon: '❌',
+        }),
+      ]);
+    });
+
+    it('should fail requesting a database bulk operation if the api request is forbidden', async () => {
+      const bulkOperationID = DATABASE_BULK_OPERATION_ID;
+      const operation = DATABASE_STOP;
+      const targetGroupIDs = [faker.string.uuid()];
+      const errors = [
+        { detail: 'error1', metadata: [{ key: 'value' }] },
+        { detail: 'error2' },
+      ];
+
+      axiosMock
+        .onPost(databaseBulkOperationRequestURL(operation))
+        .reply(403, { errors });
+
+      const dispatched = await recordSaga(requestBulkOperation, {
+        payload: {
+          bulkOperationID,
+          targetGroupIDs,
+          operation,
+          params: { timeout: 300 },
+        },
       });
 
       expect(dispatched).toEqual([
