@@ -211,6 +211,19 @@ describe('ChecksFrequencySettingsModal component', () => {
     });
   });
 
+  it('should not allow changing the settings while saving', async () => {
+    await renderModal({
+      initialFrequency: { value: 6, unit: 'hour' },
+      loading: true,
+    });
+
+    expect(
+      screen.getByRole('switch', { name: 'Run Checks Periodically' })
+    ).toBeDisabled();
+    expect(screen.getByLabelText('checks-frequency-value')).toBeDisabled();
+    expect(screen.getByLabelText('checks-frequency-unit')).toBeDisabled();
+  });
+
   it('should announce the errors', async () => {
     await renderModal({
       initialFrequency: { value: 6, unit: 'hour' },

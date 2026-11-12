@@ -131,6 +131,7 @@ function ChecksFrequencySettingsModal({
             id="checks-frequency-enabled-input"
             name="checks-frequency-enabled-input"
             selected={enabled}
+            disabled={loading}
             onChange={(newEnabled) => {
               setEnabled(newEnabled);
               onClearErrors();
@@ -141,7 +142,7 @@ function ChecksFrequencySettingsModal({
         <div className="col-span-4">
           <FrequencySpan
             frequency={frequency}
-            disabled={!enabled}
+            disabled={!enabled || loading}
             error={Boolean(frequencyError)}
             onChange={(newFrequency) => {
               setFrequency(newFrequency);
