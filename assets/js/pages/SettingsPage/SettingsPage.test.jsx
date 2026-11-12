@@ -465,7 +465,9 @@ describe('Settings Page', () => {
         ({ rerender } = renderWithRouter(StatefulSettings));
       });
 
-      await user.click(screen.getByLabelText('checks-frequency-enabled'));
+      await user.click(
+        screen.getByRole('switch', { name: 'Run Checks Periodically' })
+      );
 
       const [UpdatedSettings] = withState(
         <SettingsPage />,
@@ -477,7 +479,7 @@ describe('Settings Page', () => {
 
       const modal = screen.getByRole('dialog');
       expect(
-        within(modal).getByLabelText('checks-frequency-enabled')
+        within(modal).getByRole('switch', { name: 'Run Checks Periodically' })
       ).not.toBeChecked();
       expect(within(modal).getByText('6')).toBeVisible();
     });
@@ -498,7 +500,7 @@ describe('Settings Page', () => {
         within(modal).getByText('Check Executions Settings')
       ).toBeVisible();
       expect(
-        within(modal).getByLabelText('checks-frequency-enabled')
+        within(modal).getByRole('switch', { name: 'Run Checks Periodically' })
       ).not.toBeChecked();
       expect(within(modal).getByText('12')).toBeVisible();
       expect(within(modal).getByText('Hours')).toBeVisible();
