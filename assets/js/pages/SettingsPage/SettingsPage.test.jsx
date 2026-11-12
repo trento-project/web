@@ -406,6 +406,23 @@ describe('Settings Page', () => {
       ).toBeDisabled();
     });
 
+    it('should show the checks disabled by the environment', async () => {
+      await renderWithChecksFrequencySettings({
+        settings: {
+          enabled: false,
+          frequency: null,
+          enforced_from_env: true,
+        },
+      });
+
+      expect(screen.getByLabelText('checks-frequency')).toHaveTextContent(
+        'Disabled'
+      );
+      expect(
+        screen.getByLabelText('checks-frequency-edit-button')
+      ).toBeDisabled();
+    });
+
     it('should clear the previous errors and start editing when clicking on the edit button', async () => {
       const user = userEvent.setup();
       const store = await renderWithChecksFrequencySettings({
