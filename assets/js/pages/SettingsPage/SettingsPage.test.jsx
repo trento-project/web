@@ -406,15 +406,63 @@ describe('Settings Page', () => {
       ).toBeDisabled();
     });
 
-    it('should start editing when clicking on the edit button', async () => {
+    it('should clear the previous errors and start editing when clicking on the edit button', async () => {
       const user = userEvent.setup();
-      const store = await renderWithChecksFrequencySettings();
+      const store = await renderWithChecksFrequencySettings({
+        errors: [
+          {
+            detail:
+              'Checks frequency settings can not be set, enforced by ENV.',
+            title: 'Conflict has occurred',
+          },
+        ],
+      });
 
       await user.click(screen.getByLabelText('checks-frequency-edit-button'));
 
-      expect(store.getActions()).toContainEqual(
-        setEditingChecksFrequencySettings(true)
+      expect(store.getActions()).toEqual(
+        expect.arrayContaining([
+          setChecksFrequencySettingsErrors([]),
+          setEditingChecksFrequencySettings(true),
+        ])
       );
+    });
+
+    it('should keep the unsaved changes when the settings change while editing', async () => {
+      const user = userEvent.setup();
+      const editingState = (frequency) => ({
+        ...defaultInitialState,
+        checksFrequencySettings: {
+          ...defaultInitialState.checksFrequencySettings,
+          editing: true,
+          settings: { enabled: true, frequency, enforced_from_env: false },
+        },
+      });
+
+      const [StatefulSettings] = withState(
+        <SettingsPage />,
+        editingState({ value: 6, unit: 'hour' })
+      );
+      let rerender;
+      await act(async () => {
+        ({ rerender } = renderWithRouter(StatefulSettings));
+      });
+
+      await user.click(screen.getByLabelText('checks-frequency-enabled'));
+
+      const [UpdatedSettings] = withState(
+        <SettingsPage />,
+        editingState({ value: 12, unit: 'hour' })
+      );
+      await act(async () => {
+        rerender(UpdatedSettings);
+      });
+
+      const modal = screen.getByRole('dialog');
+      expect(
+        within(modal).getByLabelText('checks-frequency-enabled')
+      ).not.toBeChecked();
+      expect(within(modal).getByText('6')).toBeVisible();
     });
 
     it('should render edit modal and save the settings', async () => {

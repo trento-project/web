@@ -443,15 +443,14 @@ function SettingsPage() {
               enabled={checksFrequencySettings.enabled}
               frequency={checksFrequencySettings.frequency}
               enforcedFromEnv={checksFrequencySettings.enforced_from_env}
-              onEditClick={() =>
-                dispatch(setEditingChecksFrequencySettings(true))
-              }
+              onEditClick={() => {
+                dispatch(setChecksFrequencySettingsErrors([]));
+                dispatch(setEditingChecksFrequencySettings(true));
+              }}
             />
           </SettingsLoader>
           <ChecksFrequencySettingsModal
-            key={`${JSON.stringify(
-              checksFrequencySettings
-            )}-${editingChecksFrequencySettings}`}
+            key={`checks-frequency-${editingChecksFrequencySettings}`}
             open={editingChecksFrequencySettings}
             errors={checksFrequencyValidationErrors}
             loading={checksFrequencySettingsLoading}
