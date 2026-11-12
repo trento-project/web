@@ -86,7 +86,9 @@ function FrequencySpan({
  */
 function Error({ text }) {
   return text ? (
-    <p className="text-red-500 mt-1">{text}</p>
+    <p className="text-red-500 mt-1" role="alert">
+      {text}
+    </p>
   ) : (
     <p className="mt-1">&nbsp;</p>
   );
@@ -121,10 +123,13 @@ function ChecksFrequencySettingsModal({
     >
       <div className="text-gray-500">Configure when the checks are run.</div>
       <div className="grid grid-cols-6 my-5 gap-6">
-        <Label className="col-span-2">Run Checks Periodically</Label>
+        <Label className="col-span-2" htmlFor="checks-frequency-enabled-input">
+          Run Checks Periodically
+        </Label>
         <div className="col-span-4">
           <Switch
-            aria-label="checks-frequency-enabled"
+            id="checks-frequency-enabled-input"
+            name="checks-frequency-enabled-input"
             selected={enabled}
             onChange={(newEnabled) => {
               setEnabled(newEnabled);
