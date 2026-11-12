@@ -268,7 +268,7 @@ const checksFrequencyChangeMessage = ({ metadata }) => {
   const frequency = describeChecksFrequency(metadata?.frequency);
 
   return frequency
-    ? `Check execution frequency changed to ${lowerFirst(frequency)}`
+    ? `Check execution frequency set to ${lowerFirst(frequency)}`
     : 'Check Executions Settings were changed';
 };
 
