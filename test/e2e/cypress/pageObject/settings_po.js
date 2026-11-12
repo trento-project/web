@@ -97,9 +97,34 @@ const activityLogSettingsSaveButton = `${activityLogSettingsModal} button:contai
 const activityLogSettingsCancelButton = `${activityLogSettingsModal} button:contains("Cancel")`;
 const retentionTimeInput = 'input[role="spinbutton"]';
 
+// Checks frequency selectors
+const checksFrequency = '[aria-label="checks-frequency"]';
+const checksFrequencyEditButton = '[aria-label="checks-frequency-edit-button"]';
+const checksFrequencySettingsModal = 'div[id*="headlessui-dialog-panel"]';
+const checksFrequencyEnabledSwitch = '#checks-frequency-enabled-input';
+const checksFrequencyValueDropdown = basePage.getSelectControlValue(
+  '[aria-label="checks-frequency-value"]'
+);
+const checksFrequencyUnitDropdown = basePage.getSelectControlValue(
+  '[aria-label="checks-frequency-unit"]'
+);
+const checksFrequencySaveButton = `${checksFrequencySettingsModal} button:contains("Save Settings")`;
+const checksFrequencyCloseButton = `${checksFrequencySettingsModal} button:contains("Close")`;
+const checksFrequencySettingsError = `${checksFrequencySettingsModal} [role="alert"]`;
+const checksFrequencyLoadingError =
+  'p:contains("Unable to load Check Executions Settings")';
+const checksFrequencyReloadButton = `div:has(> ${checksFrequencyLoadingError}) button:contains("Reload")`;
+
 // Test data
 
 const url = '/settings';
+
+const checksFrequencySettingsUrl = '/api/v1/settings/checks_frequency';
+
+const defaultChecksFrequencySettings = {
+  enabled: true,
+  frequency: { value: 5, unit: 'minute' },
+};
 
 const smlmUrl = 'https://valid';
 const smlmUsername = 'admin';
@@ -193,6 +218,11 @@ export const visit = () => {
     '/api/v1/settings/activity_log',
     cy.spy().as('changeSettingsEndpoint')
   );
+  cy.intercept(
+    'PATCH',
+    checksFrequencySettingsUrl,
+    cy.spy().as('changeChecksFrequencySettingsEndpoint')
+  );
   interceptSettingsPageEndpoints();
   return basePage.visit(url);
 };
@@ -211,6 +241,26 @@ export const clickActivityLogSettingsSaveButton = () =>
 
 export const clickEditActivityLogSettingsButton = () =>
   cy.get(editActivityLogsSettingsButton).click();
+
+export const clickChecksFrequencyEditButton = () =>
+  cy.get(checksFrequencyEditButton).click();
+
+export const toggleChecksFrequencyEnabled = () =>
+  cy.get(checksFrequencyEnabledSwitch).click();
+
+export const selectChecksFrequency = (value, unit) => {
+  basePage.selectFromDropdown(checksFrequencyUnitDropdown, unit);
+  return basePage.selectFromDropdown(checksFrequencyValueDropdown, `${value}`);
+};
+
+export const clickChecksFrequencySaveButton = () =>
+  cy.get(checksFrequencySaveButton).click();
+
+export const clickChecksFrequencyCloseButton = () =>
+  cy.get(checksFrequencyCloseButton).click();
+
+export const clickChecksFrequencyReloadButton = () =>
+  cy.get(checksFrequencyReloadButton).click();
 
 export const clearSmlmSettings = () => {
   cy.get(clearSmlmSettingsButton).click();
@@ -345,6 +395,10 @@ export const interceptSettingsPageEndpoints = () => {
     'activityLogSettingsEndpoint'
   );
   cy.intercept('/api/v1/settings/smlm').as('smlmSettingsEndpoint');
+  // GET only, so that a save does not count as a page load
+  cy.intercept('GET', checksFrequencySettingsUrl).as(
+    'checksFrequencySettingsEndpoint'
+  );
   return cy
     .intercept('/api/v1/settings/alerting')
     .as('alertingSettingsEndpoint');
@@ -356,6 +410,7 @@ export const waitForSettingsPageRequests = () => {
   basePage.waitForRequest('apiKeySettingsEndpoint');
   basePage.waitForRequest('activityLogSettingsEndpoint');
   basePage.waitForRequest('smlmSettingsEndpoint');
+  basePage.waitForRequest('checksFrequencySettingsEndpoint');
   return basePage.waitForRequest('alertingSettingsEndpoint');
 };
 
@@ -373,6 +428,10 @@ export const checkSettingsEndpointsRequestsAreForbidden = (forbidden) => {
     .should(matcher, 401);
   basePage
     .waitForRequest('smlmSettingsEndpoint', waitOptions)
+    .its('response.statusCode')
+    .should(matcher, 401);
+  basePage
+    .waitForRequest('checksFrequencySettingsEndpoint', waitOptions)
     .its('response.statusCode')
     .should(matcher, 401);
   return basePage
@@ -409,6 +468,34 @@ export const changeSettingsEndpointIsNotCalled = () =>
 
 export const activityLogSettingsModalIsNotDisplayed = () =>
   cy.get(activityLogSettingsModal).should('not.exist');
+
+export const checksFrequencyIsTheExpected = (expectedValue) =>
+  cy.get(checksFrequency).should('have.text', expectedValue);
+
+export const checksFrequencyEditButtonIsEnabled = () =>
+  cy.get(checksFrequencyEditButton).should('be.enabled');
+
+export const checksFrequencyEditButtonIsDisabled = () =>
+  cy.get(checksFrequencyEditButton).should('be.disabled');
+
+export const checksFrequencySettingsModalIsNotDisplayed = () =>
+  cy.get(checksFrequencySettingsModal).should('not.exist');
+
+export const checksFrequencyFormShows = (value, unit) => {
+  cy.get(checksFrequencyValueDropdown).should('have.text', `${value}`);
+  return cy.get(checksFrequencyUnitDropdown).should('have.text', unit);
+};
+
+export const checksFrequencySettingsErrorIsDisplayed = (error) =>
+  cy.get(checksFrequencySettingsError).should('have.text', error);
+
+export const checksFrequencyLoadingErrorIsDisplayed = () =>
+  cy.get(checksFrequencyLoadingError).should('be.visible');
+
+export const changeChecksFrequencySettingsEndpointIsNotCalled = () =>
+  cy
+    .get('@changeChecksFrequencySettingsEndpoint')
+    .should('not.have.been.called');
 
 export const retentionTimeIsTheExpected = (expectedValue) =>
   cy.get(retentionTime).should('have.text', expectedValue);
@@ -1050,10 +1137,35 @@ export const saveInitialAlertingSettings = () =>
     })
   );
 
+export const apiSetDefaultChecksFrequencySettings = () =>
+  basePage.apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: checksFrequencySettingsUrl,
+      method: 'PATCH',
+      auth: {
+        bearer: accessToken,
+      },
+      body: defaultChecksFrequencySettings,
+    })
+  );
+
+export const interceptChecksFrequencySettingsUpdateWithServerError = () =>
+  cy.intercept('PATCH', checksFrequencySettingsUrl, {
+    statusCode: 500,
+    body: {},
+  });
+
+export const interceptChecksFrequencySettingsFetchWithNetworkError = () =>
+  cy.intercept(
+    { method: 'GET', url: checksFrequencySettingsUrl, times: 1 },
+    { forceNetworkError: true }
+  );
+
 export const apiCreateUserWithSettingsAbilities = () =>
   basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'activity_logs_settings' },
     { name: 'all', resource: 'api_key_settings' },
     { name: 'all', resource: 'smlm_settings' },
     { name: 'all', resource: 'alerting_settings' },
+    { name: 'all', resource: 'checks_frequency_settings' },
   ]);
