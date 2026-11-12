@@ -6,6 +6,12 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { getEnrichedDatabaseInstances } from '@state/selectors/sapSystem';
 import { getUserProfile } from '@state/selectors/user';
+import { getRunningOperation } from '@state/selectors/runningOperations';
+import {
+  DATABASE_BULK_OPERATION_ID,
+  bulkOperationRequested,
+  removeRunningOperation,
+} from '@state/runningOperations';
 
 import {
   addTagToDatabase,
@@ -33,6 +39,9 @@ function DatabasesOverviewPage() {
   );
   const dispatch = useDispatch();
   const { abilities, timezone } = useSelector(getUserProfile);
+  const bulkOperation = useSelector(
+    getRunningOperation(DATABASE_BULK_OPERATION_ID)
+  );
 
   return (
     <DatabasesOverview
@@ -53,6 +62,22 @@ function DatabasesOverviewPage() {
       }}
       onInstanceCleanUp={(instance) => {
         dispatch(deregisterDatabaseInstance(instance));
+      }}
+      bulkOperation={bulkOperation}
+      onBulkOperationRequest={({ operation, databases: targets, params }) => {
+        dispatch(
+          bulkOperationRequested({
+            bulkOperationID: DATABASE_BULK_OPERATION_ID,
+            targetGroupIDs: targets.map(({ id }) => id),
+            operation,
+            params,
+          })
+        );
+      }}
+      onBulkOperationForbiddenDismiss={() => {
+        dispatch(
+          removeRunningOperation({ groupID: DATABASE_BULK_OPERATION_ID })
+        );
       }}
     />
   );
