@@ -104,10 +104,10 @@ describe('Alerting settings from DB', () => {
 });
 
 describe('Check executions settings enforced from env', () => {
-  const checksInterval = Cypress.expose('CHECKS_INTERVAL');
+  const checksFrequencyFromEnv = Cypress.expose('CHECKS_FREQUENCY_FROM_ENV');
 
   before(function () {
-    if (!checksInterval) {
+    if (!checksFrequencyFromEnv) {
       // the checks frequency is not set by the environment
       this.skip();
     }
@@ -119,7 +119,7 @@ describe('Check executions settings enforced from env', () => {
   });
 
   it('should be displayed correctly', () => {
-    settingsPage.checksFrequencyDisplaysEnvValue(checksInterval);
+    settingsPage.checksFrequencyDisplaysEnvValue(checksFrequencyFromEnv);
   });
 
   it('should have an edit button that is disabled', () => {

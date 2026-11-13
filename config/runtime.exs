@@ -448,15 +448,3 @@ if config_env() in [:prod, :demo] do
     config :trento, :analytics, installation_method: installation_method
   end
 end
-
-# A development server reads CHECKS_INTERVAL as well, like the e2e tests of the checks
-# frequency set by the environment do. Unset, it leaves the checks frequency editable.
-if config_env() == :dev and System.get_env("CHECKS_INTERVAL") do
-  case Trento.Checks.Frequency.parse(System.get_env("CHECKS_INTERVAL")) do
-    {:ok, checks_frequency} ->
-      config :trento, :checks_frequency, checks_frequency
-
-    {:error, :invalid_frequency} ->
-      raise "Invalid value set for environment variable CHECKS_INTERVAL"
-  end
-end
