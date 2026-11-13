@@ -295,7 +295,10 @@ describe('Users', () => {
     it('should fail to login if TOTP code is not given', () => {
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.getSecretAndTypeTotpCode();
+      usersPage.interceptConfirmTotpEnrollmentEndpoint();
       usersPage.clickVerifyTotpButton();
+      usersPage.waitForConfirmTotpEnrollmentEndpoint();
+      usersPage.authenticatorAppSwitchIsEnabled();
       loginPage.loginFailsIfOtpNotProvided(
         usersPage.USER.username,
         usersPage.PASSWORD
@@ -305,9 +308,15 @@ describe('Users', () => {
     it('should disable TOTP authentication and check login works without TOTP', () => {
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.getSecretAndTypeTotpCode();
+      usersPage.interceptConfirmTotpEnrollmentEndpoint();
       usersPage.clickVerifyTotpButton();
+      usersPage.waitForConfirmTotpEnrollmentEndpoint();
+      usersPage.totpEnabledToasterIsDisplayed();
       usersPage.clickAuthenticatorAppSwitch();
+      usersPage.interceptDeleteTotpEnrollmentEndpoint();
       usersPage.clickDisableTotpButton();
+      usersPage.waitForTotpEnrollmentEndpoint();
+      usersPage.authenticatorAppSwitchIsUnchecked();
       loginPage.loginShouldSucceed(usersPage.USER.username, usersPage.PASSWORD);
     });
 
