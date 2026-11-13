@@ -37,6 +37,28 @@ defmodule Trento.Checks do
     request_due_executions(settings, date_service.utc_now())
   end
 
+  @doc """
+  Deletes the requests of the hosts and clusters that are deregistered or removed, and
+  returns how many it deleted.
+  """
+  @spec delete_stale_execution_requests() :: non_neg_integer()
+  def delete_stale_execution_requests do
+    registered_hosts = from h in HostReadModel, where: is_nil(h.deregistered_at), select: h.id
+
+    registered_clusters =
+      from c in ClusterReadModel, where: is_nil(c.deregistered_at), select: c.id
+
+    {deleted, _} =
+      Repo.delete_all(
+        from r in ChecksExecutionRequest,
+          where:
+            (r.target_type == ^:host and r.target_id not in subquery(registered_hosts)) or
+              (r.target_type == ^:cluster and r.target_id not in subquery(registered_clusters))
+      )
+
+    deleted
+  end
+
   defp request_due_executions(%ChecksFrequencySettings{enabled: false}, _now), do: :ok
 
   defp request_due_executions(%ChecksFrequencySettings{enabled: true, frequency: frequency}, now) do
