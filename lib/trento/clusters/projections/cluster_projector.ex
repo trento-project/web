@@ -75,7 +75,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
           hosts_number: hosts_number,
           details: details,
           health: health,
-          health_details: postprocess_health_details(health_details),
+          health_details: HealthValueDetails.to_details_map(health_details),
           state: state
         })
 
@@ -368,14 +368,6 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   def after_update(_, _, _), do: :ok
 
   # -- Helpers --
-
-  defp postprocess_health_details(nil), do: nil
-
-  defp postprocess_health_details(health_details) do
-    health_details
-    |> StructHelper.to_map()
-    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
-  end
 
   defp maybe_get_default_health_details(:ascs_ers, nil),
     do: %AscsErsClusterHealthDetails{

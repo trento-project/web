@@ -3,13 +3,30 @@
 
 defmodule Trento.Support.HealthValueDetails do
   @moduledoc """
-  ValueDetails struct with Trento.Enums.Health as `value` field type.
+  Represent Health value with additional details.
   """
-  require Trento.Enums.Health, as: Health
-  require Trento.Support.ValueDetails, as: ValueDetails
+  @required_fields [:value]
 
-  use ValueDetails,
-    value_type: Ecto.Enum,
-    values: Health.values(),
-    default: Health.unknown()
+  use Trento.Support.Type
+
+  require Trento.Enums.Health, as: Health
+
+  alias Trento.Support.StructHelper
+
+  deftype do
+    field :value, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    field :reason, :string, default: ""
+  end
+
+  @spec to_details_map(map()) :: map()
+  @doc """
+    Utility function that converts a mapping (struct or map) of Health values into a Map of HealthValueDetails
+  """
+  def to_details_map(nil), do: nil
+
+  def to_details_map(health_mapping) do
+    health_mapping
+    |> StructHelper.to_map()
+    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
+  end
 end

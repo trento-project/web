@@ -35,6 +35,13 @@ defmodule TrentoWeb.V2.ClusterJSON do
   def cluster_health_details_changed(data) do
     data
     |> StructHelper.to_atomized_map()
+    # We don't expose reason for now. Remove this once we start using
+    # :reason.
+    |> Map.update!(:health_details, fn health_details ->
+      for {key, details} <- health_details, into: %{} do
+        {key, Map.delete(details, :reason)}
+      end
+    end)
     |> Map.take([:cluster_id, :health_details])
   end
 
