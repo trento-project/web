@@ -393,43 +393,16 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         name: "ClusterChecksHealthChanged",
         event: ClusterChecksHealthChanged,
         health_key: :checks_health,
+        cluster_type_fn: Enum.random([&cluster_make_ascs_ers/1, &cluster_make_hana/1]),
         event_factory: :cluster_checks_health_changed_event
       },
       %{
         name: "ClusterSbdHealthChanged",
         event: ClusterSbdHealthChanged,
         health_key: :sbd_health,
+        cluster_type_fn: Enum.random([&cluster_make_ascs_ers/1, &cluster_make_hana/1]),
         event_factory: :cluster_sbd_health_changed_event
-      }
-    ]
-    for scenario <- @scenarios do
-      @scenario scenario
-
-      test "#{scenario.name} projects its change into the read model" do
-        %{health_key: health_key} = @scenario
-
-        %{id: cluster_id} = insert(:cluster)
-
-        event =
-          %{^health_key => expected_health} =
-          build(@scenario.event_factory,
-            cluster_id: cluster_id
-          )
-
-        ProjectorTestHelper.project(
-          ClusterProjector,
-          event,
-          "cluster_projector"
-        )
-
-        %{health_details: %{^health_key => %{value: actual_health}}} =
-          Repo.get!(ClusterReadModel, cluster_id)
-
-        assert expected_health === actual_health
-      end
-    end
-
-    @scenarios [
+      },
       %{
         name: "ClusterReplicationHealthChanged",
         event: ClusterReplicationHealthChanged,
