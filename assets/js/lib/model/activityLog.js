@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { has } from 'lodash';
+import { has, lowerFirst } from 'lodash';
 import {
   defaultTo,
   entries,
@@ -19,6 +19,7 @@ import {
   getOperationResourceType,
 } from '@lib/operations';
 import { isPermitted } from './users';
+import { describeChecksFrequency } from './checksFrequency';
 
 export const LOGIN_ATTEMPT = 'login_attempt';
 export const RESOURCE_TAGGING = 'resource_tagging';
@@ -45,6 +46,8 @@ export const HOST_CLEANUP_REQUESTED = 'host_cleanup_requested';
 export const SAP_SYSTEM_CLEANUP_REQUESTED = 'sap_system_cleanup_requested';
 export const DATABASE_CLEANUP_REQUESTED = 'database_cleanup_requested';
 export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
+export const CHANGING_CHECKS_FREQUENCY_SETTINGS =
+  'changing_checks_frequency_settings';
 
 export const AI_CONFIGURATION_CREATION = 'ai_configuration_creation';
 export const AI_CONFIGURATION_MODIFICATION = 'ai_configuration_modification';
@@ -257,6 +260,18 @@ const operationMessageFromMetadata = (metadata, singular, plural) => {
   });
 };
 
+const checksFrequencyChangeMessage = ({ metadata }) => {
+  if (metadata?.enabled === false) {
+    return 'Check execution frequency disabled';
+  }
+
+  const frequency = describeChecksFrequency(metadata?.frequency);
+
+  return frequency
+    ? `Check execution frequency set to ${lowerFirst(frequency)}`
+    : 'Check Executions Settings were changed';
+};
+
 const userManagement = ['all:all', 'all:users'];
 
 export const ACTIVITY_TYPES_CONFIG = {
@@ -407,6 +422,11 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Activity Log Settings Updated',
     message: (_entry) => `Activity log settings were updated`,
     resource: (_entry) => 'Activity Log Settings',
+  },
+  [CHANGING_CHECKS_FREQUENCY_SETTINGS]: {
+    label: 'Check Executions Settings Changed',
+    message: checksFrequencyChangeMessage,
+    resource: (_entry) => 'Check Executions Settings',
   },
   // Host events
   [HEARTBEAT_FAILED]: {
