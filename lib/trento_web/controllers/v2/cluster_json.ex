@@ -3,6 +3,7 @@
 
 defmodule TrentoWeb.V2.ClusterJSON do
   alias Trento.Clusters.ValueObjects.SapInstance
+  alias Trento.Support.StructHelper
 
   def clusters(%{clusters: clusters}), do: Enum.map(clusters, &cluster(%{cluster: &1}))
 
@@ -30,6 +31,19 @@ defmodule TrentoWeb.V2.ClusterJSON do
 
   def cluster_health_changed(%{cluster: %{id: id, name: name, health: health}}),
     do: %{cluster_id: id, name: name, health: health}
+
+  def cluster_health_details_changed(data) do
+    data
+    |> StructHelper.to_atomized_map()
+    # We don't expose reason for now. Remove this once we start using
+    # :reason.
+    |> Map.update!(:health_details, fn health_details ->
+      for {key, details} <- health_details, into: %{} do
+        {key, Map.delete(details, :reason)}
+      end
+    end)
+    |> Map.take([:cluster_id, :health_details])
+  end
 
   def cluster_stale_changed(%{cluster: %{id: id, stale_at: stale_at}}),
     do: %{id: id, stale_at: stale_at}

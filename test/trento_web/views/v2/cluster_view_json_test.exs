@@ -27,32 +27,58 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
              ClusterJSON.cluster(%{cluster: cluster})
   end
 
-  test "should render sap instances and deprecated sids properly" do
-    sap_instances = [
-      %{sid: sid_1, instance_number: inr_1} =
-        build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_instance()),
-      %{sid: sid_2, instance_number: inr_2} =
-        build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_hana_topology()),
-      %{sid: sid_3, instance_number: inr_3} =
-        build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_instance())
-    ]
+  @scenarios [
+    %{
+      name: "cluster",
+      view_fn: &ClusterJSON.cluster/1,
+      view_arg_name: :cluster,
+      view_arg_factory_name: :cluster
+    },
+    %{
+      name: "cluster_details_updated",
+      view_fn: &ClusterJSON.cluster_details_updated/1,
+      view_arg_name: :data,
+      view_arg_factory_name: :cluster_details_updated_event
+    }
+  ]
+  for scenario <- @scenarios do
+    @scenario scenario
 
-    cluster = build(:cluster, sap_instances: sap_instances)
+    test "#{scenario.name} view should render sap instances and deprecated sids properly" do
+      %{
+        view_fn: view_fn,
+        view_arg_name: view_arg_name,
+        view_arg_factory_name: view_arg_factory_name
+      } = @scenario
 
-    %{sap_instances: view_sap_instances, sid: sid, additional_sids: additional_sids} =
-      ClusterJSON.cluster(%{cluster: cluster})
+      sap_instances = [
+        %{sid: sid_1, instance_number: inr_1} =
+          build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_instance()),
+        %{sid: sid_2, instance_number: inr_2} =
+          build(:clustered_sap_instance,
+            resource_type: SapInstanceResourceType.sap_hana_topology()
+          ),
+        %{sid: sid_3, instance_number: inr_3} =
+          build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_instance())
+      ]
 
-    assert sid_2 == sid
-    assert [sid_1, sid_3] == additional_sids
+      data = build(view_arg_factory_name, sap_instances: sap_instances)
 
-    assert [
-             %{sid: sid_1, instance_number: inr_1},
-             %{sid: sid_2, instance_number: inr_2},
-             %{sid: sid_3, instance_number: inr_3}
-           ] == view_sap_instances
+      %{sap_instances: view_sap_instances, sid: sid, additional_sids: additional_sids} =
+        view_fn.(%{view_arg_name => data})
+
+      assert sid_2 == sid
+      assert [sid_1, sid_3] == additional_sids
+
+      assert [
+               %{sid: sid_1, instance_number: inr_1},
+               %{sid: sid_2, instance_number: inr_2},
+               %{sid: sid_3, instance_number: inr_3}
+             ] == view_sap_instances
+    end
   end
 
-  test "should remove sid from resources" do
+  test "cluster view should remove sid from resources" do
     details = build(:hana_cluster_details)
     cluster = build(:cluster, details: details)
 
@@ -65,5 +91,39 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
       refute Map.has_key?(resource, :sid)
       refute Map.has_key?(resource, :__struct__)
     end)
+  end
+
+  @scenarios [
+    %{
+      name: "HANA",
+      factory: :hana_cluster_health_details_projection,
+      health_fields: [:checks_health, :sbd_health, :replication_health]
+    },
+    %{
+      name: "ASCS/ERS",
+      factory: :ascs_ers_cluster_health_details_projection,
+      health_fields: [:checks_health, :sbd_health, :distributed_health]
+    }
+  ]
+  for scenario <- @scenarios do
+    @scenario scenario
+
+    test "cluster_health_details_changed renders correctly for #{scenario.name}" do
+      id = Faker.UUID.v4()
+      health_details_projection = build(@scenario.factory)
+
+      data =
+        ClusterJSON.cluster_health_details_changed(%{
+          cluster_id: id,
+          health_details: health_details_projection
+        })
+
+      expected_health_details =
+        for field <- @scenario.health_fields,
+            into: %{},
+            do: {field, %{value: Map.fetch!(health_details_projection, field).value}}
+
+      assert %{cluster_id: id, health_details: expected_health_details} == data
+    end
   end
 end

@@ -7,8 +7,9 @@ defmodule Trento.Factory do
   """
 
   require Trento.Enums.Provider, as: Provider
-  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
@@ -26,6 +27,7 @@ defmodule Trento.Factory do
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
+    AscsErsClusterHealthDetails,
     AscsErsClusterNode,
     AscsErsClusterSapSystem,
     ClusterResource,
@@ -108,11 +110,14 @@ defmodule Trento.Factory do
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
+    ClusterDistributedHealthChanged,
     ClusterHealthChanged,
     ClusterHostDataMarkedInSync,
     ClusterHostDataMarkedStale,
     ClusterHostStatusChanged,
     ClusterRegistered,
+    ClusterReplicationHealthChanged,
+    ClusterSbdHealthChanged,
     ClusterTombstoned,
     HostAddedToCluster,
     HostRemovedFromCluster
@@ -154,6 +159,13 @@ defmodule Trento.Factory do
 
   alias Trento.Clusters.ClusterEnrichmentData
   alias Trento.Clusters.Projections.ClusterReadModel
+
+  alias Trento.Clusters.Projections.HanaClusterHealthDetails,
+    as: HanaClusterHealthDetailsProjection
+
+  alias Trento.Clusters.Projections.AscsErsClusterHealthDetails,
+    as: AscsErsClusterHealthDetailsProjection
+
   alias Trento.Heartbeats.Heartbeat
   alias Trento.Tags.Tag
 
@@ -206,6 +218,8 @@ defmodule Trento.Factory do
 
   alias OpenApiSpex.Operation
   alias Trento.AI.{LLMRegistry, OperationEntry, UserConfiguration}
+
+  alias Trento.Support.HealthValueDetails
 
   alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
 
@@ -348,6 +362,7 @@ defmodule Trento.Factory do
     })
   end
 
+  # TODO: Fully randomize this event.
   def cluster_registered_event_factory do
     %ClusterRegistered{
       cluster_id: Faker.UUID.v4(),
@@ -359,12 +374,53 @@ defmodule Trento.Factory do
       details: build(:hana_cluster_details),
       health: Health.passing(),
       health_details:
-        HanaClusterHealthDetails.new!(%{
+        build(:hana_cluster_health_details,
+          checks_health: Health.unknown(),
           sbd_health: Health.passing(),
           replication_health: Health.passing()
-        }),
+        ),
       type: ClusterType.hana_scale_up(),
       state: :S_IDLE
+    }
+  end
+
+  def cluster_registered_event_make_hana(event, attrs \\ []) do
+    event
+    |> struct!(
+      type: ClusterType.hana_scale_up(),
+      details: build(:hana_cluster_details),
+      health_details: build(:hana_cluster_health_details)
+    )
+    |> merge_attributes(Map.new(attrs))
+  end
+
+  def cluster_registered_event_make_ascs_ers(event, attrs \\ []) do
+    event
+    |> struct!(
+      type: ClusterType.ascs_ers(),
+      details: build(:ascs_ers_cluster_details),
+      sap_instances:
+        build_list(2, :clustered_sap_instance,
+          resource_type: SapInstanceResourceType.sap_instance()
+        ),
+      health_details: build(:ascs_ers_cluster_health_details)
+    )
+    |> merge_attributes(Map.new(attrs))
+  end
+
+  def hana_cluster_health_details_factory do
+    %HanaClusterHealthDetails{
+      checks_health: Enum.random(Health.values()),
+      sbd_health: Enum.random(Health.values()),
+      replication_health: Enum.random(Health.values())
+    }
+  end
+
+  def ascs_ers_cluster_health_details_factory do
+    %AscsErsClusterHealthDetails{
+      checks_health: Enum.random(Health.values()),
+      sbd_health: Enum.random(Health.values()),
+      distributed_health: Enum.random(Health.values())
     }
   end
 
@@ -379,6 +435,49 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       state: :S_IDLE
+    }
+  end
+
+  def cluster_details_updated_event_make_hana(event, attrs \\ []) do
+    event
+    |> struct!(
+      type: ClusterType.hana_scale_up(),
+      details: build(:hana_cluster_details)
+    )
+    |> merge_attributes(Map.new(attrs))
+  end
+
+  def cluster_details_updated_event_make_ascs_ers(event, attrs \\ []) do
+    event
+    |> struct!(
+      type: ClusterType.ascs_ers(),
+      details: build(:ascs_ers_cluster_details),
+      sap_instances:
+        build_list(1, :clustered_sap_instance,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
+    )
+    |> merge_attributes(Map.new(attrs))
+  end
+
+  def cluster_sbd_health_changed_event_factory do
+    %ClusterSbdHealthChanged{
+      cluster_id: Faker.UUID.v4(),
+      sbd_health: Enum.random(Health.values())
+    }
+  end
+
+  def cluster_replication_health_changed_event_factory do
+    %ClusterReplicationHealthChanged{
+      cluster_id: Faker.UUID.v4(),
+      replication_health: Enum.random(Health.values())
+    }
+  end
+
+  def cluster_distributed_health_changed_event_factory do
+    %ClusterDistributedHealthChanged{
+      cluster_id: Faker.UUID.v4(),
+      distributed_health: Enum.random(Health.values())
     }
   end
 
@@ -524,23 +623,90 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_factory(attrs) do
-    cluster = %ClusterReadModel{
+  def cluster_factory do
+    type = Enum.random([ClusterType.hana_scale_up(), ClusterType.ascs_ers()])
+
+    %ClusterReadModel{
       id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
       sap_instances: build_list(1, :clustered_sap_instance),
       provider: Enum.random(Provider.values()),
-      type: ClusterType.hana_scale_up(),
-      health: Health.passing(),
+      type: type,
+      health: Enum.random(Health.values()),
+      health_details:
+        case type do
+          ClusterType.hana_scale_up() -> build(:hana_cluster_health_details_projection)
+          ClusterType.ascs_ers() -> build(:ascs_ers_cluster_health_details_projection)
+        end,
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
-      details: %{},
+      details:
+        case type do
+          ClusterType.hana_scale_up() -> build(:hana_cluster_details)
+          ClusterType.ascs_ers() -> build(:ascs_ers_cluster_details)
+        end,
       state: :S_IDLE,
       stale_at: nil
     }
+  end
 
+  def cluster_make_hana(cluster, attrs \\ []) do
     cluster
-    |> merge_attributes(attrs)
-    |> evaluate_lazy_attributes()
+    |> struct!(
+      type: Enum.random([ClusterType.hana_scale_up(), ClusterType.hana_scale_out()]),
+      health_details: build(:hana_cluster_health_details_projection),
+      sap_instances:
+        build_list(1, :clustered_sap_instance,
+          resource_type: SapInstanceResourceType.sap_hana_topology()
+        ),
+      details: build(:hana_cluster_details)
+    )
+    |> merge_attributes(Map.new(attrs))
+  end
+
+  def cluster_make_ascs_ers(cluster, attrs \\ []) do
+    cluster
+    |> struct!(
+      type: ClusterType.ascs_ers(),
+      health_details: build(:ascs_ers_cluster_health_details_projection),
+      sap_instances:
+        build_list(1, :clustered_sap_instance,
+          resource_type: SapInstanceResourceType.sap_instance()
+        ),
+      details: build(:ascs_ers_cluster_details)
+    )
+    |> merge_attributes(Map.new(attrs))
+  end
+
+  def cluster_make_unknown(cluster, attrs \\ []) do
+    cluster
+    |> struct!(
+      type: ClusterType.unknown(),
+      sap_instances: [],
+      provider: Provider.unknown(),
+      resources_number: nil,
+      hosts_number: nil,
+      details: nil,
+      health: Health.unknown(),
+      health_details: nil,
+      state: ClusterState.unknown()
+    )
+    |> merge_attributes(Map.new(attrs))
+  end
+
+  def hana_cluster_health_details_projection_factory do
+    %HanaClusterHealthDetailsProjection{
+      checks_health: %HealthValueDetails{value: Enum.random(Health.values())},
+      sbd_health: %HealthValueDetails{value: Enum.random(Health.values())},
+      replication_health: %HealthValueDetails{value: Enum.random(Health.values())}
+    }
+  end
+
+  def ascs_ers_cluster_health_details_projection_factory do
+    %AscsErsClusterHealthDetailsProjection{
+      checks_health: %HealthValueDetails{value: Enum.random(Health.values())},
+      sbd_health: %HealthValueDetails{value: Enum.random(Health.values())},
+      distributed_health: %HealthValueDetails{value: Enum.random(Health.values())}
+    }
   end
 
   def cluster_enrichment_data_factory do
