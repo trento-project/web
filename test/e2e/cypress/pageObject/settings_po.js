@@ -490,7 +490,12 @@ export const checksFrequencyEditButtonIsDisabled = () =>
 export const checksFrequencySettingsModalIsNotDisplayed = () =>
   cy.get(checksFrequencySettingsModal).should('not.exist');
 
-export const checksFrequencyFormShows = (value, unit) => {
+export const checksFrequencyFormShows = ({ enabled, value, unit }) => {
+  cy.get(checksFrequencyEnabledSwitch).should(
+    'have.attr',
+    'aria-checked',
+    enabled ? 'true' : 'false'
+  );
   cy.get(checksFrequencyValueDropdown).should('have.text', `${value}`);
   return cy.get(checksFrequencyUnitDropdown).should('have.text', unit);
 };

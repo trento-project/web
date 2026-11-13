@@ -267,7 +267,11 @@ context('Settings page', () => {
       settingsPage.checksFrequencyIsTheExpected('Every 5 mins');
       settingsPage.changeChecksFrequencySettingsEndpointIsNotCalled();
       settingsPage.clickChecksFrequencyEditButton();
-      settingsPage.checksFrequencyFormShows(5, 'Minutes');
+      settingsPage.checksFrequencyFormShows({
+        enabled: true,
+        value: 5,
+        unit: 'Minutes',
+      });
     });
 
     it('should show an error when the settings cannot be saved', () => {
