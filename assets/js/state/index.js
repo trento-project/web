@@ -15,6 +15,7 @@ import lastExecutionsReducer from './lastExecutions';
 import userReducer from './user';
 import softwareUpdatesReducer from './softwareUpdates';
 import activityLogsSettingsReducer from './activityLogsSettings';
+import checksFrequencySettingsReducer from './checksFrequencySettings';
 import activityLogReducer from './activityLog';
 import runningOperationsReducer from './runningOperations';
 import rootSaga from './sagas';
@@ -39,6 +40,7 @@ export const createStore = (router, preloadedState) => {
       user: userReducer,
       softwareUpdates: softwareUpdatesReducer,
       activityLogsSettings: activityLogsSettingsReducer,
+      checksFrequencySettings: checksFrequencySettingsReducer,
       activityLog: activityLogReducer,
       runningOperations: runningOperationsReducer,
     },
