@@ -23,6 +23,7 @@ defmodule Trento.Release do
     migrate()
     init_event_store()
     migrate_event_store()
+    repair_projections()
     init_admin_user()
     init_default_api_key()
     init_default_activity_log_retention_time()
@@ -57,6 +58,12 @@ defmodule Trento.Release do
     config = Trento.EventStore.config()
 
     :ok = EventStore.Tasks.Migrate.exec(config, [])
+  end
+
+  def repair_projections do
+    load_app()
+
+    Mix.Tasks.RepairProjections.run([])
   end
 
   def rollback(repo, version) do
