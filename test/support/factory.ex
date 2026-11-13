@@ -391,7 +391,7 @@ defmodule Trento.Factory do
       details: build(:hana_cluster_details),
       health_details: build(:hana_cluster_health_details)
     )
-    |> merge_attributes(attrs)
+    |> merge_attributes(Map.new(attrs))
   end
 
   def cluster_registered_event_make_ascs_ers(event, attrs \\ []) do
@@ -405,7 +405,7 @@ defmodule Trento.Factory do
         ),
       health_details: build(:ascs_ers_cluster_health_details)
     )
-    |> merge_attributes(attrs)
+    |> merge_attributes(Map.new(attrs))
   end
 
   def hana_cluster_health_details_factory do
@@ -444,7 +444,7 @@ defmodule Trento.Factory do
       type: ClusterType.hana_scale_up(),
       details: build(:hana_cluster_details)
     )
-    |> merge_attributes(attrs)
+    |> merge_attributes(Map.new(attrs))
   end
 
   def cluster_details_updated_event_make_ascs_ers(event, attrs \\ []) do
@@ -457,7 +457,7 @@ defmodule Trento.Factory do
           resource_type: SapInstanceResourceType.sap_instance()
         )
     )
-    |> merge_attributes(attrs)
+    |> merge_attributes(Map.new(attrs))
   end
 
   def cluster_sbd_health_changed_event_factory do
@@ -649,7 +649,7 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_make_hana(cluster, args \\ []) do
+  def cluster_make_hana(cluster, attrs \\ []) do
     cluster
     |> struct!(
       type: Enum.random([ClusterType.hana_scale_up(), ClusterType.hana_scale_out()]),
@@ -660,10 +660,10 @@ defmodule Trento.Factory do
         ),
       details: build(:hana_cluster_details)
     )
-    |> merge_attributes(args)
+    |> merge_attributes(Map.new(attrs))
   end
 
-  def cluster_make_ascs_ers(cluster, args \\ []) do
+  def cluster_make_ascs_ers(cluster, attrs \\ []) do
     cluster
     |> struct!(
       type: ClusterType.ascs_ers(),
@@ -674,10 +674,10 @@ defmodule Trento.Factory do
         ),
       details: build(:ascs_ers_cluster_details)
     )
-    |> merge_attributes(args)
+    |> merge_attributes(Map.new(attrs))
   end
 
-  def cluster_make_unknown(cluster, args \\ []) do
+  def cluster_make_unknown(cluster, attrs \\ []) do
     cluster
     |> struct!(
       type: ClusterType.unknown(),
@@ -690,7 +690,7 @@ defmodule Trento.Factory do
       health_details: nil,
       state: ClusterState.unknown()
     )
-    |> merge_attributes(args)
+    |> merge_attributes(Map.new(attrs))
   end
 
   def hana_cluster_health_details_projection_factory do
