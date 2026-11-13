@@ -14,13 +14,6 @@ config :swoosh, local: false
 # config :logger, level: :info
 
 config :trento, Oban,
-  cron: [
-    crontab: [
-      clusters_checks_execution:
-        {"@hourly", Trento.Infrastructure.Jobs.ClustersChecksExecutionJob},
-      hosts_checks_execution: {"@hourly", Trento.Infrastructure.Jobs.HostsChecksExecutionJob}
-    ]
-  ],
   plugins: [
     {Trento.Infrastructure.Jobs.Plugins.Periodic,
      tasks: [
