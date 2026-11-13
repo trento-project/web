@@ -126,7 +126,7 @@ const defaultChecksFrequencySettings = {
   frequency: { value: 5, unit: 'minute' },
 };
 
-// How the settings page shows the CHECKS_INTERVAL values of the e2e environments
+// How the settings page shows the checks frequencies set in the e2e environments
 const checksFrequencyEnvLabels = {
   disabled: 'Disabled',
   '6h': 'Every 6 hours',
@@ -478,8 +478,8 @@ export const activityLogSettingsModalIsNotDisplayed = () =>
 export const checksFrequencyIsTheExpected = (expectedValue) =>
   cy.get(checksFrequency).should('have.text', expectedValue);
 
-export const checksFrequencyDisplaysEnvValue = (checksInterval) =>
-  checksFrequencyIsTheExpected(checksFrequencyEnvLabels[checksInterval]);
+export const checksFrequencyDisplaysEnvValue = (frequency) =>
+  checksFrequencyIsTheExpected(checksFrequencyEnvLabels[frequency]);
 
 export const checksFrequencyEditButtonIsEnabled = () =>
   cy.get(checksFrequencyEditButton).should('be.enabled');
