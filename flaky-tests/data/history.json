@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-09-20T19:34:25Z",
-    "commit": "dd96467c4d1a67b8cdce096ba166b33f37cc1310",
-    "run_id": "35531982506",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 43,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-20T19:35:40Z",
     "commit": "dd96467c4d1a67b8cdce096ba166b33f37cc1310",
     "run_id": "35531982506",
@@ -5426,5 +5406,41 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-13T00:25:19Z",
+    "commit": "9db21a6994fd7d2f91dbee6f61168e1a6baf3c9a",
+    "run_id": "43336931844",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 95,
+      "failed_runs": 10
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.1574
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.07658
+      },
+      {
+        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.05001
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::HANA database details Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      }
+    ]
   }
 ]
