@@ -2,8 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState } from 'react';
-import { noop } from 'lodash';
-import { getOperationTitle } from '@lib/operations';
+import { get, isEmpty, noop } from 'lodash';
+import {
+  DATABASE_START,
+  DATABASE_STOP,
+  getOperationTitle,
+} from '@lib/operations';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
@@ -41,11 +45,17 @@ const DEFAULT_TIMEOUT = 5;
 const MIN_TIMEOUT = 1;
 const MAX_TIMEOUT = 720; // 12 hours
 
+const BULK_DESCRIPTIONS = {
+  [DATABASE_START]: 'Start the following databases:',
+  [DATABASE_STOP]: 'Stop the following databases:',
+};
+
 function SapStartStopOperationModal({
   operation,
   type,
   sid,
   site = null,
+  resources = [],
   isOpen = false,
   onRequest = noop,
   onCancel = noop,
@@ -55,11 +65,16 @@ function SapStartStopOperationModal({
 
   const operationTitle = getOperationTitle(operation);
 
+  const description = isEmpty(resources)
+    ? `${operationTitle} ${sid}${site ? ` on ${site} site` : ''}`
+    : get(BULK_DESCRIPTIONS, operation, 'No description available');
+
   return (
     <OperationModal
       title={operationTitle}
-      description={`${operationTitle} ${sid}${site ? ` on ${site} site` : ''}`}
+      description={description}
       operationText={operationTitle}
+      resources={resources}
       isOpen={isOpen}
       onRequest={() => {
         onRequest({

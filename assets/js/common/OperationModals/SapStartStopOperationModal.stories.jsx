@@ -2,8 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import { DATABASE_START, SAP_SYSTEM_START } from '@lib/operations';
-import { sapSystemFactory } from '@lib/test-utils/factories';
+import {
+  DATABASE_START,
+  DATABASE_STOP,
+  SAP_SYSTEM_START,
+} from '@lib/operations';
+import {
+  bulkOperationResourceFactory,
+  sapSystemFactory,
+} from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
 
 import SapStartStopOperationModal from './SapStartStopOperationModal';
@@ -28,6 +35,11 @@ export default {
     site: {
       description: 'System replication site. Only applicable for database type',
       control: { type: 'text' },
+    },
+    resources: {
+      description:
+        'Resources the operation is requested on. Switches the modal to bulk mode',
+      control: { type: 'object' },
     },
     isOpen: {
       description: 'Modal is open',
@@ -78,5 +90,21 @@ export const Database = {
     isOpen: true,
     onRequest: action('onRequest'),
     onCancel: action('onCancel'),
+  },
+};
+
+export const DatabaseBulkStart = {
+  args: {
+    ...Default.args,
+    operation: DATABASE_START,
+    type: DATABASE_TYPE,
+    resources: bulkOperationResourceFactory.buildList(3),
+  },
+};
+
+export const DatabaseBulkStop = {
+  args: {
+    ...DatabaseBulkStart.args,
+    operation: DATABASE_STOP,
   },
 };
