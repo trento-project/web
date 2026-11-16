@@ -598,13 +598,14 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
 
     ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
 
-    %{tags: tags} =
-      cluster_projection =
+    %{tags: tags, deregistered_at: deregistered_at} =
       ClusterReadModel
       |> Repo.get!(event.cluster_id)
       |> Repo.preload([:tags])
 
-    assert nil == cluster_projection.deregistered_at
+    tags = StructHelper.to_atomized_map(tags)
+
+    assert nil == deregistered_at
 
     assert_broadcast(
       "cluster_restored",
