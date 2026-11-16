@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-22T21:01:04Z",
-    "commit": "67e6af0fa5f97f990aca8e185ada6a18c3cac591",
-    "run_id": "35780409201",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-22T21:02:24Z",
     "commit": "67e6af0fa5f97f990aca8e185ada6a18c3cac591",
     "run_id": "35780409201",
@@ -5326,5 +5315,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-15T23:23:00Z",
+    "commit": "5ef8b24660c602db05aa284d3bac7c8a3d5c4092",
+    "run_id": "43774500007",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 97,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve the selected items per page when reloading clusters view::Clusters Overview Persistent filters should preserve the selected items per page when reloading clusters view",
+        "score": 0.05001
+      }
+    ]
   }
 ]
