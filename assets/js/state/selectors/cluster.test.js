@@ -5,6 +5,8 @@ import { faker } from '@faker-js/faker';
 import {
   ascsErsSapSystemFactory,
   clusterFactory,
+  hanaClusterHealthDetailsFactory,
+  ascsErsClusterHealthDetailsFactory,
   hostFactory,
   databaseInstanceFactory,
   databaseFactory,
@@ -22,6 +24,7 @@ import {
   getClusterHostIDs,
   getClusterHosts,
   getClusterName,
+  getClusterHealthDetails,
   getClusterSapSystems,
   getClusterSelectedChecks,
   getClusterIDs,
@@ -109,6 +112,38 @@ describe('Cluster selector', () => {
     expect(getClusterName('cluster1')(state)).toEqual('cluster-name');
     expect(getClusterName('cluster2')(state)).toEqual('');
   });
+
+  it.each([
+    {
+      clusterType: 'hana_scale_up',
+      healthDetailsFactory: hanaClusterHealthDetailsFactory,
+    },
+    {
+      clusterType: 'ascs_ers',
+      healthDetailsFactory: ascsErsClusterHealthDetailsFactory,
+    },
+  ])(
+    'should return cluster health details for $clusterType cluster',
+    ({ healthDetailsFactory }) => {
+      const healthDetails = healthDetailsFactory.build();
+      const state = {
+        clustersList: {
+          clusters: [
+            {
+              id: 'cluster1',
+              health_details: healthDetails,
+            },
+            {
+              id: 'cluster2',
+            },
+          ],
+        },
+      };
+
+      expect(getClusterHealthDetails(state, 'cluster1')).toEqual(healthDetails);
+      expect(getClusterHealthDetails(state, 'cluster2')).toBeNull();
+    }
+  );
 
   it('should return SAP systems associated to the cluster', () => {
     const clusters = clusterFactory.buildList(2);

@@ -3,17 +3,23 @@
 
 import { recordSaga } from '@lib/test-utils';
 
-import { clusterFactory } from '@lib/test-utils/factories';
+import {
+  clusterFactory,
+  hanaClusterHealthDetailsFactory,
+  ascsErsClusterHealthDetailsFactory,
+} from '@lib/test-utils/factories';
 
 import {
   clusterDeregistered,
   clusterRestored,
   clusterHealthChanged,
+  clusterHealthDetailsChanged,
 } from '@state/sagas/clusters';
 import {
   removeCluster,
   appendCluster,
   updateClusterHealth,
+  updateClusterHealthDetails,
 } from '@state/clusters';
 import { notify } from '@state/notifications';
 
@@ -57,4 +63,29 @@ describe('Clusters sagas', () => {
       }),
     ]);
   });
+
+  it.each([
+    {
+      clusterType: 'hana_scale_up',
+      healthDetailsFactory: hanaClusterHealthDetailsFactory,
+    },
+    {
+      clusterType: 'ascs_ers',
+      healthDetailsFactory: ascsErsClusterHealthDetailsFactory,
+    },
+  ])(
+    'should update health details of a $clusterType cluster',
+    async ({ clusterType, healthDetailsFactory }) => {
+      const { id: cluster_id } = clusterFactory.build({ type: clusterType });
+      const health_details = healthDetailsFactory.build();
+
+      const dispatched = await recordSaga(clusterHealthDetailsChanged, {
+        payload: { cluster_id, health_details },
+      });
+
+      expect(dispatched).toEqual([
+        updateClusterHealthDetails({ cluster_id, health_details }),
+      ]);
+    }
+  );
 });

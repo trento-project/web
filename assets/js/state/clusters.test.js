@@ -4,8 +4,13 @@
 import clustersReducer, {
   removeCluster,
   updateClusterStaleAt,
+  updateClusterHealthDetails,
 } from '@state/clusters';
-import { clusterFactory } from '@lib/test-utils/factories';
+import {
+  clusterFactory,
+  hanaClusterHealthDetailsFactory,
+  ascsErsClusterHealthDetailsFactory,
+} from '@lib/test-utils/factories';
 
 describe('Clusters reducer', () => {
   it('should remove cluster from state', () => {
@@ -50,4 +55,45 @@ describe('Clusters reducer', () => {
 
     expect(clustersReducer(initialState, action)).toEqual(expectedState);
   });
+
+  it.each([
+    {
+      clusterType: 'hana_scale_up',
+      healthDetailsFactory: hanaClusterHealthDetailsFactory,
+    },
+    {
+      clusterType: 'ascs_ers',
+      healthDetailsFactory: ascsErsClusterHealthDetailsFactory,
+    },
+  ])(
+    'should update the health_details field of a $clusterType cluster',
+    ({ clusterType, healthDetailsFactory }) => {
+      const [cluster1, cluster2] = [
+        clusterFactory.build({ type: clusterType }),
+        clusterFactory.build(),
+      ];
+      const healthDetails = healthDetailsFactory.build();
+
+      const initialState = {
+        clusters: [cluster1, cluster2],
+      };
+
+      const action = updateClusterHealthDetails({
+        cluster_id: cluster1.id,
+        health_details: healthDetails,
+      });
+
+      const expectedState = {
+        clusters: [
+          {
+            ...cluster1,
+            health_details: healthDetails,
+          },
+          cluster2,
+        ],
+      };
+
+      expect(clustersReducer(initialState, action)).toEqual(expectedState);
+    }
+  );
 });
