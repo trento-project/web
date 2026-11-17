@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { faker } from '@faker-js/faker';
+
 import { recordSaga } from '@lib/test-utils';
 
 import {
@@ -10,6 +12,7 @@ import {
 } from '@lib/test-utils/factories';
 
 import {
+  clusterRegistered,
   clusterDeregistered,
   clusterRestored,
   clusterHealthChanged,
@@ -24,6 +27,20 @@ import {
 import { notify } from '@state/notifications';
 
 describe('Clusters sagas', () => {
+  it('should register a newly discovered cluster', async () => {
+    const payload = clusterFactory.build();
+
+    const dispatched = await recordSaga(clusterRegistered, { payload });
+
+    expect(dispatched).toEqual([
+      appendCluster(payload),
+      notify({
+        text: `A new cluster, ${payload.name}, has been discovered.`,
+        icon: 'ℹ️',
+      }),
+    ]);
+  });
+
   it('should remove the cluster', async () => {
     const { id, name } = clusterFactory.build();
 
@@ -64,28 +81,21 @@ describe('Clusters sagas', () => {
     ]);
   });
 
-  it.each([
-    {
-      clusterType: 'hana_scale_up',
-      healthDetailsFactory: hanaClusterHealthDetailsFactory,
-    },
-    {
-      clusterType: 'ascs_ers',
-      healthDetailsFactory: ascsErsClusterHealthDetailsFactory,
-    },
-  ])(
-    'should update health details of a $clusterType cluster',
-    async ({ clusterType, healthDetailsFactory }) => {
-      const { id: cluster_id } = clusterFactory.build({ type: clusterType });
-      const health_details = healthDetailsFactory.build();
+  it('should update health details of a cluster', async () => {
+    const cluster_id = faker.string.uuid();
+    const health_details = faker.helpers
+      .arrayElement([
+        hanaClusterHealthDetailsFactory,
+        ascsErsClusterHealthDetailsFactory,
+      ])
+      .build();
 
-      const dispatched = await recordSaga(clusterHealthDetailsChanged, {
-        payload: { cluster_id, health_details },
-      });
+    const dispatched = await recordSaga(clusterHealthDetailsChanged, {
+      payload: { cluster_id, health_details },
+    });
 
-      expect(dispatched).toEqual([
-        updateClusterHealthDetails({ cluster_id, health_details }),
-      ]);
-    }
-  );
+    expect(dispatched).toEqual([
+      updateClusterHealthDetails({ cluster_id, health_details }),
+    ]);
+  });
 });

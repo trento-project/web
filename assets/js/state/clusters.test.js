@@ -3,9 +3,11 @@
 
 import clustersReducer, {
   removeCluster,
+  updateCluster,
   updateClusterStaleAt,
   updateClusterHealthDetails,
 } from '@state/clusters';
+import { getDefaultHealthDetails } from '@lib/model/clusters';
 import {
   clusterFactory,
   hanaClusterHealthDetailsFactory,
@@ -96,4 +98,62 @@ describe('Clusters reducer', () => {
       expect(clustersReducer(initialState, action)).toEqual(expectedState);
     }
   );
+
+  it.each(['hana_scale_up', 'ascs_ers'])(
+    'should set default health details when updating an unknown cluster to %s',
+    (newType) => {
+      const unknownCluster = clusterFactory.build({
+        type: 'unknown',
+        health_details: null,
+      });
+
+      const initialState = {
+        clusters: [unknownCluster],
+      };
+
+      const action = updateCluster({
+        id: unknownCluster.id,
+        type: newType,
+      });
+
+      const expectedState = {
+        clusters: [
+          {
+            ...unknownCluster,
+            type: newType,
+            health_details: getDefaultHealthDetails(newType),
+          },
+        ],
+      };
+
+      expect(clustersReducer(initialState, action)).toEqual(expectedState);
+    }
+  );
+
+  it('should preserve existing health details when updating cluster details', () => {
+    const cluster = clusterFactory.build({
+      type: 'hana_scale_up',
+      health_details: hanaClusterHealthDetailsFactory.build(),
+    });
+
+    const initialState = {
+      clusters: [cluster],
+    };
+
+    const action = updateCluster({
+      id: cluster.id,
+      name: 'new-cluster-name',
+    });
+
+    const expectedState = {
+      clusters: [
+        {
+          ...cluster,
+          name: 'new-cluster-name',
+        },
+      ],
+    };
+
+    expect(clustersReducer(initialState, action)).toEqual(expectedState);
+  });
 });

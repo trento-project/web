@@ -3,6 +3,8 @@
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
 
+import { getDefaultHealthDetails } from '@lib/model/clusters';
+
 const initialState = {
   loading: false,
   clusters: [],
@@ -21,7 +23,13 @@ export const clustersListSlice = createSlice({
     updateCluster: (state, action) => {
       state.clusters = state.clusters.map((cluster) => {
         if (cluster.id === action.payload.id) {
-          return { ...cluster, ...action.payload };
+          const updatedCluster = { ...cluster, ...action.payload };
+          if (!updatedCluster.health_details) {
+            updatedCluster.health_details = getDefaultHealthDetails(
+              updatedCluster.type
+            );
+          }
+          return updatedCluster;
         }
         return cluster;
       });
