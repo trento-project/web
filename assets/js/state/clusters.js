@@ -3,6 +3,8 @@
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
 
+import { getDefaultHealthDetails } from '@lib/model/clusters';
+
 const initialState = {
   loading: false,
   clusters: [],
@@ -21,7 +23,13 @@ export const clustersListSlice = createSlice({
     updateCluster: (state, action) => {
       state.clusters = state.clusters.map((cluster) => {
         if (cluster.id === action.payload.id) {
-          return { ...cluster, ...action.payload };
+          const updatedCluster = { ...cluster, ...action.payload };
+          if (!updatedCluster.health_details) {
+            updatedCluster.health_details = getDefaultHealthDetails(
+              updatedCluster.type
+            );
+          }
+          return updatedCluster;
         }
         return cluster;
       });
@@ -56,6 +64,17 @@ export const clustersListSlice = createSlice({
       state.clusters = state.clusters.map((cluster) => {
         if (cluster.id === action.payload.cluster_id) {
           cluster.health = action.payload.health;
+        }
+        return cluster;
+      });
+    },
+    updateClusterHealthDetails: (
+      state,
+      { payload: { cluster_id, health_details } }
+    ) => {
+      state.clusters = state.clusters.map((cluster) => {
+        if (cluster.id === cluster_id) {
+          cluster.health_details = health_details;
         }
         return cluster;
       });
@@ -99,11 +118,15 @@ export const CLUSTER_DEREGISTERED = 'CLUSTER_DEREGISTERED';
 export const CLUSTER_RESTORED = 'CLUSTER_RESTORED';
 export const CLUSTER_CHECKS_SELECTED = 'CLUSTER_CHECKS_SELECTED';
 export const CLUSTER_HEALTH_CHANGED = 'CLUSTER_HEALTH_CHANGED';
+export const CLUSTER_HEALTH_DETAILS_CHANGED = 'CLUSTER_HEALTH_DETAILS_CHANGED';
 export const CLUSTER_STALE_CHANGED = 'CLUSTER_STALE_CHANGED';
 
 export const clusterRegistered = createAction(CLUSTER_REGISTERED);
 export const clusterDetailsUpdated = createAction(CLUSTER_DETAILS_UPDATED);
 export const clusterHealthChanged = createAction(CLUSTER_HEALTH_CHANGED);
+export const clusterHealthDetailsChanged = createAction(
+  CLUSTER_HEALTH_DETAILS_CHANGED
+);
 export const clusterCibLastWrittenUpdated = createAction(
   CLUSTER_CIB_LAST_WRITTEN_UPDATED
 );
@@ -121,6 +144,7 @@ export const {
   updateSelectedChecks,
   updateChecksResults,
   updateClusterHealth,
+  updateClusterHealthDetails,
   updateClusterStaleAt,
   updateCibLastWritten,
   startClustersLoading,

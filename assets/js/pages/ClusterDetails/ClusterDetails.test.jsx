@@ -3,13 +3,18 @@
 
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { noop } from 'lodash';
+import { capitalize, noop } from 'lodash';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { formatDateTime } from '@lib/timezones';
 
-import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
+import {
+  hostFactory,
+  clusterFactory,
+  hanaClusterHealthDetailsFactory,
+  ascsErsClusterHealthDetailsFactory,
+} from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
 import {
   CLUSTER_MAINTENANCE_CHANGE,
@@ -54,6 +59,88 @@ describe('ClusterDetails ClusterDetails component', () => {
     expect(
       screen.getByRole('img', { name: /cluster health/i })
     ).toBeInTheDocument();
+  });
+
+  it('should display health details tooltip on hover for HANA cluster', async () => {
+    const user = userEvent.setup();
+    const healthDetails = hanaClusterHealthDetailsFactory.build();
+    const { id, name, health, details } = clusterFactory.build();
+
+    renderWithRouter(
+      <ClusterDetails
+        clusterID={id}
+        clusterName={name}
+        details={details}
+        hasSelectedChecks={false}
+        hosts={[]}
+        health={health}
+        healthDetails={healthDetails}
+        selectedChecks={[]}
+        userAbilities={userAbilities}
+        onStartExecution={noop}
+        navigate={noop}
+      />
+    );
+
+    const healthIcon = screen.getByRole('img', { name: /cluster health/i });
+    await user.hover(healthIcon);
+
+    expect(
+      screen.getByText(
+        `Overall Checks Results: ${capitalize(healthDetails.checks_health.value)}`
+      )
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        `System Replication Status: ${capitalize(healthDetails.replication_health.value)}`
+      )
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        `Overall SBD Device Health: ${capitalize(healthDetails.sbd_health.value)}`
+      )
+    ).toBeVisible();
+  });
+
+  it('should display health details tooltip on hover for ASCS/ERS cluster', async () => {
+    const user = userEvent.setup();
+    const healthDetails = ascsErsClusterHealthDetailsFactory.build();
+    const { id, name, health, details } = clusterFactory.build();
+
+    renderWithRouter(
+      <ClusterDetails
+        clusterID={id}
+        clusterName={name}
+        details={details}
+        hasSelectedChecks={false}
+        hosts={[]}
+        health={health}
+        healthDetails={healthDetails}
+        selectedChecks={[]}
+        userAbilities={userAbilities}
+        onStartExecution={noop}
+        navigate={noop}
+      />
+    );
+
+    const healthIcon = screen.getByRole('img', { name: /cluster health/i });
+    await user.hover(healthIcon);
+
+    expect(
+      screen.getByText(
+        `Overall Checks Results: ${capitalize(healthDetails.checks_health.value)}`
+      )
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        `Instance Distribution Status: ${capitalize(healthDetails.distributed_health.value)}`
+      )
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        `Overall SBD Device Health: ${capitalize(healthDetails.sbd_health.value)}`
+      )
+    ).toBeVisible();
   });
 
   it('should render a stale cluster', () => {

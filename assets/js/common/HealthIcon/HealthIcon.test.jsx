@@ -145,13 +145,85 @@ describe('HealthIcon', () => {
     { health: 'not_available' },
     { health: 'pending' },
   ])(
-    "does not show a tooltip for $health health when it's not stale",
+    "does not show a tooltip for $health health when it's not stale and has no healthDetails",
     async ({ health }) => {
       const user = userEvent.setup();
       render(<HealthIcon health={health} />);
 
       const healthSvg = screen.getByTestId('eos-svg-component');
       await user.hover(healthSvg);
+
+      const tooltip = document.querySelector('.rc-tooltip');
+      expect(tooltip).not.toBeInTheDocument();
+    }
+  );
+
+  it.each([
+    [
+      {
+        checks_health: { value: 'passing' },
+        replication_health: { value: 'passing' },
+      },
+      ['Overall Checks Results: Passing', 'System Replication Status: Passing'],
+    ],
+    [
+      {
+        distributed_health: { value: 'passing' },
+        sbd_health: { value: 'passing' },
+      },
+      [
+        'Instance Distribution Status: Passing',
+        'Overall SBD Device Health: Passing',
+      ],
+    ],
+  ])(
+    'shows tooltip with paired health details correctly',
+    async (healthDetails, expectedTexts) => {
+      const user = userEvent.setup();
+      render(<HealthIcon health="passing" healthDetails={healthDetails} />);
+
+      const healthIcon = screen.getByRole('img', { name: /health/i });
+      await user.hover(healthIcon);
+
+      expectedTexts.forEach((text) => {
+        expect(screen.getByText(text)).toBeInTheDocument();
+      });
+    }
+  );
+
+  it('shows tooltip with health details and stale message when both are provided', async () => {
+    const user = userEvent.setup();
+    const healthDetails = {
+      checks_health: { value: 'passing' },
+    };
+
+    render(
+      <HealthIcon
+        health="passing"
+        healthDetails={healthDetails}
+        staleAt="2026-06-15T10:30:00Z"
+      />
+    );
+
+    const healthIcon = screen.getByRole('img', { name: /health/i });
+    await user.hover(healthIcon);
+
+    expect(
+      screen.getByText('Overall Checks Results: Passing')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('(Stale since 15 Jun 2026, 10:30:00)')
+    ).toBeInTheDocument();
+  });
+
+  it.each([null, undefined, {}])(
+    'does not show a tooltip when healthDetails is %s and not stale',
+    async (healthDetails) => {
+      const user = userEvent.setup();
+      render(<HealthIcon health="passing" healthDetails={healthDetails} />);
+
+      const healthIcon = screen.getByRole('img', { name: /health/i });
+      await user.hover(healthIcon);
 
       const tooltip = document.querySelector('.rc-tooltip');
       expect(tooltip).not.toBeInTheDocument();
