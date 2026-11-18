@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-09-24T20:36:39Z",
-    "commit": "9602defed64527519ac2709cbd4ead71b59a284c",
-    "run_id": "36054381375",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 40,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-24T20:37:40Z",
     "commit": "9602defed64527519ac2709cbd4ead71b59a284c",
     "run_id": "36054381375",
@@ -5244,5 +5228,37 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-18T01:37:00Z",
+    "commit": "9b2d6921515d83d9622435a036733be049111786",
+    "run_id": "44217157608",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 93,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should allow to deregister a host after clean up confirmation & restore it::Hosts Overview Deregistration Clean-up button should deregister a host should allow to deregister a host after clean up confirmation & restore it",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark the database and database cluster health as stale when a clustered database instance agent stops reporting::Homepage Stale data should mark the database and database cluster health as stale when a clustered database instance agent stops reporting",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      }
+    ]
   }
 ]
