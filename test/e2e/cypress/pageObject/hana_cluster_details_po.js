@@ -140,6 +140,9 @@ export const clickAllUncheckedCategorySwitches = () =>
 export const mouseOverArchitectureInfo = () =>
   cy.get(architectureInfoLabel).trigger('mouseover');
 
+export const mouseOverClusterHealth = () =>
+  cy.findByRole('img', { name: /cluster health/i }).trigger('mouseover');
+
 export const mouseOverStartExecutionButton = () =>
   cy.get(startExecutionButton).trigger('mouseover', { force: true });
 
@@ -266,6 +269,18 @@ export const architectureTooltipIsDisplayed = (clusterType) => {
   );
   const architectureTypeLabel = `span:contains("${architectureType}")`;
   return cy.get(architectureTypeLabel).should('be.visible');
+};
+
+export const healthTooltipIsDisplayed = () => {
+  const healthDetailsLabels = [
+    'Overall Checks Results',
+    'System Replication Status',
+    'Overall SBD Device Health',
+  ];
+
+  return cy.wrap(healthDetailsLabels).each((label) => {
+    cy.get('.rc-tooltip').should('be.visible').and('contain', label);
+  });
 };
 
 export const expectedReplicationModeIsDisplayed = (clusterType) => {
