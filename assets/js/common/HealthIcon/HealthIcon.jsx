@@ -32,7 +32,7 @@ const UnknownIcon = StaleIconWrapper(EOS_LENS_FILLED);
 const HEALTH_DETAILS_LABELS = {
   checks_health: 'Overall Checks Results',
   replication_health: 'System Replication Status',
-  distributed_health: 'Distributed System Health',
+  distributed_health: 'Instance Distribution Status',
   sbd_health: 'Overall SBD Device Health',
 };
 

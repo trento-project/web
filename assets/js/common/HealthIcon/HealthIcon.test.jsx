@@ -172,7 +172,7 @@ describe('HealthIcon', () => {
         sbd_health: { value: 'passing' },
       },
       [
-        'Distributed System Health: Passing',
+        'Instance Distribution Status: Passing',
         'Overall SBD Device Health: Passing',
       ],
     ],

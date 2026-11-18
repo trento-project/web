@@ -133,7 +133,7 @@ describe('ClusterDetails ClusterDetails component', () => {
     ).toBeVisible();
     expect(
       screen.getByText(
-        `Distributed System Health: ${capitalize(healthDetails.distributed_health.value)}`
+        `Instance Distribution Status: ${capitalize(healthDetails.distributed_health.value)}`
       )
     ).toBeVisible();
     expect(
