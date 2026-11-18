@@ -40,11 +40,6 @@ export const getClusterName = (clusterID) => (state) => {
   return get(cluster, 'name', '');
 };
 
-export const getClusterHealthDetails = (state, clusterID) => {
-  const cluster = getCluster(clusterID)(state);
-  return get(cluster, 'health_details', null);
-};
-
 export const getClusterByHost = (state, hostID) => {
   const host = state.hostsList.hosts.find((h) => h.id === hostID);
   return find(state.clustersList.clusters, { id: host?.cluster_id });

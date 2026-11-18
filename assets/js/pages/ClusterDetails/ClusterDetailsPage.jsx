@@ -56,7 +56,7 @@ function ClusterDetailComponent({ clusterType, ...props }) {
   }
 }
 
-export function ClusterDetailsPage() {
+function ClusterDetailsPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -125,6 +125,7 @@ export function ClusterDetailsPage() {
       hasSelectedChecks={hasSelectedChecks}
       hosts={clusterHosts}
       health={cluster.health}
+      healthDetails={cluster.health_details}
       state={cluster.state}
       staleAt={cluster.stale_at}
       lastExecution={lastExecution}
@@ -179,3 +180,5 @@ export function ClusterDetailsPage() {
     </ClusterDetails>
   );
 }
+
+export default ClusterDetailsPage;

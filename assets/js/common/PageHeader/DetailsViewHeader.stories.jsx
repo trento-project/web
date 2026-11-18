@@ -33,6 +33,10 @@ export default {
         type: 'text',
       },
     },
+    healthDetails: {
+      description: 'Health details object for the tooltip',
+      control: { type: 'object' },
+    },
     children: {
       description: 'Content or text displayed inside the component',
       control: { type: 'text' },
@@ -54,5 +58,32 @@ export const Stale = {
     health: 'passing',
     staleAt: '2026-06-15T10:30:00Z',
     children: 'Stale resource',
+  },
+};
+
+export const WithHealthDetails = {
+  args: {
+    className: '',
+    health: 'passing',
+    healthDetails: {
+      checks_health: { value: 'passing' },
+      sbd_health: { value: 'passing' },
+      replication_health: { value: 'warning' },
+    },
+    children: 'HANA Cluster Details: cluster_1',
+  },
+};
+
+export const StaleWithHealthDetails = {
+  args: {
+    className: '',
+    health: 'passing',
+    healthDetails: {
+      checks_health: { value: 'passing' },
+      sbd_health: { value: 'passing' },
+      replication_health: { value: 'warning' },
+    },
+    staleAt: '2026-06-15T10:30:00Z',
+    children: 'HANA Cluster Details: cluster_1',
   },
 };

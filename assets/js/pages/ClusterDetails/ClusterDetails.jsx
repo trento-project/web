@@ -60,6 +60,7 @@ function ClusterDetails({
   hasSelectedChecks,
   hosts,
   health,
+  healthDetails,
   state,
   staleAt,
   lastExecution = {},
@@ -199,6 +200,7 @@ function ClusterDetails({
             staleAt={staleAt}
             timezone={userTimezone}
             healthAriaLabelPrefix="Cluster"
+            healthDetails={healthDetails}
           >
             Pacemaker Cluster Details:{' '}
             <span className="font-bold">{clusterName}</span>
