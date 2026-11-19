@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-09-24T20:37:40Z",
-    "commit": "9602defed64527519ac2709cbd4ead71b59a284c",
-    "run_id": "36054381375",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.TrentoWeb.AIAssistantChannelTest::test handle_in send_message/3 — tool_context pushes the fresh token into the running AgentServer via update_agent_and_state when stale",
-        "score": 0.3334
-      },
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-24T21:18:17Z",
     "commit": "9602defed64527519ac2709cbd4ead71b59a284c",
     "run_id": "36057024014",
@@ -5258,6 +5238,26 @@
       {
         "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-11-19T00:12:45Z",
+    "commit": "9b2d6921515d83d9622435a036733be049111786",
+    "run_id": "44427160577",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 36,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
       }
     ]
   }
