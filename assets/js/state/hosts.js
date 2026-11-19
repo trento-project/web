@@ -91,10 +91,7 @@ export const hostsListSlice = createSlice({
     updateHostHealth: (state, { payload: { id, health } }) => {
       state.hosts = updateHostData(state.hosts, id, { health });
     },
-    updateHostHealthDetails: (
-      state,
-      { payload: { id, health_details } }
-    ) => {
+    updateHostHealthDetails: (state, { payload: { id, health_details } }) => {
       state.hosts = updateHostData(state.hosts, id, { health_details });
     },
     startHostsLoading: (state) => {
