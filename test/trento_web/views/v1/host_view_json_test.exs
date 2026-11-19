@@ -103,7 +103,7 @@ defmodule TrentoWeb.V1.HostJSONTest do
     assert [
              %{
                provider_data: %{
-                 "image" => "sles-15-sp1-sap-byos-v20220126"
+                 image: "sles-15-sp1-sap-byos-v20220126"
                }
              },
              %{
@@ -111,7 +111,7 @@ defmodule TrentoWeb.V1.HostJSONTest do
              },
              %{
                provider_data: %{
-                 "image" => nil
+                 image: nil
                }
              }
            ] = HostJSON.hosts(%{hosts: hosts})

@@ -115,6 +115,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
              }
            } = host_projection.health_details
 
+    expected_systemd_units = StructHelper.to_atomized_map(systemd_units)
+
     assert_broadcast "host_registered",
                      %{
                        agent_version: ^agent_version,
@@ -127,7 +129,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        netmasks: ^netmasks,
                        provider: ^provider,
                        provider_data: ^provider_data,
-                       systemd_units: ^systemd_units,
+                       systemd_units: ^expected_systemd_units,
                        last_boot_timestamp: ^last_boot_timestamp
                      },
                      1000
@@ -341,6 +343,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.arch == host_projection.arch
     assert event.systemd_units == host_projection.systemd_units
 
+    expected_systemd_units = StructHelper.to_atomized_map(systemd_units)
+
     assert_broadcast "host_details_updated",
                      %{
                        agent_version: ^agent_version,
@@ -350,7 +354,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        ip_addresses: [^ip_address],
                        netmasks: [^netmask],
                        provider_data: nil,
-                       systemd_units: ^systemd_units
+                       systemd_units: ^expected_systemd_units
                      },
                      1000
   end
@@ -611,6 +615,10 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
     assert nil == deregistered_at
 
+    expected_systemd_units = StructHelper.to_atomized_map(systemd_units)
+    expected_sles_subscriptions = StructHelper.to_atomized_map(sles_subscriptions)
+    expected_tags = StructHelper.to_atomized_map(tags)
+
     assert_broadcast "host_restored",
                      %{
                        agent_version: ^agent_version,
@@ -622,9 +630,9 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        ip_addresses: ^ip_addresses,
                        provider: ^provider,
                        provider_data: ^provider_data,
-                       sles_subscriptions: ^sles_subscriptions,
-                       tags: ^tags,
-                       systemd_units: ^systemd_units
+                       sles_subscriptions: ^expected_sles_subscriptions,
+                       tags: ^expected_tags,
+                       systemd_units: ^expected_systemd_units
                      },
                      1000
   end
