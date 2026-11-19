@@ -11,6 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
 
   alias TrentoWeb.OpenApi.V1.Schema.{
     HostArchitecture,
+    HostHealthDetails,
     Provider,
     ResourceHealth,
     SaptuneStatus,
@@ -134,6 +135,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           },
           arch: HostArchitecture,
           health: ResourceHealth,
+          health_details: HostHealthDetails,
           cluster_id: %Schema{
             type: :string,
             description:
@@ -215,6 +217,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           ],
           arch: "x86_64",
           health: "passing",
+          health_details: %{
+            checks_health: %{value: "passing"},
+            saptune_health: %{value: "passing"},
+            software_updates_discovery_health: %{value: "passing"}
+          },
           cluster_id: "123e4567-e89b-12d3-a456-426614174000",
           cluster_host_status: "online",
           heartbeat: "passing",
