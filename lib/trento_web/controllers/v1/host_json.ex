@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.HostJSON do
+  alias Trento.Support.StructHelper
+
   def hosts(%{hosts: hosts}), do: Enum.map(hosts, &host(%{host: &1}))
 
   def host(%{host: %{sles_subscriptions: sles_subscriptions} = host}) do
@@ -18,6 +20,7 @@ defmodule TrentoWeb.V1.HostJSON do
     |> Map.delete(:application_instances)
     |> Map.delete(:database_instances)
     |> Map.delete(:__meta__)
+    |> remove_reason_from_health_details()
   end
 
   def sles_subscription(%{sles_subscription: sles_subscription}) do
@@ -39,6 +42,7 @@ defmodule TrentoWeb.V1.HostJSON do
     |> Map.delete(:prometheus_targets)
     |> Map.delete(:prometheus_mode)
     |> Map.delete(:__meta__)
+    |> remove_reason_from_health_details()
   end
 
   def host_details_updated(%{host: host}) do
@@ -48,6 +52,7 @@ defmodule TrentoWeb.V1.HostJSON do
     |> Map.delete(:cluster_id)
     |> Map.delete(:heartbeat)
     |> Map.delete(:health)
+    |> Map.delete(:health_details)
     |> Map.delete(:provider)
   end
 
@@ -74,4 +79,20 @@ defmodule TrentoWeb.V1.HostJSON do
 
   def host_health_changed(%{host: %{id: id, hostname: hostname, health: health}}),
     do: %{id: id, hostname: hostname, health: health}
+
+  def host_health_details_changed(data) do
+    data
+    |> StructHelper.to_atomized_map()
+    |> remove_reason_from_health_details()
+    |> Map.take([:id, :health_details])
+  end
+
+  defp remove_reason_from_health_details(data) do
+    Map.update!(data, :health_details, fn health_details ->
+      health_details
+      |> StructHelper.to_atomized_map()
+      |> Enum.map(fn {key, details} -> {key, Map.delete(details, :reason)} end)
+      |> Map.new()
+    end)
+  end
 end

@@ -13,8 +13,11 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
   require Trento.Hosts.Enums.Architecture, as: Architecture
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Enums.Health, as: Health
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   alias Trento.Hosts.Projections.{
+    HostHealthDetails,
     HostProjector,
     HostReadModel
   }
@@ -41,6 +44,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     ProviderUpdated,
     SaptuneStatusUpdated
   }
+
+  alias Trento.Support.HealthValueDetails
 
   alias Trento.ProjectorTestHelper
   alias Trento.Repo
@@ -100,6 +105,15 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.agent_version == host_projection.agent_version
     assert event.heartbeat == host_projection.heartbeat
     assert event.systemd_units == host_projection.systemd_units
+
+    assert %HostHealthDetails{
+             checks_health: %HealthValueDetails{value: :unknown, reason: ""},
+             saptune_health: %HealthValueDetails{value: :unknown, reason: ""},
+             software_updates_discovery_health: %HealthValueDetails{
+               value: :unknown,
+               reason: "not_set"
+             }
+           } = host_projection.health_details
 
     assert_broadcast "host_registered",
                      %{
@@ -705,6 +719,141 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                          health: ^projected_health
                        },
                        1000
+    end
+  end
+
+  describe "Individual health change" do
+    @scenarios [
+      %{
+        name: "HostChecksHealthChanged",
+        health_key: :checks_health,
+        event_factory: :host_checks_health_changed
+      },
+      %{
+        name: "HostSaptuneHealthChanged",
+        health_key: :saptune_health,
+        event_factory: :host_saptune_health_changed_event
+      }
+    ]
+
+    for scenario <- @scenarios do
+      @scenario scenario
+
+      test "#{scenario.name} projects its change into the read model", %{host_id: host_id} do
+        health_key = @scenario.health_key
+
+        event =
+          %{^health_key => expected_health} =
+          build(@scenario.event_factory, host_id: host_id)
+
+        ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+        %{health_details: %{^health_key => actual_health_details_value}} =
+          Repo.get!(HostReadModel, host_id)
+
+        assert %HealthValueDetails{value: expected_health, reason: ""} ===
+                 actual_health_details_value
+      end
+    end
+
+    @software_updates_scenarios [
+      %{health: SoftwareUpdatesHealth.passing(), expected_value: :passing, expected_reason: ""},
+      %{health: SoftwareUpdatesHealth.warning(), expected_value: :warning, expected_reason: ""},
+      %{health: SoftwareUpdatesHealth.critical(), expected_value: :critical, expected_reason: ""},
+      %{health: SoftwareUpdatesHealth.unknown(), expected_value: :unknown, expected_reason: ""},
+      %{
+        health: SoftwareUpdatesHealth.not_set(),
+        expected_value: :unknown,
+        expected_reason: "not_set"
+      }
+    ]
+
+    for scenario <- @software_updates_scenarios do
+      @scenario scenario
+
+      test "SoftwareUpdatesHealthChanged with health #{scenario.health} projects value #{scenario.expected_value} and reason #{inspect(scenario.expected_reason)}",
+           %{host_id: host_id} do
+        event =
+          build(:software_updates_discovery_health_changed_event,
+            host_id: host_id,
+            health: @scenario.health
+          )
+
+        ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+        %{health_details: %{software_updates_discovery_health: actual_health_details_value}} =
+          Repo.get!(HostReadModel, host_id)
+
+        assert %HealthValueDetails{
+                 value: @scenario.expected_value,
+                 reason: @scenario.expected_reason
+               } === actual_health_details_value
+      end
+    end
+
+    test "SoftwareUpdatesDiscoveryCleared projects unknown health and not_set reason",
+         %{host_id: host_id} do
+      event = build(:software_updates_discovery_cleared_event, host_id: host_id)
+
+      ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+      %{health_details: %{software_updates_discovery_health: actual_health_details_value}} =
+        Repo.get!(HostReadModel, host_id)
+
+      assert %HealthValueDetails{value: :unknown, reason: "not_set"} ===
+               actual_health_details_value
+    end
+
+    @broadcast_scenarios [
+      %{
+        name: "HostChecksHealthChanged",
+        event_factory: :host_checks_health_changed,
+        characteristic_field: :checks_health
+      },
+      %{
+        name: "HostSaptuneHealthChanged",
+        event_factory: :host_saptune_health_changed_event,
+        characteristic_field: :saptune_health
+      },
+      %{
+        name: "SoftwareUpdatesHealthChanged",
+        event_factory: :software_updates_discovery_health_changed_event,
+        characteristic_field: :software_updates_discovery_health
+      },
+      %{
+        name: "SoftwareUpdatesDiscoveryCleared",
+        event_factory: :software_updates_discovery_cleared_event,
+        characteristic_field: :software_updates_discovery_health
+      }
+    ]
+
+    for scenario <- @broadcast_scenarios do
+      @scenario scenario
+
+      test "#{scenario.name} broadcast its change to phoenix channel", %{host_id: host_id} do
+        characteristic_field = @scenario.characteristic_field
+
+        event = build(@scenario.event_factory, host_id: host_id)
+
+        ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+        assert_broadcast(
+          "host_health_details_changed",
+          %{id: ^host_id, health_details: %{^characteristic_field => _}} = message,
+          1000
+        )
+
+        expected_keys =
+          MapSet.new([
+            :id,
+            :health_details
+          ])
+
+        assert expected_keys == MapSet.new(Map.keys(message))
+
+        # Check message can be properly encoded to JSON
+        assert {:ok, _} = Jason.encode(message)
+      end
     end
   end
 end
