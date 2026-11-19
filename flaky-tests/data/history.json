@@ -1,77 +1,5 @@
 [
   {
-    "timestamp": "2026-09-25T00:38:48Z",
-    "commit": "9602defed64527519ac2709cbd4ead71b59a284c",
-    "run_id": "36062009220",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 99,
-      "failed_runs": 23
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
-        "score": 0.2132
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.2086
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.2086
-      },
-      {
-        "name": "should create a new personal access token and grant access to guarded resources::Users Profile personal access tokens should create a new personal access token and grant access to guarded resources",
-        "score": 0.1982
-      },
-      {
-        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
-        "score": 0.1743
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
-        "score": 0.1743
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
-        "score": 0.1743
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
-        "score": 0.1743
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.06938
-      },
-      {
-        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
-        "score": 0.05001
-      },
-      {
-        "name": "should keep configuration when clear modal is dismissed::Users AI Configuration Clearing AI Configuration should keep configuration when clear modal is dismissed",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should allow to deregister a host after clean up confirmation & restore it::Hosts Overview Deregistration Clean-up button should deregister a host should allow to deregister a host after clean up confirmation & restore it",
-        "score": 0.02501
-      },
-      {
-        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-25T20:37:31Z",
     "commit": "7676f8f11a67f7adeab688dc0fc34b9af1f1b26d",
     "run_id": "36185373829",
@@ -5258,6 +5186,17 @@
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-19T01:12:56Z",
+    "commit": "9b2d6921515d83d9622435a036733be049111786",
+    "run_id": "44435177629",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 1
     },
     "top_flaky_tests": []
   }
