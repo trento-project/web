@@ -36,6 +36,11 @@ context('Host Details', () => {
       hostDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
     });
 
+    it('should have expected health details tooltip in header', () => {
+      hostDetailsPage.mouseOverHostHealth();
+      hostDetailsPage.healthTooltipIsDisplayed();
+    });
+
     it('should show the correct cluster', () => {
       hostDetailsPage.clusterNameHasExpectedValue();
     });

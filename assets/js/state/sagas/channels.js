@@ -15,6 +15,7 @@ import {
   hostRestored,
   saptuneStatusUpdated,
   hostHelathChanged,
+  hostHealthDetailsChanged,
   hostSoftwareUpdatesDiscoveryCompleted,
 } from '@state/hosts';
 
@@ -100,6 +101,10 @@ const hostEvents = [
   {
     name: 'host_health_changed',
     action: hostHelathChanged,
+  },
+  {
+    name: 'host_health_details_changed',
+    action: hostHealthDetailsChanged,
   },
   {
     name: 'host_software_updates_discovery_completed',

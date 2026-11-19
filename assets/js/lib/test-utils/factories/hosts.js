@@ -112,6 +112,12 @@ export const systemdUnitFactory = Factory.define(() => ({
   ]),
 }));
 
+export const hostHealthDetailsFactory = Factory.define(() => ({
+  checks_health: { value: healthEnum() },
+  saptune_health: { value: healthEnum() },
+  software_updates_discovery_health: { value: healthEnum() },
+}));
+
 export const hostFactory = Factory.define(({ params, sequence }) => {
   const id = params.id || faker.string.uuid();
 
@@ -126,6 +132,7 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     netmasks: [faker.helpers.arrayElement([8, 16, 24, 32])],
     provider: cloudProviderEnum(),
     health: healthEnum(),
+    health_details: hostHealthDetailsFactory.build(params.health_details),
     heartbeat: heartbeatEnum(),
     stale_at: null,
     provider_data: {
