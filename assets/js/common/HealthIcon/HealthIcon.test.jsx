@@ -176,6 +176,13 @@ describe('HealthIcon', () => {
         'Overall SBD Device Health: Passing',
       ],
     ],
+    [
+      {
+        saptune_health: { value: 'passing' },
+        software_updates_discovery_health: { value: 'warning' },
+      },
+      ['Saptune Tuning Status: Passing', 'Relevant Patches: Warning'],
+    ],
   ])(
     'shows tooltip with paired health details correctly',
     async (healthDetails, expectedTexts) => {

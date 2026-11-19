@@ -30,10 +30,17 @@ const CriticalIconLink = StaleIconWrapper(EOS_ERROR_FILLED);
 const UnknownIcon = StaleIconWrapper(EOS_LENS_FILLED);
 
 const HEALTH_DETAILS_LABELS = {
+  // Common
   checks_health: 'Overall Checks Results',
+
+  // Cluster
   replication_health: 'System Replication Status',
   distributed_health: 'Instance Distribution Status',
   sbd_health: 'Overall SBD Device Health',
+
+  // Host
+  saptune_health: 'Saptune Tuning Status',
+  software_updates_discovery_health: 'Relevant Patches',
 };
 
 const formatHealthDetails = (healthDetails) =>

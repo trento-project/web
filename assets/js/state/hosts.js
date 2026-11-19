@@ -91,6 +91,12 @@ export const hostsListSlice = createSlice({
     updateHostHealth: (state, { payload: { id, health } }) => {
       state.hosts = updateHostData(state.hosts, id, { health });
     },
+    updateHostHealthDetails: (
+      state,
+      { payload: { id, health_details } }
+    ) => {
+      state.hosts = updateHostData(state.hosts, id, { health_details });
+    },
     startHostsLoading: (state) => {
       state.loading = true;
     },
@@ -117,6 +123,7 @@ export const HOST_DEREGISTERED = 'HOST_DEREGISTERED';
 export const HOST_RESTORED = 'HOST_RESTORED';
 export const SAPTUNE_STATUS_UPDATED = 'SAPTUNE_STATUS_UPDATED';
 export const HOST_HEALTH_CHANGED = 'HOST_HEALTH_CHANGED';
+export const HOST_HEALTH_DETAILS_CHANGED = 'HOST_HEALTH_DETAILS_CHANGED';
 export const DEREGISTER_HOST = 'DEREGISTER_HOST';
 export const HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED =
   'HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED';
@@ -129,6 +136,9 @@ export const hostDeregisterd = createAction(HOST_DEREGISTERED);
 export const hostRestored = createAction(HOST_RESTORED);
 export const saptuneStatusUpdated = createAction(SAPTUNE_STATUS_UPDATED);
 export const hostHelathChanged = createAction(HOST_HEALTH_CHANGED);
+export const hostHealthDetailsChanged = createAction(
+  HOST_HEALTH_DETAILS_CHANGED
+);
 export const hostSoftwareUpdatesDiscoveryCompleted = createAction(
   HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED
 );
@@ -157,6 +167,7 @@ export const {
   unsetHostDeregistering,
   updateSaptuneStatus,
   updateHostHealth,
+  updateHostHealthDetails,
   startHostsLoading,
   stopHostsLoading,
   removeHost,
