@@ -18,6 +18,7 @@ export const DEFAULT_TOKEN_NAME = 'test token';
 export const DEFAULT_TOKEN_EXPIRES_AT = addDays(new Date(), 10);
 
 const totpEnrollmentEndpointAlias = 'totpEnrollment';
+const confirmTotpEnrollmentEndpointAlias = 'confirmTotpEnrollment';
 const profileEndpointAlias = 'analyticsClosed';
 const clearAIConfigurationEndpointAlias = 'clearAIConfiguration';
 
@@ -523,6 +524,14 @@ export const interceptDeleteTotpEnrollmentEndpoint = () =>
 
 export const waitForTotpEnrollmentEndpoint = () =>
   basePage.waitForRequest(totpEnrollmentEndpointAlias);
+
+export const interceptConfirmTotpEnrollmentEndpoint = () =>
+  cy
+    .intercept('POST', '/api/v1/profile/totp_enrollment')
+    .as(confirmTotpEnrollmentEndpointAlias);
+
+export const waitForConfirmTotpEnrollmentEndpoint = () =>
+  basePage.waitForRequest(confirmTotpEnrollmentEndpointAlias);
 
 export const apiGetProfileInfo = (
   username = USER.username,
