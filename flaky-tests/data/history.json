@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-25T21:16:23Z",
-    "commit": "7676f8f11a67f7adeab688dc0fc34b9af1f1b26d",
-    "run_id": "36187505151",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-26T00:43:28Z",
     "commit": "7676f8f11a67f7adeab688dc0fc34b9af1f1b26d",
     "run_id": "36192379213",
@@ -5190,5 +5179,53 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-20T01:16:00Z",
+    "commit": "9b2d6921515d83d9622435a036733be049111786",
+    "run_id": "44652327385",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 98,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve the selected items per page when reloading clusters view::Clusters Overview Persistent filters should preserve the selected items per page when reloading clusters view",
+        "score": 0.05001
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.02501
+      }
+    ]
   }
 ]
