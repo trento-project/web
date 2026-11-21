@@ -1269,9 +1269,13 @@ defmodule Trento.ClustersTest do
     end
 
     test "should return only the requested registered clusters" do
-      [%{id: cluster_id_1}, %{id: cluster_id_2}] = expected_clusters = insert_list(2, :cluster)
-      %{id: deregistered_cluster_id} = insert(:cluster, deregistered_at: DateTime.utc_now())
-      insert(:cluster)
+      [%{id: cluster_id_1}, %{id: cluster_id_2}] =
+        expected_clusters = insert_list(2, :cluster, details: %{})
+
+      %{id: deregistered_cluster_id} =
+        insert(:cluster, deregistered_at: DateTime.utc_now(), details: %{})
+
+      insert(:cluster, details: %{})
 
       clusters =
         Clusters.get_clusters_by_ids([
