@@ -12,6 +12,7 @@ defmodule TrentoWeb.V1.SettingsController do
   alias Trento.SoftwareUpdates
   alias TrentoWeb.OpenApi.V1.Schema
   alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
+  alias TrentoWeb.V1.SettingsJSON
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
@@ -498,7 +499,13 @@ defmodule TrentoWeb.V1.SettingsController do
   def update_checks_frequency_settings(conn, _params) do
     checks_frequency_body = OpenApiSpex.body_params(conn)
 
-    with {:ok, settings} <- Settings.update_checks_frequency_settings(checks_frequency_body) do
+    with {:ok, settings} <- Settings.update_checks_frequency_settings(checks_frequency_body),
+         :ok <-
+           TrentoWeb.Endpoint.broadcast(
+             "monitoring:settings",
+             "checks_frequency_settings_updated",
+             SettingsJSON.checks_frequency_settings(%{checks_frequency_settings: settings})
+           ) do
       conn
       |> put_status(:ok)
       |> render(:checks_frequency_settings, checks_frequency_settings: settings)
