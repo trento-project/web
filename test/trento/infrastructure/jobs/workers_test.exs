@@ -12,8 +12,6 @@ defmodule Trento.Infrastructure.Jobs.WorkersTest do
   import Trento.Factory
   import Trento.Support.Helpers.AlertingSettingsHelper
 
-  require Trento.Clusters.Enums.ClusterType, as: ClusterType
-
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
   alias Trento.ActivityLog.RetentionTime
   alias Trento.Checks.V1.ExecutionRequested
@@ -24,9 +22,8 @@ defmodule Trento.Infrastructure.Jobs.WorkersTest do
   alias Trento.Infrastructure.Jobs.{
     ActivityLogCleaningJob,
     ApiKeyExpirationAlertJob,
-    ClustersChecksExecutionJob,
+    ChecksExecutionJob,
     DiscoveryEventsPruningJob,
-    HostsChecksExecutionJob,
     SoftwareUpdatesDiscoveryJob
   }
 
@@ -35,9 +32,8 @@ defmodule Trento.Infrastructure.Jobs.WorkersTest do
   @workers [
     ActivityLogCleaningJob,
     ApiKeyExpirationAlertJob,
-    ClustersChecksExecutionJob,
+    ChecksExecutionJob,
     DiscoveryEventsPruningJob,
-    HostsChecksExecutionJob,
     SoftwareUpdatesDiscoveryJob
   ]
 
@@ -62,33 +58,18 @@ defmodule Trento.Infrastructure.Jobs.WorkersTest do
   end
 
   describe "checks execution" do
-    test "should request a checks execution for every cluster" do
-      for _ <- 1..3 do
-        %{id: cluster_id} =
-          insert(:cluster, type: ClusterType.hana_scale_up(), selected_checks: ["check"])
+    test "should request the due checks executions" do
+      %{id: host_id} = insert(:host)
 
-        insert_list(2, :host, cluster_id: cluster_id)
-      end
-
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 3, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{} ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        %ExecutionRequested{
+                                                                          group_id: ^host_id
+                                                                        } ->
         :ok
       end)
 
-      assert :ok = perform_job(ClustersChecksExecutionJob, %{})
-    end
-
-    test "should request a checks execution for every host" do
-      insert_list(3, :host, selected_checks: ["check"])
-
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 3, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{} ->
-        :ok
-      end)
-
-      assert :ok = perform_job(HostsChecksExecutionJob, %{})
+      assert :ok = perform_job(ChecksExecutionJob, %{})
     end
   end
 

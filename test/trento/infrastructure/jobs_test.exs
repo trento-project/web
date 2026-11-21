@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.JobsTest do
   alias Trento.Infrastructure.Jobs.{
     ActivityLogCleaningJob,
     DiscoveryEventsPruningJob,
-    HostsChecksExecutionJob
+    SoftwareUpdatesDiscoveryJob
   }
 
   describe "oban configuration" do
@@ -21,13 +21,13 @@ defmodule Trento.Infrastructure.JobsTest do
 
     test "should build the crontab from the named entries, keeping their options" do
       put_crontab(
-        hosts_checks_execution: {"@hourly", HostsChecksExecutionJob},
+        software_updates_discovery: {"@hourly", SoftwareUpdatesDiscoveryJob},
         discovery_events_pruning:
           {"0 3 * * *", DiscoveryEventsPruningJob, args: %{older_than: 30}, priority: 1}
       )
 
       assert [
-               {"@hourly", HostsChecksExecutionJob},
+               {"@hourly", SoftwareUpdatesDiscoveryJob},
                {"0 3 * * *", DiscoveryEventsPruningJob, args: %{older_than: 30}, priority: 1}
              ] == Jobs.oban_config()[:cron][:crontab]
     end

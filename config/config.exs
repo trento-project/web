@@ -135,15 +135,12 @@ config :trento, Oban,
   queues: [default: 10],
   pruner: [max_age: {7, :days}],
   lifeline: [rescue_after: {30, :minutes}],
-  # Periodic jobs, keyed by name so that runtime.exs, dev.exs and demo.exs override a
-  # single entry. See Trento.Infrastructure.Jobs.
+  # Periodic jobs, keyed by name so that runtime.exs overrides a single entry. See
+  # Trento.Infrastructure.Jobs.
   cron: [
     crontab: [
-      # Runs every five minutes
-      clusters_checks_execution:
-        {"*/5 * * * *", Trento.Infrastructure.Jobs.ClustersChecksExecutionJob},
-      # Runs every five minutes
-      hosts_checks_execution: {"*/5 * * * *", Trento.Infrastructure.Jobs.HostsChecksExecutionJob},
+      # Runs every minute, requesting the checks executions due at the checks frequency
+      checks_execution: {"* * * * *", Trento.Infrastructure.Jobs.ChecksExecutionJob},
       # Runs every 12 hours. At 00:00 and 12:00
       software_updates_discovery:
         {"0 */12 * * *", Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob},
