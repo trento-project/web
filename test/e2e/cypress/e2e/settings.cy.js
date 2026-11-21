@@ -225,6 +225,76 @@ context('Settings page', () => {
     });
   });
 
+  describe('Check executions settings', () => {
+    before(() => settingsPage.apiSetDefaultChecksFrequencySettings());
+
+    afterEach(() => settingsPage.apiSetDefaultChecksFrequencySettings());
+
+    it('should show the default frequency', () => {
+      settingsPage.checksFrequencyIsTheExpected('Every 5 mins');
+    });
+
+    it('should change the frequency', () => {
+      settingsPage.clickChecksFrequencyEditButton();
+      settingsPage.selectChecksFrequency(6, 'Hours');
+      settingsPage.clickChecksFrequencySaveButton();
+      settingsPage.checksFrequencySettingsModalIsNotDisplayed();
+      settingsPage.checksFrequencyIsTheExpected('Every 6 hours');
+      settingsPage.refresh();
+      settingsPage.checksFrequencyIsTheExpected('Every 6 hours');
+    });
+
+    it('should keep the frequency while the periodic checks are disabled', () => {
+      settingsPage.clickChecksFrequencyEditButton();
+      settingsPage.selectChecksFrequency(6, 'Hours');
+      settingsPage.toggleChecksFrequencyEnabled();
+      settingsPage.clickChecksFrequencySaveButton();
+      settingsPage.checksFrequencyIsTheExpected('Disabled');
+      settingsPage.refresh();
+      settingsPage.checksFrequencyIsTheExpected('Disabled');
+      settingsPage.clickChecksFrequencyEditButton();
+      settingsPage.toggleChecksFrequencyEnabled();
+      settingsPage.clickChecksFrequencySaveButton();
+      settingsPage.checksFrequencyIsTheExpected('Every 6 hours');
+    });
+
+    it('should not change the settings when closing the modal', () => {
+      settingsPage.clickChecksFrequencyEditButton();
+      settingsPage.selectChecksFrequency(6, 'Hours');
+      settingsPage.toggleChecksFrequencyEnabled();
+      settingsPage.clickChecksFrequencyCloseButton();
+      settingsPage.checksFrequencySettingsModalIsNotDisplayed();
+      settingsPage.checksFrequencyIsTheExpected('Every 5 mins');
+      settingsPage.changeChecksFrequencySettingsEndpointIsNotCalled();
+      settingsPage.clickChecksFrequencyEditButton();
+      settingsPage.checksFrequencyFormShows({
+        enabled: true,
+        value: 5,
+        unit: 'Minutes',
+      });
+    });
+
+    it('should show an error when the settings cannot be saved', () => {
+      settingsPage.interceptChecksFrequencySettingsUpdateWithServerError();
+      settingsPage.clickChecksFrequencyEditButton();
+      settingsPage.selectChecksFrequency(6, 'Hours');
+      settingsPage.clickChecksFrequencySaveButton();
+      settingsPage.checksFrequencySettingsErrorIsDisplayed(
+        'Something went wrong.'
+      );
+      settingsPage.clickChecksFrequencyCloseButton();
+      settingsPage.checksFrequencyIsTheExpected('Every 5 mins');
+    });
+
+    it('should reload the settings after a connection error', () => {
+      settingsPage.interceptChecksFrequencySettingsFetchWithNetworkError();
+      settingsPage.refresh();
+      settingsPage.checksFrequencyLoadingErrorIsDisplayed();
+      settingsPage.clickChecksFrequencyReloadButton();
+      settingsPage.checksFrequencyIsTheExpected('Every 5 mins');
+    });
+  });
+
   describe('Page reload after refresh token flow', () => {
     it('should reload all settings data after refresh token flow', () => {
       settingsPage.waitForInitialDataFetch();
@@ -261,6 +331,7 @@ context('Settings page', () => {
       settingsPage.smlmEditSettingsButtonIsEnabled();
       settingsPage.smlmClearSettingsButtonIsEnabled();
       settingsPage.activityLogsEditButtonIsEnabled();
+      settingsPage.checksFrequencyEditButtonIsEnabled();
       settingsPage.alertingTestEmailButtonIsEnabled();
     });
 
@@ -274,6 +345,7 @@ context('Settings page', () => {
       settingsPage.smlmEditSettingsButtonIsDisabled();
       settingsPage.smlmClearSettingsButtonIsDisabled();
       settingsPage.activityLogsEditButtonIsDisabled();
+      settingsPage.checksFrequencyEditButtonIsDisabled();
       settingsPage.alertingTestEmailButtonIsDisabled();
     });
   });
