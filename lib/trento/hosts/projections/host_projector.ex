@@ -15,6 +15,9 @@ defmodule Trento.Hosts.Projections.HostProjector do
 
   alias Trento.Repo
 
+  require Trento.Enums.Health, as: Health
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
+
   alias Trento.Clusters.Events.{
     ClusterHostStatusChanged,
     HostAddedToCluster,
@@ -24,19 +27,30 @@ defmodule Trento.Hosts.Projections.HostProjector do
   alias Trento.Hosts.Events.{
     HeartbeatFailed,
     HeartbeatSucceeded,
+    HostChecksHealthChanged,
     HostChecksSelected,
     HostDeregistered,
     HostDetailsUpdated,
     HostHealthChanged,
     HostRegistered,
     HostRestored,
+    HostSaptuneHealthChanged,
     ProviderUpdated,
-    SaptuneStatusUpdated
+    SaptuneStatusUpdated,
+    SoftwareUpdatesDiscoveryCleared,
+    SoftwareUpdatesHealthChanged
   }
 
   alias Trento.Hosts.Projections.HostReadModel
 
   @hosts_topic "monitoring:hosts"
+
+  @health_details_changed_events [
+    HostChecksHealthChanged,
+    HostSaptuneHealthChanged,
+    SoftwareUpdatesHealthChanged,
+    SoftwareUpdatesDiscoveryCleared
+  ]
 
   project(
     %HostRegistered{
@@ -64,6 +78,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           arch: arch,
           fully_qualified_domain_name: fully_qualified_domain_name,
           heartbeat: heartbeat,
+          health_details: default_health_details(),
           prometheus_targets: prometheus_targets,
           prometheus_mode: prometheus_mode,
           systemd_units: map_list_from_struct_list(systemd_units),
@@ -300,6 +315,65 @@ defmodule Trento.Hosts.Projections.HostProjector do
     end
   )
 
+  project(
+    %HostChecksHealthChanged{host_id: host_id, checks_health: checks_health},
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(host_id, "checks_health", checks_health),
+        []
+      )
+    end
+  )
+
+  project(
+    %HostSaptuneHealthChanged{host_id: host_id, saptune_health: saptune_health},
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(host_id, "saptune_health", saptune_health),
+        []
+      )
+    end
+  )
+
+  project(
+    %SoftwareUpdatesHealthChanged{host_id: host_id, health: health},
+    fn multi ->
+      {value, reason} =
+        case health do
+          SoftwareUpdatesHealth.not_set() -> {Health.unknown(), "not_set"}
+          value -> {value, ""}
+        end
+
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(host_id, "software_updates_discovery_health", value, reason),
+        []
+      )
+    end
+  )
+
+  project(
+    %SoftwareUpdatesDiscoveryCleared{host_id: host_id},
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(
+          host_id,
+          "software_updates_discovery_health",
+          Health.unknown(),
+          "not_set"
+        ),
+        []
+      )
+    end
+  )
+
   @impl true
   @spec after_update(any, any, any) :: :ok | {:error, any}
   def after_update(
@@ -477,7 +551,50 @@ defmodule Trento.Hosts.Projections.HostProjector do
     TrentoWeb.Endpoint.broadcast(@hosts_topic, "host_health_changed", message)
   end
 
+  def after_update(%event_module{host_id: host_id}, _metadata, %{
+        health_details: {1, [health_details]}
+      })
+      when event_module in @health_details_changed_events do
+    message =
+      HostJSON.host_health_details_changed(%{
+        id: host_id,
+        health_details: health_details
+      })
+
+    TrentoWeb.Endpoint.broadcast(@hosts_topic, "host_health_details_changed", message)
+  end
+
   def after_update(_, _, _), do: :ok
+
+  defp default_health_details do
+    %{
+      checks_health: %{value: Health.unknown(), reason: ""},
+      saptune_health: %{value: Health.unknown(), reason: ""},
+      software_updates_discovery_health: %{value: Health.unknown(), reason: "not_set"}
+    }
+  end
+
+  defp health_details_update_query(host_id, value_path, value, reason \\ "") do
+    details_map = %{value: value, reason: reason}
+
+    from(
+      h in HostReadModel,
+      where: h.id == ^host_id,
+      update: [
+        set: [
+          health_details:
+            fragment(
+              "jsonb_set(?, ARRAY[?::text], ?::jsonb, false)",
+              h.health_details,
+              ^value_path,
+              ^details_map
+            ),
+          updated_at: ^DateTime.utc_now()
+        ]
+      ],
+      select: h.health_details
+    )
+  end
 
   defp map_list_from_struct_list(structs) when is_list(structs) do
     Enum.map(structs, &map_from_struct/1)
