@@ -157,6 +157,33 @@ defmodule Trento.ChecksTest do
     end
   end
 
+  describe "deleting the stale execution requests" do
+    test "should delete the requests of the deregistered and removed targets, keeping the others" do
+      %{id: registered_host_id} = insert(:host)
+      %{id: unchecked_host_id} = insert(:host, selected_checks: [])
+      %{id: deregistered_host_id} = insert(:host, deregistered_at: @now)
+      %{id: registered_cluster_id} = insert(:cluster)
+      %{id: deregistered_cluster_id} = insert(:cluster, deregistered_at: @now)
+
+      for {target_type, target_id} <- [
+            host: registered_host_id,
+            host: unchecked_host_id,
+            host: deregistered_host_id,
+            host: Faker.UUID.v4(),
+            cluster: registered_cluster_id,
+            cluster: deregistered_cluster_id,
+            cluster: Faker.UUID.v4()
+          ] do
+        requested_at!(target_type, target_id, @now)
+      end
+
+      assert 4 == Checks.delete_stale_execution_requests()
+
+      assert Enum.sort([registered_host_id, unchecked_host_id, registered_cluster_id]) ==
+               ChecksExecutionRequest |> Repo.all() |> Enum.map(& &1.target_id) |> Enum.sort()
+    end
+  end
+
   defp requested_at!(target_type, target_id, last_requested_at) do
     Repo.insert!(%ChecksExecutionRequest{
       target_id: target_id,

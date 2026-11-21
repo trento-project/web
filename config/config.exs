@@ -146,6 +146,8 @@ config :trento, Oban,
         {"0 */12 * * *", Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob},
       api_key_expiration_alert: {"@daily", Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob},
       activity_log_cleaning: {"@daily", Trento.Infrastructure.Jobs.ActivityLogCleaningJob},
+      checks_execution_requests_cleaning:
+        {"@daily", Trento.Infrastructure.Jobs.ChecksExecutionRequestsCleaningJob},
       # Runs every day at 00:00, deleting the events older than 10 days
       discovery_events_pruning:
         {"0 0 * * *", Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
