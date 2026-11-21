@@ -29,6 +29,8 @@ const {
   selected_checks: selectedChecks,
   details,
   state,
+  health,
+  health_details: healthDetails,
 } = clusterFactory.build({ type: 'ascs_ers' });
 
 const multiSidDetails = ascsErsClusterDetailsFactory.build({
@@ -143,6 +145,19 @@ export default {
       description: 'Function returning available host operations for a host',
       action: 'getClusterHostOperations',
     },
+    health: {
+      control: { type: 'radio' },
+      options: ['passing', 'warning', 'critical', 'unknown'],
+      description: 'Cluster health',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'passing' },
+      },
+    },
+    healthDetails: {
+      description: 'Cluster health details breakdown for the tooltip',
+      control: { type: 'object' },
+    },
   },
 };
 
@@ -158,6 +173,8 @@ export const Default = {
     sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
     details,
     state,
+    health,
+    healthDetails,
     lastExecution,
     catalog,
     userAbilities,
@@ -179,6 +196,8 @@ export const Single = {
     sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
     details,
     state,
+    health,
+    healthDetails,
     lastExecution,
     catalog,
     userAbilities,

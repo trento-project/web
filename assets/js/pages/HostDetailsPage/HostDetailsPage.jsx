@@ -136,6 +136,7 @@ function HostDetailsPage() {
       heartbeat={host.heartbeat}
       staleAt={host.stale_at}
       health={host.health}
+      healthDetails={host.health_details}
       hostID={host.id}
       hostname={host.hostname}
       ipAddresses={host.ip_addresses}

@@ -195,8 +195,7 @@ export const WithHealthDetails = {
     size: 'xl',
     healthDetails: {
       checks_health: { value: 'passing' },
-      sbd_health: { value: 'passing' },
-      replication_health: { value: 'warning' },
+      software_updates_discovery_health: { value: 'warning' },
     },
   },
 };
@@ -208,8 +207,7 @@ export const StaleWithHealthDetails = {
     size: 'xl',
     healthDetails: {
       checks_health: { value: 'passing' },
-      sbd_health: { value: 'passing' },
-      replication_health: { value: 'warning' },
+      software_updates_discovery_health: { value: 'warning' },
     },
     staleAt: '2026-06-15T10:30:00Z',
   },
