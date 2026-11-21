@@ -59,3 +59,23 @@ export const getClusterSids = ({ sap_instances: sapInstances }) =>
 
 export const isSomeHostOnline = (hosts) =>
   some(hosts, { cluster_host_status: 'online' });
+
+export const getDefaultHealthDetails = (type) => {
+  switch (type) {
+    case HANA_SCALE_UP:
+    case HANA_SCALE_OUT:
+      return {
+        checks_health: { value: 'unknown' },
+        sbd_health: { value: 'unknown' },
+        replication_health: { value: 'unknown' },
+      };
+    case ASCS_ERS:
+      return {
+        checks_health: { value: 'unknown' },
+        sbd_health: { value: 'unknown' },
+        distributed_health: { value: 'unknown' },
+      };
+    default:
+      return null;
+  }
+};

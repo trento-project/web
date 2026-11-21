@@ -12,6 +12,10 @@ import {
   isValidClusterType,
   getClusterSids,
   isSomeHostOnline,
+  getDefaultHealthDetails,
+  HANA_SCALE_UP,
+  HANA_SCALE_OUT,
+  ASCS_ERS,
 } from './clusters';
 
 describe('clusters', () => {
@@ -56,5 +60,28 @@ describe('clusters', () => {
   it('should return false if none of hosts are online', () => {
     const hosts = hostFactory.buildList(2, { cluster_host_status: 'offline' });
     expect(isSomeHostOnline(hosts)).toBeFalsy();
+  });
+
+  it.each([HANA_SCALE_UP, HANA_SCALE_OUT])(
+    'should return default health details for %s',
+    (type) => {
+      expect(getDefaultHealthDetails(type)).toEqual({
+        checks_health: { value: 'unknown' },
+        sbd_health: { value: 'unknown' },
+        replication_health: { value: 'unknown' },
+      });
+    }
+  );
+
+  it('should return default health details for ASCS/ERS', () => {
+    expect(getDefaultHealthDetails(ASCS_ERS)).toEqual({
+      checks_health: { value: 'unknown' },
+      sbd_health: { value: 'unknown' },
+      distributed_health: { value: 'unknown' },
+    });
+  });
+
+  it('should return null default health details for unknown cluster type', () => {
+    expect(getDefaultHealthDetails('unknown')).toBeNull();
   });
 });
