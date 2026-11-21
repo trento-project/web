@@ -50,6 +50,7 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 24, name: 'start', resource: 'database' },
       { id: 25, name: 'stop', resource: 'database' },
       { id: 26, name: 'resource_refresh', resource: 'cluster' },
+      { id: 27, name: 'all', resource: 'checks_frequency_settings' },
     ];
 
     render(
