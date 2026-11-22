@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-09-27T20:18:33Z",
-    "commit": "4d56fb36a9c304b30f94998bfa52bd70fc952d46",
-    "run_id": "36346522817",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-27T20:55:29Z",
     "commit": "4d56fb36a9c304b30f94998bfa52bd70fc952d46",
     "run_id": "36347779896",
@@ -5123,5 +5107,29 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-21T23:47:45Z",
+    "commit": "afc431252eb95d01dc826fc651531aec28f48796",
+    "run_id": "44963517137",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 96,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.06776
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should show AWS cloud details correctly::Host Details Cloud details for this host should be displayed should show AWS cloud details correctly",
+        "score": 0.05001
+      }
+    ]
   }
 ]
