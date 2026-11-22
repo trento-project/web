@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-09-27T20:17:21Z",
-    "commit": "4d56fb36a9c304b30f94998bfa52bd70fc952d46",
-    "run_id": "36346522817",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.02501
-      },
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-27T20:18:33Z",
     "commit": "4d56fb36a9c304b30f94998bfa52bd70fc952d46",
     "run_id": "36346522817",
@@ -5131,6 +5107,17 @@
     "commit": "afc431252eb95d01dc826fc651531aec28f48796",
     "run_id": "44962439552",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-21T23:34:14Z",
+    "commit": "afc431252eb95d01dc826fc651531aec28f48796",
+    "run_id": "44962439552",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
