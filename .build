@@ -396,6 +396,7 @@ Trento.Operations.DatabasePolicy.html
 Trento.Operations.Enums.ClusterBulkOperations.html
 Trento.Operations.Enums.ClusterHostOperations.html
 Trento.Operations.Enums.ClusterOperations.html
+Trento.Operations.Enums.DatabaseBulkOperations.html
 Trento.Operations.Enums.DatabaseOperations.html
 Trento.Operations.Enums.HostBulkOperations.html
 Trento.Operations.Enums.HostOperations.html
@@ -626,7 +627,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-ED28E0FF.js
-dist/sidebar_items-EDAE3AD4.js
+dist/search_data-6A82C032.js
+dist/sidebar_items-E30D9529.js
 index.html
 search.html

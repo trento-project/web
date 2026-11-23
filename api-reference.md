@@ -193,6 +193,8 @@ tests that require setting an event store.
 
 - [Trento.Operations.Enums.ClusterOperations](Trento.Operations.Enums.ClusterOperations.md): Cluster operations
 
+- [Trento.Operations.Enums.DatabaseBulkOperations](Trento.Operations.Enums.DatabaseBulkOperations.md): Database operations that can be requested on multiple databases at once
+
 - [Trento.Operations.Enums.DatabaseOperations](Trento.Operations.Enums.DatabaseOperations.md): Database operations
 
 - [Trento.Operations.Enums.HostBulkOperations](Trento.Operations.Enums.HostBulkOperations.md): Host operations that can be requested on multiple hosts at once

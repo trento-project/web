@@ -395,6 +395,7 @@ Trento.Operations.DatabasePolicy.md
 Trento.Operations.Enums.ClusterBulkOperations.md
 Trento.Operations.Enums.ClusterHostOperations.md
 Trento.Operations.Enums.ClusterOperations.md
+Trento.Operations.Enums.DatabaseBulkOperations.md
 Trento.Operations.Enums.DatabaseOperations.md
 Trento.Operations.Enums.HostBulkOperations.md
 Trento.Operations.Enums.HostOperations.md

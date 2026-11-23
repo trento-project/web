@@ -1,6 +1,10 @@
 # `TrentoWeb.V1.DatabaseController`
 [🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L4)
 
+# `bulk_database_start`
+
+# `bulk_database_stop`
+
 # `database_start`
 
 # `database_stop`
@@ -11,6 +15,8 @@
 @spec delete_database_instance(Plug.Conn.t(), map()) ::
   {:error, any()} | Plug.Conn.t()
 ```
+
+# `get_action`
 
 # `get_operation_database`
 

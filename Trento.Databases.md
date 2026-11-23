@@ -54,6 +54,23 @@ Provides a set of functions to interact with databases.
 ]
 ```
 
+# `get_databases_by_ids`
+
+```elixir
+@spec get_databases_by_ids([String.t()]) :: [
+  Trento.Databases.Projections.DatabaseReadModel.t()
+]
+```
+
+# `request_bulk_operation`
+
+```elixir
+@spec request_bulk_operation(atom(), [String.t()], map()) ::
+  {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+   [%{resource_id: String.t(), reason: any()}]}
+  | {:error, any()}
+```
+
 # `request_operation`
 
 ```elixir
