@@ -52,7 +52,6 @@ defmodule Trento.Databases.Database do
   }
 
   alias Trento.Databases.ValueObjects.Tenant
-  alias Trento.SapSystems.Services.HealthService, as: SapSystemsHealthService
   alias Trento.Services.HealthService
 
   alias Trento.SapSystems.Events, as: SapSystemEvents
@@ -132,7 +131,7 @@ defmodule Trento.Databases.Database do
       %DatabaseRegistered{
         database_id: database_id,
         sid: sid,
-        health: SapSystemsHealthService.derive_health_from_status(status)
+        health: HealthService.derive_health_from_status(status)
       },
       %DatabaseInstanceRegistered{
         database_id: database_id,
@@ -225,7 +224,7 @@ defmodule Trento.Databases.Database do
         },
         %DatabaseRestored{
           database_id: database_id,
-          health: SapSystemsHealthService.derive_health_from_status(status)
+          health: HealthService.derive_health_from_status(status)
         }
       ]
     end)
@@ -828,12 +827,7 @@ defmodule Trento.Databases.Database do
          instances: instances,
          health: health
        }) do
-    new_health =
-      instances
-      |> Enum.map(fn %{status: status} ->
-        SapSystemsHealthService.derive_health_from_status(status)
-      end)
-      |> HealthService.compute_aggregated_health()
+    new_health = HealthService.compute_instances_health(instances)
 
     if new_health != health do
       %DatabaseHealthChanged{

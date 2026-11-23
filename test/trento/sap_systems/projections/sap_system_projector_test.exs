@@ -15,6 +15,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
+    SapSystemHealthDetails,
     SapSystemProjector,
     SapSystemReadModel
   }
@@ -35,6 +36,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     SapSystemUpdated
   }
 
+  alias Trento.Support.HealthValueDetails
+
   alias Trento.ProjectorTestHelper
   alias Trento.Repo
 
@@ -53,8 +56,20 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
 
   test "should project a new SAP System when a SapSystemRegistered event is received" do
     %{id: database_id, sid: database_sid, health: database_health} = insert(:database)
-    event = build(:sap_system_registered_event, database_id: database_id)
 
+    event =
+      build(:sap_system_registered_event,
+        database_id: database_id,
+        database_health: database_health
+      )
+
+    instance_event =
+      build(:application_instance_registered_event,
+        sap_system_id: event.sap_system_id,
+        status: Status.green()
+      )
+
+    ProjectorTestHelper.project(SapSystemProjector, instance_event, "sap_system_projector")
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
     %{
@@ -63,7 +78,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       id: id,
       sid: sid,
       health: health,
-      ensa_version: ensa_version
+      ensa_version: ensa_version,
+      health_details: health_details
     } = projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
 
     assert event.sid == projection.sid
@@ -72,6 +88,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     assert event.health == projection.health
     assert event.ensa_version == projection.ensa_version
     assert event.database_id == projection.database_id
+
+    assert %SapSystemHealthDetails{
+             instances_health: %HealthValueDetails{value: :passing, reason: ""},
+             database_health: %HealthValueDetails{value: ^database_health, reason: ""}
+           } = health_details
 
     assert_broadcast(
       "sap_system_registered",
@@ -110,8 +131,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should project a new application instance when ApplicationInstanceRegistered event is received" do
-    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
-    event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
+    event = build(:application_instance_registered_event)
+    sap_system_id = event.sap_system_id
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
@@ -153,6 +174,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       },
       1000
     )
+
+    refute_broadcast("sap_system_health_details_changed", %{}, 500)
   end
 
   test "should move the application instance when an ApplicationInstanceMoved is received" do
@@ -573,5 +596,306 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       },
       1000
     )
+  end
+
+  describe "health details" do
+    test "should update health details database_health and broadcast when SapSystemDatabaseHealthChanged event changes database_health" do
+      %{id: sap_system_id} =
+        insert(:sap_system,
+          health_details:
+            build(:sap_system_health_details_projection,
+              database_health: build(:health_value_details, value: :passing),
+              instances_health: build(:health_value_details, value: :passing)
+            )
+        )
+
+      event =
+        build(:sap_system_database_health_changed_event,
+          sap_system_id: sap_system_id,
+          database_health: :critical
+        )
+
+      ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+      %{health_details: health_details} = Repo.get!(SapSystemReadModel, sap_system_id)
+
+      assert %SapSystemHealthDetails{
+               database_health: %HealthValueDetails{value: :critical, reason: ""}
+             } = health_details
+
+      assert_broadcast(
+        "sap_system_health_details_changed",
+        %{
+          id: ^sap_system_id,
+          health_details: %{
+            database_health: %{value: :critical}
+          }
+        },
+        1000
+      )
+    end
+
+    test "should not broadcast sap_system_health_details_changed when SapSystemDatabaseHealthChanged event does not change database_health" do
+      event =
+        %{database_health: database_health} =
+        build(:sap_system_database_health_changed_event)
+
+      insert(:sap_system,
+        id: event.sap_system_id,
+        health_details:
+          build(:sap_system_health_details_projection,
+            database_health: build(:health_value_details, value: database_health)
+          )
+      )
+
+      ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+      %{health_details: health_details} = Repo.get!(SapSystemReadModel, event.sap_system_id)
+
+      assert %SapSystemHealthDetails{
+               database_health: %HealthValueDetails{value: ^database_health, reason: ""}
+             } = health_details
+
+      refute_broadcast("sap_system_health_details_changed", %{}, 500)
+    end
+
+    test "should update instances_health and broadcast when ApplicationInstanceRegistered event changes instances_health" do
+      %{id: sap_system_id} =
+        insert(:sap_system,
+          health_details:
+            build(:sap_system_health_details_projection,
+              database_health: build(:health_value_details, value: :passing),
+              instances_health: build(:health_value_details, value: :unknown)
+            )
+        )
+
+      event =
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          status: Status.green()
+        )
+
+      ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+      %{health_details: health_details} = Repo.get!(SapSystemReadModel, sap_system_id)
+
+      assert %SapSystemHealthDetails{
+               instances_health: %HealthValueDetails{value: :passing, reason: ""}
+             } = health_details
+
+      assert_broadcast(
+        "sap_system_health_details_changed",
+        %{
+          id: ^sap_system_id,
+          health_details: %{
+            instances_health: %{value: :passing}
+          }
+        },
+        1000
+      )
+    end
+
+    test "should not broadcast sap_system_health_details_changed when ApplicationInstanceRegistered event does not change instances_health" do
+      %{id: sap_system_id} =
+        insert(:sap_system,
+          health_details:
+            build(:sap_system_health_details_projection,
+              instances_health: build(:health_value_details, value: :critical)
+            )
+        )
+
+      insert(:application_instance,
+        sap_system_id: sap_system_id,
+        instance_number: "01",
+        status: Status.red()
+      )
+
+      event =
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          instance_number: "02",
+          status: Enum.random([Status.green(), Status.yellow(), Status.red()])
+        )
+
+      ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+      %{health_details: health_details} = Repo.get!(SapSystemReadModel, sap_system_id)
+
+      assert %SapSystemHealthDetails{
+               instances_health: %HealthValueDetails{value: :critical, reason: ""}
+             } = health_details
+
+      refute_broadcast("sap_system_health_details_changed", %{}, 500)
+    end
+
+    test "should update instances_health and broadcast when ApplicationInstanceStatusChanged event changes instances_health" do
+      %{id: sap_system_id} =
+        insert(:sap_system,
+          health_details:
+            build(:sap_system_health_details_projection,
+              database_health: build(:health_value_details, value: :passing),
+              instances_health: build(:health_value_details, value: :unknown)
+            )
+        )
+
+      %{host_id: host_id, instance_number: instance_number} =
+        insert(:application_instance,
+          sap_system_id: sap_system_id,
+          status: Status.green()
+        )
+
+      status_event =
+        build(:application_instance_status_changed_event,
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          status: Status.red()
+        )
+
+      ProjectorTestHelper.project(SapSystemProjector, status_event, "sap_system_projector")
+
+      %{health_details: health_details} = Repo.get!(SapSystemReadModel, sap_system_id)
+
+      assert %SapSystemHealthDetails{
+               instances_health: %HealthValueDetails{value: :critical, reason: ""}
+             } = health_details
+
+      assert_broadcast(
+        "sap_system_health_details_changed",
+        %{
+          id: ^sap_system_id,
+          health_details: %{
+            instances_health: %{value: :critical}
+          }
+        },
+        1000
+      )
+    end
+
+    test "should not broadcast sap_system_health_details_changed when ApplicationInstanceStatusChanged event does not change instances_health" do
+      %{id: sap_system_id} =
+        insert(:sap_system,
+          health_details:
+            build(:sap_system_health_details_projection,
+              instances_health: build(:health_value_details, value: :critical)
+            )
+        )
+
+      insert(:application_instance,
+        sap_system_id: sap_system_id,
+        instance_number: "01",
+        status: Status.red()
+      )
+
+      %{host_id: host_id, instance_number: instance_number} =
+        insert(:application_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "02",
+          status: Enum.random([Status.green(), Status.yellow()])
+        )
+
+      non_critical_status = Enum.random([Status.green(), Status.yellow()])
+
+      status_event =
+        build(:application_instance_status_changed_event,
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          status: non_critical_status
+        )
+
+      ProjectorTestHelper.project(SapSystemProjector, status_event, "sap_system_projector")
+
+      %{health_details: health_details} = Repo.get!(SapSystemReadModel, sap_system_id)
+
+      assert %SapSystemHealthDetails{
+               instances_health: %HealthValueDetails{value: :critical, reason: ""}
+             } = health_details
+
+      refute_broadcast("sap_system_health_details_changed", %{}, 500)
+    end
+
+    test "should update instances_health and broadcast when ApplicationInstanceDeregistered event changes instances_health" do
+      %{id: sap_system_id} =
+        insert(:sap_system,
+          health_details:
+            build(:sap_system_health_details_projection,
+              database_health: build(:health_value_details, value: :passing),
+              instances_health: build(:health_value_details, value: :passing)
+            )
+        )
+
+      %{host_id: host_id, instance_number: instance_number} =
+        insert(:application_instance,
+          sap_system_id: sap_system_id,
+          status: Status.green()
+        )
+
+      deregistered_event =
+        build(:application_instance_deregistered_event,
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number
+        )
+
+      ProjectorTestHelper.project(SapSystemProjector, deregistered_event, "sap_system_projector")
+
+      %{health_details: health_details} = Repo.get!(SapSystemReadModel, sap_system_id)
+
+      assert %SapSystemHealthDetails{
+               instances_health: %HealthValueDetails{value: :unknown, reason: ""}
+             } = health_details
+
+      assert_broadcast(
+        "sap_system_health_details_changed",
+        %{
+          id: ^sap_system_id,
+          health_details: %{
+            instances_health: %{value: :unknown}
+          }
+        },
+        1000
+      )
+    end
+
+    test "should not broadcast sap_system_health_details_changed when ApplicationInstanceDeregistered event does not change instances_health" do
+      %{id: sap_system_id} =
+        insert(:sap_system,
+          health_details:
+            build(:sap_system_health_details_projection,
+              instances_health: build(:health_value_details, value: :critical)
+            )
+        )
+
+      insert(:application_instance,
+        sap_system_id: sap_system_id,
+        instance_number: "01",
+        status: Status.red()
+      )
+
+      %{host_id: host_id, instance_number: instance_number} =
+        insert(:application_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "02",
+          status: Enum.random([Status.green(), Status.yellow()])
+        )
+
+      deregistered_event =
+        build(:application_instance_deregistered_event,
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number
+        )
+
+      ProjectorTestHelper.project(SapSystemProjector, deregistered_event, "sap_system_projector")
+
+      %{health_details: health_details} = Repo.get!(SapSystemReadModel, sap_system_id)
+
+      assert %SapSystemHealthDetails{
+               instances_health: %HealthValueDetails{value: :critical, reason: ""}
+             } = health_details
+
+      refute_broadcast("sap_system_health_details_changed", %{}, 500)
+    end
   end
 end
