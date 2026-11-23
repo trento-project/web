@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { act, screen } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -16,6 +16,13 @@ import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwa
 import { networkClient } from '@lib/network';
 import { formatDateOnly } from '@lib/timezones';
 import MockAdapter from 'axios-mock-adapter';
+
+import {
+  fetchChecksFrequencySettings,
+  updateChecksFrequencySettings,
+  setEditingChecksFrequencySettings,
+  setChecksFrequencySettingsErrors,
+} from '@state/checksFrequencySettings';
 
 import SettingsPage from './SettingsPage';
 import {
@@ -31,6 +38,17 @@ const defaultInitialState = {
     settings: {
       retention_time: { value: 1, unit: 'day' },
     },
+  },
+  checksFrequencySettings: {
+    loading: false,
+    settings: {
+      enabled: true,
+      frequency: { value: 5, unit: 'minute' },
+      enforced_from_env: false,
+    },
+    errors: [],
+    editing: false,
+    networkError: false,
   },
 };
 
@@ -283,6 +301,278 @@ describe('Settings Page', () => {
       ).toBeGreaterThan(0);
       expect(
         screen.queryAllByText('You are not authorized for this action')[0]
+      ).toBeVisible();
+    });
+  });
+
+  describe('Check Executions Section', () => {
+    const renderWithChecksFrequencySettings = async (
+      checksFrequencySettings = {},
+      user = defaultInitialState.user
+    ) => {
+      const [StatefulSettings, store] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+        user,
+        checksFrequencySettings: {
+          ...defaultInitialState.checksFrequencySettings,
+          ...checksFrequencySettings,
+        },
+      });
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      return store;
+    };
+
+    it('should fetch the checks frequency settings', async () => {
+      const store = await renderWithChecksFrequencySettings();
+
+      expect(store.getActions()).toContainEqual(fetchChecksFrequencySettings());
+    });
+
+    it('should render the check executions section', async () => {
+      await renderWithChecksFrequencySettings({
+        settings: {
+          enabled: true,
+          frequency: { value: 6, unit: 'hour' },
+          enforced_from_env: false,
+        },
+      });
+
+      expect(screen.getByText('Check Executions')).toBeVisible();
+      expect(screen.getByLabelText('checks-frequency')).toHaveTextContent(
+        'Every 6 hours'
+      );
+      expect(
+        screen.getByLabelText('checks-frequency-edit-button')
+      ).toBeEnabled();
+    });
+
+    it('should render the disabled periodic checks', async () => {
+      await renderWithChecksFrequencySettings({
+        settings: {
+          enabled: false,
+          frequency: { value: 6, unit: 'hour' },
+          enforced_from_env: false,
+        },
+      });
+
+      expect(screen.getByLabelText('checks-frequency')).toHaveTextContent(
+        'Disabled'
+      );
+    });
+
+    it('should render loader on check executions section', async () => {
+      await renderWithChecksFrequencySettings({ loading: true });
+
+      expect(
+        screen.getByText('Loading Check Executions Settings...')
+      ).toBeVisible();
+    });
+
+    it('should reload the checks frequency settings after a network error', async () => {
+      const user = userEvent.setup();
+      const store = await renderWithChecksFrequencySettings({
+        networkError: true,
+      });
+
+      expect(
+        screen.getByText(
+          'Unable to load Check Executions Settings. Please try reloading this section.'
+        )
+      ).toBeVisible();
+
+      store.clearActions();
+      await user.click(screen.getByRole('button', { name: 'Reload' }));
+
+      expect(store.getActions()).toContainEqual(fetchChecksFrequencySettings());
+    });
+
+    it('should show the frequency enforced from env without allowing to change it', async () => {
+      await renderWithChecksFrequencySettings({
+        settings: {
+          frequency: { value: 2, unit: 'week' },
+          enforced_from_env: true,
+        },
+      });
+
+      expect(screen.getByLabelText('checks-frequency')).toHaveTextContent(
+        'Every 2 weeks'
+      );
+      expect(
+        screen.getByLabelText('checks-frequency-edit-button')
+      ).toBeDisabled();
+    });
+
+    it('should show the checks disabled by the environment', async () => {
+      await renderWithChecksFrequencySettings({
+        settings: {
+          enabled: false,
+          frequency: null,
+          enforced_from_env: true,
+        },
+      });
+
+      expect(screen.getByLabelText('checks-frequency')).toHaveTextContent(
+        'Disabled'
+      );
+      expect(
+        screen.getByLabelText('checks-frequency-edit-button')
+      ).toBeDisabled();
+    });
+
+    it('should clear the previous errors and start editing when clicking on the edit button', async () => {
+      const user = userEvent.setup();
+      const store = await renderWithChecksFrequencySettings({
+        errors: [
+          {
+            detail:
+              'Checks frequency settings can not be set, enforced by ENV.',
+            title: 'Conflict has occurred',
+          },
+        ],
+      });
+
+      await user.click(screen.getByLabelText('checks-frequency-edit-button'));
+
+      expect(store.getActions()).toEqual(
+        expect.arrayContaining([
+          setChecksFrequencySettingsErrors([]),
+          setEditingChecksFrequencySettings(true),
+        ])
+      );
+    });
+
+    it('should keep the unsaved changes when the settings change while editing', async () => {
+      const user = userEvent.setup();
+      const editingState = (frequency) => ({
+        ...defaultInitialState,
+        checksFrequencySettings: {
+          ...defaultInitialState.checksFrequencySettings,
+          editing: true,
+          settings: { enabled: true, frequency, enforced_from_env: false },
+        },
+      });
+
+      const [StatefulSettings] = withState(
+        <SettingsPage />,
+        editingState({ value: 6, unit: 'hour' })
+      );
+      let rerender;
+      await act(async () => {
+        ({ rerender } = renderWithRouter(StatefulSettings));
+      });
+
+      await user.click(
+        screen.getByRole('switch', { name: 'Run Checks Periodically' })
+      );
+
+      const [UpdatedSettings] = withState(
+        <SettingsPage />,
+        editingState({ value: 12, unit: 'hour' })
+      );
+      await act(async () => {
+        rerender(UpdatedSettings);
+      });
+
+      const modal = screen.getByRole('dialog');
+      expect(
+        within(modal).getByRole('switch', { name: 'Run Checks Periodically' })
+      ).not.toBeChecked();
+      expect(within(modal).getByText('6')).toBeVisible();
+    });
+
+    it('should render edit modal and save the settings', async () => {
+      const user = userEvent.setup();
+      const store = await renderWithChecksFrequencySettings({
+        editing: true,
+        settings: {
+          enabled: false,
+          frequency: { value: 12, unit: 'hour' },
+          enforced_from_env: false,
+        },
+      });
+
+      const modal = screen.getByRole('dialog');
+      expect(
+        within(modal).getByText('Check Executions Settings')
+      ).toBeVisible();
+      expect(
+        within(modal).getByRole('switch', { name: 'Run Checks Periodically' })
+      ).not.toBeChecked();
+      expect(within(modal).getByText('12')).toBeVisible();
+      expect(within(modal).getByText('Hours')).toBeVisible();
+
+      await user.click(
+        within(modal).getByRole('button', { name: 'Save Settings' })
+      );
+
+      expect(store.getActions()).toContainEqual(
+        updateChecksFrequencySettings({
+          enabled: false,
+          frequency: { value: 12, unit: 'hour' },
+        })
+      );
+    });
+
+    it('should clear errors and stop editing on close', async () => {
+      const user = userEvent.setup();
+      const store = await renderWithChecksFrequencySettings({ editing: true });
+
+      await user.click(
+        within(screen.getByRole('dialog')).getByRole('button', {
+          name: 'Close',
+        })
+      );
+
+      expect(store.getActions()).toEqual(
+        expect.arrayContaining([
+          setChecksFrequencySettingsErrors([]),
+          setEditingChecksFrequencySettings(false),
+        ])
+      );
+    });
+
+    it('should clear the saving errors when the frequency changes', async () => {
+      const user = userEvent.setup();
+      const store = await renderWithChecksFrequencySettings({
+        editing: true,
+        errors: [
+          {
+            detail: 'must be one of 5, 15, 30 when the unit is minute',
+            source: { pointer: '/frequency/value' },
+            title: 'Invalid value',
+          },
+        ],
+      });
+
+      store.clearActions();
+      await user.click(screen.getByLabelText('checks-frequency-unit'));
+      await user.click(screen.getByRole('option', { name: 'Hours' }));
+
+      expect(store.getActions()).toEqual([
+        setChecksFrequencySettingsErrors([]),
+      ]);
+    });
+
+    it('should render saving errors', async () => {
+      await renderWithChecksFrequencySettings({
+        editing: true,
+        errors: [
+          {
+            title: 'Conflict has occurred',
+            detail:
+              'Checks frequency settings can not be set, enforced by ENV.',
+          },
+        ],
+      });
+
+      expect(
+        screen.getByText(
+          'Checks frequency settings can not be set, enforced by ENV.'
+        )
       ).toBeVisible();
     });
   });

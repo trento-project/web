@@ -21,6 +21,7 @@ import {
   CLUSTER_BULK_OPERATION_REQUESTED,
   HOST_BULK_OPERATION_REQUESTED,
   TESTING_ALERTING_SETTINGS,
+  CHANGING_CHECKS_FREQUENCY_SETTINGS,
   availableResourceNameKeys,
   resourceNameFromMetadata,
   resourceTypes,
@@ -327,6 +328,23 @@ describe('activityLog', () => {
         expect(toMessage({ type: TESTING_ALERTING_SETTINGS, metadata })).toBe(
           expectedMessage
         );
+      }
+    );
+
+    it.each`
+      metadata                                                      | expectedMessage
+      ${{ enabled: true, frequency: { value: 5, unit: 'minute' } }} | ${'Check execution frequency set to every 5 mins'}
+      ${{ enabled: true, frequency: { value: 6, unit: 'hour' } }}   | ${'Check execution frequency set to every 6 hours'}
+      ${{ enabled: true, frequency: { value: 1, unit: 'week' } }}   | ${'Check execution frequency set to every week'}
+      ${{ enabled: false, frequency: { value: 6, unit: 'hour' } }}  | ${'Check execution frequency disabled'}
+      ${{}}                                                         | ${'Check Executions Settings were changed'}
+      ${{ enabled: true, frequency: { value: 'bogus' } }}           | ${'Check Executions Settings were changed'}
+    `(
+      'should resolve checks frequency change message for $metadata',
+      ({ metadata, expectedMessage }) => {
+        const entry = { type: CHANGING_CHECKS_FREQUENCY_SETTINGS, metadata };
+
+        expect(toMessage(entry)).toBe(expectedMessage);
       }
     );
   });
