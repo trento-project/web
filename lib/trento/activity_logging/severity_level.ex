@@ -154,6 +154,11 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "application_instance_operation_requested" => :info,
     "sap_system_operation_requested" => :info,
     "database_operation_requested" => :info,
+    "database_bulk_operation_requested" => %{
+      type: :key,
+      key: :failed_requests,
+      condition: :non_empty_list
+    },
     "operation_completed" => %{
       type: :kv,
       key_suffix: "result",

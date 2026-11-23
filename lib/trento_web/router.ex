@@ -10,6 +10,7 @@ defmodule TrentoWeb.Router do
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
   require Trento.Operations.Enums.ClusterBulkOperations, as: ClusterBulkOperations
   require Trento.Operations.Enums.HostBulkOperations, as: HostBulkOperations
+  require Trento.Operations.Enums.DatabaseBulkOperations, as: DatabaseBulkOperations
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
   require Trento.Operations.Enums.HostOperations, as: HostOperations
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
@@ -233,6 +234,12 @@ defmodule TrentoWeb.Router do
           post "/databases/:id/operations/#{database_operations}",
                DatabaseController,
                database_operations
+        end
+
+        for database_bulk_operation <- DatabaseBulkOperations.values() do
+          post "/databases/operations/#{database_bulk_operation}/bulk",
+               DatabaseController,
+               OperationsHelper.to_bulk_operation(database_bulk_operation)
         end
 
         for cluster_host_operation <- ClusterHostOperations.values() do

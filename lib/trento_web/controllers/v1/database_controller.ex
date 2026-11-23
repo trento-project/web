@@ -9,27 +9,39 @@ defmodule TrentoWeb.V1.DatabaseController do
   alias Trento.Repo
 
   alias Trento.Databases
+  alias Trento.Support.OperationsHelper
 
   alias Trento.Databases.Projections.DatabaseReadModel
 
   alias TrentoWeb.OpenApi.V1.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.{
+    BulkOperationAccepted,
     Forbidden,
     NotFound,
     OperationAccepted,
     UnprocessableEntity
   }
 
-  alias TrentoWeb.OpenApi.V1.Schema.Operations.DatabaseStartStopParams
+  alias TrentoWeb.OpenApi.V1.Schema.Operations.{
+    DatabaseBulkStartStopParams,
+    DatabaseStartStopParams
+  }
 
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+  require Trento.Operations.Enums.DatabaseBulkOperations, as: DatabaseBulkOperations
+
+  @bulk_actions Map.new(
+                  DatabaseBulkOperations.values(),
+                  &{OperationsHelper.to_bulk_operation(&1), &1}
+                )
+  @database_bulk_operations Map.keys(@bulk_actions)
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
   plug Bodyguard.Plug.Authorize,
     policy: Trento.Databases.Policy,
-    action: {Phoenix.Controller, :action_name},
+    action: {__MODULE__, :get_action},
     user: {Pow.Plug, :current_user},
     params: {__MODULE__, :get_policy_resource},
     fallback: TrentoWeb.FallbackController
@@ -40,11 +52,11 @@ defmodule TrentoWeb.V1.DatabaseController do
        [
          policy: Trento.Operations.DatabasePolicy,
          resource: &__MODULE__.get_operation_database/1,
-         operation: &Phoenix.Controller.action_name/1,
+         operation: &__MODULE__.get_action/1,
          assigns_to: :database,
          params: &__MODULE__.get_operation_params/1
        ]
-       when action in DatabaseOperations.values()
+       when action in DatabaseOperations.values() or action in @database_bulk_operations
 
   action_fallback TrentoWeb.FallbackController
 
@@ -179,7 +191,68 @@ defmodule TrentoWeb.V1.DatabaseController do
     end
   end
 
+  @bulk_operations [
+    %{
+      operation: DatabaseBulkOperations.database_start(),
+      summary: "Request database start bulk operation",
+      description:
+        "Request database start operation to start multiple databases at once, in all their system replication sites. The request is forbidden if any of the databases is not authorized to run the operation. Otherwise, an individual operation is requested for every database.",
+      request_body: DatabaseBulkStartStopParams
+    },
+    %{
+      operation: DatabaseBulkOperations.database_stop(),
+      summary: "Request database stop bulk operation",
+      description:
+        "Request database stop operation to stop multiple databases at once, in all their system replication sites. The request is forbidden if any of the databases is not authorized to run the operation. Otherwise, an individual operation is requested for every database.",
+      request_body: DatabaseBulkStartStopParams
+    }
+  ]
+
+  for %{
+        operation: database_operation,
+        summary: summary,
+        description: description,
+        request_body: request_body
+      } <- @bulk_operations do
+    @bulk_action OperationsHelper.to_bulk_operation(database_operation)
+
+    operation @bulk_action,
+      summary: summary,
+      tags: ["Operations"],
+      description: description,
+      request_body:
+        {"Request containing the databases and the parameters for the specified database bulk operation.",
+         "application/json", request_body},
+      responses: [
+        accepted: BulkOperationAccepted.response(),
+        not_found: NotFound.response(),
+        forbidden: Forbidden.response(),
+        unprocessable_entity: UnprocessableEntity.response()
+      ]
+
+    def unquote(@bulk_action)(conn, params) do
+      request_bulk_operation(conn, params)
+    end
+  end
+
+  def get_action(conn) do
+    action = Phoenix.Controller.action_name(conn)
+    Map.get(@bulk_actions, action, action)
+  end
+
   def get_policy_resource(_), do: DatabaseReadModel
+
+  def get_operation_database(%{body_params: %{database_ids: database_ids}}) do
+    databases =
+      database_ids
+      |> Databases.get_databases_by_ids()
+      |> Repo.preload(
+        database_instances: [host: [:cluster]],
+        sap_systems: [:application_instances]
+      )
+
+    OperationsHelper.ensure_all_found(database_ids, databases, "Databases")
+  end
 
   def get_operation_database(%{
         params: %{
@@ -210,6 +283,10 @@ defmodule TrentoWeb.V1.DatabaseController do
 
   def get_operation_database(_), do: nil
 
+  def get_operation_params(%{body_params: %{database_ids: _} = body_params}) do
+    Map.get(body_params, :params, %{})
+  end
+
   def get_operation_params(%{
         body_params: body_params
       }) do
@@ -233,6 +310,23 @@ defmodule TrentoWeb.V1.DatabaseController do
       conn
       |> put_status(:accepted)
       |> json(%{operation_id: operation_id})
+    end
+  end
+
+  defp request_bulk_operation(%{assigns: %{operation: operation}} = conn, _) do
+    %{database_ids: database_ids} = body_params = OpenApiSpex.body_params(conn)
+    params = Map.get(body_params, :params, %{})
+
+    with {:ok, bulk_operation_id, operations, failed_requests} <-
+           Databases.request_bulk_operation(operation, database_ids, params) do
+      conn
+      |> put_status(:accepted)
+      |> put_view(json: TrentoWeb.V1.OperationJSON)
+      |> render(:bulk_operation_accepted,
+        bulk_operation_id: bulk_operation_id,
+        operations: operations,
+        failed_requests: failed_requests
+      )
     end
   end
 end

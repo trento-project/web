@@ -9,6 +9,7 @@ defmodule Trento.Databases do
   import Ecto.Query
 
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+  require Trento.Operations.Enums.DatabaseBulkOperations, as: DatabaseBulkOperations
 
   alias Trento.Databases.Projections.{
     DatabaseInstanceReadModel,
@@ -19,6 +20,7 @@ defmodule Trento.Databases do
 
   alias Trento.Support.CommandedUtils
   alias Trento.Support.DateService
+  alias Trento.Support.OperationsHelper
 
   alias Trento.Databases.Commands.DeregisterDatabaseInstance
 
@@ -37,6 +39,13 @@ defmodule Trento.Databases do
     DatabaseReadModel
     |> where([c], c.id == ^id and is_nil(c.deregistered_at))
     |> Repo.one()
+  end
+
+  @spec get_databases_by_ids([String.t()]) :: [DatabaseReadModel.t()]
+  def get_databases_by_ids(ids) do
+    DatabaseReadModel
+    |> where([d], d.id in ^ids and is_nil(d.deregistered_at))
+    |> Repo.all()
   end
 
   @spec get_all_databases :: [DatabaseReadModel.t()]
@@ -142,6 +151,20 @@ defmodule Trento.Databases do
   end
 
   def request_operation(_, _, _), do: {:error, :operation_not_found}
+
+  @spec request_bulk_operation(atom(), [String.t()], map()) ::
+          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+           [%{resource_id: String.t(), reason: any}]}
+          | {:error, any}
+  def request_bulk_operation(operation, database_ids, params)
+      when operation in DatabaseBulkOperations.values() do
+    OperationsHelper.do_bulk_requests(
+      database_ids,
+      &request_operation(operation, &1, params)
+    )
+  end
+
+  def request_bulk_operation(_, _, _), do: {:error, :operation_not_found}
 
   defp maybe_filter_by_site(databases, %{site: site}) when not is_nil(site) do
     Enum.filter(databases, fn %{system_replication_site: current_site} -> site == current_site end)

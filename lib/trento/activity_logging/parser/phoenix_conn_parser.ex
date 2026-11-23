@@ -296,7 +296,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       )
       when activity in [
              :cluster_bulk_operation_requested,
-             :host_bulk_operation_requested
+             :host_bulk_operation_requested,
+             :database_bulk_operation_requested
            ] do
     params = Map.get(body_params, :params, %{})
 
@@ -362,7 +363,9 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
        when activity in [:host_operation_requested, :host_bulk_operation_requested],
        do: :host_id
 
-  defp get_operation_resource_id_field(:database_operation_requested), do: :database_id
+  defp get_operation_resource_id_field(activity)
+       when activity in [:database_operation_requested, :database_bulk_operation_requested],
+       do: :database_id
 
   defp maybe_add_additional_fields(
          metadata,
