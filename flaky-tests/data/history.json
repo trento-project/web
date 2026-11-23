@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-28T22:47:54Z",
-    "commit": "9379ec2c79cf85e7d2d8323d960ee270956b8ca4",
-    "run_id": "36492685774",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 40,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-28T22:49:30Z",
     "commit": "9379ec2c79cf85e7d2d8323d960ee270956b8ca4",
     "run_id": "36492685774",
@@ -5087,5 +5076,29 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-23T00:18:17Z",
+    "commit": "afc431252eb95d01dc826fc651531aec28f48796",
+    "run_id": "45087972461",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 94,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.02501
+      }
+    ]
   }
 ]
