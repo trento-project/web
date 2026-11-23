@@ -21,7 +21,7 @@ describe('ChecksFrequencyConfig', () => {
 
     expect(screen.getByText('Check Executions')).toBeVisible();
     expect(
-      screen.getByText('Configure when the health checks are run.')
+      screen.getByText('Configure when the checks are run.')
     ).toBeVisible();
     expect(screen.getByText('Check Execution Frequency')).toBeVisible();
     expect(screen.getByLabelText('checks-frequency')).toHaveTextContent(

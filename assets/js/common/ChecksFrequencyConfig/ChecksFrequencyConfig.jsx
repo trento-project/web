@@ -69,7 +69,7 @@ function ChecksFrequencyConfig({
         </span>
       </div>
       <p className="mt-3 mb-3 text-gray-500">
-        Configure when the health checks are run.
+        Configure when the checks are run.
       </p>
 
       <div className="grid grid-cols-6 mt-5 items-center">
