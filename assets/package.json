@@ -44,7 +44,7 @@
     "yaml": "^2.9.1"
   },
   "dependencies": {
-    "@ag-ui/client": "^1.0.3",
+    "@ag-ui/client": "^1.0.5",
     "@ag-ui/core": "^1.0.4",
     "@assistant-ui/core": "^0.3.32",
     "@assistant-ui/react": "^0.15.32",
