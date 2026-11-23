@@ -100,6 +100,12 @@ jobs:
           elixir-version: ${{ matrix.toolchain.elixir }}
       - name: Compile
         run: mix compile --warnings-as-errors
+      - name: "Pull docker compose images"
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 2
+          max_attempts: 2
+          command: docker compose pull
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
         with:
