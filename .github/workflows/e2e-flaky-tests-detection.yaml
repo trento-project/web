@@ -189,6 +189,12 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: "Pull docker compose images"
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 2
+          max_attempts: 2
+          command: docker compose --profile wanda pull
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
         with:
