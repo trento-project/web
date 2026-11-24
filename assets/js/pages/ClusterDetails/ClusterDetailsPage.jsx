@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { get } from 'lodash';
 
+import { getDefaultHealthDetails } from '@lib/model/clusters';
 import { getFromConfig } from '@lib/config';
 
 import {
@@ -125,7 +126,9 @@ function ClusterDetailsPage() {
       hasSelectedChecks={hasSelectedChecks}
       hosts={clusterHosts}
       health={cluster.health}
-      healthDetails={cluster.health_details}
+      healthDetails={
+        cluster.health_details || getDefaultHealthDetails(cluster.type)
+      }
       state={cluster.state}
       staleAt={cluster.stale_at}
       lastExecution={lastExecution}

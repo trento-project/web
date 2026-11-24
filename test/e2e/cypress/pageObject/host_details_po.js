@@ -157,6 +157,9 @@ export const selectPatchTypeFilter = (patchType) => {
   return basePage.selectFromDropdown(filterButton, patchType);
 };
 
+export const mouseOverHostHealth = () =>
+  cy.findByRole('img', { name: hostHealthIconName }).trigger('mouseover');
+
 //Validations
 export const restoredHostIsDisplayed = () =>
   cy.get(cleanedUpHost).should('be.visible');
@@ -235,6 +238,18 @@ export const pageTitleHealthIsCorrectlyDisplayed = (
 ) => {
   cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
   basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', health);
+};
+
+export const healthTooltipIsDisplayed = () => {
+  const healthDetailsLabels = [
+    'Overall Checks Results',
+    'Saptune Tuning Status',
+    'Relevant Patches',
+  ];
+
+  return cy.wrap(healthDetailsLabels).each((label) => {
+    cy.get('.rc-tooltip').should('be.visible').and('contain', label);
+  });
 };
 
 export const clusterNameHasExpectedValue = () =>

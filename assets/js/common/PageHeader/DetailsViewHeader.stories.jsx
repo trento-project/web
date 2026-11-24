@@ -67,10 +67,9 @@ export const WithHealthDetails = {
     health: 'passing',
     healthDetails: {
       checks_health: { value: 'passing' },
-      sbd_health: { value: 'passing' },
-      replication_health: { value: 'warning' },
+      saptune_health: { value: 'warning' },
     },
-    children: 'HANA Cluster Details: cluster_1',
+    children: 'Resource Details: resource_1',
   },
 };
 
@@ -80,10 +79,9 @@ export const StaleWithHealthDetails = {
     health: 'passing',
     healthDetails: {
       checks_health: { value: 'passing' },
-      sbd_health: { value: 'passing' },
-      replication_health: { value: 'warning' },
+      saptune_health: { value: 'warning' },
     },
     staleAt: '2026-06-15T10:30:00Z',
-    children: 'HANA Cluster Details: cluster_1',
+    children: 'Resource Details: resource_1',
   },
 };

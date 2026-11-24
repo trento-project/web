@@ -89,6 +89,10 @@ export default {
         defaultValue: { summary: 'passing' },
       },
     },
+    healthDetails: {
+      description: 'Host health details breakdown for the tooltip',
+      control: { type: 'object' },
+    },
     hostID: {
       control: { type: 'text' },
       description: 'The host identifier',
@@ -245,6 +249,7 @@ export const Default = {
     heartbeat: host.heartbeat,
     staleAt: null,
     health: host.health,
+    healthDetails: host.health_details,
     hostID: host.id,
     hostname: host.hostname,
     ipAddresses: host.ip_addresses,

@@ -71,6 +71,7 @@ function HostDetails({
   heartbeat,
   staleAt,
   health,
+  healthDetails,
   hostID,
   hostname,
   ipAddresses = [],
@@ -231,6 +232,7 @@ function HostDetails({
               staleAt={staleAt}
               timezone={timezone}
               healthAriaLabelPrefix="Host"
+              healthDetails={healthDetails}
             >
               Host Details: <span className="font-bold">{hostname}</span>
             </DetailsViewHeader>
