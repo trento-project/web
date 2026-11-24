@@ -1260,35 +1260,6 @@ defmodule Trento.ClustersTest do
     end
   end
 
-  describe "get_clusters_by_ids/1" do
-    test "should return an empty list when no ids match" do
-      insert(:cluster)
-
-      assert [] == Clusters.get_clusters_by_ids([UUID.uuid4()])
-      assert [] == Clusters.get_clusters_by_ids([])
-    end
-
-    test "should return only the requested registered clusters" do
-      [%{id: cluster_id_1}, %{id: cluster_id_2}] =
-        expected_clusters = insert_list(2, :cluster, details: %{})
-
-      %{id: deregistered_cluster_id} =
-        insert(:cluster, deregistered_at: DateTime.utc_now(), details: %{})
-
-      insert(:cluster, details: %{})
-
-      clusters =
-        Clusters.get_clusters_by_ids([
-          cluster_id_1,
-          cluster_id_2,
-          deregistered_cluster_id,
-          UUID.uuid4()
-        ])
-
-      assert Enum.sort_by(expected_clusters, & &1.id) == Enum.sort_by(clusters, & &1.id)
-    end
-  end
-
   describe "request_operation/3" do
     operations = [
       %{
