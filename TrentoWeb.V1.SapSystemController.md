@@ -1,12 +1,18 @@
 # `TrentoWeb.V1.SapSystemController`
 [🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/sap_system_controller.ex#L4)
 
+# `bulk_sap_system_start`
+
+# `bulk_sap_system_stop`
+
 # `delete_application_instance`
 
 ```elixir
 @spec delete_application_instance(Plug.Conn.t(), map()) ::
   {:error, any()} | Plug.Conn.t()
 ```
+
+# `get_action`
 
 # `get_operation_instance`
 

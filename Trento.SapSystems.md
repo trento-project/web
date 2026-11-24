@@ -54,6 +54,23 @@ Provides a set of functions to interact with SAP systems.
   Trento.SapSystems.Projections.SapSystemReadModel.t() | nil
 ```
 
+# `get_sap_systems_by_ids`
+
+```elixir
+@spec get_sap_systems_by_ids([String.t()]) :: [
+  Trento.SapSystems.Projections.SapSystemReadModel.t()
+]
+```
+
+# `request_bulk_operation`
+
+```elixir
+@spec request_bulk_operation(atom(), [String.t()], map()) ::
+  {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+   [%{resource_id: String.t(), reason: any()}]}
+  | {:error, any()}
+```
+
 # `request_instance_operation`
 
 ```elixir

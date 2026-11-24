@@ -403,6 +403,7 @@ Trento.Operations.Enums.DatabaseOperations.md
 Trento.Operations.Enums.HostBulkOperations.md
 Trento.Operations.Enums.HostOperations.md
 Trento.Operations.Enums.SapInstanceOperations.md
+Trento.Operations.Enums.SapSystemBulkOperations.md
 Trento.Operations.Enums.SapSystemOperations.md
 Trento.Operations.HostPolicy.md
 Trento.Operations.PolicyBehaviour.md

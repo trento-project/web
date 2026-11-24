@@ -203,6 +203,8 @@ tests that require setting an event store.
 
 - [Trento.Operations.Enums.SapInstanceOperations](Trento.Operations.Enums.SapInstanceOperations.md): SAP instance operations
 
+- [Trento.Operations.Enums.SapSystemBulkOperations](Trento.Operations.Enums.SapSystemBulkOperations.md): SAP system operations that can be requested on multiple SAP systems at once
+
 - [Trento.Operations.Enums.SapSystemOperations](Trento.Operations.Enums.SapSystemOperations.md): SAP system operations
 
 - [Trento.Operations.HostPolicy](Trento.Operations.HostPolicy.md): HostReadModel operation policies
