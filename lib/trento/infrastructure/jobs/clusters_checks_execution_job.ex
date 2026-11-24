@@ -3,14 +3,14 @@
 
 defmodule Trento.Infrastructure.Jobs.ClustersChecksExecutionJob do
   @moduledoc """
-  Requests a checks execution for every registered cluster with selected checks.
+  Requests the due checks executions of the clusters, see `Trento.Checks`.
   """
 
   use Oban.Worker, max_attempts: 1, unique: [period: :infinity, states: :incomplete]
 
   @impl Oban.Worker
   def perform(%Oban.Job{}) do
-    Trento.Clusters.request_clusters_checks_execution()
+    Trento.Checks.request_due_executions(:cluster)
 
     :ok
   end
