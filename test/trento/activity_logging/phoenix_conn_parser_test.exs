@@ -28,6 +28,11 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       activity: :database_bulk_operation_requested,
       operation: :database_start,
       resource_field: :database_id
+    },
+    %{
+      activity: :sap_system_bulk_operation_requested,
+      operation: :sap_system_start,
+      resource_field: :sap_system_id
     }
   ]
 

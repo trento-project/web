@@ -222,7 +222,7 @@ defmodule TrentoWeb.V1.DatabaseController do
       description: description,
       request_body:
         {"Request containing the databases and the parameters for the specified database bulk operation.",
-         "application/json", request_body},
+         "application/json", request_body, required: true},
       responses: [
         accepted: BulkOperationAccepted.response(),
         not_found: NotFound.response(),

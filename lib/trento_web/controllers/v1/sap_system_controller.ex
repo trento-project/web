@@ -9,6 +9,7 @@ defmodule TrentoWeb.V1.SapSystemController do
   alias Trento.Repo
 
   alias Trento.SapSystems
+  alias Trento.Support.OperationsHelper
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
@@ -18,6 +19,7 @@ defmodule TrentoWeb.V1.SapSystemController do
   alias TrentoWeb.OpenApi.V1.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.{
+    BulkOperationAccepted,
     Forbidden,
     NotFound,
     OperationAccepted,
@@ -26,17 +28,25 @@ defmodule TrentoWeb.V1.SapSystemController do
 
   alias TrentoWeb.OpenApi.V1.Schema.Operations.{
     SapInstanceStartStopParams,
+    SapSystemBulkStartStopParams,
     SapSystemStartStopParams
   }
 
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
   require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
+  require Trento.Operations.Enums.SapSystemBulkOperations, as: SapSystemBulkOperations
+
+  @bulk_actions Map.new(
+                  SapSystemBulkOperations.values(),
+                  &{OperationsHelper.to_bulk_operation(&1), &1}
+                )
+  @sap_system_bulk_operations Map.keys(@bulk_actions)
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
   plug Bodyguard.Plug.Authorize,
     policy: Trento.SapSystems.Policy,
-    action: {Phoenix.Controller, :action_name},
+    action: {__MODULE__, :get_action},
     user: {Pow.Plug, :current_user},
     params: {__MODULE__, :get_policy_resource},
     fallback: TrentoWeb.FallbackController
@@ -56,11 +66,11 @@ defmodule TrentoWeb.V1.SapSystemController do
        [
          policy: Trento.Operations.SapSystemPolicy,
          resource: &__MODULE__.get_operation_system/1,
-         operation: &Phoenix.Controller.action_name/1,
+         operation: &__MODULE__.get_action/1,
          assigns_to: :sap_system,
          params: &__MODULE__.get_operation_params/1
        ]
-       when action in SapSystemOperations.values()
+       when action in SapSystemOperations.values() or action in @sap_system_bulk_operations
 
   action_fallback TrentoWeb.FallbackController
 
@@ -275,6 +285,55 @@ defmodule TrentoWeb.V1.SapSystemController do
     end
   end
 
+  @bulk_operations [
+    %{
+      operation: SapSystemBulkOperations.sap_system_start(),
+      summary: "Request SAP system start bulk operation",
+      description:
+        "Request SAP system start operation to start multiple SAP systems at once. The request is forbidden if any of the SAP systems is not authorized to run the operation. Otherwise, an individual operation is requested for every SAP system.",
+      request_body: SapSystemBulkStartStopParams
+    },
+    %{
+      operation: SapSystemBulkOperations.sap_system_stop(),
+      summary: "Request SAP system stop bulk operation",
+      description:
+        "Request SAP system stop operation to stop multiple SAP systems at once. The request is forbidden if any of the SAP systems is not authorized to run the operation. Otherwise, an individual operation is requested for every SAP system.",
+      request_body: SapSystemBulkStartStopParams
+    }
+  ]
+
+  for %{
+        operation: sap_system_bulk_operation,
+        summary: summary,
+        description: description,
+        request_body: request_body
+      } <- @bulk_operations do
+    @bulk_action OperationsHelper.to_bulk_operation(sap_system_bulk_operation)
+
+    operation @bulk_action,
+      summary: summary,
+      tags: ["Operations"],
+      description: description,
+      request_body:
+        {"Request containing the SAP systems and the parameters for the specified SAP system bulk operation.",
+         "application/json", request_body, required: true},
+      responses: [
+        accepted: BulkOperationAccepted.response(),
+        not_found: NotFound.response(),
+        forbidden: Forbidden.response(),
+        unprocessable_entity: UnprocessableEntity.response()
+      ]
+
+    def unquote(@bulk_action)(conn, params) do
+      request_bulk_operation(conn, params)
+    end
+  end
+
+  def get_action(conn) do
+    action = Phoenix.Controller.action_name(conn)
+    Map.get(@bulk_actions, action, action)
+  end
+
   def get_policy_resource(%{
         private: %{phoenix_action: action}
       })
@@ -315,7 +374,20 @@ defmodule TrentoWeb.V1.SapSystemController do
     |> Repo.preload([:database_instances, [application_instances: [host: :cluster]]])
   end
 
+  def get_operation_system(%{body_params: %{sap_system_ids: sap_system_ids}}) do
+    sap_systems =
+      sap_system_ids
+      |> SapSystems.get_sap_systems_by_ids()
+      |> Repo.preload([:database_instances, [application_instances: [host: :cluster]]])
+
+    OperationsHelper.ensure_all_found(sap_system_ids, sap_systems, "SAP systems")
+  end
+
   def get_operation_system(_), do: nil
+
+  def get_operation_params(%{body_params: %{sap_system_ids: _} = body_params}) do
+    Map.get(body_params, :params, %{})
+  end
 
   def get_operation_params(%{
         body_params: body_params
@@ -360,6 +432,23 @@ defmodule TrentoWeb.V1.SapSystemController do
       conn
       |> put_status(:accepted)
       |> json(%{operation_id: operation_id})
+    end
+  end
+
+  defp request_bulk_operation(%{assigns: %{operation: operation}} = conn, _) do
+    %{sap_system_ids: sap_system_ids} = body_params = OpenApiSpex.body_params(conn)
+    params = Map.get(body_params, :params, %{})
+
+    with {:ok, bulk_operation_id, operations, failed_requests} <-
+           SapSystems.request_bulk_operation(operation, sap_system_ids, params) do
+      conn
+      |> put_status(:accepted)
+      |> put_view(json: TrentoWeb.V1.OperationJSON)
+      |> render(:bulk_operation_accepted,
+        bulk_operation_id: bulk_operation_id,
+        operations: operations,
+        failed_requests: failed_requests
+      )
     end
   end
 end

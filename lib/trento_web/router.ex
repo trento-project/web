@@ -11,6 +11,7 @@ defmodule TrentoWeb.Router do
   require Trento.Operations.Enums.ClusterBulkOperations, as: ClusterBulkOperations
   require Trento.Operations.Enums.HostBulkOperations, as: HostBulkOperations
   require Trento.Operations.Enums.DatabaseBulkOperations, as: DatabaseBulkOperations
+  require Trento.Operations.Enums.SapSystemBulkOperations, as: SapSystemBulkOperations
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
   require Trento.Operations.Enums.HostOperations, as: HostOperations
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
@@ -228,6 +229,12 @@ defmodule TrentoWeb.Router do
           post "/sap_systems/:id/operations/#{sap_system_operation}",
                SapSystemController,
                sap_system_operation
+        end
+
+        for sap_system_bulk_operation <- SapSystemBulkOperations.values() do
+          post "/sap_systems/operations/#{sap_system_bulk_operation}/bulk",
+               SapSystemController,
+               OperationsHelper.to_bulk_operation(sap_system_bulk_operation)
         end
 
         for database_operations <- DatabaseOperations.values() do

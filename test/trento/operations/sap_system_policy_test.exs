@@ -41,6 +41,27 @@ defmodule Trento.Operations.SapSystemPolicyTest do
     end
   end
 
+  test "should forbid operation if the host of the application instance is not present" do
+    sap_system =
+      build(:sap_system,
+        application_instances: [
+          build(:application_instance, host: nil)
+        ]
+      )
+
+    for operation <- SapSystemOperations.values() do
+      assert {:error,
+              [
+                %{
+                  message:
+                    "Trento agent is not currently running in any of the hosts in the SAP system",
+                  metadata: []
+                }
+              ]} ==
+               SapSystemPolicy.authorize_operation(operation, sap_system, %{})
+    end
+  end
+
   test "should continue checking policies if at least one host heartbeat in the sap system is passing" do
     sap_system =
       build(:sap_system,

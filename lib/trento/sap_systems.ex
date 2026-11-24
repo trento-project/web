@@ -10,6 +10,7 @@ defmodule Trento.SapSystems do
 
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
   require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
+  require Trento.Operations.Enums.SapSystemBulkOperations, as: SapSystemBulkOperations
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
@@ -20,6 +21,7 @@ defmodule Trento.SapSystems do
 
   alias Trento.Support.CommandedUtils
   alias Trento.Support.DateService
+  alias Trento.Support.OperationsHelper
 
   alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
@@ -38,6 +40,13 @@ defmodule Trento.SapSystems do
     SapSystemReadModel
     |> where([c], c.id == ^id and is_nil(c.deregistered_at))
     |> Repo.one()
+  end
+
+  @spec get_sap_systems_by_ids([String.t()]) :: [SapSystemReadModel.t()]
+  def get_sap_systems_by_ids(ids) do
+    SapSystemReadModel
+    |> where([s], s.id in ^ids and is_nil(s.deregistered_at))
+    |> Repo.all()
   end
 
   @spec get_all_sap_systems :: [SapSystemReadModel.t()]
@@ -159,4 +168,18 @@ defmodule Trento.SapSystems do
   end
 
   def request_operation(_, _, _), do: {:error, :operation_not_found}
+
+  @spec request_bulk_operation(atom(), [String.t()], map()) ::
+          {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
+           [%{resource_id: String.t(), reason: any}]}
+          | {:error, any}
+  def request_bulk_operation(operation, sap_system_ids, params)
+      when operation in SapSystemBulkOperations.values() do
+    OperationsHelper.do_bulk_requests(
+      sap_system_ids,
+      &request_operation(operation, &1, params)
+    )
+  end
+
+  def request_bulk_operation(_, _, _), do: {:error, :operation_not_found}
 end

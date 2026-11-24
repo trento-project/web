@@ -530,6 +530,277 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
     end
   end
 
+  describe "sap system bulk operations" do
+    bulk_operation_scenarios = [
+      %{
+        operation: "sap_system_start",
+        ability: "start"
+      },
+      %{
+        operation: "sap_system_stop",
+        ability: "stop"
+      }
+    ]
+
+    for %{operation: operation, ability: ability} <- bulk_operation_scenarios do
+      @operation operation
+      @ability ability
+      @arguments %{"params" => %{"instance_type" => "all", "timeout" => 300}}
+
+      test "should respond with 422 if the SAP system ids are missing or empty for #{@operation}",
+           %{conn: conn} do
+        for body <- [@arguments, Map.put(@arguments, "sap_system_ids", [])] do
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/sap_systems/operations/#{@operation}/bulk", body)
+          |> json_response(:unprocessable_entity)
+        end
+      end
+
+      test "should respond with 422 if the SAP system ids contain duplicates for #{@operation}",
+           %{conn: conn} do
+        %{id: sap_system_id} = insert(:sap_system)
+        %{id: host_id} = insert(:host, heartbeat: :passing)
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/operations/#{@operation}/bulk",
+          Map.put(@arguments, "sap_system_ids", [sap_system_id, sap_system_id])
+        )
+        |> json_response(:unprocessable_entity)
+      end
+
+      test "should respond with 404 if any SAP system is not found for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: sap_system_id} = insert(:sap_system)
+        %{id: host_id} = insert(:host, heartbeat: :passing)
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+        missing_sap_system_id = UUID.uuid4()
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/operations/#{@operation}/bulk",
+            Map.put(@arguments, "sap_system_ids", [sap_system_id, missing_sap_system_id])
+          )
+          |> json_response(:not_found)
+
+        assert_schema(resp, "NotFoundV1", api_spec)
+
+        assert %{
+                 "errors" => [
+                   %{"detail" => "SAP systems not found: " <> ^missing_sap_system_id <> "."}
+                 ]
+               } = resp
+      end
+
+      test "should respond with 404 if a SAP system is deregistered for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: sap_system_id} = insert(:sap_system, deregistered_at: DateTime.utc_now())
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/operations/#{@operation}/bulk",
+          Map.put(@arguments, "sap_system_ids", [sap_system_id])
+        )
+        |> json_response(:not_found)
+        |> assert_schema("NotFoundV1", api_spec)
+      end
+
+      test "should respond with 403 if any SAP system is not authorized for #{@operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: database_id} = insert(:database)
+        %{id: authorized_sap_system_id} = insert(:sap_system, database_id: database_id)
+        %{id: authorized_host_id} = insert(:host, heartbeat: :passing)
+        %{id: database_host_id} = insert(:host, heartbeat: :passing)
+
+        insert(:application_instance,
+          sap_system_id: authorized_sap_system_id,
+          host_id: authorized_host_id
+        )
+
+        insert(:database_instance, database_id: database_id, host_id: database_host_id)
+
+        %{id: unauthorized_sap_system_id, sid: unauthorized_sid} = insert(:sap_system)
+        %{id: unauthorized_host_id} = insert(:host, heartbeat: :critical)
+
+        insert(:application_instance,
+          sap_system_id: unauthorized_sap_system_id,
+          host_id: unauthorized_host_id
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/operations/#{@operation}/bulk",
+            Map.put(@arguments, "sap_system_ids", [
+              authorized_sap_system_id,
+              unauthorized_sap_system_id
+            ])
+          )
+          |> json_response(:forbidden)
+
+        assert_schema(resp, "ForbiddenV1", api_spec)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" =>
+                       "Trento agent is not currently running in any of the hosts in the SAP system",
+                     "resource" => %{
+                       "id" => ^unauthorized_sap_system_id,
+                       "label" => ^unauthorized_sid,
+                       "type" => "sap_system"
+                     }
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should respond with 500 on messaging error for #{@operation}", %{conn: conn} do
+        %{id: sap_system_id} = insert(:sap_system)
+        %{id: host_id} = insert(:host, heartbeat: :passing)
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/operations/#{@operation}/bulk",
+            Map.put(@arguments, "sap_system_ids", [sap_system_id])
+          )
+          |> json_response(:internal_server_error)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Something went wrong.",
+                     "title" => "Internal Server Error"
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should perform bulk #{@operation} operation when the user has #{@ability}:sap_system ability",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: user_id} = insert(:user)
+
+        %{id: ability_id} = insert(:ability, name: @ability, resource: "sap_system")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+        [sap_system_id_1, sap_system_id_2] =
+          for _ <- 1..2 do
+            %{id: database_id} = insert(:database)
+            %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
+            %{id: host_id} = insert(:host, heartbeat: :passing)
+            %{id: database_host_id} = insert(:host, heartbeat: :passing)
+
+            insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+            insert(:database_instance, database_id: database_id, host_id: database_host_id)
+
+            sap_system_id
+          end
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          2,
+          fn OperationsPublisher,
+             _,
+             %{
+               targets: [
+                 %{
+                   arguments: %{
+                     "instance_number" => %{kind: {:string_value, _}},
+                     "instance_type" => %{kind: {:string_value, "all"}},
+                     "timeout" => %{kind: {:number_value, 300}}
+                   }
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        posted_conn =
+          conn
+          |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/operations/#{@operation}/bulk",
+            Map.put(@arguments, "sap_system_ids", [sap_system_id_1, sap_system_id_2])
+          )
+
+        resp = json_response(posted_conn, :accepted)
+
+        assert_schema(resp, "BulkOperationAcceptedV1", api_spec)
+
+        assert %{
+                 "operations" => [
+                   %{"resource_id" => ^sap_system_id_1},
+                   %{"resource_id" => ^sap_system_id_2}
+                 ],
+                 "failed_requests" => []
+               } = resp
+
+        assert %{assigns: %{sap_system: [%{id: ^sap_system_id_1}, %{id: ^sap_system_id_2}]}} =
+                 posted_conn
+      end
+
+      test "should accept the bulk #{@operation} request when optional params are not given",
+           %{conn: conn, api_spec: api_spec} do
+        for body <- [%{}, %{"params" => %{}}] do
+          %{id: database_id} = insert(:database)
+          %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
+          %{id: host_id} = insert(:host, heartbeat: :passing)
+          %{id: database_host_id} = insert(:host, heartbeat: :passing)
+
+          insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+          insert(:database_instance, database_id: database_id, host_id: database_host_id)
+
+          expect(
+            Trento.Infrastructure.Messaging.Adapter.Mock,
+            :publish,
+            fn OperationsPublisher, _, _ ->
+              :ok
+            end
+          )
+
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/operations/#{@operation}/bulk",
+            Map.put(body, "sap_system_ids", [sap_system_id])
+          )
+          |> json_response(:accepted)
+          |> assert_schema("BulkOperationAcceptedV1", api_spec)
+        end
+      end
+    end
+  end
+
   describe "forbidden response" do
     test "should return forbidden on any controller action if the user does not have the right permission",
          %{conn: conn, api_spec: api_spec} do
@@ -569,7 +840,13 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
             conn,
             "/api/v1/sap_systems/#{sap_system_id}/operations/sap_system_stop",
             %{}
-          )
+          ),
+          post(conn, "/api/v1/sap_systems/operations/sap_system_start/bulk", %{
+            "sap_system_ids" => [sap_system_id]
+          }),
+          post(conn, "/api/v1/sap_systems/operations/sap_system_stop/bulk", %{
+            "sap_system_ids" => [sap_system_id]
+          })
         ],
         fn conn ->
           conn
