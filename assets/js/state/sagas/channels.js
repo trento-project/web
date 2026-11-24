@@ -22,6 +22,7 @@ import {
   clusterRegistered,
   clusterDetailsUpdated,
   clusterHealthChanged,
+  clusterHealthDetailsChanged,
   clusterCibLastWrittenUpdated,
   clusterDeregistered,
   clusterRestored,
@@ -122,6 +123,10 @@ const clusterEvents = [
   {
     name: 'cluster_health_changed',
     action: clusterHealthChanged,
+  },
+  {
+    name: 'cluster_health_details_changed',
+    action: clusterHealthDetailsChanged,
   },
   {
     name: 'cluster_stale_changed',
