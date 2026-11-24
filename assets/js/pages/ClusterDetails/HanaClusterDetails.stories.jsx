@@ -36,6 +36,8 @@ const {
   cib_last_written: cibLastWritten,
   details,
   state,
+  health,
+  health_details: healthDetails,
 } = clusterFactory.build({
   type: 'hana_scale_up',
   details: {
@@ -208,6 +210,19 @@ export default {
       description: 'List of cluster SIDs',
       control: { type: 'object' },
     },
+    health: {
+      control: { type: 'radio' },
+      options: ['passing', 'warning', 'critical', 'unknown'],
+      description: 'Cluster health',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'passing' },
+      },
+    },
+    healthDetails: {
+      description: 'Cluster health details breakdown for the tooltip',
+      control: { type: 'object' },
+    },
   },
 };
 
@@ -225,6 +240,8 @@ export const Default = {
     sapSystems,
     details,
     state,
+    health,
+    healthDetails,
     lastExecution,
     catalog,
     userAbilities,
@@ -249,6 +266,8 @@ export const Hana = {
     sapSystems,
     details,
     state,
+    health,
+    healthDetails,
     staleAt: null,
     lastExecution,
     catalog,

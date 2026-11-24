@@ -24,3 +24,11 @@ export const isOnlineInCluster = (host) =>
 export const isHeartbeatPassing = ({ heartbeat }) => heartbeat === 'passing';
 
 export const isSomeHostHeartbeatPassing = some({ heartbeat: 'passing' });
+
+export const getDefaultHealthDetails = () => {
+  return {
+    checks_health: { value: 'unknown' },
+    saptune_health: { value: 'unknown' },
+    software_updates_discovery_health: { value: 'unknown' },
+  };
+};

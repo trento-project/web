@@ -5,6 +5,7 @@ import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { capitalize } from 'lodash';
 import { faker } from '@faker-js/faker';
 import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
@@ -14,6 +15,7 @@ import { TUNING_VALUES } from '@lib/test-utils/saptune';
 import { formatDateTime } from '@lib/timezones';
 import {
   hostFactory,
+  hostHealthDetailsFactory,
   saptuneStatusFactory,
   databaseInstanceFactory,
   sapSystemApplicationInstanceFactory,
@@ -57,6 +59,41 @@ describe('HostDetails component', () => {
         })
       ).toBeVisible();
       expect(screen.getByRole('img', { name: /host health/i })).toBeVisible();
+    });
+
+    it('should display health details tooltip on hover', async () => {
+      const user = userEvent.setup();
+      const healthDetails = hostHealthDetailsFactory.build();
+      const { hostname, health } = hostFactory.build();
+
+      renderWithRouter(
+        <HostDetails
+          hostname={hostname}
+          health={health}
+          healthDetails={healthDetails}
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+        />
+      );
+
+      const healthIcon = screen.getByRole('img', { name: /host health/i });
+      await user.hover(healthIcon);
+
+      expect(
+        screen.getByText(
+          `Overall Checks Results: ${capitalize(healthDetails.checks_health.value)}`
+        )
+      ).toBeVisible();
+      expect(
+        screen.getByText(
+          `Saptune Tuning Status: ${capitalize(healthDetails.saptune_health.value)}`
+        )
+      ).toBeVisible();
+      expect(
+        screen.getByText(
+          `Relevant Patches: ${capitalize(healthDetails.software_updates_discovery_health.value)}`
+        )
+      ).toBeVisible();
     });
   });
 
