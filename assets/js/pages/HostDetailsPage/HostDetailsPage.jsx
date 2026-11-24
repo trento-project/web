@@ -10,6 +10,7 @@ import { getFromConfig } from '@lib/config';
 import { networkClient } from '@lib/network';
 
 import { TARGET_HOST } from '@lib/model';
+import { getDefaultHealthDetails } from '@lib/model/hosts';
 
 import { getUserProfile } from '@state/selectors/user';
 import { getClusterByHost } from '@state/selectors/cluster';
@@ -136,7 +137,8 @@ function HostDetailsPage() {
       heartbeat={host.heartbeat}
       staleAt={host.stale_at}
       health={host.health}
-      healthDetails={host.health_details}
+      /* getDefaultHealthDetails() is a safety net for unforeseen cases */
+      healthDetails={host.health_details || getDefaultHealthDetails()}
       hostID={host.id}
       hostname={host.hostname}
       ipAddresses={host.ip_addresses}
