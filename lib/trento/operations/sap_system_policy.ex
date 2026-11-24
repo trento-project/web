@@ -31,10 +31,9 @@ defmodule Trento.Operations.SapSystemPolicy do
       )
       when operation in SapSystemOperations.values() do
     some_heartbeat_passing? =
-      Enum.any?(instances, fn %ApplicationInstanceReadModel{
-                                host: %HostReadModel{heartbeat: heartbeat}
-                              } ->
-        heartbeat == :passing
+      Enum.any?(instances, fn
+        %ApplicationInstanceReadModel{host: %HostReadModel{heartbeat: :passing}} -> true
+        _ -> false
       end)
 
     if some_heartbeat_passing? do
