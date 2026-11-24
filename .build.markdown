@@ -47,8 +47,10 @@ Trento.Charts.Hosts.HostFilesystemChart.md
 Trento.Charts.Hosts.HostMemoryChart.md
 Trento.Charts.SampledMetric.md
 Trento.Charts.md
+Trento.Checks.ChecksExecutionRequest.md
 Trento.Checks.Enums.FrequencyUnit.md
 Trento.Checks.Frequency.md
+Trento.Checks.md
 Trento.Clusters.Cluster.md
 Trento.Clusters.ClusterEnrichmentData.md
 Trento.Clusters.Commands.CompleteChecksExecution.md

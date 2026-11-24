@@ -70,8 +70,6 @@ Hosts with prometheus_mode set to :push are excluded as they push metrics direct
 @spec request_checks_execution(String.t()) :: :ok | {:error, any()}
 ```
 
-# `request_hosts_checks_execution`
-
 # `request_operation`
 
 ```elixir

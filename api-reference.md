@@ -88,6 +88,10 @@ Derived from Commanded.AggregateCase
 - [Trento.Charts.Hosts.HostMemoryChart](Trento.Charts.Hosts.HostMemoryChart.md): Represents Memory chart data for a single host
 - [Trento.Charts.SampledMetric](Trento.Charts.SampledMetric.md): Represents metric and its sample at a given time
 
+- [Trento.Checks](Trento.Checks.md): Periodic checks executions of the hosts and clusters.
+
+- [Trento.Checks.ChecksExecutionRequest](Trento.Checks.ChecksExecutionRequest.md): When the periodic checks of a host or cluster were last requested.
+
 - [Trento.Checks.Enums.FrequencyUnit](Trento.Checks.Enums.FrequencyUnit.md): Type that represents the units of the checks frequency.
 
 - [Trento.Checks.Frequency](Trento.Checks.Frequency.md): How often the checks run periodically on every target, such as hosts and clusters:
@@ -778,11 +782,11 @@ delegates to `Sagents.AgentsDynamicSupervisor`.
 
   - [Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob](Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob.md): Sends an alert when the API key is about to expire or expired.
 
-  - [Trento.Infrastructure.Jobs.ClustersChecksExecutionJob](Trento.Infrastructure.Jobs.ClustersChecksExecutionJob.md): Requests a checks execution for every registered cluster with selected checks.
+  - [Trento.Infrastructure.Jobs.ClustersChecksExecutionJob](Trento.Infrastructure.Jobs.ClustersChecksExecutionJob.md): Requests the due checks executions of the clusters, see `Trento.Checks`.
 
   - [Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob](Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob.md): Deletes the discovery events older than `older_than` days.
 
-  - [Trento.Infrastructure.Jobs.HostsChecksExecutionJob](Trento.Infrastructure.Jobs.HostsChecksExecutionJob.md): Requests a checks execution for every registered host with selected checks.
+  - [Trento.Infrastructure.Jobs.HostsChecksExecutionJob](Trento.Infrastructure.Jobs.HostsChecksExecutionJob.md): Requests the due checks executions of the hosts, see `Trento.Checks`.
 
   - [Trento.Infrastructure.Jobs.Plugins.Periodic](Trento.Infrastructure.Jobs.Plugins.Periodic.md): Oban plugin that calls functions at a fixed interval, on the leader node only.
   - [Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob](Trento.Infrastructure.Jobs.SoftwareUpdatesDiscoveryJob.md): Discovers the available software updates of the registered hosts.

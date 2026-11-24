@@ -59,6 +59,8 @@ A simple Factory helper module to be used within tests to generate test data
 
 # `check_customization_reset_v1_factory`
 
+# `checks_execution_request_factory`
+
 # `checks_frequency_settings_factory`
 
 # `cib_resource_factory`

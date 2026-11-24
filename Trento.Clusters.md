@@ -10,6 +10,14 @@ Provides a set of functions to interact with clusters.
   {:ok, Trento.Clusters.Projections.ClusterReadModel.t()} | {:error, :not_found}
 ```
 
+# `checkable_cluster_types`
+
+```elixir
+@spec checkable_cluster_types() :: [Trento.Clusters.Enums.ClusterType.t()]
+```
+
+The cluster types whose checks can be executed.
+
 # `enrich_cluster_model`
 
 ```elixir
@@ -77,12 +85,6 @@ Provides a set of functions to interact with clusters.
 
 ```elixir
 @spec request_checks_execution(String.t()) :: :ok | {:error, any()}
-```
-
-# `request_clusters_checks_execution`
-
-```elixir
-@spec request_clusters_checks_execution() :: :ok | {:error, any()}
 ```
 
 # `request_host_operation`
