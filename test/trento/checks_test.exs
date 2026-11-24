@@ -243,6 +243,14 @@ defmodule Trento.ChecksTest do
       assert Enum.sort([registered_host_id, unchecked_host_id, registered_cluster_id]) ==
                ChecksExecutionRequest |> Repo.all() |> Enum.map(& &1.target_id) |> Enum.sort()
     end
+
+    test "should keep the requests made since the clean up started" do
+      %{id: host_id} = insert(:host, deregistered_at: @now)
+      insert(:checks_execution_request, target_id: host_id, last_requested_at: @now)
+
+      assert 0 == Checks.delete_stale_execution_requests(DateService.Mock)
+      assert [%ChecksExecutionRequest{target_id: ^host_id}] = Repo.all(ChecksExecutionRequest)
+    end
   end
 
   # A cluster gets a registered host, without selected checks so that it is not a due host

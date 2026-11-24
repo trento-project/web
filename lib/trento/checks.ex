@@ -39,10 +39,12 @@ defmodule Trento.Checks do
 
   @doc """
   Deletes the requests of the hosts and clusters that are deregistered or removed, and
-  returns how many it deleted.
+  returns how many it deleted. The requests made since it started are kept, because their
+  target was restored in the meantime.
   """
-  @spec delete_stale_execution_requests() :: non_neg_integer()
-  def delete_stale_execution_requests do
+  @spec delete_stale_execution_requests(module()) :: non_neg_integer()
+  def delete_stale_execution_requests(date_service \\ DateService) do
+    started_at = date_service.utc_now()
     registered_hosts = from h in HostReadModel, where: is_nil(h.deregistered_at), select: h.id
 
     registered_clusters =
@@ -53,7 +55,8 @@ defmodule Trento.Checks do
         from r in ChecksExecutionRequest,
           where:
             (r.target_type == ^:host and r.target_id not in subquery(registered_hosts)) or
-              (r.target_type == ^:cluster and r.target_id not in subquery(registered_clusters))
+              (r.target_type == ^:cluster and r.target_id not in subquery(registered_clusters)),
+          where: r.last_requested_at < ^started_at
       )
 
     deleted
