@@ -140,29 +140,6 @@ defmodule Trento.Clusters do
     end
   end
 
-  @spec request_clusters_checks_execution :: :ok | {:error, any}
-  def request_clusters_checks_execution do
-    query =
-      from(c in ClusterReadModel,
-        select: c.id,
-        where: c.type in @checkable_clusters and is_nil(c.deregistered_at)
-      )
-
-    query
-    |> Repo.all()
-    |> Enum.each(fn cluster_id ->
-      case request_checks_execution(cluster_id) do
-        :ok ->
-          :ok
-
-        {:error, reason} ->
-          Logger.error(
-            "Failed to request checks execution, cluster: #{cluster_id}, reason: #{reason}"
-          )
-      end
-    end)
-  end
-
   @spec update_cib_last_written(String.t(), String.t()) :: {:ok, Ecto.Schema.t()} | {:error, any}
   def update_cib_last_written(cluster_id, cib_last_written) do
     case Repo.get(ClusterEnrichmentData, cluster_id) do

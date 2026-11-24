@@ -236,24 +236,9 @@ if config_env() in [:prod, :demo] do
 
   config :trento, :checks_frequency, checks_frequency
 
-  # Until the checks scheduler applies the frequency, the checks execution cron jobs follow
-  # CHECKS_INTERVAL only when it is 5, 15 or 30 minutes, which a cron minute step can express.
-  # Hours, weeks and disabled keep the default of every 5 minutes.
-  checks_execution_minutes =
-    case checks_frequency do
-      %Trento.Checks.Frequency{value: minutes, unit: :minute} -> minutes
-      _ -> 5
-    end
-
   config :trento, Oban,
     cron: [
       crontab: [
-        clusters_checks_execution:
-          {"*/#{checks_execution_minutes} * * * *",
-           Trento.Infrastructure.Jobs.ClustersChecksExecutionJob},
-        hosts_checks_execution:
-          {"*/#{checks_execution_minutes} * * * *",
-           Trento.Infrastructure.Jobs.HostsChecksExecutionJob},
         discovery_events_pruning:
           {System.get_env("PRUNE_EVENTS_INTERVAL", "0 0 * * *"),
            Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob,
