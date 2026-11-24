@@ -84,6 +84,8 @@ defmodule TrentoWeb.V1.HostJSON do
     |> Map.take([:id, :health_details])
   end
 
+  defp remove_reason_from_health_details(%{health_details: nil} = data), do: data
+
   defp remove_reason_from_health_details(data) do
     Map.update!(data, :health_details, fn health_details ->
       health_details

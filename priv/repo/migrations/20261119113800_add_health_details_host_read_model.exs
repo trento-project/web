@@ -4,15 +4,9 @@
 defmodule Trento.Repo.Migrations.AddHealthDetailsHostReadModel do
   use Ecto.Migration
 
-  def up do
+  def change do
     alter table("hosts") do
       add :health_details, :map
-    end
-  end
-
-  def down do
-    alter table("hosts") do
-      remove :health_details
     end
   end
 end
