@@ -44,10 +44,20 @@ defmodule Trento.ChecksTest do
 
       test "should request again the #{target_type}s last requested 5 minutes ago, by default" do
         %{id: due_id} = insert_target(@target_type)
-        requested_at!(@target_type, due_id, ~U[2026-03-02 09:55:00.000000Z])
+
+        insert(:checks_execution_request,
+          target_type: @target_type,
+          target_id: due_id,
+          last_requested_at: ~U[2026-03-02 09:55:00.000000Z]
+        )
 
         %{id: recent_id} = insert_target(@target_type)
-        requested_at!(@target_type, recent_id, ~U[2026-03-02 09:58:00.000000Z])
+
+        insert(:checks_execution_request,
+          target_type: @target_type,
+          target_id: recent_id,
+          last_requested_at: ~U[2026-03-02 09:58:00.000000Z]
+        )
 
         assert_requested(@target_type, [due_id])
 
@@ -116,10 +126,20 @@ defmodule Trento.ChecksTest do
         insert(:checks_frequency_settings, frequency: @frequency)
 
         %{id: due_id} = insert(:host)
-        requested_at!(:host, due_id, DateTime.add(@now, -@due_after_seconds))
+
+        insert(:checks_execution_request,
+          target_type: :host,
+          target_id: due_id,
+          last_requested_at: DateTime.add(@now, -@due_after_seconds)
+        )
 
         %{id: early_id} = insert(:host)
-        requested_at!(:host, early_id, DateTime.add(@now, -@due_after_seconds + 1))
+
+        insert(:checks_execution_request,
+          target_type: :host,
+          target_id: early_id,
+          last_requested_at: DateTime.add(@now, -@due_after_seconds + 1)
+        )
 
         assert_requested(:host, [due_id])
       end
@@ -164,7 +184,12 @@ defmodule Trento.ChecksTest do
       %{id: never_requested_id} = insert(:host)
 
       %{id: requested_id} = insert(:host)
-      requested_at!(:host, requested_id, ~U[2026-03-02 09:50:00.000000Z])
+
+      insert(:checks_execution_request,
+        target_type: :host,
+        target_id: requested_id,
+        last_requested_at: ~U[2026-03-02 09:50:00.000000Z]
+      )
 
       expect(Messaging, :publish, 2, fn Publisher, "executions", %ExecutionRequested{} ->
         {:error, :amqp_error}
@@ -199,14 +224,6 @@ defmodule Trento.ChecksTest do
     insert(:host, cluster_id: cluster.id, selected_checks: [])
 
     cluster
-  end
-
-  defp requested_at!(target_type, target_id, last_requested_at) do
-    Repo.insert!(%ChecksExecutionRequest{
-      target_id: target_id,
-      target_type: target_type,
-      last_requested_at: last_requested_at
-    })
   end
 
   # Requests the due executions of the given type, expecting one request for each of the
