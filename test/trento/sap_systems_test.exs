@@ -98,6 +98,35 @@ defmodule Trento.SapSystemsTest do
     end
   end
 
+  describe "get_sap_systems_by_ids/1" do
+    test "should return an empty list when no ids match" do
+      insert(:sap_system)
+
+      assert [] == SapSystems.get_sap_systems_by_ids([UUID.uuid4()])
+      assert [] == SapSystems.get_sap_systems_by_ids([])
+    end
+
+    test "should return only the requested registered SAP systems" do
+      [%{id: sap_system_id_1}, %{id: sap_system_id_2}] =
+        expected_sap_systems = insert_list(2, :sap_system)
+
+      %{id: deregistered_sap_system_id} =
+        insert(:sap_system, deregistered_at: DateTime.utc_now())
+
+      insert(:sap_system)
+
+      sap_systems =
+        SapSystems.get_sap_systems_by_ids([
+          sap_system_id_1,
+          sap_system_id_2,
+          deregistered_sap_system_id,
+          UUID.uuid4()
+        ])
+
+      assert Enum.sort_by(expected_sap_systems, & &1.id) == Enum.sort_by(sap_systems, & &1.id)
+    end
+  end
+
   describe "get_application_instances_by_id/1" do
     test "should return empty if no application instances were found" do
       assert [] == SapSystems.get_application_instances_by_id(UUID.uuid4())
@@ -401,6 +430,59 @@ defmodule Trento.SapSystemsTest do
 
         assert {:error, :amqp_error} =
                  SapSystems.request_operation(operation, UUID.uuid4(), params)
+      end
+    end
+  end
+
+  describe "request_bulk_operation/3" do
+    for operation <- [:sap_system_start, :sap_system_stop] do
+      @operation operation
+
+      test "should request #{@operation} operation on every SAP system" do
+        %{id: sap_system_id_1} = insert(:sap_system)
+        %{id: sap_system_id_2} = insert(:sap_system)
+        %{id: host_id_1} = insert(:host, heartbeat: :passing)
+        %{id: host_id_2} = insert(:host, heartbeat: :passing)
+        insert(:application_instance, sap_system_id: sap_system_id_1, host_id: host_id_1)
+        insert(:application_instance, sap_system_id: sap_system_id_2, host_id: host_id_2)
+
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+          OperationsPublisher, "requests", %OperationRequested{} -> :ok
+        end)
+
+        assert {:ok, _bulk_operation_id, operations, failed} =
+                 SapSystems.request_bulk_operation(
+                   @operation,
+                   [sap_system_id_1, sap_system_id_2],
+                   %{instance_type: "all", timeout: 300}
+                 )
+
+        assert [] == failed
+
+        assert [
+                 %{resource_id: ^sap_system_id_1, operation_id: operation_id_1},
+                 %{resource_id: ^sap_system_id_2, operation_id: operation_id_2}
+               ] = operations
+
+        refute operation_id_1 == operation_id_2
+      end
+    end
+
+    test "should return an error when all the messaging requests fail" do
+      sap_system_ids = [UUID.uuid4(), UUID.uuid4()]
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 2, fn
+        OperationsPublisher, "requests", %OperationRequested{} -> {:error, :amqp_error}
+      end)
+
+      assert {:error, :bulk_operation_request_failed} =
+               SapSystems.request_bulk_operation(:sap_system_start, sap_system_ids, %{})
+    end
+
+    test "should return operation_not_found for unsupported operations" do
+      for operation <- [:unknown, :sap_instance_start] do
+        assert {:error, :operation_not_found} =
+                 SapSystems.request_bulk_operation(operation, [UUID.uuid4()], %{})
       end
     end
   end
