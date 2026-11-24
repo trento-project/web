@@ -14,6 +14,7 @@ import {
   CLUSTER_RESOURCE_REFRESH,
   SAP_INSTANCE_START,
   SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
   DATABASE_START,
@@ -25,6 +26,7 @@ import {
   CLUSTER_BULK_OPERATION_ID,
   HOST_BULK_OPERATION_ID,
   DATABASE_BULK_OPERATION_ID,
+  SAP_SYSTEM_BULK_OPERATION_ID,
   removeRunningOperation,
   setRunningOperation,
   setForbiddenOperation,
@@ -53,6 +55,9 @@ const hostBulkOperationRequestURL = (operation) =>
 
 const databaseBulkOperationRequestURL = (operation) =>
   `/databases/operations/${operation}/bulk`;
+
+const sapSystemBulkOperationRequestURL = (operation) =>
+  `/sap_systems/operations/${operation}/bulk`;
 
 const clusterHostOperationRequestURL = (clusterID, hostID, operation) =>
   `/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`;
@@ -413,6 +418,23 @@ describe('operations saga', () => {
         successScenarios: [
           { operation: DATABASE_START, params: { timeout: 300 } },
           { operation: DATABASE_STOP, params: { timeout: 300 } },
+        ],
+      },
+      {
+        resource: 'SAP systems',
+        bulkOperationID: SAP_SYSTEM_BULK_OPERATION_ID,
+        requestURL: sapSystemBulkOperationRequestURL,
+        idsKey: 'sap_system_ids',
+        defaultOperation: SAP_SYSTEM_START,
+        successScenarios: [
+          {
+            operation: SAP_SYSTEM_START,
+            params: { timeout: 300, instance_type: 'all' },
+          },
+          {
+            operation: SAP_SYSTEM_STOP,
+            params: { timeout: 300, instance_type: 'abap' },
+          },
         ],
       },
     ];
