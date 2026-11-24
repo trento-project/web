@@ -18,6 +18,7 @@ Host read model
   deregistered_at: term(),
   fully_qualified_domain_name: term(),
   health: term(),
+  health_details: term(),
   heartbeat: term(),
   hostname: term(),
   id: term(),

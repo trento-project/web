@@ -227,6 +227,10 @@ Raises a helpful error if no factory is defined.
 
 # `host_health_changed_event_factory`
 
+# `host_health_details_factory`
+
+# `host_health_details_projection_factory`
+
 # `host_prometheus_targets_factory`
 
 # `host_registered_event_factory`

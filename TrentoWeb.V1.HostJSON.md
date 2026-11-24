@@ -11,6 +11,8 @@
 
 # `host_health_changed`
 
+# `host_health_details_changed`
+
 # `host_registered`
 
 # `host_restored`

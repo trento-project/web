@@ -474,6 +474,8 @@ It contains the snapshot of the host aggregate that will be used to restore the 
   - [Trento.Hosts.Events.SoftwareUpdatesHealthChanged](Trento.Hosts.Events.SoftwareUpdatesHealthChanged.md): This event is emitted when a host's software updates discovery process complete
 and its calculated health is taken into account in host's aggregated health.
 
+  - [Trento.Hosts.Projections.HostHealthDetails](Trento.Hosts.Projections.HostHealthDetails.md): Health details for Hosts in read model format.
+
   - [Trento.Hosts.Projections.HostProjector](Trento.Hosts.Projections.HostProjector.md): Host projector
 
   - [Trento.Hosts.Projections.HostReadModel](Trento.Hosts.Projections.HostReadModel.md): Host read model

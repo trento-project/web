@@ -308,6 +308,7 @@ Trento.Hosts.Events.SoftwareUpdatesHealthChanged.md
 Trento.Hosts.Host.md
 Trento.Hosts.Lifespan.md
 Trento.Hosts.Policy.md
+Trento.Hosts.Projections.HostHealthDetails.md
 Trento.Hosts.Projections.HostProjector.md
 Trento.Hosts.Projections.HostReadModel.md
 Trento.Hosts.Projections.SlesSubscriptionReadModel.md
