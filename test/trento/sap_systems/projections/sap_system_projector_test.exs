@@ -63,13 +63,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         database_health: database_health
       )
 
-    instance_event =
-      build(:application_instance_registered_event,
-        sap_system_id: event.sap_system_id,
-        status: Status.green()
-      )
+    insert(:application_instance_registered_event,
+      sap_system_id: event.sap_system_id,
+      status: Status.green()
+    )
 
-    ProjectorTestHelper.project(SapSystemProjector, instance_event, "sap_system_projector")
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
     %{
@@ -633,30 +631,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         },
         1000
       )
-    end
-
-    test "should not broadcast sap_system_health_details_changed when SapSystemDatabaseHealthChanged event does not change database_health" do
-      event =
-        %{database_health: database_health} =
-        build(:sap_system_database_health_changed_event)
-
-      insert(:sap_system,
-        id: event.sap_system_id,
-        health_details:
-          build(:sap_system_health_details_projection,
-            database_health: build(:health_value_details, value: database_health)
-          )
-      )
-
-      ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
-
-      %{health_details: health_details} = Repo.get!(SapSystemReadModel, event.sap_system_id)
-
-      assert %SapSystemHealthDetails{
-               database_health: %HealthValueDetails{value: ^database_health, reason: ""}
-             } = health_details
-
-      refute_broadcast("sap_system_health_details_changed", %{}, 500)
     end
 
     test "should update instances_health and broadcast when ApplicationInstanceRegistered event changes instances_health" do

@@ -435,9 +435,16 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
   def after_update(
         %SapSystemDatabaseHealthChanged{sap_system_id: sap_system_id},
         _,
-        changes
+        %{health_details: %SapSystemHealthDetails{} = health_details}
       ) do
-    maybe_broadcast_health_details_changed(sap_system_id, changes)
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "sap_system_health_details_changed",
+      SapSystemJSON.sap_system_health_details_changed(%{
+        id: sap_system_id,
+        health_details: health_details
+      })
+    )
   end
 
   @impl true
@@ -714,22 +721,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
   @impl true
   def after_update(_, _, _), do: :ok
 
-  defp update_instances_health_details(repo, sap_system_id) do
-    instance_statuses =
-      repo.all(
-        from(ai in ApplicationInstanceReadModel,
-          where: ai.sap_system_id == ^sap_system_id,
-          select: %{status: ai.status}
-        )
-      )
-
-    instances_health = HealthService.compute_instances_health(instance_statuses)
-
-    update_health_details(repo, sap_system_id, %{
-      instances_health: %{value: instances_health}
-    })
-  end
-
   defp update_health_details(repo, sap_system_id, health_details_attrs) do
     case repo.get(SapSystemReadModel, sap_system_id) do
       nil ->
@@ -748,6 +739,22 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           {:ok, nil}
         end
     end
+  end
+
+  defp update_instances_health_details(repo, sap_system_id) do
+    instance_statuses =
+      repo.all(
+        from(ai in ApplicationInstanceReadModel,
+          where: ai.sap_system_id == ^sap_system_id,
+          select: %{status: ai.status}
+        )
+      )
+
+    instances_health = HealthService.compute_instances_health(instance_statuses)
+
+    update_health_details(repo, sap_system_id, %{
+      instances_health: %{value: instances_health}
+    })
   end
 
   defp maybe_broadcast_health_details_changed(sap_system_id, %{

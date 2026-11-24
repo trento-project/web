@@ -1015,8 +1015,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def sap_system_registered_event_factory(attrs) do
-    data = %{
+  def sap_system_registered_event_factory do
+    %SapSystemRegistered{
       sap_system_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
       db_host: Faker.Internet.ip_v4_address(),
@@ -1027,11 +1027,6 @@ defmodule Trento.Factory do
       database_stale_at: nil,
       ensa_version: EnsaVersion.ensa1()
     }
-
-    data
-    |> merge_attributes(attrs)
-    |> evaluate_lazy_attributes
-    |> SapSystemRegistered.new!()
   end
 
   def sap_system_health_changed_event_factory do
