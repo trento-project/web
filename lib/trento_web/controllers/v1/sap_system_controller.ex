@@ -316,7 +316,7 @@ defmodule TrentoWeb.V1.SapSystemController do
       description: description,
       request_body:
         {"Request containing the SAP systems and the parameters for the specified SAP system bulk operation.",
-         "application/json", request_body},
+         "application/json", request_body, required: true},
       responses: [
         accepted: BulkOperationAccepted.response(),
         not_found: NotFound.response(),
