@@ -137,7 +137,6 @@ function HostDetailsPage() {
       heartbeat={host.heartbeat}
       staleAt={host.stale_at}
       health={host.health}
-      /* getDefaultHealthDetails() is a safety net for unforeseen cases */
       healthDetails={host.health_details || getDefaultHealthDetails()}
       hostID={host.id}
       hostname={host.hostname}

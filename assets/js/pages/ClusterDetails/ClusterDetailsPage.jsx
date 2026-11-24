@@ -126,7 +126,6 @@ function ClusterDetailsPage() {
       hasSelectedChecks={hasSelectedChecks}
       hosts={clusterHosts}
       health={cluster.health}
-      /* getDefaultHealthDetails() is a safety net for unforeseen cases */
       healthDetails={
         cluster.health_details || getDefaultHealthDetails(cluster.type)
       }
