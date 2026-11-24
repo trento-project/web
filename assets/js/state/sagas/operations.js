@@ -22,6 +22,7 @@ import {
   requestClusterOperation,
   requestClusterBulkOperation,
   requestHostBulkOperation,
+  requestDatabaseBulkOperation,
   requestSapSystemOperation,
   requestSapInstanceOperation,
   requestClusterHostOperation,
@@ -149,6 +150,11 @@ const BULK_OPERATION_RESOURCES = {
     singular: 'host',
     plural: 'hosts',
     request: requestHostBulkOperation,
+  },
+  [DATABASE_OPERATION]: {
+    singular: 'database',
+    plural: 'databases',
+    request: requestDatabaseBulkOperation,
   },
 };
 

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
@@ -15,6 +15,7 @@ import {
 import { renderWithRouter } from '@lib/test-utils';
 import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
+import { waiveOperationDisclaimer } from '@lib/operations';
 
 import DatabasesOverview from './DatabasesOverview';
 
@@ -381,6 +382,182 @@ describe('DatabasesOverview component', () => {
       await waitFor(() =>
         expect(readViewSetting('databases')).toEqual('itemsPerPage=50')
       );
+    });
+  });
+
+  describe('bulk operations', () => {
+    beforeAll(() => waiveOperationDisclaimer());
+
+    const selectDatabases = async (user, databases, indexes) => {
+      for (const index of indexes) {
+        const row = screen.getByText(databases[index].sid).closest('tr');
+        await user.click(
+          within(row).getByRole('checkbox', { name: 'Select row' })
+        );
+      }
+    };
+
+    it('should not allow selecting databases when operations are disabled', () => {
+      renderWithRouter(
+        <DatabasesOverview
+          databases={databaseFactory.buildList(2)}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+          operationsEnabled={false}
+        />
+      );
+
+      expect(
+        screen.queryByRole('checkbox', { name: 'Select row' })
+      ).not.toBeInTheDocument();
+    });
+
+    it.each([
+      {
+        operation: 'Start database',
+        description: 'Start the following databases:',
+      },
+      {
+        operation: 'Stop database',
+        description: 'Stop the following databases:',
+      },
+    ])(
+      'should list the selected databases in the $operation modal',
+      async ({ operation, description }) => {
+        const user = userEvent.setup();
+        const databases = databaseFactory.buildList(3);
+
+        renderWithRouter(
+          <DatabasesOverview
+            databases={databases}
+            databaseInstances={[]}
+            userAbilities={userAbilities}
+            operationsEnabled
+          />
+        );
+
+        await selectDatabases(user, databases, [0, 2]);
+
+        await user.click(screen.getByRole('button', { name: 'Operations' }));
+        await user.click(screen.getByRole('menuitem', { name: operation }));
+
+        const modal = screen.getByRole('dialog');
+        expect(within(modal).getByText(description)).toBeInTheDocument();
+        expect(
+          within(modal)
+            .getAllByRole('listitem')
+            .map(({ textContent }) => textContent)
+        ).toEqual([databases[0].sid, databases[2].sid]);
+      }
+    );
+
+    it('should request the operation with the default timeout in seconds', async () => {
+      const user = userEvent.setup();
+      const databases = databaseFactory.buildList(2);
+      const onOperationRequest = jest.fn();
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={databases}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+          operationsEnabled
+          onOperationRequest={onOperationRequest}
+        />
+      );
+
+      await selectDatabases(user, databases, [1]);
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+      await user.click(
+        screen.getByRole('menuitem', { name: 'Start database' })
+      );
+
+      const modal = screen.getByRole('dialog');
+      expect(within(modal).getByRole('spinbutton')).toHaveValue('5');
+
+      await user.click(within(modal).getByRole('button', { name: 'Request' }));
+
+      expect(onOperationRequest).toHaveBeenCalledWith({
+        operation: 'database_start',
+        databases: [expect.objectContaining({ id: databases[1].id })],
+        params: { timeout: 300 },
+      });
+    });
+
+    it('should request the operation with the given timeout in seconds', async () => {
+      const user = userEvent.setup();
+      const databases = databaseFactory.buildList(2);
+      const onOperationRequest = jest.fn();
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={databases}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+          operationsEnabled
+          onOperationRequest={onOperationRequest}
+        />
+      );
+
+      await selectDatabases(user, databases, [0, 1]);
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+      await user.click(screen.getByRole('menuitem', { name: 'Stop database' }));
+
+      const modal = screen.getByRole('dialog');
+      const timeoutInput = within(modal).getByRole('spinbutton');
+      await user.clear(timeoutInput);
+      await user.type(timeoutInput, '10');
+
+      await user.click(within(modal).getByRole('button', { name: 'Request' }));
+
+      expect(onOperationRequest).toHaveBeenCalledWith({
+        operation: 'database_stop',
+        databases: [
+          expect.objectContaining({ id: databases[0].id }),
+          expect.objectContaining({ id: databases[1].id }),
+        ],
+        params: { timeout: 600 },
+      });
+    });
+
+    it('should show the forbidden modal and dismiss it', async () => {
+      const user = userEvent.setup();
+      const onOperationForbiddenDismiss = jest.fn();
+      const [database] = databaseFactory.buildList(1);
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={[database]}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+          operationsEnabled
+          runningOperation={{
+            operation: 'database_start',
+            forbidden: true,
+            errors: [
+              {
+                detail: 'Not allowed',
+                metadata: [],
+                resource: {
+                  id: database.id,
+                  label: database.sid,
+                  type: 'database',
+                },
+              },
+            ],
+          }}
+          onOperationForbiddenDismiss={onOperationForbiddenDismiss}
+        />
+      );
+
+      const modal = screen.getByRole('dialog');
+      expect(within(modal).getByText('Not allowed')).toBeInTheDocument();
+
+      await user.click(within(modal).getByRole('button', { name: 'Close' }));
+
+      expect(onOperationForbiddenDismiss).toHaveBeenCalled();
     });
   });
 });
