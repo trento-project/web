@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-28T22:49:30Z",
-    "commit": "9379ec2c79cf85e7d2d8323d960ee270956b8ca4",
-    "run_id": "36492685774",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-28T23:13:28Z",
     "commit": "9379ec2c79cf85e7d2d8323d960ee270956b8ca4",
     "run_id": "36493489157",
@@ -5097,6 +5086,22 @@
       },
       {
         "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-11-24T03:55:35Z",
+    "commit": "f59dea778561c9c551e0d7fdc8369ba2871a2eff",
+    "run_id": "45322819992",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
         "score": 0.02501
       }
     ]
