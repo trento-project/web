@@ -34,7 +34,7 @@ defmodule Trento.ChecksTest do
       @target_type target_type
 
       test "should request the #{target_type}s never requested, and store the request time" do
-        %{id: target_id} = insert(@target_type)
+        %{id: target_id} = insert_target(@target_type)
 
         assert_requested(@target_type, [target_id])
 
@@ -43,10 +43,10 @@ defmodule Trento.ChecksTest do
       end
 
       test "should request again the #{target_type}s last requested 5 minutes ago, by default" do
-        %{id: due_id} = insert(@target_type)
+        %{id: due_id} = insert_target(@target_type)
         requested_at!(@target_type, due_id, ~U[2026-03-02 09:55:00.000000Z])
 
-        %{id: recent_id} = insert(@target_type)
+        %{id: recent_id} = insert_target(@target_type)
         requested_at!(@target_type, recent_id, ~U[2026-03-02 09:58:00.000000Z])
 
         assert_requested(@target_type, [due_id])
@@ -73,9 +73,20 @@ defmodule Trento.ChecksTest do
 
     test "should request only the targets of the given type" do
       %{id: host_id} = insert(:host)
-      %{id: cluster_id} = insert(:cluster)
+      %{id: cluster_id} = insert_target(:cluster)
 
       assert_requested(:host, [host_id])
+      assert_requested(:cluster, [cluster_id])
+    end
+
+    test "should request a cluster only once one of its hosts is registered" do
+      %{id: cluster_id} = insert(:cluster)
+      insert(:host, cluster_id: cluster_id, selected_checks: [], deregistered_at: @now)
+
+      assert_requested(:cluster, [])
+
+      insert(:host, cluster_id: cluster_id, selected_checks: [])
+
       assert_requested(:cluster, [cluster_id])
     end
 
@@ -86,7 +97,7 @@ defmodule Trento.ChecksTest do
               ClusterType.hana_scale_out(),
               ClusterType.ascs_ers()
             ] do
-          insert(:cluster, type: type).id
+          insert_target(:cluster, type: type).id
         end
 
       assert_requested(:cluster, cluster_ids)
@@ -121,7 +132,7 @@ defmodule Trento.ChecksTest do
       )
 
       insert(:host)
-      insert(:cluster)
+      insert_target(:cluster)
 
       assert_requested(:host, [])
       assert_requested(:cluster, [])
@@ -132,10 +143,10 @@ defmodule Trento.ChecksTest do
         Enum.map(
           [
             insert(:host, deregistered_at: @now),
-            insert(:cluster, deregistered_at: @now),
+            insert_target(:cluster, deregistered_at: @now),
             insert(:host, selected_checks: []),
-            insert(:cluster, selected_checks: []),
-            insert(:cluster, type: ClusterType.unknown())
+            insert_target(:cluster, selected_checks: []),
+            insert_target(:cluster, type: ClusterType.unknown())
           ],
           & &1.id
         )
@@ -176,6 +187,18 @@ defmodule Trento.ChecksTest do
 
       assert_requested(:host, [never_requested_id, requested_id])
     end
+  end
+
+  # A cluster gets a registered host, without selected checks so that it is not a due host
+  defp insert_target(target_type, attrs \\ [])
+
+  defp insert_target(:host, attrs), do: insert(:host, attrs)
+
+  defp insert_target(:cluster, attrs) do
+    cluster = insert(:cluster, attrs)
+    insert(:host, cluster_id: cluster.id, selected_checks: [])
+
+    cluster
   end
 
   defp requested_at!(target_type, target_id, last_requested_at) do

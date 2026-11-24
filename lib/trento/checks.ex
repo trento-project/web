@@ -67,9 +67,13 @@ defmodule Trento.Checks do
     ClusterReadModel
     |> due(requested_before)
     |> where([c], c.type in ^Clusters.checkable_cluster_types())
+    |> where([c], c.id in subquery(clusters_with_registered_hosts()))
     |> select([c], c.id)
     |> Repo.all()
   end
+
+  defp clusters_with_registered_hosts,
+    do: from(h in HostReadModel, where: is_nil(h.deregistered_at), select: h.cluster_id)
 
   # Registered targets with selected checks, never requested or last requested before the
   # given time
