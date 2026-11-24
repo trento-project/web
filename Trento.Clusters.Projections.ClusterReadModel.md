@@ -12,6 +12,7 @@ Cluster read model
   deregistered_at: term(),
   details: term(),
   health: term(),
+  health_details: term(),
   hosts: term(),
   hosts_number: term(),
   id: term(),

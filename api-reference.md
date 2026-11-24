@@ -362,9 +362,13 @@ It contains the snapshot of the cluster aggregate that will be used to restore t
 
   - [Trento.Clusters.Events.HostRemovedFromCluster](Trento.Clusters.Events.HostRemovedFromCluster.md): This event is emitted when a host is removed from a cluster.
 
+  - [Trento.Clusters.Projections.AscsErsClusterHealthDetails](Trento.Clusters.Projections.AscsErsClusterHealthDetails.md): Health details for ASCS/ERS clusters in read model format.
+
   - [Trento.Clusters.Projections.ClusterProjector](Trento.Clusters.Projections.ClusterProjector.md): Cluster projector
 
   - [Trento.Clusters.Projections.ClusterReadModel](Trento.Clusters.Projections.ClusterReadModel.md): Cluster read model
+
+  - [Trento.Clusters.Projections.HanaClusterHealthDetails](Trento.Clusters.Projections.HanaClusterHealthDetails.md): Health details for HANA clusters in read model format.
 
   - [Trento.Clusters.ValueObjects.AscsErsClusterDetails](Trento.Clusters.ValueObjects.AscsErsClusterDetails.md): Represents the details of a ASCS/ERS cluster.
 
@@ -857,6 +861,8 @@ check supported values and validate possible values
   - [Trento.Support.Event](Trento.Support.Event.md): Adds the macro `defevent` which is used to define a new event.
 
   - [Trento.Support.EventHandlerFailureContext](Trento.Support.EventHandlerFailureContext.md): Event handler failure context
+  - [Trento.Support.HealthValueDetails](Trento.Support.HealthValueDetails.md): Represent Health value with additional details.
+
   - [Trento.Support.Helpers.AbilitiesTestHelper](Trento.Support.Helpers.AbilitiesTestHelper.md): Helper functions to setup abilities.
   - [Trento.Support.Helpers.AlertingSettingsHelper](Trento.Support.Helpers.AlertingSettingsHelper.md): Test helper functions for alerting settings.
 

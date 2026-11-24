@@ -91,8 +91,10 @@ Trento.Clusters.Events.HostAddedToCluster.md
 Trento.Clusters.Events.HostRemovedFromCluster.md
 Trento.Clusters.Lifespan.md
 Trento.Clusters.Policy.md
+Trento.Clusters.Projections.AscsErsClusterHealthDetails.md
 Trento.Clusters.Projections.ClusterProjector.md
 Trento.Clusters.Projections.ClusterReadModel.md
+Trento.Clusters.Projections.HanaClusterHealthDetails.md
 Trento.Clusters.ValueObjects.AscsErsClusterDetails.md
 Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails.md
 Trento.Clusters.ValueObjects.AscsErsClusterNode.md
@@ -489,6 +491,7 @@ Trento.Support.Ecto.STI.md
 Trento.Support.Enum.md
 Trento.Support.Event.md
 Trento.Support.EventHandlerFailureContext.md
+Trento.Support.HealthValueDetails.md
 Trento.Support.Helpers.AbilitiesTestHelper.md
 Trento.Support.Helpers.AlertingSettingsHelper.md
 Trento.Support.Helpers.TestCertificates.md

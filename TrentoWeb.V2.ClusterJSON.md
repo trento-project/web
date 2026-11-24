@@ -7,6 +7,8 @@
 
 # `cluster_health_changed`
 
+# `cluster_health_details_changed`
+
 # `cluster_registered`
 
 # `cluster_restored`

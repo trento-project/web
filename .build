@@ -92,8 +92,10 @@ Trento.Clusters.Events.HostAddedToCluster.html
 Trento.Clusters.Events.HostRemovedFromCluster.html
 Trento.Clusters.Lifespan.html
 Trento.Clusters.Policy.html
+Trento.Clusters.Projections.AscsErsClusterHealthDetails.html
 Trento.Clusters.Projections.ClusterProjector.html
 Trento.Clusters.Projections.ClusterReadModel.html
+Trento.Clusters.Projections.HanaClusterHealthDetails.html
 Trento.Clusters.ValueObjects.AscsErsClusterDetails.html
 Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails.html
 Trento.Clusters.ValueObjects.AscsErsClusterNode.html
@@ -490,6 +492,7 @@ Trento.Support.Ecto.STI.html
 Trento.Support.Enum.html
 Trento.Support.Event.html
 Trento.Support.EventHandlerFailureContext.html
+Trento.Support.HealthValueDetails.html
 Trento.Support.Helpers.AbilitiesTestHelper.html
 Trento.Support.Helpers.AlertingSettingsHelper.html
 Trento.Support.Helpers.TestCertificates.html
@@ -627,7 +630,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-6A82C032.js
-dist/sidebar_items-E30D9529.js
+dist/search_data-15DE68A1.js
+dist/sidebar_items-5B829619.js
 index.html
 search.html

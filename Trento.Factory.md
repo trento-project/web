@@ -39,6 +39,10 @@ A simple Factory helper module to be used within tests to generate test data
 
 # `ascs_ers_cluster_details_factory`
 
+# `ascs_ers_cluster_health_details_factory`
+
+# `ascs_ers_cluster_health_details_projection_factory`
+
 # `ascs_ers_cluster_node_factory`
 
 # `ascs_ers_cluster_sap_system_factory`
@@ -71,7 +75,13 @@ A simple Factory helper module to be used within tests to generate test data
 
 # `cluster_details_updated_event_factory`
 
+# `cluster_details_updated_event_make_ascs_ers`
+
+# `cluster_details_updated_event_make_hana`
+
 # `cluster_discovered_health_changed_event_factory`
+
+# `cluster_distributed_health_changed_event_factory`
 
 # `cluster_enrichment_data_factory`
 
@@ -85,11 +95,25 @@ A simple Factory helper module to be used within tests to generate test data
 
 # `cluster_host_status_changed_event_factory`
 
+# `cluster_make_ascs_ers`
+
+# `cluster_make_hana`
+
+# `cluster_make_unknown`
+
 # `cluster_registered_event_factory`
+
+# `cluster_registered_event_make_ascs_ers`
+
+# `cluster_registered_event_make_hana`
+
+# `cluster_replication_health_changed_event_factory`
 
 # `cluster_resource_factory`
 
 # `cluster_resource_parent_factory`
+
+# `cluster_sbd_health_changed_event_factory`
 
 # `cluster_tombstoned_event_factory`
 
@@ -176,6 +200,10 @@ Raises a helpful error if no factory is defined.
 # `failed_software_updates_discovery_result_factory`
 
 # `hana_cluster_details_factory`
+
+# `hana_cluster_health_details_factory`
+
+# `hana_cluster_health_details_projection_factory`
 
 # `hana_cluster_node_factory`
 
