@@ -67,6 +67,11 @@ function SapStartStopOperationModal({
   const [instanceType, setInstanceType] = useState(ALL_SELECTED);
   const [timeout, setTimeout] = useState(DEFAULT_TIMEOUT);
 
+  const resetValues = () => {
+    setInstanceType(ALL_SELECTED);
+    setTimeout(DEFAULT_TIMEOUT);
+  };
+
   const operationTitle = getOperationTitle(operation);
 
   const description = isEmpty(resources)
@@ -86,11 +91,11 @@ function SapStartStopOperationModal({
           ...(type === APPLICATION_TYPE && { instance_type: instanceType }),
           ...(type === DATABASE_TYPE && site && { site }),
         });
+        resetValues();
       }}
       onCancel={() => {
         onCancel();
-        setInstanceType(ALL_SELECTED);
-        setTimeout(DEFAULT_TIMEOUT);
+        resetValues();
       }}
     >
       <div>

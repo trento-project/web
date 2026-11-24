@@ -179,6 +179,41 @@ describe('SapStartStopOperationModal', () => {
     }
   );
 
+  it('should reset the instance type and timeout after requesting the operation', async () => {
+    const user = userEvent.setup();
+    const onRequest = jest.fn();
+
+    await act(() =>
+      render(
+        <SapStartStopOperationModal
+          operation={SAP_SYSTEM_START}
+          sid={sid}
+          type={APPLICATION_TYPE}
+          isOpen
+          onRequest={onRequest}
+        />
+      )
+    );
+
+    await user.click(screen.getByRole('combobox', { name: 'instance_type' }));
+    await user.click(screen.getByRole('option', { name: 'ABAP instances' }));
+    await user.clear(screen.getByRole('spinbutton'));
+    await user.type(screen.getByRole('spinbutton'), '10');
+    await user.click(screen.getByText('Request'));
+
+    expect(onRequest).toHaveBeenNthCalledWith(1, {
+      instance_type: 'abap',
+      timeout: 600,
+    });
+
+    await user.click(screen.getByText('Request'));
+
+    expect(onRequest).toHaveBeenNthCalledWith(2, {
+      instance_type: 'all',
+      timeout: 300,
+    });
+  });
+
   it('should request a database operation with correct params', async () => {
     const user = userEvent.setup();
     const onRequest = jest.fn();
