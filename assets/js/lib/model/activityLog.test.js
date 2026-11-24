@@ -21,6 +21,7 @@ import {
   CLUSTER_BULK_OPERATION_REQUESTED,
   HOST_BULK_OPERATION_REQUESTED,
   DATABASE_BULK_OPERATION_REQUESTED,
+  SAP_SYSTEM_BULK_OPERATION_REQUESTED,
   TESTING_ALERTING_SETTINGS,
   CHANGING_CHECKS_FREQUENCY_SETTINGS,
   availableResourceNameKeys,
@@ -36,6 +37,7 @@ import {
   SAPTUNE_SOLUTION_APPLY,
   HOST_REBOOT,
   DATABASE_START,
+  SAP_SYSTEM_START,
   OPERATION_REQUEST_FAILED,
 } from '@lib/operations';
 
@@ -388,6 +390,49 @@ describe('activityLog', () => {
 
       expect(toMessage(entry)).toBe(
         'Operation Database start requested on 3 databases (1 failed)'
+      );
+    });
+
+    it('should resolve SAP system bulk operation requested message', () => {
+      const entry = {
+        type: SAP_SYSTEM_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: SAP_SYSTEM_START,
+          operations: [{}, {}, {}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation SAP system start requested on 3 SAP systems'
+      );
+    });
+
+    it('should resolve SAP system bulk operation requested message on a single SAP system', () => {
+      const entry = {
+        type: SAP_SYSTEM_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: SAP_SYSTEM_START,
+          operations: [{}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation SAP system start requested on 1 SAP system'
+      );
+    });
+
+    it('should resolve SAP system bulk operation requested message when some operation failed', () => {
+      const entry = {
+        type: SAP_SYSTEM_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: SAP_SYSTEM_START,
+          operations: [{}, {}],
+          failed_requests: [{}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation SAP system start requested on 3 SAP systems (1 failed)'
       );
     });
 
