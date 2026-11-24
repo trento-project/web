@@ -149,8 +149,20 @@ export const clusteredSapInstanceFactory = Factory.define(() => ({
   instance_number: faker.number.int({ min: 10, max: 99 }).toString(),
 }));
 
+export const hanaClusterHealthDetailsFactory = Factory.define(() => ({
+  checks_health: { value: healthEnum() },
+  sbd_health: { value: healthEnum() },
+  replication_health: { value: healthEnum() },
+}));
+
+export const ascsErsClusterHealthDetailsFactory = Factory.define(() => ({
+  checks_health: { value: healthEnum() },
+  sbd_health: { value: healthEnum() },
+  distributed_health: { value: healthEnum() },
+}));
+
 export const clusterFactory = Factory.define(({ sequence, params }) => {
-  const { type = 'hana_scale_up' } = params;
+  const { type = clusterTypeEnum() } = params;
 
   const details = (() => {
     switch (type) {
@@ -163,14 +175,27 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     }
   })();
 
+  const healthDetails = (() => {
+    switch (type) {
+      case 'ascs_ers':
+        return ascsErsClusterHealthDetailsFactory.build(params.health_details);
+      case 'hana_scale_up':
+      case 'hana_scale_out':
+        return hanaClusterHealthDetailsFactory.build(params.health_details);
+      default:
+        return null;
+    }
+  })();
+
   return {
     id: faker.string.uuid(),
     name: `${faker.person.firstName()}_${sequence}`,
     sap_instances: clusteredSapInstanceFactory.buildList(1),
     hosts_number: faker.number.int(),
     resources_number: faker.number.int(),
-    type: clusterTypeEnum(),
+    type,
     health: healthEnum(),
+    health_details: healthDetails,
     selected_checks: [],
     provider: cloudProviderEnum(),
     cib_last_written: formatDateTime(faker.date.recent()),

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
+import { capitalize } from 'lodash';
 
 import { computedIconCssClass } from '@lib/icon';
 
@@ -28,6 +29,40 @@ const CriticalIconBlank = StaleIconWrapper(EOS_ERROR_OUTLINED);
 const CriticalIconLink = StaleIconWrapper(EOS_ERROR_FILLED);
 const UnknownIcon = StaleIconWrapper(EOS_LENS_FILLED);
 
+const HEALTH_DETAILS_LABELS = {
+  checks_health: 'Overall Checks Results',
+  replication_health: 'System Replication Status',
+  distributed_health: 'Instance Distribution Status',
+  sbd_health: 'Overall SBD Device Health',
+};
+
+const formatHealthDetails = (healthDetails) =>
+  Object.entries(HEALTH_DETAILS_LABELS).reduce((acc, [key, label]) => {
+    if (healthDetails?.[key]?.value) {
+      acc[label] = capitalize(healthDetails[key].value);
+    }
+    return acc;
+  }, {});
+
+const renderHealthDetails = (healthDetails) => {
+  const formattedDetails = formatHealthDetails(healthDetails);
+  const entries = Object.entries(formattedDetails);
+
+  if (entries.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="text-left">
+      {entries.map(([label, value]) => (
+        <div key={label}>
+          {label}: {value}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 function HealthIcon({
   health = undefined,
   centered = false,
@@ -37,12 +72,15 @@ function HealthIcon({
   staleAt = null,
   timezone = 'Etc/UTC',
   ariaLabelPrefix = '',
+  healthDetails = null,
 }) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
   };
   const ariaLabelPre = `${ariaLabelPrefix ? `${ariaLabelPrefix} ` : ''}Health:`;
+  const tooltipContent = renderHealthDetails(healthDetails);
+  const tooltipEnabled = Boolean(staleAt || tooltipContent);
 
   switch (health) {
     case 'passing': {
@@ -54,7 +92,8 @@ function HealthIcon({
           size={size}
           staleAt={staleAt}
           timezone={timezone}
-          tooltipEnabled={!!staleAt}
+          tooltipEnabled={tooltipEnabled}
+          tooltipContent={tooltipContent}
           ariaLabel={`${ariaLabelPre} Passing`}
           containerProps={{ 'data-health-state': health }}
         />
@@ -70,7 +109,8 @@ function HealthIcon({
           size={size}
           staleAt={staleAt}
           timezone={timezone}
-          tooltipEnabled={!!staleAt}
+          tooltipEnabled={tooltipEnabled}
+          tooltipContent={tooltipContent}
           ariaLabel={`${ariaLabelPre} Warning`}
           containerProps={{ 'data-health-state': health }}
         />
@@ -86,7 +126,8 @@ function HealthIcon({
           size={size}
           staleAt={staleAt}
           timezone={timezone}
-          tooltipEnabled={!!staleAt}
+          tooltipEnabled={tooltipEnabled}
+          tooltipContent={tooltipContent}
           ariaLabel={`${ariaLabelPre} Critical`}
           containerProps={{ 'data-health-state': health }}
         />
@@ -117,7 +158,8 @@ function HealthIcon({
           size={size}
           staleAt={staleAt}
           timezone={timezone}
-          tooltipEnabled={!!staleAt}
+          tooltipEnabled={tooltipEnabled}
+          tooltipContent={tooltipContent}
           ariaLabel={`${ariaLabelPre} Unknown`}
           containerProps={{ 'data-health-state': 'unknown' }}
         />

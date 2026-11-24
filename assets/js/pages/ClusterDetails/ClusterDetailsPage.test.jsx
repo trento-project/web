@@ -9,7 +9,7 @@ import { withState, renderWithRouterMatch } from '@lib/test-utils';
 
 import { clusterFactory } from '@lib/test-utils/factories';
 
-import { ClusterDetailsPage } from './ClusterDetailsPage';
+import ClusterDetailsPage from './ClusterDetailsPage';
 
 describe('ClusterDetails ClusterDetailsPage component', () => {
   it.each([
