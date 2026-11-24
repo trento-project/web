@@ -19,6 +19,27 @@ defmodule TrentoWeb.V1.HostJSONTest do
              HostJSON.host_health_changed(%{host: host})
   end
 
+  test "should render host_health_details_changed relevant information" do
+    id = Faker.UUID.v4()
+    health_details_projection = build(:host_health_details_projection)
+
+    data =
+      HostJSON.host_health_details_changed(%{
+        id: id,
+        health_details: health_details_projection
+      })
+
+    expected_health_details = %{
+      checks_health: %{value: health_details_projection.checks_health.value},
+      saptune_health: %{value: health_details_projection.saptune_health.value},
+      software_updates_discovery_health: %{
+        value: health_details_projection.software_updates_discovery_health.value
+      }
+    }
+
+    assert %{id: id, health_details: expected_health_details} == data
+  end
+
   test "should render single host information" do
     host = build(:host, sles_subscriptions: build_list(1, :sles_subscription))
 
@@ -27,6 +48,9 @@ defmodule TrentoWeb.V1.HostJSONTest do
     refute Access.get(rendered_host, :fully_qualified_domain_name)
     refute Access.get(rendered_host, :prometheus_targets)
     refute Access.get(rendered_host, :inserted_at)
+    refute Map.has_key?(rendered_host.health_details.checks_health, :reason)
+    refute Map.has_key?(rendered_host.health_details.saptune_health, :reason)
+    refute Map.has_key?(rendered_host.health_details.software_updates_discovery_health, :reason)
   end
 
   test "should render host details relevant information" do
@@ -40,6 +64,7 @@ defmodule TrentoWeb.V1.HostJSONTest do
       :cluster_id,
       :heartbeat,
       :health,
+      :health_details,
       :provider
     ]
 
@@ -78,7 +103,7 @@ defmodule TrentoWeb.V1.HostJSONTest do
     assert [
              %{
                provider_data: %{
-                 "image" => "sles-15-sp1-sap-byos-v20220126"
+                 image: "sles-15-sp1-sap-byos-v20220126"
                }
              },
              %{
@@ -86,7 +111,7 @@ defmodule TrentoWeb.V1.HostJSONTest do
              },
              %{
                provider_data: %{
-                 "image" => nil
+                 image: nil
                }
              }
            ] = HostJSON.hosts(%{hosts: hosts})

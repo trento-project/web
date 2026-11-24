@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-defmodule TrentoWeb.OpenApi.V2.Schema.HealthValueDetails do
+defmodule TrentoWeb.OpenApi.V1.Schema.HealthValueDetails do
   @moduledoc false
 
   require OpenApiSpex
