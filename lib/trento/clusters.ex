@@ -48,6 +48,12 @@ defmodule Trento.Clusters do
     ClusterType.ascs_ers()
   ]
 
+  @doc """
+  The cluster types whose checks can be executed.
+  """
+  @spec checkable_cluster_types() :: [ClusterType.t()]
+  def checkable_cluster_types, do: @checkable_clusters
+
   @spec by_id(String.t()) :: {:ok, ClusterReadModel.t()} | {:error, :not_found}
   def by_id(id) do
     case Repo.get(ClusterReadModel, id) do
