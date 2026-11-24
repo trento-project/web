@@ -297,7 +297,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       when activity in [
              :cluster_bulk_operation_requested,
              :host_bulk_operation_requested,
-             :database_bulk_operation_requested
+             :database_bulk_operation_requested,
+             :sap_system_bulk_operation_requested
            ] do
     params = Map.get(body_params, :params, %{})
 
@@ -347,7 +348,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   defp get_operation_resource_id_field(activity)
        when activity in [
               :application_instance_operation_requested,
-              :sap_system_operation_requested
+              :sap_system_operation_requested,
+              :sap_system_bulk_operation_requested
             ],
        do: :sap_system_id
 

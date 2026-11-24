@@ -26,6 +26,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   require Trento.Operations.Enums.HostBulkOperations, as: HostBulkOperations
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
   require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
+  require Trento.Operations.Enums.SapSystemBulkOperations, as: SapSystemBulkOperations
 
   @excluded_events [
     Trento.Hosts.Events.HostChecksSelected,
@@ -52,7 +53,10 @@ defmodule Trento.ActivityLog.ActivityCatalog do
     {TrentoWeb.V1.SapSystemController, SapInstanceOperations.values(),
      :application_instance_operation_requested},
     {TrentoWeb.V1.SapSystemController, SapSystemOperations.values(),
-     :sap_system_operation_requested}
+     :sap_system_operation_requested},
+    {TrentoWeb.V1.SapSystemController,
+     OperationsHelper.to_bulk_operation(SapSystemBulkOperations.values()),
+     :sap_system_bulk_operation_requested}
   ]
 
   @type activity_type :: atom()

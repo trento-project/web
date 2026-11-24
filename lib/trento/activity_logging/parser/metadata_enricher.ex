@@ -16,8 +16,9 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   @bulk_operation_enrichments %{
     cluster_bulk_operation_requested: {:cluster_id, Clusters, :get_clusters_by_ids, :name},
     host_bulk_operation_requested: {:host_id, Hosts, :get_hosts_by_ids, :hostname},
-    database_bulk_operation_requested: {:database_id, Databases, :get_databases_by_ids, :sid}
-    # sap_system_bulk_operation_requested: {:sap_system_id, SapSystems, :get_sap_systems_by_ids, :sid},
+    database_bulk_operation_requested: {:database_id, Databases, :get_databases_by_ids, :sid},
+    sap_system_bulk_operation_requested:
+      {:sap_system_id, SapSystems, :get_sap_systems_by_ids, :sid}
   }
 
   @spec enrich(activity :: ActivityCatalog.activity_type(), metadata :: map()) ::
