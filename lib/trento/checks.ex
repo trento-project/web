@@ -45,17 +45,15 @@ defmodule Trento.Checks do
   @spec delete_stale_execution_requests(module()) :: non_neg_integer()
   def delete_stale_execution_requests(date_service \\ DateService) do
     started_at = date_service.utc_now()
-    registered_hosts = from h in HostReadModel, where: is_nil(h.deregistered_at), select: h.id
-
-    registered_clusters =
-      from c in ClusterReadModel, where: is_nil(c.deregistered_at), select: c.id
+    host_ids = Enum.map(Hosts.get_all_hosts(), & &1.id)
+    cluster_ids = Enum.map(Clusters.get_all_clusters(), & &1.id)
 
     {deleted, _} =
       Repo.delete_all(
         from r in ChecksExecutionRequest,
           where:
-            (r.target_type == ^:host and r.target_id not in subquery(registered_hosts)) or
-              (r.target_type == ^:cluster and r.target_id not in subquery(registered_clusters)),
+            (r.target_type == ^:host and r.target_id not in ^host_ids) or
+              (r.target_type == ^:cluster and r.target_id not in ^cluster_ids),
           where: r.last_requested_at < ^started_at
       )
 
