@@ -276,6 +276,20 @@ describe('activityLog', () => {
       );
     });
 
+    it('should resolve cluster bulk operation requested message on a single cluster', () => {
+      const entry = {
+        type: CLUSTER_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: CLUSTER_MAINTENANCE_CHANGE,
+          operations: [{}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Cluster maintenance change requested on 1 cluster'
+      );
+    });
+
     it('should resolve cluster bulk operation requested message when some operation failed', () => {
       const entry = {
         type: CLUSTER_BULK_OPERATION_REQUESTED,
@@ -305,6 +319,20 @@ describe('activityLog', () => {
       );
     });
 
+    it('should resolve host bulk operation requested message on a single host', () => {
+      const entry = {
+        type: HOST_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: HOST_REBOOT,
+          operations: [{}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Reboot host requested on 1 host'
+      );
+    });
+
     it('should resolve host bulk operation requested message when some operation failed', () => {
       const entry = {
         type: HOST_BULK_OPERATION_REQUESTED,
@@ -331,6 +359,20 @@ describe('activityLog', () => {
 
       expect(toMessage(entry)).toBe(
         'Operation Database start requested on 3 databases'
+      );
+    });
+
+    it('should resolve database bulk operation requested message on a single database', () => {
+      const entry = {
+        type: DATABASE_BULK_OPERATION_REQUESTED,
+        metadata: {
+          operation: DATABASE_START,
+          operations: [{}],
+        },
+      };
+
+      expect(toMessage(entry)).toBe(
+        'Operation Database start requested on 1 database'
       );
     });
 
