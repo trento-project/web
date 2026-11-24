@@ -577,6 +577,10 @@ defmodule Trento.Hosts.Projections.HostProjector do
   defp health_details_update_query(host_id, value_path, value, reason \\ "") do
     details_map = %{value: value, reason: reason}
 
+    # Add extra security that the jsonb_set below would succeed every
+    # time. In normal circumstances, we shouldn't end up here.
+    default_details = default_health_details()
+
     from(
       h in HostReadModel,
       where: h.id == ^host_id,
@@ -584,8 +588,9 @@ defmodule Trento.Hosts.Projections.HostProjector do
         set: [
           health_details:
             fragment(
-              "jsonb_set(?, ARRAY[?::text], ?::jsonb, false)",
+              "jsonb_set(COALESCE(?, ?::jsonb), ARRAY[?::text], ?::jsonb, false)",
               h.health_details,
+              ^default_details,
               ^value_path,
               ^details_map
             ),
