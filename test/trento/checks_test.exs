@@ -89,7 +89,7 @@ defmodule Trento.ChecksTest do
       assert_requested(:cluster, [cluster_id])
     end
 
-    test "should request a cluster only once one of its hosts is registered" do
+    test "should request an execution for a cluster only once one of its hosts is registered" do
       %{id: cluster_id} = insert(:cluster)
       insert(:host, cluster_id: cluster_id, selected_checks: [], deregistered_at: @now)
 
