@@ -166,6 +166,12 @@ defmodule Trento.Factory do
   alias Trento.Clusters.Projections.AscsErsClusterHealthDetails,
     as: AscsErsClusterHealthDetailsProjection
 
+  alias Trento.Hosts.Projections.HostHealthDetails,
+    as: HostHealthDetailsProjection
+
+  alias Trento.Hosts.ValueObjects.HealthDetails,
+    as: HostHealthDetails
+
   alias Trento.Heartbeats.Heartbeat
   alias Trento.Tags.Tag
 
@@ -285,6 +291,7 @@ defmodule Trento.Factory do
       cluster_host_status: ClusterHostStatus.online(),
       heartbeat: :unknown,
       health: :unknown,
+      health_details: build(:host_health_details_projection),
       provider: Enum.random(Provider.values()),
       provider_data: nil,
       deregistered_at: nil,
@@ -706,6 +713,24 @@ defmodule Trento.Factory do
       checks_health: %HealthValueDetails{value: Enum.random(Health.values())},
       sbd_health: %HealthValueDetails{value: Enum.random(Health.values())},
       distributed_health: %HealthValueDetails{value: Enum.random(Health.values())}
+    }
+  end
+
+  def host_health_details_factory do
+    %HostHealthDetails{
+      checks_health: Enum.random(Health.values()),
+      saptune_health: Enum.random(Health.values()),
+      software_updates_discovery_health: Enum.random(SoftwareUpdatesHealth.values())
+    }
+  end
+
+  def host_health_details_projection_factory do
+    %HostHealthDetailsProjection{
+      checks_health: %HealthValueDetails{value: Enum.random(Health.values())},
+      saptune_health: %HealthValueDetails{value: Enum.random(Health.values())},
+      software_updates_discovery_health: %HealthValueDetails{
+        value: Enum.random(Health.values())
+      }
     }
   end
 
@@ -1448,7 +1473,7 @@ defmodule Trento.Factory do
   def software_updates_discovery_health_changed_event_factory do
     SoftwareUpdatesHealthChanged.new!(%{
       host_id: Faker.UUID.v4(),
-      health: SoftwareUpdatesHealth.passing()
+      health: Enum.random(SoftwareUpdatesHealth.values())
     })
   end
 
