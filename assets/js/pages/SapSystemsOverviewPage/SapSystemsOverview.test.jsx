@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';
@@ -18,6 +18,7 @@ import { renderWithRouter } from '@lib/test-utils';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
+import { waiveOperationDisclaimer } from '@lib/operations';
 
 import SapSystemsOverview from './SapSystemsOverview';
 
@@ -697,6 +698,195 @@ describe('SapSystemsOverviews component', () => {
       expect(
         screen.queryByText('Tag2').children.item(0).children.item(0)
       ).toHaveClass('opacity-50');
+    });
+  });
+
+  describe('bulk operations', () => {
+    beforeAll(() => waiveOperationDisclaimer());
+
+    const selectSapSystems = async (user, sapSystems, indexes) => {
+      for (const index of indexes) {
+        const row = screen.getByText(sapSystems[index].sid).closest('tr');
+        await user.click(
+          within(row).getByRole('checkbox', { name: 'Select row' })
+        );
+      }
+    };
+
+    it('should not allow selecting SAP systems when operations are disabled', () => {
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={sapSystemFactory.buildList(2)}
+          applicationInstances={[]}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+          operationsEnabled={false}
+        />
+      );
+
+      expect(
+        screen.queryByRole('checkbox', { name: 'Select row' })
+      ).not.toBeInTheDocument();
+    });
+
+    it.each([
+      {
+        operation: 'Start SAP system',
+        description: 'Start the following SAP systems:',
+      },
+      {
+        operation: 'Stop SAP system',
+        description: 'Stop the following SAP systems:',
+      },
+    ])(
+      'should list the selected SAP systems in the $operation modal',
+      async ({ operation, description }) => {
+        const user = userEvent.setup();
+        const sapSystems = sapSystemFactory.buildList(3);
+
+        renderWithRouter(
+          <SapSystemsOverview
+            sapSystems={sapSystems}
+            applicationInstances={[]}
+            databaseInstances={[]}
+            userAbilities={userAbilities}
+            operationsEnabled
+          />
+        );
+
+        await selectSapSystems(user, sapSystems, [0, 2]);
+
+        await user.click(screen.getByRole('button', { name: 'Operations' }));
+        await user.click(screen.getByRole('menuitem', { name: operation }));
+
+        const modal = screen.getByRole('dialog');
+        expect(within(modal).getByText(description)).toBeInTheDocument();
+        expect(
+          within(modal)
+            .getAllByRole('listitem')
+            .map(({ textContent }) => textContent)
+        ).toEqual([sapSystems[0].sid, sapSystems[2].sid]);
+      }
+    );
+
+    it('should request the operation with the default params', async () => {
+      const user = userEvent.setup();
+      const sapSystems = sapSystemFactory.buildList(2);
+      const onOperationRequest = jest.fn();
+
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+          operationsEnabled
+          onOperationRequest={onOperationRequest}
+        />
+      );
+
+      await selectSapSystems(user, sapSystems, [1]);
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+      await user.click(
+        screen.getByRole('menuitem', { name: 'Start SAP system' })
+      );
+
+      const modal = screen.getByRole('dialog');
+      expect(within(modal).getByRole('spinbutton')).toHaveValue('5');
+
+      await user.click(within(modal).getByRole('button', { name: 'Request' }));
+
+      expect(onOperationRequest).toHaveBeenCalledWith({
+        operation: 'sap_system_start',
+        sapSystems: [expect.objectContaining({ id: sapSystems[1].id })],
+        params: { instance_type: 'all', timeout: 300 },
+      });
+    });
+
+    it('should request the operation with the given instance type and timeout', async () => {
+      const user = userEvent.setup();
+      const sapSystems = sapSystemFactory.buildList(2);
+      const onOperationRequest = jest.fn();
+
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+          operationsEnabled
+          onOperationRequest={onOperationRequest}
+        />
+      );
+
+      await selectSapSystems(user, sapSystems, [0, 1]);
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+      await user.click(
+        screen.getByRole('menuitem', { name: 'Stop SAP system' })
+      );
+
+      const modal = screen.getByRole('dialog');
+      await user.click(
+        within(modal).getByRole('combobox', { name: 'instance_type' })
+      );
+      await user.click(
+        within(modal).getByRole('option', { name: 'ABAP instances' })
+      );
+      const timeoutInput = within(modal).getByRole('spinbutton');
+      await user.clear(timeoutInput);
+      await user.type(timeoutInput, '10');
+
+      await user.click(within(modal).getByRole('button', { name: 'Request' }));
+
+      expect(onOperationRequest).toHaveBeenCalledWith({
+        operation: 'sap_system_stop',
+        sapSystems: [
+          expect.objectContaining({ id: sapSystems[0].id }),
+          expect.objectContaining({ id: sapSystems[1].id }),
+        ],
+        params: { instance_type: 'abap', timeout: 600 },
+      });
+    });
+
+    it('should show the forbidden modal and dismiss it', async () => {
+      const user = userEvent.setup();
+      const onOperationForbiddenDismiss = jest.fn();
+      const [sapSystem] = sapSystemFactory.buildList(1);
+
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={[sapSystem]}
+          applicationInstances={[]}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+          operationsEnabled
+          runningOperation={{
+            operation: 'sap_system_start',
+            forbidden: true,
+            errors: [
+              {
+                detail: 'Not allowed',
+                metadata: [],
+                resource: {
+                  id: sapSystem.id,
+                  label: sapSystem.sid,
+                  type: 'sap_system',
+                },
+              },
+            ],
+          }}
+          onOperationForbiddenDismiss={onOperationForbiddenDismiss}
+        />
+      );
+
+      const modal = screen.getByRole('dialog');
+      expect(within(modal).getByText('Not allowed')).toBeInTheDocument();
+
+      await user.click(within(modal).getByRole('button', { name: 'Close' }));
+
+      expect(onOperationForbiddenDismiss).toHaveBeenCalled();
     });
   });
 });

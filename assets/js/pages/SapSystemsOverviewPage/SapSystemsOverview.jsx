@@ -6,10 +6,21 @@ import { Link } from 'react-router';
 import { filter } from 'lodash';
 import classNames from 'classnames';
 
-import { getEnsaVersionLabel, getSapSystemType } from '@lib/model/sapSystems';
+import { getFromConfig } from '@lib/config';
+import {
+  APPLICATION_TYPE,
+  getEnsaVersionLabel,
+  getSapSystemType,
+} from '@lib/model/sapSystems';
+import { getOperationLabel } from '@lib/operations';
 import { STALE_ROW } from '@lib/tables';
 
 import HealthIcon from '@common/HealthIcon';
+import {
+  OperationForbiddenModal,
+  SapStartStopOperationModal,
+} from '@common/OperationModals';
+import OperationsButton from '@common/OperationsButton';
 import PageHeader from '@common/PageHeader';
 import Tags from '@common/Tags';
 import Table from '@common/Table';
@@ -21,6 +32,8 @@ import HealthSummary from '@pages/HealthSummary';
 import SAPSystemItemOverview from '@pages/SapSystemsOverviewPage/SapSystemItemOverview';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
 
+import { getSapSystemsBulkOperations } from './sapSystemOperations';
+
 function SapSystemsOverview({
   sapSystems,
   applicationInstances,
@@ -28,9 +41,13 @@ function SapSystemsOverview({
   loading,
   userAbilities,
   userTimezone,
+  runningOperation,
+  operationsEnabled = getFromConfig('operationsEnabled'),
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
+  onOperationRequest,
+  onOperationForbiddenDismiss,
 }) {
   const [searchParams, setSearchParams] =
     usePersistentSearchParams('sapSystems');
@@ -38,8 +55,36 @@ function SapSystemsOverview({
   const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
   const [instanceType, setInstanceType] = useState(undefined);
 
+  const [bulkOperationModal, setBulkOperationModalOpen] = useState({
+    open: false,
+    operation: undefined,
+    sapSystems: [],
+  });
+
+  const closeBulkOperationModal = () =>
+    setBulkOperationModalOpen((prevState) => ({ ...prevState, open: false }));
+
+  const requestBulkOperation = (params) => {
+    const { operation, sapSystems: targetSapSystems } = bulkOperationModal;
+
+    onOperationRequest({
+      operation,
+      sapSystems: targetSapSystems,
+      params,
+    });
+    closeBulkOperationModal();
+  };
+
+  const selectBulkOperation = (selectedSapSystems) => (operation) =>
+    setBulkOperationModalOpen({
+      open: true,
+      operation,
+      sapSystems: selectedSapSystems,
+    });
+
   const config = {
     pagination: true,
+    selectable: operationsEnabled,
     usePadding: false,
     collapsedRowClassName: 'bg-gray-100',
     rowClassName: ({ staleAt }) =>
@@ -180,6 +225,24 @@ function SapSystemsOverview({
           setCleanUpModalOpen(false);
         }}
       />
+      <SapStartStopOperationModal
+        operation={bulkOperationModal.operation}
+        type={APPLICATION_TYPE}
+        resources={bulkOperationModal.sapSystems.map(({ id, sid }) => ({
+          id,
+          label: sid,
+        }))}
+        isOpen={bulkOperationModal.open}
+        onRequest={requestBulkOperation}
+        onCancel={closeBulkOperationModal}
+      />
+      <OperationForbiddenModal
+        operation={getOperationLabel(runningOperation?.operation)}
+        isOpen={!!runningOperation?.forbidden}
+        errors={runningOperation?.errors ?? []}
+        groupByResource
+        onCancel={onOperationForbiddenDismiss}
+      />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
@@ -188,6 +251,15 @@ function SapSystemsOverview({
           searchParams={searchParams}
           setSearchParams={setSearchParams}
           rowKey={(item, _index) => item.id}
+          renderSelectionActions={(selectedSapSystems) => (
+            <OperationsButton
+              userAbilities={userAbilities}
+              menuPosition="bottom end"
+              operations={getSapSystemsBulkOperations(
+                selectBulkOperation(selectedSapSystems)
+              )}
+            />
+          )}
         />
       </div>
     </>

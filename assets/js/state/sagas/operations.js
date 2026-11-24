@@ -23,6 +23,7 @@ import {
   requestClusterBulkOperation,
   requestHostBulkOperation,
   requestDatabaseBulkOperation,
+  requestSapSystemBulkOperation,
   requestSapSystemOperation,
   requestSapInstanceOperation,
   requestClusterHostOperation,
@@ -155,6 +156,11 @@ const BULK_OPERATION_RESOURCES = {
     singular: 'database',
     plural: 'databases',
     request: requestDatabaseBulkOperation,
+  },
+  [SAP_SYSTEM_OPERATION]: {
+    singular: 'SAP system',
+    plural: 'SAP systems',
+    request: requestSapSystemBulkOperation,
   },
 };
 

@@ -6,6 +6,8 @@ import { get, isEmpty, noop } from 'lodash';
 import {
   DATABASE_START,
   DATABASE_STOP,
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
   getOperationTitle,
 } from '@lib/operations';
 
@@ -46,6 +48,8 @@ const MIN_TIMEOUT = 1;
 const MAX_TIMEOUT = 720; // 12 hours
 
 const BULK_DESCRIPTIONS = {
+  [SAP_SYSTEM_START]: 'Start the following SAP systems:',
+  [SAP_SYSTEM_STOP]: 'Stop the following SAP systems:',
   [DATABASE_START]: 'Start the following databases:',
   [DATABASE_STOP]: 'Stop the following databases:',
 };
@@ -62,6 +66,11 @@ function SapStartStopOperationModal({
 }) {
   const [instanceType, setInstanceType] = useState(ALL_SELECTED);
   const [timeout, setTimeout] = useState(DEFAULT_TIMEOUT);
+
+  const resetValues = () => {
+    setInstanceType(ALL_SELECTED);
+    setTimeout(DEFAULT_TIMEOUT);
+  };
 
   const operationTitle = getOperationTitle(operation);
 
@@ -82,11 +91,11 @@ function SapStartStopOperationModal({
           ...(type === APPLICATION_TYPE && { instance_type: instanceType }),
           ...(type === DATABASE_TYPE && site && { site }),
         });
+        resetValues();
       }}
       onCancel={() => {
         onCancel();
-        setInstanceType(ALL_SELECTED);
-        setTimeout(DEFAULT_TIMEOUT);
+        resetValues();
       }}
     >
       <div>

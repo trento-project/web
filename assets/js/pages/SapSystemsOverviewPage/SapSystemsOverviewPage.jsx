@@ -11,6 +11,12 @@ import {
   getEnrichedDatabaseInstances,
 } from '@state/selectors/sapSystem';
 import { getUserProfile } from '@state/selectors/user';
+import { getRunningOperation } from '@state/selectors/runningOperations';
+import {
+  SAP_SYSTEM_BULK_OPERATION_ID,
+  bulkOperationRequested,
+  removeRunningOperation,
+} from '@state/runningOperations';
 import {
   addTagToSAPSystem,
   removeTagFromSAPSystem,
@@ -39,6 +45,9 @@ function SapSystemOverviewPage() {
     getEnrichedDatabaseInstances(state)
   );
   const { abilities, timezone } = useSelector(getUserProfile);
+  const runningOperation = useSelector(
+    getRunningOperation(SAP_SYSTEM_BULK_OPERATION_ID)
+  );
   const dispatch = useDispatch();
 
   return (
@@ -49,6 +58,7 @@ function SapSystemOverviewPage() {
       applicationInstances={enrichedApplicationInstances}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}
+      runningOperation={runningOperation}
       onTagAdd={(tag, sapSystemID) => {
         addTag(tag, sapSystemID);
         dispatch(
@@ -65,6 +75,21 @@ function SapSystemOverviewPage() {
         instanceType === APPLICATION_TYPE
           ? dispatch(deregisterApplicationInstance(instance))
           : dispatch(deregisterDatabaseInstance(instance));
+      }}
+      onOperationRequest={({ operation, sapSystems: targets, params }) => {
+        dispatch(
+          bulkOperationRequested({
+            bulkOperationID: SAP_SYSTEM_BULK_OPERATION_ID,
+            targetGroupIDs: targets.map(({ id }) => id),
+            operation,
+            params,
+          })
+        );
+      }}
+      onOperationForbiddenDismiss={() => {
+        dispatch(
+          removeRunningOperation({ groupID: SAP_SYSTEM_BULK_OPERATION_ID })
+        );
       }}
     />
   );

@@ -13,6 +13,7 @@ export const BULK_OPERATION_REQUESTED = 'BULK_OPERATION_REQUESTED';
 export const CLUSTER_BULK_OPERATION_ID = 'cluster_bulk_operation';
 export const HOST_BULK_OPERATION_ID = 'host_bulk_operation';
 export const DATABASE_BULK_OPERATION_ID = 'database_bulk_operation';
+export const SAP_SYSTEM_BULK_OPERATION_ID = 'sap_system_bulk_operation';
 
 export const operationCompleted = ({
   operationID,

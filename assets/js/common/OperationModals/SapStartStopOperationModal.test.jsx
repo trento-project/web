@@ -88,6 +88,18 @@ describe('SapStartStopOperationModal', () => {
       title: 'Stop database',
       expectedDescription: 'Stop the following databases:',
     },
+    {
+      operation: SAP_SYSTEM_START,
+      type: APPLICATION_TYPE,
+      title: 'Start SAP system',
+      expectedDescription: 'Start the following SAP systems:',
+    },
+    {
+      operation: SAP_SYSTEM_STOP,
+      type: APPLICATION_TYPE,
+      title: 'Stop SAP system',
+      expectedDescription: 'Stop the following SAP systems:',
+    },
   ])(
     'should show the title, description and resources for $operation for bulk operation',
     async ({ operation, type, title, expectedDescription }) => {
@@ -166,6 +178,41 @@ describe('SapStartStopOperationModal', () => {
       });
     }
   );
+
+  it('should reset the instance type and timeout after requesting the operation', async () => {
+    const user = userEvent.setup();
+    const onRequest = jest.fn();
+
+    await act(() =>
+      render(
+        <SapStartStopOperationModal
+          operation={SAP_SYSTEM_START}
+          sid={sid}
+          type={APPLICATION_TYPE}
+          isOpen
+          onRequest={onRequest}
+        />
+      )
+    );
+
+    await user.click(screen.getByRole('combobox', { name: 'instance_type' }));
+    await user.click(screen.getByRole('option', { name: 'ABAP instances' }));
+    await user.clear(screen.getByRole('spinbutton'));
+    await user.type(screen.getByRole('spinbutton'), '10');
+    await user.click(screen.getByText('Request'));
+
+    expect(onRequest).toHaveBeenNthCalledWith(1, {
+      instance_type: 'abap',
+      timeout: 600,
+    });
+
+    await user.click(screen.getByText('Request'));
+
+    expect(onRequest).toHaveBeenNthCalledWith(2, {
+      instance_type: 'all',
+      timeout: 300,
+    });
+  });
 
   it('should request a database operation with correct params', async () => {
     const user = userEvent.setup();
