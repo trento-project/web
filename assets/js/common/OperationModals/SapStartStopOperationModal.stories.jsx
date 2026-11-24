@@ -6,6 +6,7 @@ import {
   DATABASE_START,
   DATABASE_STOP,
   SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
 } from '@lib/operations';
 import {
   bulkOperationResourceFactory,
@@ -106,5 +107,21 @@ export const DatabaseBulkStop = {
   args: {
     ...DatabaseBulkStart.args,
     operation: DATABASE_STOP,
+  },
+};
+
+export const SapSystemBulkStart = {
+  args: {
+    ...Default.args,
+    operation: SAP_SYSTEM_START,
+    type: APPLICATION_TYPE,
+    resources: bulkOperationResourceFactory.buildList(3),
+  },
+};
+
+export const SapSystemBulkStop = {
+  args: {
+    ...SapSystemBulkStart.args,
+    operation: SAP_SYSTEM_STOP,
   },
 };

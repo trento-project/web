@@ -6,6 +6,8 @@ import { get, isEmpty, noop } from 'lodash';
 import {
   DATABASE_START,
   DATABASE_STOP,
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
   getOperationTitle,
 } from '@lib/operations';
 
@@ -46,6 +48,8 @@ const MIN_TIMEOUT = 1;
 const MAX_TIMEOUT = 720; // 12 hours
 
 const BULK_DESCRIPTIONS = {
+  [SAP_SYSTEM_START]: 'Start the following SAP systems:',
+  [SAP_SYSTEM_STOP]: 'Stop the following SAP systems:',
   [DATABASE_START]: 'Start the following databases:',
   [DATABASE_STOP]: 'Stop the following databases:',
 };

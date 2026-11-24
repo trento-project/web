@@ -88,6 +88,18 @@ describe('SapStartStopOperationModal', () => {
       title: 'Stop database',
       expectedDescription: 'Stop the following databases:',
     },
+    {
+      operation: SAP_SYSTEM_START,
+      type: APPLICATION_TYPE,
+      title: 'Start SAP system',
+      expectedDescription: 'Start the following SAP systems:',
+    },
+    {
+      operation: SAP_SYSTEM_STOP,
+      type: APPLICATION_TYPE,
+      title: 'Stop SAP system',
+      expectedDescription: 'Stop the following SAP systems:',
+    },
   ])(
     'should show the title, description and resources for $operation for bulk operation',
     async ({ operation, type, title, expectedDescription }) => {
