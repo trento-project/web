@@ -12,6 +12,7 @@ import {
   deregisterHost,
   hostRestored,
   hostHealthChanged,
+  hostHealthDetailsChanged,
   saptuneStatusUpdated,
   hostSoftwareUpdatesDiscoveryCompleted,
 } from '@state/sagas/hosts';
@@ -24,6 +25,7 @@ import {
   unsetHostDeregistering,
   appendHost,
   updateHostHealth,
+  updateHostHealthDetails,
   updateSaptuneStatus,
 } from '@state/hosts';
 
@@ -181,6 +183,18 @@ describe('Hosts sagas', () => {
         text: `Host ${hostname} health changed to ${health}.`,
         icon: 'ℹ️',
       }),
+    ]);
+  });
+
+  it('should update health details of a host', async () => {
+    const { id, health_details } = hostFactory.build();
+
+    const dispatched = await recordSaga(hostHealthDetailsChanged, {
+      payload: { id, health_details },
+    });
+
+    expect(dispatched).toEqual([
+      updateHostHealthDetails({ id, health_details }),
     ]);
   });
 

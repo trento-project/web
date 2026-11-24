@@ -24,6 +24,7 @@ import {
   DEREGISTER_HOST,
   HOST_RESTORED,
   HOST_HEALTH_CHANGED,
+  HOST_HEALTH_DETAILS_CHANGED,
   SAPTUNE_STATUS_UPDATED,
   HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED,
   removeHost,
@@ -33,6 +34,7 @@ import {
   appendHost,
   updateHost,
   updateHostHealth,
+  updateHostHealthDetails,
   updateSaptuneStatus,
   setHeartbeatPassing,
   setHeartbeatCritical,
@@ -171,6 +173,10 @@ export function* hostHealthChanged({ payload: { id, hostname, health } }) {
   );
 }
 
+export function* hostHealthDetailsChanged({ payload: { id, health_details } }) {
+  yield put(updateHostHealthDetails({ id, health_details }));
+}
+
 export function* hostSoftwareUpdatesDiscoveryCompleted({ payload: { id } }) {
   yield put(fetchSoftwareUpdates(id));
 }
@@ -186,6 +192,7 @@ export function* watchHostEvents() {
   yield takeEvery(HOST_RESTORED, hostRestored);
   yield takeEvery(SAPTUNE_STATUS_UPDATED, saptuneStatusUpdated);
   yield takeEvery(HOST_HEALTH_CHANGED, hostHealthChanged);
+  yield takeEvery(HOST_HEALTH_DETAILS_CHANGED, hostHealthDetailsChanged);
   yield takeEvery(
     HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED,
     hostSoftwareUpdatesDiscoveryCompleted

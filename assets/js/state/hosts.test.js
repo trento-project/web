@@ -11,10 +11,15 @@ import hostsReducer, {
   setStaleAt,
   unsetHostDeregistering,
   updateHostHealth,
+  updateHostHealthDetails,
   updateSelectedChecks,
   updateSaptuneStatus,
 } from '@state/hosts';
-import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
+import {
+  hostFactory,
+  hostHealthDetailsFactory,
+  saptuneStatusFactory,
+} from '@lib/test-utils/factories';
 
 describe('Hosts reducer', () => {
   it('should update the host', () => {
@@ -165,6 +170,25 @@ describe('Hosts reducer', () => {
 
     const expectedState = {
       hosts: [{ ...host1, health: newHealth }, host2],
+    };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update health details for a host', () => {
+    const host1 = hostFactory.build();
+    const host2 = hostFactory.build();
+    const initialState = { hosts: [host1, host2] };
+
+    const newHealthDetails = hostHealthDetailsFactory.build();
+
+    const action = updateHostHealthDetails({
+      id: host1.id,
+      health_details: newHealthDetails,
+    });
+
+    const expectedState = {
+      hosts: [{ ...host1, health_details: newHealthDetails }, host2],
     };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);
