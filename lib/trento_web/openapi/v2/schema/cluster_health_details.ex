@@ -6,7 +6,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.ClusterHealthDetails do
 
   require OpenApiSpex
 
-  alias TrentoWeb.OpenApi.V2.Schema.HealthValueDetails
+  alias TrentoWeb.OpenApi.V1.Schema.HealthValueDetails
 
   OpenApiSpex.schema(
     %{
