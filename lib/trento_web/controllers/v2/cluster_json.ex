@@ -3,17 +3,19 @@
 
 defmodule TrentoWeb.V2.ClusterJSON do
   alias Trento.Clusters.ValueObjects.SapInstance
+  alias Trento.Support.StructHelper
 
   def clusters(%{clusters: clusters}), do: Enum.map(clusters, &cluster(%{cluster: &1}))
 
   def cluster(%{cluster: cluster}) do
     cluster
-    |> Map.from_struct()
+    |> StructHelper.to_atomized_map()
     |> Map.delete(:deregistered_at)
     |> Map.delete(:hosts)
     |> Map.delete(:__meta__)
     |> adapt_sids()
     |> adapt_resources()
+    |> remove_reason_from_health_details()
   end
 
   def cluster_registered(%{cluster: cluster}), do: Map.delete(cluster(%{cluster: cluster}), :tags)
@@ -30,6 +32,13 @@ defmodule TrentoWeb.V2.ClusterJSON do
 
   def cluster_health_changed(%{cluster: %{id: id, name: name, health: health}}),
     do: %{cluster_id: id, name: name, health: health}
+
+  def cluster_health_details_changed(data) do
+    data
+    |> StructHelper.to_atomized_map()
+    |> remove_reason_from_health_details()
+    |> Map.take([:cluster_id, :health_details])
+  end
 
   def cluster_stale_changed(%{cluster: %{id: id, stale_at: stale_at}}),
     do: %{id: id, stale_at: stale_at}
@@ -80,8 +89,18 @@ defmodule TrentoWeb.V2.ClusterJSON do
   end
 
   defp remove_sid_from_resources(resources) do
-    # Cannot use Map.from_struct to remove __struct__
-    # as the object can be loaded from the db already as map
-    Enum.map(resources, &Map.drop(&1, [:__struct__, :sid]))
+    Enum.map(resources, &Map.drop(&1, [:sid]))
+  end
+
+  # We don't expose reason for now. Remove this function once we start
+  # using :reason.
+  defp remove_reason_from_health_details(%{health_details: nil} = data), do: data
+
+  defp remove_reason_from_health_details(data) do
+    Map.update!(data, :health_details, fn health_details ->
+      for {key, details} <- health_details, into: %{} do
+        {key, Map.delete(details, :reason)}
+      end
+    end)
   end
 end
