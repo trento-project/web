@@ -48,6 +48,12 @@ export default {
         type: 'text',
       },
     },
+    healthDetails: {
+      description: 'Detailed health status breakdown',
+      control: {
+        type: 'object',
+      },
+    },
   },
 };
 
@@ -179,5 +185,32 @@ export const ExtraLarge = {
     health: 'passing',
     size: 'xl',
     isLink: false,
+  },
+};
+
+export const WithHealthDetails = {
+  args: {
+    ...Default.args,
+    health: 'passing',
+    size: 'xl',
+    healthDetails: {
+      checks_health: { value: 'passing' },
+      sbd_health: { value: 'passing' },
+      replication_health: { value: 'warning' },
+    },
+  },
+};
+
+export const StaleWithHealthDetails = {
+  args: {
+    ...Default.args,
+    health: 'passing',
+    size: 'xl',
+    healthDetails: {
+      checks_health: { value: 'passing' },
+      sbd_health: { value: 'passing' },
+      replication_health: { value: 'warning' },
+    },
+    staleAt: '2026-06-15T10:30:00Z',
   },
 };

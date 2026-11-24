@@ -16,15 +16,15 @@ import Tooltip from '@common/Tooltip';
  * added signifying that the state indicated by the original icon is
  * stale.  In addition to that, this component adds a Tooltip showing
  * since when the state is stale. The timezone for the staleness
- * message needs to be provided with the `timezone` property. The text
- * before the staleness info can be configured by `tooltipText`
- * property.
+ * message needs to be provided with the `timezone` property. The
+ * content before the staleness info can be configured by
+ * `tooltipContent` property.
  */
 function StaleIconWrapper(WrappedIcon) {
   function StaleAugmentedHealthIcon({
     staleAt,
     tooltipEnabled = true,
-    tooltipText = '',
+    tooltipContent = null,
     timezone = 'Etc/UTC',
     size = 'm',
     className = '',
@@ -37,29 +37,32 @@ function StaleIconWrapper(WrappedIcon) {
     const fillColor =
       className.split(' ').find((cls) => cls.startsWith('fill-')) ??
       'fill-gray-500';
-    const tooltipContent = (
-      <span className="block text-center">
-        {tooltipText}
-        {staleAt && tooltipText && <br />}
-        {staleAt && tooltipText && '('}
-        {staleAt && `Stale since ${formatDateTime(staleAt, timezone)}`}
-        {staleAt && tooltipText && ')'}
-      </span>
+    const tooltipComputedContent = (
+      <div>
+        {tooltipContent}
+        {staleAt && (
+          <span className="block text-center">
+            {tooltipContent && '('}
+            {`Stale since ${formatDateTime(staleAt, timezone)}`}
+            {tooltipContent && ')'}
+          </span>
+        )}
+      </div>
     );
 
     return (
-      <div
-        className="flex items-center mx-1"
-        role="img"
-        aria-label={`${ariaLabel}${staleAt ? ' Stale' : ''}`}
-        {...containerProps}
-        {...(staleAt && { 'data-stale': '' })}
+      <Tooltip
+        content={tooltipComputedContent}
+        place="top"
+        isEnabled={tooltipEnabled}
+        wrap={false}
       >
-        <Tooltip
-          content={tooltipContent}
-          place="top"
-          isEnabled={tooltipEnabled}
-          wrap={false}
+        <div
+          className="flex items-center mx-1"
+          role="img"
+          aria-label={`${ariaLabel}${staleAt ? ' Stale' : ''}`}
+          {...containerProps}
+          {...(staleAt && { 'data-stale': '' })}
         >
           <div className={classNames('relative', { 'mx-auto': centered })}>
             <WrappedIcon
@@ -74,8 +77,8 @@ function StaleIconWrapper(WrappedIcon) {
               />
             )}
           </div>
-        </Tooltip>
-      </div>
+        </div>
+      </Tooltip>
     );
   }
 

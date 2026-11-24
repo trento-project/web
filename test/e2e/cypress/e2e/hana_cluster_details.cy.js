@@ -22,6 +22,11 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.expectedClusterHealthIsDisplayedInHeader();
     });
 
+    it('should have expected health details tooltip in header', () => {
+      hanaClusterDetailsPage.mouseOverClusterHealth();
+      hanaClusterDetailsPage.healthTooltipIsDisplayed();
+    });
+
     it('should have expected provider', () => {
       hanaClusterDetailsPage.expectedProviderIsDisplayed('hana');
     });

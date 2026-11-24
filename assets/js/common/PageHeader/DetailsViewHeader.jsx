@@ -11,6 +11,7 @@ function DetailsViewHeader({
   staleAt,
   timezone,
   healthAriaLabelPrefix,
+  healthDetails = null,
   children,
 }) {
   return (
@@ -22,6 +23,7 @@ function DetailsViewHeader({
           staleAt={staleAt}
           timezone={timezone}
           ariaLabelPrefix={healthAriaLabelPrefix}
+          healthDetails={healthDetails}
         />
       </div>
       <PageHeader className={className}>
