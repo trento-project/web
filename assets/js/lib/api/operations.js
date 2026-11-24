@@ -34,6 +34,16 @@ export const requestDatabaseBulkOperation = (databaseIDs, operation, params) =>
     ...(!isEmpty(params) && { params }),
   });
 
+export const requestSapSystemBulkOperation = (
+  sapSystemIDs,
+  operation,
+  params
+) =>
+  post(`/sap_systems/operations/${operation}/bulk`, {
+    sap_system_ids: sapSystemIDs,
+    ...(!isEmpty(params) && { params }),
+  });
+
 export const requestSapSystemOperation = (sapSystemID, operation, params) =>
   post(`/sap_systems/${sapSystemID}/operations/${operation}`, params);
 
