@@ -59,6 +59,18 @@ defmodule Trento.ChecksTest do
       end
     end
 
+    test "should store the time of each request, not the start of the run" do
+      %{id: host_id} = insert(:host)
+
+      expect(DateService.Mock, :utc_now, fn -> @now end)
+      expect(DateService.Mock, :utc_now, fn -> ~U[2026-03-02 10:00:40.000000Z] end)
+
+      assert_requested(:host, [host_id])
+
+      assert %ChecksExecutionRequest{last_requested_at: ~U[2026-03-02 10:00:40.000000Z]} =
+               Repo.get!(ChecksExecutionRequest, host_id)
+    end
+
     test "should request only the targets of the given type" do
       %{id: host_id} = insert(:host)
       %{id: cluster_id} = insert(:cluster)

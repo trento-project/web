@@ -34,23 +34,26 @@ defmodule Trento.Checks do
   def request_due_executions(target_type, date_service \\ DateService) do
     {:ok, settings} = Settings.get_checks_frequency_settings()
 
-    request_due_executions(target_type, settings, date_service.utc_now())
+    request_due_executions(target_type, settings, date_service)
   end
 
-  defp request_due_executions(_target_type, %ChecksFrequencySettings{enabled: false}, _now),
+  defp request_due_executions(_target_type, %ChecksFrequencySettings{enabled: false}, _),
     do: :ok
 
   defp request_due_executions(
          target_type,
          %ChecksFrequencySettings{enabled: true, frequency: frequency},
-         now
+         date_service
        ) do
     requested_before =
-      DateTime.add(now, @due_tolerance_seconds - Frequency.to_minutes(frequency) * 60)
+      DateTime.add(
+        date_service.utc_now(),
+        @due_tolerance_seconds - Frequency.to_minutes(frequency) * 60
+      )
 
     target_type
     |> due_targets(requested_before)
-    |> Enum.each(&request_execution(target_type, &1, now))
+    |> Enum.each(&request_execution(target_type, &1, date_service))
   end
 
   defp due_targets(:host, requested_before) do
@@ -79,14 +82,14 @@ defmodule Trento.Checks do
           (is_nil(r.last_requested_at) or r.last_requested_at <= ^requested_before)
   end
 
-  defp request_execution(target_type, target_id, now) do
+  defp request_execution(target_type, target_id, date_service) do
     case request_checks_execution(target_type, target_id) do
       :ok ->
         Repo.insert!(
           %ChecksExecutionRequest{
             target_id: target_id,
             target_type: target_type,
-            last_requested_at: now
+            last_requested_at: date_service.utc_now()
           },
           on_conflict: {:replace, [:last_requested_at, :updated_at]},
           conflict_target: :target_id
