@@ -18,7 +18,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
 
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
-  alias Trento.Hosts.Projections.SlesSubscriptionReadModel
+  alias Trento.Hosts.Projections.{HostHealthDetails, SlesSubscriptionReadModel}
   alias Trento.Hosts.ValueObjects.SystemdUnit
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
   alias Trento.Tags.Tag
@@ -42,6 +42,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
     field :stale_at, :utc_datetime_usec
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    embeds_one :health_details, HostHealthDetails, on_replace: :update
     field :selected_checks, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :provider_data, :map
@@ -88,7 +89,8 @@ defmodule Trento.Hosts.Projections.HostReadModel do
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(host, attrs) do
     host
-    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:systemd_units])
+    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:systemd_units, :health_details])
     |> cast_embed(:systemd_units)
+    |> cast_embed(:health_details)
   end
 end
