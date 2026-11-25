@@ -20,6 +20,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     ApplicationInstanceStatusChanged,
+    SapSystemDatabaseHealthChanged,
     SapSystemDataMarkedInSync,
     SapSystemDataMarkedStale,
     SapSystemDeregistered,
@@ -33,10 +34,16 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
+    SapSystemHealthDetails,
     SapSystemReadModel
   }
 
   alias Trento.Repo
+  alias Trento.Services.HealthService
+
+  require Trento.Enums.Health, as: Health
+
+  import Ecto.Query
 
   project(
     %SapSystemRegistered{
@@ -46,21 +53,29 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       db_host: db_host,
       health: health,
       ensa_version: ensa_version,
-      database_id: database_id
+      database_id: database_id,
+      database_health: database_health
     },
     fn multi ->
-      changeset =
+      multi
+      |> Ecto.Multi.run(:instances_health, fn repo, _changes ->
+        {:ok, compute_instances_health(repo, sap_system_id)}
+      end)
+      |> Ecto.Multi.insert(:sap_system, fn %{instances_health: instances_health} ->
         SapSystemReadModel.changeset(%SapSystemReadModel{}, %{
           id: sap_system_id,
           sid: sid,
           tenant: tenant,
           db_host: db_host,
           health: health,
+          health_details: %{
+            instances_health: %{value: instances_health, reason: ""},
+            database_health: %{value: database_health || Health.unknown(), reason: ""}
+          },
           ensa_version: ensa_version,
           database_id: database_id
         })
-
-      Ecto.Multi.insert(multi, :sap_system, changeset)
+      end)
     end
   )
 
@@ -76,6 +91,20 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         |> SapSystemReadModel.changeset(%{health: health})
 
       Ecto.Multi.update(multi, :sap_system, changeset)
+    end
+  )
+
+  project(
+    %SapSystemDatabaseHealthChanged{
+      sap_system_id: sap_system_id,
+      database_health: database_health
+    },
+    fn multi ->
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, sap_system_id, %{
+          database_health: %{value: database_health}
+        })
+      end)
     end
   )
 
@@ -108,7 +137,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           stale_at: nil
         })
 
-      Ecto.Multi.insert(multi, :application_instance, changeset)
+      multi
+      |> Ecto.Multi.insert(:application_instance, changeset)
+      |> Ecto.Multi.run(:health_details, fn repo, _changes ->
+        update_instances_health_details(repo, sap_system_id)
+      end)
     end
   )
 
@@ -150,7 +183,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         )
         |> ApplicationInstanceReadModel.changeset(%{status: status})
 
-      Ecto.Multi.update(multi, :application_instance, changeset)
+      multi
+      |> Ecto.Multi.update(:application_instance, changeset)
+      |> Ecto.Multi.run(:health_details, fn repo, _changes ->
+        update_instances_health_details(repo, sap_system_id)
+      end)
     end
   )
 
@@ -293,20 +330,28 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       sap_system_id: sap_system_id,
       tenant: tenant,
       db_host: db_host,
-      health: health
+      health: health,
+      database_health: database_health
     },
     fn multi ->
-      changeset =
+      multi
+      |> Ecto.Multi.run(:instances_health, fn repo, _changes ->
+        {:ok, compute_instances_health(repo, sap_system_id)}
+      end)
+      |> Ecto.Multi.update(:sap_system, fn %{instances_health: instances_health} ->
         SapSystemReadModel
         |> Repo.get!(sap_system_id)
         |> SapSystemReadModel.changeset(%{
           tenant: tenant,
           db_host: db_host,
           health: health,
+          health_details: %{
+            instances_health: %{value: instances_health, reason: ""},
+            database_health: %{value: database_health || Health.unknown(), reason: ""}
+          },
           deregistered_at: nil
         })
-
-      Ecto.Multi.update(multi, :sap_system, changeset)
+      end)
     end
   )
 
@@ -324,7 +369,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           host_id: host_id
         )
 
-      Ecto.Multi.delete(multi, :application_instance, deregistered_instance)
+      multi
+      |> Ecto.Multi.delete(:application_instance, deregistered_instance)
+      |> Ecto.Multi.run(:health_details, fn repo, _changes ->
+        update_instances_health_details(repo, sap_system_id)
+      end)
     end
   )
 
@@ -384,15 +433,33 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
 
   @impl true
   def after_update(
-        %ApplicationInstanceRegistered{},
+        %SapSystemDatabaseHealthChanged{sap_system_id: sap_system_id},
         _,
-        %{application_instance: %ApplicationInstanceReadModel{} = instance}
+        %{health_details: %SapSystemHealthDetails{} = health_details}
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "sap_system_health_details_changed",
+      SapSystemJSON.sap_system_health_details_changed(%{
+        id: sap_system_id,
+        health_details: health_details
+      })
+    )
+  end
+
+  @impl true
+  def after_update(
+        %ApplicationInstanceRegistered{sap_system_id: sap_system_id},
+        _,
+        %{application_instance: %ApplicationInstanceReadModel{} = instance} = changes
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_registered",
       SapSystemJSON.application_instance(%{instance: instance})
     )
+
+    maybe_broadcast_health_details_changed(sap_system_id, changes)
   end
 
   @impl true
@@ -425,16 +492,14 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
 
   @impl true
   def after_update(
-        %ApplicationInstanceStatusChanged{},
+        %ApplicationInstanceStatusChanged{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          status: status
+        },
         _,
-        %{
-          application_instance: %ApplicationInstanceReadModel{
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number,
-            status: status
-          }
-        }
+        changes
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
@@ -448,6 +513,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         }
       })
     )
+
+    maybe_broadcast_health_details_changed(sap_system_id, changes)
   end
 
   @impl true
@@ -592,7 +659,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         _,
         %{
           application_instance: %ApplicationInstanceReadModel{sid: sid}
-        }
+        } = changes
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
@@ -604,6 +671,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         sid: sid
       })
     )
+
+    maybe_broadcast_health_details_changed(sap_system_id, changes)
   end
 
   @impl true
@@ -651,4 +720,59 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
 
   @impl true
   def after_update(_, _, _), do: :ok
+
+  defp update_health_details(repo, sap_system_id, health_details_attrs) do
+    case repo.get(SapSystemReadModel, sap_system_id) do
+      nil ->
+        {:ok, nil}
+
+      %SapSystemReadModel{} = sap_system ->
+        changeset =
+          SapSystemReadModel.changeset(sap_system, %{
+            health_details: health_details_attrs
+          })
+
+        if changeset.changes != %{} do
+          {:ok, updated_sap_system} = repo.update(changeset)
+          {:ok, updated_sap_system.health_details}
+        else
+          {:ok, nil}
+        end
+    end
+  end
+
+  defp compute_instances_health(repo, sap_system_id) do
+    instance_statuses =
+      repo.all(
+        from(ai in ApplicationInstanceReadModel,
+          where: ai.sap_system_id == ^sap_system_id,
+          select: %{status: ai.status}
+        )
+      )
+
+    HealthService.compute_instances_health(instance_statuses)
+  end
+
+  defp update_instances_health_details(repo, sap_system_id) do
+    instances_health = compute_instances_health(repo, sap_system_id)
+
+    update_health_details(repo, sap_system_id, %{
+      instances_health: %{value: instances_health}
+    })
+  end
+
+  defp maybe_broadcast_health_details_changed(sap_system_id, %{
+         health_details: %SapSystemHealthDetails{} = health_details
+       }) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "sap_system_health_details_changed",
+      SapSystemJSON.sap_system_health_details_changed(%{
+        id: sap_system_id,
+        health_details: health_details
+      })
+    )
+  end
+
+  defp maybe_broadcast_health_details_changed(_, _), do: :ok
 end

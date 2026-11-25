@@ -10,7 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.SapSystems.Enums.Status, as: Status
 
-  alias TrentoWeb.OpenApi.V1.Schema.{Database, ResourceHealth, Tags}
+  alias TrentoWeb.OpenApi.V1.Schema.{Database, ResourceHealth, SapSystemHealthDetails, Tags}
 
   defmodule ApplicationInstance do
     @moduledoc false
@@ -179,6 +179,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             example: "10.1.1.5"
           },
           health: ResourceHealth,
+          health_details: SapSystemHealthDetails,
           ensa_version: %Schema{
             type: :string,
             enum: EnsaVersion.values(),
@@ -231,6 +232,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           tenant: "PRD",
           db_host: "10.1.1.5",
           health: "passing",
+          health_details: %{
+            instances_health: %{value: "passing"},
+            database_health: %{value: "passing"}
+          },
           ensa_version: "ensa1",
           application_instances: [],
           database_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
@@ -264,6 +269,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             tenant: "PRD",
             db_host: "10.1.1.5",
             health: "passing",
+            health_details: %{
+              instances_health: %{value: "passing"},
+              database_health: %{value: "passing"}
+            },
             ensa_version: "ensa1",
             application_instances: [],
             database_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
