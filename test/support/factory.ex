@@ -1046,7 +1046,7 @@ defmodule Trento.Factory do
   def sap_system_updated_event_factory do
     %SapSystemUpdated{
       sap_system_id: Faker.UUID.v4(),
-      ensa_version: EnsaVersion.values()
+      ensa_version: Enum.random(EnsaVersion.values())
     }
   end
 

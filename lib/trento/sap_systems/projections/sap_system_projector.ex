@@ -41,8 +41,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
   alias Trento.Repo
   alias Trento.Services.HealthService
 
-  require Trento.Enums.Health, as: Health
-
   import Ecto.Query
 
   project(

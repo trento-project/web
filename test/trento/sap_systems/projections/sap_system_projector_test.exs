@@ -63,7 +63,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         database_health: database_health
       )
 
-    insert(:application_instance_registered_event,
+    insert(:application_instance_event,
       sap_system_id: event.sap_system_id,
       status: Status.green()
     )
