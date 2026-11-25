@@ -44,6 +44,7 @@ import {
   DATABASE_TYPE,
   getEnsaVersionLabel,
   getSapSystemType,
+  getDefaultHealthDetails,
 } from '@lib/model/sapSystems';
 import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
 import { STALE_ROW } from '@lib/tables';
@@ -298,6 +299,10 @@ export function GenericSystemDetails({
           <DetailsViewHeader
             className="font-bold"
             health={system.health}
+            healthDetails={
+              system.health_details ||
+              (type === APPLICATION_TYPE ? getDefaultHealthDetails() : null)
+            }
             staleAt={system.stale_at}
             timezone={userTimezone}
             healthAriaLabelPrefix="System"

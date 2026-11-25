@@ -52,6 +52,9 @@ export const visit = () => {
 export const visitNonExistentSapSystem = () =>
   basePage.visit('/sap_systems/other', '', { failOnStatusCode: false });
 
+export const mouseOverSystemHealth = () =>
+  cy.findByRole('img', { name: /system health/i }).trigger('mouseover');
+
 // UI Validations
 
 export const validatePageUrl = (systemId = selectedSystem.Id) =>
@@ -62,6 +65,17 @@ export const pageTitleHealthIsCorrectlyDisplayed = (
 ) => {
   cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
   basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', health);
+};
+
+export const healthTooltipIsDisplayed = () => {
+  const healthDetailsLabels = [
+    'Overall Instance Status',
+    'Aggregated Database Health',
+  ];
+
+  return cy.wrap(healthDetailsLabels).each((label) => {
+    cy.get('.rc-tooltip').should('be.visible').and('contain', label);
+  });
 };
 
 export const sapSystemHasExpectedName = () =>

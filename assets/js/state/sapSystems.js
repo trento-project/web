@@ -59,6 +59,17 @@ export const sapSystemsListSlice = createSlice({
         return sapSystem;
       });
     },
+    updateSapSystemHealthDetails: (
+      state,
+      { payload: { id, health_details } }
+    ) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === id) {
+          sapSystem.health_details = health_details;
+        }
+        return sapSystem;
+      });
+    },
     addTagToSAPSystem: (state, { payload: { id, tags } }) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {
         if (sapSystem.id === id) {
@@ -152,6 +163,8 @@ export const sapSystemsListSlice = createSlice({
 
 export const SAP_SYSTEM_REGISTERED = 'SAP_SYSTEM_REGISTERED';
 export const SAP_SYSTEM_HEALTH_CHANGED = 'SAP_SYSTEM_HEALTH_CHANGED';
+export const SAP_SYSTEM_HEALTH_DETAILS_CHANGED =
+  'SAP_SYSTEM_HEALTH_DETAILS_CHANGED';
 export const SAP_SYSTEM_STALE_CHANGED = 'SAP_SYSTEM_STALE_CHANGED';
 export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
 export const SAP_SYSTEM_RESTORED = 'SAP_SYSTEM_RESTORED';
@@ -172,6 +185,9 @@ export const DEREGISTER_APPLICATION_INSTANCE =
 
 export const sapSystemRegistered = createAction(SAP_SYSTEM_REGISTERED);
 export const sapSystemHealthChanged = createAction(SAP_SYSTEM_HEALTH_CHANGED);
+export const sapSystemHealthDetailsChanged = createAction(
+  SAP_SYSTEM_HEALTH_DETAILS_CHANGED
+);
 export const sapSystemStaleChanged = createAction(SAP_SYSTEM_STALE_CHANGED);
 export const sapSystemDeregistered = createAction(SAP_SYSTEM_DEREGISTERED);
 export const sapSystemRestored = createAction(SAP_SYSTEM_RESTORED);
@@ -206,6 +222,7 @@ export const {
   upsertApplicationInstances,
   removeApplicationInstance,
   updateSapSystemHealth,
+  updateSapSystemHealthDetails,
   updateApplicationInstanceHost,
   updateApplicationInstanceStatus,
   addTagToSAPSystem,

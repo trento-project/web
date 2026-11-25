@@ -183,6 +183,16 @@ describe('HealthIcon', () => {
       },
       ['Saptune Tuning Status: Passing', 'Relevant Patches: Warning'],
     ],
+    [
+      {
+        instances_health: { value: 'passing' },
+        database_health: { value: 'warning' },
+      },
+      [
+        'Overall Instance Status: Passing',
+        'Aggregated Database Health: Warning',
+      ],
+    ],
   ])(
     'shows tooltip with paired health details correctly',
     async (healthDetails, expectedTexts) => {
