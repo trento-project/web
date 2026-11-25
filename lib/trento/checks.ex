@@ -45,6 +45,7 @@ defmodule Trento.Checks do
   @spec delete_stale_execution_requests(module()) :: non_neg_integer()
   def delete_stale_execution_requests(date_service \\ DateService) do
     started_at = date_service.utc_now()
+    # get_all_hosts() and get_all_clusters() return all non deregistered entries
     host_ids = Enum.map(Hosts.get_all_hosts(), & &1.id)
     cluster_ids = Enum.map(Clusters.get_all_clusters(), & &1.id)
 
