@@ -24,3 +24,8 @@ export const getSapSystemType = (applicationInstances) =>
     .map((item) => (item === 'J2EE' ? 'JAVA' : item))
     .toSorted()
     .join('+');
+
+export const getDefaultHealthDetails = () => ({
+  instances_health: { value: 'unknown' },
+  database_health: { value: 'unknown' },
+});

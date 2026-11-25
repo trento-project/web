@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React from 'react';
+import { capitalize } from 'lodash';
 import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -25,6 +26,7 @@ import {
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
+  sapSystemHealthDetailsFactory,
   databaseInstanceFactory,
   databaseFactory,
 } from '@lib/test-utils/factories';
@@ -151,6 +153,38 @@ describe('GenericSystemDetails', () => {
     expect(screen.getByText('Tenant').nextSibling).toHaveTextContent(
       sapSystem.tenant
     );
+  });
+
+  it('should display health details tooltip on hover', async () => {
+    const user = userEvent.setup();
+    const title = faker.string.uuid();
+    const healthDetails = sapSystemHealthDetailsFactory.build();
+    const sapSystem = sapSystemFactory.build({
+      health_details: healthDetails,
+      hosts: hostFactory.buildList(2),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={title}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    const healthIcon = screen.getByRole('img', { name: /system health/i });
+    await user.hover(healthIcon);
+
+    expect(
+      screen.getByText(
+        `Overall Instance Status: ${capitalize(healthDetails.instances_health.value)}`
+      )
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        `Database Health: ${capitalize(healthDetails.database_health.value)}`
+      )
+    ).toBeVisible();
   });
 
   it('should render a not found label if system is not there', () => {

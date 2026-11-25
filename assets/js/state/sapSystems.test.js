@@ -3,6 +3,7 @@
 
 import sapSystemsReducer, {
   removeSAPSystem,
+  updateSapSystemHealthDetails,
   upsertApplicationInstances,
   updateApplicationInstanceHost,
   updateApplicationInstanceStatus,
@@ -16,6 +17,7 @@ import sapSystemsReducer, {
 } from '@state/sapSystems';
 import {
   sapSystemFactory,
+  sapSystemHealthDetailsFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories/sapSystems';
 import { databaseInstanceFactory } from '@lib/test-utils/factories/databases';
@@ -288,6 +290,27 @@ describe('SAP Systems reducer', () => {
           ...instance,
           deregistering: false,
         },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update health details for a SAP system', () => {
+    const [sapSystem1, sapSystem2] = sapSystemFactory.buildList(2);
+    const initialState = { sapSystems: [sapSystem1, sapSystem2] };
+
+    const newHealthDetails = sapSystemHealthDetailsFactory.build();
+
+    const action = updateSapSystemHealthDetails({
+      id: sapSystem1.id,
+      health_details: newHealthDetails,
+    });
+
+    const expectedState = {
+      sapSystems: [
+        { ...sapSystem1, health_details: newHealthDetails },
+        sapSystem2,
       ],
     };
 

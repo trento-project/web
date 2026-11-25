@@ -38,6 +38,11 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   stale_at: null,
 }));
 
+export const sapSystemHealthDetailsFactory = Factory.define(() => ({
+  instances_health: { value: healthEnum() },
+  database_health: { value: healthEnum() },
+}));
+
 export const sapSystemFactory = Factory.define(({ params }) => {
   const id = params.id || faker.string.uuid();
   const sid = params.sid || generateSid();
@@ -56,6 +61,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     deregistered_at: null,
     ensa_version: ensaVersion(),
     health: healthEnum(),
+    health_details: sapSystemHealthDetailsFactory.build(params.health_details),
     id,
     sid,
     tags: [],
