@@ -30,6 +30,7 @@ export const checksFrequencySettingsSlice = createSlice({
       state.settings = settings;
     },
     checksFrequencySettingsUpdated: (state, { payload: settings }) => {
+      state.networkError = false;
       state.settings = settings;
     },
     setChecksFrequencySettingsErrors: (state, { payload: errors }) => {

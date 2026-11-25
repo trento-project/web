@@ -67,7 +67,7 @@ describe('ChecksFrequencySettings reducer', () => {
     });
   });
 
-  it('should store the broadcast settings, keeping the request state', () => {
+  it('should store the broadcast settings and clear the network error, keeping the loading state', () => {
     const initialState = {
       loading: true,
       settings: {
@@ -75,7 +75,7 @@ describe('ChecksFrequencySettings reducer', () => {
         frequency: { value: 5, unit: 'minute' },
         enforced_from_env: false,
       },
-      networkError: false,
+      networkError: true,
       editing: true,
       errors: [],
     };
@@ -90,6 +90,7 @@ describe('ChecksFrequencySettings reducer', () => {
 
     expect(checksFrequencySettingsReducer(initialState, action)).toEqual({
       ...initialState,
+      networkError: false,
       settings,
     });
   });
