@@ -18,7 +18,10 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
     DatabaseReadModel
   }
 
-  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
+  alias Trento.SapSystems.Projections.{
+    ApplicationInstanceReadModel,
+    SapSystemHealthDetails
+  }
 
   alias Trento.Tags.Tag
 
@@ -33,6 +36,7 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
     field :tenant, :string
     field :db_host, :string
     field :health, Ecto.Enum, values: Health.values()
+    embeds_one :health_details, SapSystemHealthDetails, on_replace: :update
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
 
     belongs_to :database, DatabaseReadModel, type: :binary_id
@@ -57,6 +61,8 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(sap_system, attrs) do
-    cast(sap_system, attrs, __MODULE__.__schema__(:fields))
+    sap_system
+    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:health_details])
+    |> cast_embed(:health_details)
   end
 end

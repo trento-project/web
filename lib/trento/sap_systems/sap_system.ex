@@ -84,7 +84,6 @@ defmodule Trento.SapSystems.SapSystem do
     SapSystemUpdated
   }
 
-  alias Trento.SapSystems.Services.HealthService, as: SapSystemsHealthService
   alias Trento.Services.HealthService
 
   @required_fields []
@@ -827,7 +826,7 @@ defmodule Trento.SapSystems.SapSystem do
     if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRestored{
         db_host: db_host,
-        health: SapSystemsHealthService.derive_health_from_status(status),
+        health: HealthService.derive_health_from_status(status),
         sap_system_id: sap_system_id,
         tenant: tenant,
         database_health: database_health,
@@ -881,7 +880,7 @@ defmodule Trento.SapSystems.SapSystem do
         sid: sid,
         tenant: tenant,
         db_host: db_host,
-        health: SapSystemsHealthService.derive_health_from_status(status),
+        health: HealthService.derive_health_from_status(status),
         ensa_version: ensa_version,
         database_id: database_id,
         database_health: database_health,
@@ -930,13 +929,8 @@ defmodule Trento.SapSystems.SapSystem do
          database_health: database_health,
          instances: instances
        }) do
-    new_health =
-      instances
-      |> Enum.map(fn %{status: status} ->
-        SapSystemsHealthService.derive_health_from_status(status)
-      end)
-      |> Kernel.++([database_health])
-      |> HealthService.compute_aggregated_health()
+    instances_health = HealthService.compute_instances_health(instances)
+    new_health = HealthService.compute_aggregated_health([instances_health, database_health])
 
     if new_health != health do
       %SapSystemHealthChanged{

@@ -5,7 +5,8 @@ defmodule TrentoWeb.V1.SapSystemJSON do
   import TrentoWeb.V1.DatabaseJSON,
     only: [database_instance: 1]
 
-  alias Trento.SapSystems.Services.HealthService
+  alias Trento.Services.HealthService
+  alias Trento.Support.StructHelper
 
   def application_instance(%{instance: instance}) do
     instance
@@ -13,8 +14,11 @@ defmodule TrentoWeb.V1.SapSystemJSON do
     |> Map.delete(:__meta__)
     |> Map.delete(:host)
     |> Map.delete(:sap_system)
-    |> HealthService.add_deprecated_health()
+    |> add_deprecated_health()
   end
+
+  defp add_deprecated_health(%{status: status} = instance),
+    do: Map.put(instance, :health, HealthService.derive_health_from_status(status))
 
   def application_instance_moved(%{instance_moved: instance_moved}), do: instance_moved
 
@@ -53,6 +57,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
       :application_instances,
       rendered_application_instances
     )
+    |> Map.update(:health_details, nil, &render_health_details/1)
   end
 
   def sap_system_registered(%{
@@ -70,6 +75,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
     |> Map.put(:database_sid, database_sid)
     |> Map.put(:database_health, database_health)
     |> Map.put(:database_stale_at, database_stale_at)
+    |> Map.update(:health_details, nil, &render_health_details/1)
   end
 
   def sap_system_restored(%{sap_system: sap_system}), do: sap_system(%{sap_system: sap_system})
@@ -78,6 +84,13 @@ defmodule TrentoWeb.V1.SapSystemJSON do
     do: %{id: id, ensa_version: ensa_version}
 
   def sap_system_health_changed(%{health: health}), do: health
+
+  def sap_system_health_details_changed(data) do
+    data
+    |> StructHelper.to_atomized_map()
+    |> Map.update!(:health_details, &render_health_details/1)
+    |> Map.take([:id, :health_details])
+  end
 
   def sap_system_database_health_changed(%{id: id, database_health: database_health}),
     do: %{id: id, database_health: database_health}
@@ -139,4 +152,13 @@ defmodule TrentoWeb.V1.SapSystemJSON do
         id: id,
         stale_at: stale_at
       }
+
+  defp render_health_details(nil), do: nil
+
+  defp render_health_details(health_details) do
+    health_details
+    |> StructHelper.to_atomized_map()
+    |> Enum.map(fn {key, details} -> {key, Map.delete(details, :reason)} end)
+    |> Map.new()
+  end
 end
