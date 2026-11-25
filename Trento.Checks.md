@@ -3,6 +3,16 @@
 
 Periodic checks executions of the hosts and clusters.
 
+# `delete_stale_execution_requests`
+
+```elixir
+@spec delete_stale_execution_requests(module()) :: non_neg_integer()
+```
+
+Deletes the requests of the hosts and clusters that are deregistered or removed, and
+returns how many it deleted. The requests made since it started are kept, because their
+target was restored in the meantime.
+
 # `request_due_executions`
 
 ```elixir

@@ -362,6 +362,7 @@ Trento.Infrastructure.ComponentVersions.md
 Trento.Infrastructure.Discovery.AMQP.Publisher.md
 Trento.Infrastructure.Jobs.ActivityLogCleaningJob.md
 Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob.md
+Trento.Infrastructure.Jobs.ChecksExecutionRequestsCleaningJob.md
 Trento.Infrastructure.Jobs.ClustersChecksExecutionJob.md
 Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob.md
 Trento.Infrastructure.Jobs.HostsChecksExecutionJob.md

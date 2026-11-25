@@ -782,6 +782,8 @@ delegates to `Sagents.AgentsDynamicSupervisor`.
 
   - [Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob](Trento.Infrastructure.Jobs.ApiKeyExpirationAlertJob.md): Sends an alert when the API key is about to expire or expired.
 
+  - [Trento.Infrastructure.Jobs.ChecksExecutionRequestsCleaningJob](Trento.Infrastructure.Jobs.ChecksExecutionRequestsCleaningJob.md): Deletes the checks execution requests of the deregistered and removed hosts and clusters.
+
   - [Trento.Infrastructure.Jobs.ClustersChecksExecutionJob](Trento.Infrastructure.Jobs.ClustersChecksExecutionJob.md): Requests the due checks executions of the clusters, see `Trento.Checks`.
 
   - [Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob](Trento.Infrastructure.Jobs.DiscoveryEventsPruningJob.md): Deletes the discovery events older than `older_than` days.

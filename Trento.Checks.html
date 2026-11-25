@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-D7070CE1.js"></script>
+    <script defer src="dist/sidebar_items-4E0A79B4.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -137,6 +137,18 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#delete_stale_execution_requests/1" data-no-tooltip="" translate="no">delete_stale_execution_requests(date_service \\ DateService)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Deletes the requests of the hosts and clusters that are deregistered or removed, and
+returns how many it deleted. The requests made since it started are kept, because their
+target was restored in the meantime.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#request_due_executions/2" data-no-tooltip="" translate="no">request_due_executions(target_type, date_service \\ DateService)</a>
 
       </div>
@@ -162,6 +174,38 @@ retried at the next call.</p></div>
     </h2>
 
     <div class="functions-list">
+<section class="detail" id="delete_stale_execution_requests/1">
+
+    <span id="delete_stale_execution_requests/0"></span>
+
+  <div class="detail-header">
+    <a href="#delete_stale_execution_requests/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">delete_stale_execution_requests(date_service \\ DateService)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/checks.ex#L46" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> delete_stale_execution_requests(<a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">module</a>()) :: <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">non_neg_integer</a>()</pre>
+
+      </div>
+
+<p>Deletes the requests of the hosts and clusters that are deregistered or removed, and
+returns how many it deleted. The requests made since it started are kept, because their
+target was restored in the meantime.</p>
+  </section>
+</section>
 <section class="detail" id="request_due_executions/2">
 
     <span id="request_due_executions/1"></span>
