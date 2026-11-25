@@ -41,6 +41,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
   alias Trento.Repo
   alias Trento.Services.HealthService
 
+  require Trento.Enums.Health, as: Health
+
   import Ecto.Query
 
   project(
@@ -68,7 +70,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           health: health,
           health_details: %{
             instances_health: %{value: instances_health, reason: ""},
-            database_health: %{value: database_health, reason: ""}
+            database_health: %{value: database_health || Health.unknown(), reason: ""}
           },
           ensa_version: ensa_version,
           database_id: database_id
@@ -345,7 +347,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           health: health,
           health_details: %{
             instances_health: %{value: instances_health, reason: ""},
-            database_health: %{value: database_health, reason: ""}
+            database_health: %{value: database_health || Health.unknown(), reason: ""}
           },
           deregistered_at: nil
         })

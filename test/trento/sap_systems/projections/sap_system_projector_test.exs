@@ -109,6 +109,25 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     )
   end
 
+  test "should project a new SAP System when a legacy SapSystemRegistered event without database_health is received" do
+    event =
+      build(:sap_system_registered_event,
+        database_id: nil,
+        database_health: nil
+      )
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    %{
+      health_details: health_details
+    } = Repo.get!(SapSystemReadModel, event.sap_system_id)
+
+    assert %SapSystemHealthDetails{
+             instances_health: %HealthValueDetails{value: :unknown, reason: ""},
+             database_health: %HealthValueDetails{value: :unknown, reason: ""}
+           } = health_details
+  end
+
   test "should update the health of a SAP System when a SapSystemHealthChanged event is received" do
     %{id: sap_system_id} = insert(:sap_system)
     event = %SapSystemHealthChanged{sap_system_id: sap_system_id, health: :critical}
