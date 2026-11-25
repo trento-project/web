@@ -16,6 +16,7 @@ defmodule Trento.Infrastructure.Jobs.WorkersTest do
 
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
   alias Trento.ActivityLog.RetentionTime
+  alias Trento.Checks.ChecksExecutionRequest
   alias Trento.Checks.V1.ExecutionRequested
   alias Trento.Discovery.{DiscardedDiscoveryEvent, DiscoveryEvent}
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
@@ -24,6 +25,7 @@ defmodule Trento.Infrastructure.Jobs.WorkersTest do
   alias Trento.Infrastructure.Jobs.{
     ActivityLogCleaningJob,
     ApiKeyExpirationAlertJob,
+    ChecksExecutionRequestsCleaningJob,
     ClustersChecksExecutionJob,
     DiscoveryEventsPruningJob,
     HostsChecksExecutionJob,
@@ -35,6 +37,7 @@ defmodule Trento.Infrastructure.Jobs.WorkersTest do
   @workers [
     ActivityLogCleaningJob,
     ApiKeyExpirationAlertJob,
+    ChecksExecutionRequestsCleaningJob,
     ClustersChecksExecutionJob,
     DiscoveryEventsPruningJob,
     HostsChecksExecutionJob,
@@ -89,6 +92,18 @@ defmodule Trento.Infrastructure.Jobs.WorkersTest do
       end)
 
       assert :ok = perform_job(HostsChecksExecutionJob, %{})
+    end
+  end
+
+  describe "checks execution requests cleaning" do
+    test "should delete the requests of the deregistered targets" do
+      %{id: host_id} = insert(:host, deregistered_at: DateTime.utc_now())
+
+      insert(:checks_execution_request, target_id: host_id)
+
+      assert :ok = perform_job(ChecksExecutionRequestsCleaningJob, %{})
+
+      assert nil == Repo.get(ChecksExecutionRequest, host_id)
     end
   end
 
