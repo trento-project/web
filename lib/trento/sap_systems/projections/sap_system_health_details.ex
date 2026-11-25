@@ -12,7 +12,10 @@ defmodule Trento.SapSystems.Projections.SapSystemHealthDetails do
   alias Trento.Support.HealthValueDetails
 
   deftype do
-    embeds_one :instances_health, HealthValueDetails, on_replace: :update, defaults_to_struct: true
+    embeds_one :instances_health, HealthValueDetails,
+      on_replace: :update,
+      defaults_to_struct: true
+
     embeds_one :database_health, HealthValueDetails, on_replace: :update, defaults_to_struct: true
   end
 end

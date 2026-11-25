@@ -63,7 +63,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         database_health: database_health
       )
 
-    insert(:application_instance_event,
+    insert(:application_instance,
       sap_system_id: event.sap_system_id,
       status: Status.green()
     )
@@ -110,9 +110,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should project a new SAP System when a legacy SapSystemRegistered event without database_health is received" do
+    %{id: database_id} = insert(:database)
+
     event =
       build(:sap_system_registered_event,
-        database_id: nil,
+        database_id: database_id,
         database_health: nil
       )
 
