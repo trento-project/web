@@ -65,6 +65,7 @@ import {
 } from '@state/lastExecutions';
 
 import { operationCompleted } from '@state/runningOperations';
+import { checksFrequencySettingsUpdated } from '@state/checksFrequencySettings';
 
 import { userUpdated, userLocked, userDeleted } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
@@ -275,6 +276,13 @@ const operationEvents = [
   },
 ];
 
+const settingsEvents = [
+  {
+    name: 'checks_frequency_settings_updated',
+    action: checksFrequencySettingsUpdated,
+  },
+];
+
 const userEvents = [
   {
     name: 'user_updated',
@@ -342,6 +350,7 @@ export function* watchSocketEvents(socket) {
     fork(watchChannelEvents, socket, 'monitoring:databases', databaseEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
     fork(watchChannelEvents, socket, 'monitoring:operations', operationEvents),
+    fork(watchChannelEvents, socket, 'monitoring:settings', settingsEvents),
     fork(watchChannelEvents, socket, `users:${userID}`, userEvents),
     fork(
       watchChannelEvents,
