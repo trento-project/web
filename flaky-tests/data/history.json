@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-09-29T21:39:17Z",
-    "commit": "fd8b9f0dd3026c77bc06de47190ce3aa9cc7fe2f",
-    "run_id": "36632616614",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.TrentoWeb.AIAssistantChannelTest::test handle_in send_message/3 — access_token validation replies {-error, -unauthorized} when token sub does not match the socket user",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-29T22:04:30Z",
     "commit": "fd8b9f0dd3026c77bc06de47190ce3aa9cc7fe2f",
     "run_id": "36633831436",
@@ -5069,6 +5049,17 @@
     "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
     "metrics": {
       "completed_runs": 44,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-25T02:45:38Z",
+    "commit": "0d8c50d7a6c689d78065ffbfcbb6d712ca726a07",
+    "run_id": "45535237718",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
       "failed_runs": 0
     },
     "top_flaky_tests": []
