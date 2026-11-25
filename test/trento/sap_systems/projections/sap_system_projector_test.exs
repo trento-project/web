@@ -346,7 +346,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       |> Map.delete(:host)
 
     application_instance =
-      insert(:application_instance, sap_system_id: sap_system_id)
+      insert(:application_instance, sap_system_id: sap_system_id, status: Status.green())
       |> Map.from_struct()
       |> Map.delete(:__meta__)
       |> Map.delete(:host)
@@ -378,13 +378,22 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       |> Map.put(:sap_system_id, database_id)
       |> Map.put(:health, :unknown)
 
-    adapted_application_instance = Map.put(application_instance, :health, :unknown)
+    adapted_application_instance = Map.put(application_instance, :health, :passing)
+
+    assert %SapSystemHealthDetails{
+             instances_health: %HealthValueDetails{value: :passing, reason: ""},
+             database_health: %HealthValueDetails{value: ^database_health, reason: ""}
+           } = projection.health_details
 
     assert_broadcast(
       "sap_system_restored",
       %{
         db_host: ^new_db_host,
         health: ^new_health,
+        health_details: %{
+          instances_health: %{value: :passing},
+          database_health: %{value: ^database_health}
+        },
         id: ^sap_system_id,
         sid: ^sid,
         tenant: ^tenant,

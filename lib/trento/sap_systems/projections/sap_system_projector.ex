@@ -57,15 +57,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     fn multi ->
       multi
       |> Ecto.Multi.run(:instances_health, fn repo, _changes ->
-        instance_statuses =
-          repo.all(
-            from(ai in ApplicationInstanceReadModel,
-              where: ai.sap_system_id == ^sap_system_id,
-              select: %{status: ai.status}
-            )
-          )
-
-        {:ok, HealthService.compute_instances_health(instance_statuses)}
+        {:ok, compute_instances_health(repo, sap_system_id)}
       end)
       |> Ecto.Multi.insert(:sap_system, fn %{instances_health: instances_health} ->
         SapSystemReadModel.changeset(%SapSystemReadModel{}, %{
@@ -336,20 +328,28 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       sap_system_id: sap_system_id,
       tenant: tenant,
       db_host: db_host,
-      health: health
+      health: health,
+      database_health: database_health
     },
     fn multi ->
-      changeset =
+      multi
+      |> Ecto.Multi.run(:instances_health, fn repo, _changes ->
+        {:ok, compute_instances_health(repo, sap_system_id)}
+      end)
+      |> Ecto.Multi.update(:sap_system, fn %{instances_health: instances_health} ->
         SapSystemReadModel
         |> Repo.get!(sap_system_id)
         |> SapSystemReadModel.changeset(%{
           tenant: tenant,
           db_host: db_host,
           health: health,
+          health_details: %{
+            instances_health: %{value: instances_health, reason: ""},
+            database_health: %{value: database_health, reason: ""}
+          },
           deregistered_at: nil
         })
-
-      Ecto.Multi.update(multi, :sap_system, changeset)
+      end)
     end
   )
 
@@ -739,7 +739,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     end
   end
 
-  defp update_instances_health_details(repo, sap_system_id) do
+  defp compute_instances_health(repo, sap_system_id) do
     instance_statuses =
       repo.all(
         from(ai in ApplicationInstanceReadModel,
@@ -748,7 +748,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         )
       )
 
-    instances_health = HealthService.compute_instances_health(instance_statuses)
+    HealthService.compute_instances_health(instance_statuses)
+  end
+
+  defp update_instances_health_details(repo, sap_system_id) do
+    instances_health = compute_instances_health(repo, sap_system_id)
 
     update_health_details(repo, sap_system_id, %{
       instances_health: %{value: instances_health}
