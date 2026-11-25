@@ -11,7 +11,7 @@ import {
 import { userUpdated } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
 import { operationCompleted } from '@state/runningOperations';
-import { setChecksFrequencySettings } from '@state/checksFrequencySettings';
+import { checksFrequencySettingsUpdated } from '@state/checksFrequencySettings';
 
 import { watchSocketEvents } from './channels';
 
@@ -138,7 +138,7 @@ describe('Channels saga', () => {
     closeSocket();
     await saga;
 
-    expect(dispatched).toEqual([setChecksFrequencySettings(settings)]);
+    expect(dispatched).toEqual([checksFrequencySettingsUpdated(settings)]);
   });
 
   it('should listen to a specific user events', async () => {

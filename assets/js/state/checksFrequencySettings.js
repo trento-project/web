@@ -29,6 +29,9 @@ export const checksFrequencySettingsSlice = createSlice({
       state.networkError = false;
       state.settings = settings;
     },
+    checksFrequencySettingsUpdated: (state, { payload: settings }) => {
+      state.settings = settings;
+    },
     setChecksFrequencySettingsErrors: (state, { payload: errors }) => {
       state.loading = false;
       state.networkError = false;
@@ -59,6 +62,7 @@ export const updateChecksFrequencySettings = createAction(
 export const {
   startLoadingChecksFrequencySettings,
   setChecksFrequencySettings,
+  checksFrequencySettingsUpdated,
   setChecksFrequencySettingsErrors,
   setEditingChecksFrequencySettings,
   setChecksFrequencySettingsNetworkError,

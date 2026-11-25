@@ -4,6 +4,7 @@
 import checksFrequencySettingsReducer, {
   startLoadingChecksFrequencySettings,
   setChecksFrequencySettings,
+  checksFrequencySettingsUpdated,
   setChecksFrequencySettingsErrors,
   setEditingChecksFrequencySettings,
   setChecksFrequencySettingsNetworkError,
@@ -63,6 +64,33 @@ describe('ChecksFrequencySettings reducer', () => {
       settings,
       networkError: false,
       errors: [],
+    });
+  });
+
+  it('should store the broadcast settings, keeping the request state', () => {
+    const initialState = {
+      loading: true,
+      settings: {
+        enabled: true,
+        frequency: { value: 5, unit: 'minute' },
+        enforced_from_env: false,
+      },
+      networkError: false,
+      editing: true,
+      errors: [],
+    };
+
+    const settings = {
+      enabled: false,
+      frequency: { value: 6, unit: 'hour' },
+      enforced_from_env: false,
+    };
+
+    const action = checksFrequencySettingsUpdated(settings);
+
+    expect(checksFrequencySettingsReducer(initialState, action)).toEqual({
+      ...initialState,
+      settings,
     });
   });
 

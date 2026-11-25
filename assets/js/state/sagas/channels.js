@@ -65,7 +65,7 @@ import {
 } from '@state/lastExecutions';
 
 import { operationCompleted } from '@state/runningOperations';
-import { setChecksFrequencySettings } from '@state/checksFrequencySettings';
+import { checksFrequencySettingsUpdated } from '@state/checksFrequencySettings';
 
 import { userUpdated, userLocked, userDeleted } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
@@ -279,7 +279,7 @@ const operationEvents = [
 const settingsEvents = [
   {
     name: 'checks_frequency_settings_updated',
-    action: setChecksFrequencySettings,
+    action: checksFrequencySettingsUpdated,
   },
 ];
 
