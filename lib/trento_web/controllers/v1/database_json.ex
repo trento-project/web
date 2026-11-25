@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 defmodule TrentoWeb.V1.DatabaseJSON do
-  alias Trento.SapSystems.Services.HealthService
+  alias Trento.Services.HealthService
 
   def databases(%{databases: databases}), do: Enum.map(databases, &database(%{database: &1}))
 
@@ -32,7 +32,10 @@ defmodule TrentoWeb.V1.DatabaseJSON do
       |> Map.put(:sap_system_id, database_id)
       |> Map.delete(:__meta__)
       |> Map.delete(:host)
-      |> HealthService.add_deprecated_health()
+      |> add_deprecated_health()
+
+  defp add_deprecated_health(%{status: status} = instance),
+    do: Map.put(instance, :health, HealthService.derive_health_from_status(status))
 
   def database_registered(%{database: database}) do
     database

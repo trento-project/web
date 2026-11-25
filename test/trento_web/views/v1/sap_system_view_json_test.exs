@@ -23,12 +23,18 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
           application_instances: application_instances
         )
 
+      expect_health_details = %{
+        instances_health: %{value: sap_system.health_details.instances_health.value},
+        database_health: %{value: sap_system.health_details.database_health.value}
+      }
+
       expect_sap_system_json =
         sap_system
         |> Map.from_struct()
         |> Map.delete(:__meta__)
         |> Map.delete(:deregistered_at)
         |> Map.delete(:database)
+        |> Map.put(:health_details, expect_health_details)
         |> Map.put(:database_sid, database_sid)
         |> Map.put(:database_health, database_health)
         |> Map.put(:database_stale_at, database_stale_at)
@@ -59,6 +65,24 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
                SapSystemJSON.sap_systems(%{
                  sap_systems: [sap_system]
                })
+    end
+
+    test "should render sap_system_health_details_changed" do
+      id = Faker.UUID.v4()
+      health_details_projection = build(:sap_system_health_details_projection)
+
+      data =
+        SapSystemJSON.sap_system_health_details_changed(%{
+          id: id,
+          health_details: health_details_projection
+        })
+
+      expected_health_details = %{
+        instances_health: %{value: health_details_projection.instances_health.value},
+        database_health: %{value: health_details_projection.database_health.value}
+      }
+
+      assert %{id: id, health_details: expected_health_details} == data
     end
   end
 end

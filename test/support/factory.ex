@@ -90,8 +90,11 @@ defmodule Trento.Factory do
     ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
+    ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
+    ApplicationInstanceStatusChanged,
+    SapSystemDatabaseHealthChanged,
     SapSystemDatabaseStaleAtChanged,
     SapSystemDataMarkedInSync,
     SapSystemDataMarkedStale,
@@ -99,7 +102,8 @@ defmodule Trento.Factory do
     SapSystemHealthChanged,
     SapSystemRegistered,
     SapSystemRestored,
-    SapSystemTombstoned
+    SapSystemTombstoned,
+    SapSystemUpdated
   }
 
   alias Trento.Clusters.Events.{
@@ -156,6 +160,9 @@ defmodule Trento.Factory do
     ApplicationInstanceReadModel,
     SapSystemReadModel
   }
+
+  alias Trento.SapSystems.Projections.SapSystemHealthDetails,
+    as: SapSystemHealthDetailsProjection
 
   alias Trento.Clusters.ClusterEnrichmentData
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -732,6 +739,20 @@ defmodule Trento.Factory do
     }
   end
 
+  def sap_system_health_details_projection_factory do
+    %SapSystemHealthDetailsProjection{
+      instances_health: %HealthValueDetails{value: Enum.random(Health.values())},
+      database_health: %HealthValueDetails{value: Enum.random(Health.values())}
+    }
+  end
+
+  def health_value_details_factory do
+    %HealthValueDetails{
+      value: Enum.random(Health.values()),
+      reason: ""
+    }
+  end
+
   def cluster_enrichment_data_factory do
     %ClusterEnrichmentData{
       cluster_id: Faker.UUID.v4(),
@@ -888,6 +909,23 @@ defmodule Trento.Factory do
     })
   end
 
+  def application_instance_marked_present_event_factory do
+    ApplicationInstanceMarkedPresent.new!(%{
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      sap_system_id: Faker.UUID.v4()
+    })
+  end
+
+  def application_instance_status_changed_event_factory do
+    ApplicationInstanceStatusChanged.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4(),
+      instance_number: "00",
+      status: Enum.random(Status.values())
+    })
+  end
+
   def application_instance_deregistered_event_factory do
     ApplicationInstanceDeregistered.new!(%{
       sap_system_id: Faker.UUID.v4(),
@@ -975,8 +1013,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def sap_system_registered_event_factory(attrs) do
-    data = %{
+  def sap_system_registered_event_factory do
+    %SapSystemRegistered{
       sap_system_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
       db_host: Faker.Internet.ip_v4_address(),
@@ -987,17 +1025,26 @@ defmodule Trento.Factory do
       database_stale_at: nil,
       ensa_version: EnsaVersion.ensa1()
     }
-
-    data
-    |> merge_attributes(attrs)
-    |> evaluate_lazy_attributes
-    |> SapSystemRegistered.new!()
   end
 
   def sap_system_health_changed_event_factory do
     %SapSystemHealthChanged{
       sap_system_id: Faker.UUID.v4(),
       health: Health.passing()
+    }
+  end
+
+  def sap_system_database_health_changed_event_factory do
+    %SapSystemDatabaseHealthChanged{
+      sap_system_id: Faker.UUID.v4(),
+      database_health: Enum.random(Health.values())
+    }
+  end
+
+  def sap_system_updated_event_factory do
+    %SapSystemUpdated{
+      sap_system_id: Faker.UUID.v4(),
+      ensa_version: Enum.random(EnsaVersion.values())
     }
   end
 
@@ -1186,6 +1233,7 @@ defmodule Trento.Factory do
       tenant: Faker.Beer.hop(),
       db_host: Faker.Internet.ip_v4_address(),
       health: Health.unknown(),
+      health_details: build(:sap_system_health_details_projection),
       ensa_version: EnsaVersion.ensa1(),
       stale_at: nil,
       deregistered_at: nil,
