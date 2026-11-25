@@ -28,6 +28,11 @@ context('SAP system details', () => {
       sapSystemDetailsPage.sapSystemHasExpectedDatabaseTenant();
     });
 
+    it('should have expected health details tooltip in header', () => {
+      sapSystemDetailsPage.mouseOverSystemHealth();
+      sapSystemDetailsPage.healthTooltipIsDisplayed();
+    });
+
     it(`should display "Not found" page when SAP system doesn't exist`, () => {
       sapSystemDetailsPage.visitNonExistentSapSystem();
       sapSystemDetailsPage.validatePageUrl('other');

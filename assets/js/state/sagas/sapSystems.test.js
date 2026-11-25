@@ -9,6 +9,7 @@ import {
   applicationInstanceAbsentAtChanged,
   applicationInstanceDeregistered,
   sapSystemDeregistered,
+  sapSystemHealthDetailsChanged,
   sapSystemRestored,
   sapSystemUpdated,
   deregisterApplicationInstance,
@@ -19,6 +20,7 @@ import {
   updateApplicationInstanceHost,
   upsertApplicationInstances,
   updateApplicationInstanceAbsentAt,
+  updateSapSystemHealthDetails,
   removeApplicationInstance,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
@@ -243,6 +245,18 @@ describe('SAP Systems sagas', () => {
         icon: '❌',
       }),
       unsetApplicationInstanceDeregistering(instance),
+    ]);
+  });
+
+  it('should update health details of a SAP system', async () => {
+    const { id, health_details } = sapSystemFactory.build();
+
+    const dispatched = await recordSaga(sapSystemHealthDetailsChanged, {
+      payload: { id, health_details },
+    });
+
+    expect(dispatched).toEqual([
+      updateSapSystemHealthDetails({ id, health_details }),
     ]);
   });
 });
