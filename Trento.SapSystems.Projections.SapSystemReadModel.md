@@ -16,6 +16,7 @@ SAP System read model
   deregistered_at: term(),
   ensa_version: term(),
   health: term(),
+  health_details: term(),
   id: term(),
   inserted_at: term(),
   sid: term(),

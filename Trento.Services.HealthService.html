@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-4E0A79B4.js"></script>
+    <script defer src="dist/sidebar_items-50EFC6B5.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -118,7 +118,7 @@ Trento Web
 
 
     <section id="moduledoc">
-<p>This module contains the domain logic for everything health related.</p>
+<p>This module contains the domain logic for health computation and status conversions.</p>
     </section>
 
 </div>
@@ -138,6 +138,22 @@ Trento Web
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#compute_aggregated_health/1" data-no-tooltip="" translate="no">compute_aggregated_health(healths)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#compute_instances_health/1" data-no-tooltip="" translate="no">compute_instances_health(instances)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#derive_health_from_status/1" data-no-tooltip="" translate="no">derive_health_from_status(arg)</a>
 
       </div>
 
@@ -167,7 +183,7 @@ Trento Web
       <h1 class="signature" translate="no">compute_aggregated_health(healths)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/services/health_service.ex#L12" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/services/health_service.ex#L13" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -179,6 +195,64 @@ Trento Web
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@spec</span> compute_aggregated_health([<a href="Trento.Enums.Health.html#t:t/0">Trento.Enums.Health.t</a>()]) :: <a href="Trento.Enums.Health.html#t:t/0">Trento.Enums.Health.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="compute_instances_health/1">
+
+  <div class="detail-header">
+    <a href="#compute_instances_health/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">compute_instances_health(instances)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/services/health_service.ex#L23" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> compute_instances_health([%{status: <a href="Trento.SapSystems.Enums.Status.html#t:t/0">Trento.SapSystems.Enums.Status.t</a>()}]) ::
+  <a href="Trento.Enums.Health.html#t:t/0">Trento.Enums.Health.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="derive_health_from_status/1">
+
+  <div class="detail-header">
+    <a href="#derive_health_from_status/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">derive_health_from_status(arg)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/services/health_service.ex#L32" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> derive_health_from_status(<a href="Trento.SapSystems.Enums.Status.html#t:t/0">Trento.SapSystems.Enums.Status.t</a>()) ::
+  <a href="Trento.Enums.Health.html#t:t/0">Trento.Enums.Health.t</a>()</pre>
 
       </div>
 

@@ -33,9 +33,13 @@ A simple Factory helper module to be used within tests to generate test data
 
 # `application_instance_marked_absent_event_factory`
 
+# `application_instance_marked_present_event_factory`
+
 # `application_instance_moved_event_factory`
 
 # `application_instance_registered_event_factory`
+
+# `application_instance_status_changed_event_factory`
 
 # `ascs_ers_cluster_details_factory`
 
@@ -209,6 +213,8 @@ Raises a helpful error if no factory is defined.
 
 # `hana_cluster_node_factory`
 
+# `health_value_details_factory`
+
 # `heartbeat_factory`
 
 # `heartbeat_failed_factory`
@@ -305,6 +311,8 @@ Raises a helpful error if no factory is defined.
 
 # `sap_system_data_marked_stale_event_factory`
 
+# `sap_system_database_health_changed_event_factory`
+
 # `sap_system_database_stale_at_changed_event_factory`
 
 # `sap_system_deregistered_event_factory`
@@ -313,6 +321,8 @@ Raises a helpful error if no factory is defined.
 
 # `sap_system_health_changed_event_factory`
 
+# `sap_system_health_details_projection_factory`
+
 # `sap_system_instance_factory`
 
 # `sap_system_registered_event_factory`
@@ -320,6 +330,8 @@ Raises a helpful error if no factory is defined.
 # `sap_system_restored_event_factory`
 
 # `sap_system_tombstoned_event_factory`
+
+# `sap_system_updated_event_factory`
 
 # `sapcontrol_process_factory`
 

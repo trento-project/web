@@ -613,11 +613,11 @@ It is used to trigger the stream archiving process and it contains the snapshot 
 
   - [Trento.SapSystems.Projections.ApplicationInstanceReadModel](Trento.SapSystems.Projections.ApplicationInstanceReadModel.md): Application instance read model
 
+  - [Trento.SapSystems.Projections.SapSystemHealthDetails](Trento.SapSystems.Projections.SapSystemHealthDetails.md): Health details for SAP Systems in read model format.
+
   - [Trento.SapSystems.Projections.SapSystemProjector](Trento.SapSystems.Projections.SapSystemProjector.md): SAP System projector
 
   - [Trento.SapSystems.Projections.SapSystemReadModel](Trento.SapSystems.Projections.SapSystemReadModel.md): SAP System read model
-
-  - [Trento.SapSystems.Services.HealthService](Trento.SapSystems.Services.HealthService.md): Provides SAP system/Database instances health related functions.
 
   - [Trento.SapSystems.Services.HealthSummaryService](Trento.SapSystems.Services.HealthSummaryService.md): Provides a set of functions to interact with SAP systems Health Summary
 
@@ -723,7 +723,7 @@ No changeset is defined here, since the schema is used to store append-only data
   - [Trento.Enums.Provider](Trento.Enums.Provider.md): Type that represents the supported provider values by our agent.
 
 - Services
-  - [Trento.Services.HealthService](Trento.Services.HealthService.md): This module contains the domain logic for everything health related.
+  - [Trento.Services.HealthService](Trento.Services.HealthService.md): This module contains the domain logic for health computation and status conversions.
 
 - Event handlers
   - [Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandler](Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandler.md): Event handler responsible to log activity from emitted domain events

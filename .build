@@ -464,10 +464,10 @@ Trento.SapSystems.Instance.html
 Trento.SapSystems.Lifespan.html
 Trento.SapSystems.Policy.html
 Trento.SapSystems.Projections.ApplicationInstanceReadModel.html
+Trento.SapSystems.Projections.SapSystemHealthDetails.html
 Trento.SapSystems.Projections.SapSystemProjector.html
 Trento.SapSystems.Projections.SapSystemReadModel.html
 Trento.SapSystems.SapSystem.html
-Trento.SapSystems.Services.HealthService.html
 Trento.SapSystems.Services.HealthSummaryService.html
 Trento.SapSystems.html
 Trento.Services.HealthService.html
@@ -635,7 +635,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-38C786DE.js
-dist/sidebar_items-4E0A79B4.js
+dist/search_data-AF264E46.js
+dist/sidebar_items-50EFC6B5.js
 index.html
 search.html

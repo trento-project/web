@@ -463,10 +463,10 @@ Trento.SapSystems.Instance.md
 Trento.SapSystems.Lifespan.md
 Trento.SapSystems.Policy.md
 Trento.SapSystems.Projections.ApplicationInstanceReadModel.md
+Trento.SapSystems.Projections.SapSystemHealthDetails.md
 Trento.SapSystems.Projections.SapSystemProjector.md
 Trento.SapSystems.Projections.SapSystemReadModel.md
 Trento.SapSystems.SapSystem.md
-Trento.SapSystems.Services.HealthService.md
 Trento.SapSystems.Services.HealthSummaryService.md
 Trento.SapSystems.md
 Trento.Services.HealthService.md

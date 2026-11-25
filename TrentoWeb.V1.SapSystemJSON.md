@@ -23,6 +23,8 @@
 
 # `sap_system_health_changed`
 
+# `sap_system_health_details_changed`
+
 # `sap_system_registered`
 
 # `sap_system_restored`
