@@ -188,10 +188,7 @@ describe('HealthIcon', () => {
         instances_health: { value: 'passing' },
         database_health: { value: 'warning' },
       },
-      [
-        'Overall Instance Status: Passing',
-        'Aggregated Database Health: Warning',
-      ],
+      ['Overall Instance Status: Passing', 'Database Health: Warning'],
     ],
   ])(
     'shows tooltip with paired health details correctly',

@@ -182,7 +182,7 @@ describe('GenericSystemDetails', () => {
     ).toBeVisible();
     expect(
       screen.getByText(
-        `Aggregated Database Health: ${capitalize(healthDetails.database_health.value)}`
+        `Database Health: ${capitalize(healthDetails.database_health.value)}`
       )
     ).toBeVisible();
   });

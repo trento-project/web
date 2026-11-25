@@ -44,7 +44,7 @@ const HEALTH_DETAILS_LABELS = {
 
   // SAP System
   instances_health: 'Overall Instance Status',
-  database_health: 'Aggregated Database Health',
+  database_health: 'Database Health',
 };
 
 const formatHealthDetails = (healthDetails) =>

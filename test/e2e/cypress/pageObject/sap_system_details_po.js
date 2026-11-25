@@ -68,10 +68,7 @@ export const pageTitleHealthIsCorrectlyDisplayed = (
 };
 
 export const healthTooltipIsDisplayed = () => {
-  const healthDetailsLabels = [
-    'Overall Instance Status',
-    'Aggregated Database Health',
-  ];
+  const healthDetailsLabels = ['Overall Instance Status', 'Database Health'];
 
   return cy.wrap(healthDetailsLabels).each((label) => {
     cy.get('.rc-tooltip').should('be.visible').and('contain', label);
