@@ -7,6 +7,7 @@ import { recordSaga } from '@lib/test-utils';
 import {
   databaseInstanceAbsentAtChanged,
   databaseDeregistered,
+  databaseHealthDetailsChanged,
   databaseInstanceDeregistered,
   databaseRestored,
   deregisterDatabaseInstance,
@@ -16,6 +17,7 @@ import {
   removeDatabase,
   removeDatabaseInstance,
   appendDatabase,
+  updateDatabaseHealthDetails,
   updateDatabaseInstanceAbsentAt,
   setDatabaseInstanceDeregistering,
   unsetDatabaseInstanceDeregistering,
@@ -180,6 +182,18 @@ describe('SAP Systems sagas', () => {
         text: `The database instance ${instance_number} from ${sid} is absent`,
         icon: 'ℹ️',
       }),
+    ]);
+  });
+
+  it('should update health details of a database', async () => {
+    const { id, health_details } = databaseFactory.build();
+
+    const dispatched = await recordSaga(databaseHealthDetailsChanged, {
+      payload: { id, health_details },
+    });
+
+    expect(dispatched).toEqual([
+      updateDatabaseHealthDetails({ id, health_details }),
     ]);
   });
 });

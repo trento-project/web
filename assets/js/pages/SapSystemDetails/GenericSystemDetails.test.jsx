@@ -187,6 +187,29 @@ describe('GenericSystemDetails', () => {
     ).toBeVisible();
   });
 
+  it('should not display health details tooltip on hover for database', async () => {
+    const user = userEvent.setup();
+    const title = faker.string.uuid();
+    const database = databaseFactory.build({
+      hosts: hostFactory.buildList(2),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={title}
+        system={database}
+        type={DATABASE_TYPE}
+      />
+    );
+
+    const healthIcon = screen.getByRole('img', { name: /system health/i });
+    await user.hover(healthIcon);
+
+    expect(
+      screen.queryByText(/overall instance status/i)
+    ).not.toBeInTheDocument();
+  });
+
   it('should render a not found label if system is not there', () => {
     const title = faker.string.uuid();
     renderWithRouter(

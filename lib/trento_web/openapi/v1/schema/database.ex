@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
 
   require Trento.SapSystems.Enums.Status, as: Status
 
-  alias TrentoWeb.OpenApi.V1.Schema.{ResourceHealth, Tags}
+  alias TrentoWeb.OpenApi.V1.Schema.{DatabaseHealthDetails, ResourceHealth, Tags}
 
   defmodule DatabaseInstance do
     @moduledoc false
@@ -253,6 +253,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
             example: "HA1"
           },
           health: ResourceHealth,
+          health_details: DatabaseHealthDetails,
           database_instances: DatabaseInstances,
           tags: Tags,
           stale_at: %Schema{
@@ -275,6 +276,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
           id: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
           sid: "HA1",
           health: "passing",
+          health_details: %{
+            instances_health: %{value: "passing"}
+          },
           database_instances: [],
           tags: [],
           stale_at: "2024-01-15T08:00:00Z",
@@ -301,6 +305,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
             id: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
             sid: "HA1",
             health: "passing",
+            health_details: %{
+              instances_health: %{value: "passing"}
+            },
             database_instances: [],
             tags: [],
             stale_at: "2024-01-15T08:00:00Z",
