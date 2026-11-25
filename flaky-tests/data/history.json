@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-29T22:05:55Z",
-    "commit": "fd8b9f0dd3026c77bc06de47190ce3aa9cc7fe2f",
-    "run_id": "36633831436",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-30T01:24:15Z",
     "commit": "fd8b9f0dd3026c77bc06de47190ce3aa9cc7fe2f",
     "run_id": "36638507681",
@@ -5063,5 +5052,45 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-25T03:01:28Z",
+    "commit": "0d8c50d7a6c689d78065ffbfcbb6d712ca726a07",
+    "run_id": "45537038210",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should display number of SLES subscriptions found::About page should display number of SLES subscriptions found",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
+        "score": 0.05001
+      },
+      {
+        "name": "should update number of SLES subscriptions when a host is deregistered::About page should update number of SLES subscriptions when a host is deregistered",
+        "score": 0.05001
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.02501
+      }
+    ]
   }
 ]
