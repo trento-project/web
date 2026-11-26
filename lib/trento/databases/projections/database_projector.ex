@@ -733,6 +733,14 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   @impl true
   def after_update(_, _, _), do: :ok
 
+  defp update_instances_health_details(repo, database_id) do
+    instances_health = compute_instances_health(repo, database_id)
+
+    update_health_details(repo, database_id, %{
+      instances_health: %{value: instances_health}
+    })
+  end
+
   defp compute_instances_health(repo, database_id) do
     instance_statuses =
       repo.all(
@@ -743,14 +751,6 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       )
 
     HealthService.compute_instances_health(instance_statuses)
-  end
-
-  defp update_instances_health_details(repo, database_id) do
-    instances_health = compute_instances_health(repo, database_id)
-
-    update_health_details(repo, database_id, %{
-      instances_health: %{value: instances_health}
-    })
   end
 
   defp update_health_details(repo, database_id, health_details_attrs) do
