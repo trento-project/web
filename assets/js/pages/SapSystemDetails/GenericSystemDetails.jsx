@@ -300,8 +300,9 @@ export function GenericSystemDetails({
             className="font-bold"
             health={system.health}
             healthDetails={
-              system.health_details ||
-              (type === APPLICATION_TYPE ? getDefaultHealthDetails() : null)
+              type === APPLICATION_TYPE
+                ? system.health_details || getDefaultHealthDetails()
+                : null
             }
             staleAt={system.stale_at}
             timezone={userTimezone}

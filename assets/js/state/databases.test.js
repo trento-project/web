@@ -5,6 +5,7 @@ import databaseReducer, {
   removeDatabase,
   removeDatabaseInstance,
   upsertDatabaseInstances,
+  updateDatabaseHealthDetails,
   updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
@@ -15,6 +16,7 @@ import databaseReducer, {
 } from '@state/databases';
 import {
   databaseFactory,
+  databaseHealthDetailsFactory,
   databaseInstanceFactory,
 } from '@lib/test-utils/factories/databases';
 
@@ -268,6 +270,27 @@ describe('Databases reducer', () => {
           ...instance,
           deregistering: false,
         },
+      ],
+    };
+
+    expect(databaseReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update health details for a database', () => {
+    const [database1, database2] = databaseFactory.buildList(2);
+    const initialState = { databases: [database1, database2] };
+
+    const newHealthDetails = databaseHealthDetailsFactory.build();
+
+    const action = updateDatabaseHealthDetails({
+      id: database1.id,
+      health_details: newHealthDetails,
+    });
+
+    const expectedState = {
+      databases: [
+        { ...database1, health_details: newHealthDetails },
+        database2,
       ],
     };
 
