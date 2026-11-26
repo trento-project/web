@@ -258,6 +258,72 @@ defmodule TrentoWeb.V1.HostController do
     end
   end
 
+  operation :update_checks_schedule,
+    summary: "Set the own checks schedule of a host.",
+    tags: ["Checks"],
+    description:
+      "Creates or replaces the own checks frequency settings of a host, used instead of the global ones.",
+    parameters: [
+      id: [
+        in: :path,
+        description: "Unique identifier of the host. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ]
+    ],
+    request_body:
+      {"The own checks schedule of the host.", "application/json",
+       Schema.Checks.ChecksScheduleRequest, required: true},
+    responses: [
+      ok: {"The checks schedule of the host.", "application/json", Schema.Checks.ChecksSchedule},
+      not_found: NotFound.response(),
+      forbidden: Forbidden.response(),
+      unprocessable_entity: UnprocessableEntity.response()
+    ]
+
+  def update_checks_schedule(conn, %{id: target_id}) do
+    with {:ok, schedule} <-
+           Trento.Checks.put_checks_schedule(:host, target_id, OpenApiSpex.body_params(conn)) do
+      conn
+      |> put_view(json: ChecksScheduleJSON)
+      |> render(:checks_schedule, schedule: schedule)
+    end
+  end
+
+  operation :delete_checks_schedule,
+    summary: "Delete the own checks schedule of a host.",
+    tags: ["Checks"],
+    description:
+      "Deletes the own checks frequency settings of a host, so that it follows the global ones again.",
+    parameters: [
+      id: [
+        in: :path,
+        description: "Unique identifier of the host. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ]
+    ],
+    responses: [
+      no_content: "The host follows the global checks frequency settings.",
+      not_found: NotFound.response(),
+      forbidden: Forbidden.response(),
+      unprocessable_entity: UnprocessableEntity.response()
+    ]
+
+  def delete_checks_schedule(conn, %{id: target_id}) do
+    with {:ok, _} <- Trento.Checks.delete_checks_schedule(:host, target_id) do
+      send_resp(conn, :no_content, "")
+    end
+  end
+
   @host_operations [
     %{
       operation: HostOperations.saptune_solution_apply(),

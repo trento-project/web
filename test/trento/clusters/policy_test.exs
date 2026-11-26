@@ -119,6 +119,34 @@ defmodule Trento.Clusters.PolicyTest do
     end)
   end
 
+  test "should allow update_checks_schedule action with the all:cluster_checks_frequency ability" do
+    user = %User{abilities: [%Ability{name: "all", resource: "cluster_checks_frequency"}]}
+
+    assert Policy.authorize(:update_checks_schedule, user, ClusterReadModel)
+  end
+
+  test "should allow update_checks_schedule action with the all:all ability" do
+    user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+
+    assert Policy.authorize(:update_checks_schedule, user, ClusterReadModel)
+  end
+
+  test "should not allow update_checks_schedule action without the all:cluster_checks_frequency ability" do
+    user = %User{abilities: []}
+
+    refute Policy.authorize(:update_checks_schedule, user, ClusterReadModel)
+  end
+
+  test "should allow delete_checks_schedule action with the all:cluster_checks_frequency ability" do
+    user = %User{abilities: [%Ability{name: "all", resource: "cluster_checks_frequency"}]}
+
+    assert Policy.authorize(:delete_checks_schedule, user, ClusterReadModel)
+  end
+
+  test "should not allow delete_checks_schedule action without the all:cluster_checks_frequency ability" do
+    refute Policy.authorize(:delete_checks_schedule, %User{abilities: []}, ClusterReadModel)
+  end
+
   test "should allow get_checks_schedule action without abilities" do
     assert Policy.authorize(:get_checks_schedule, %User{abilities: []}, ClusterReadModel)
   end

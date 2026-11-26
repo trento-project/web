@@ -513,7 +513,60 @@ defmodule Trento.ChecksTest do
       for target_id <- [deregistered_id, Faker.UUID.v4()] do
         assert {:error, :not_found} =
                  Checks.get_checks_schedule(:host, target_id, DateService.Mock)
+
+        assert {:error, :not_found} =
+                 Checks.put_checks_schedule(
+                   :host,
+                   target_id,
+                   %{enabled: true, frequency: %{value: 1, unit: :hour}},
+                   DateService.Mock
+                 )
+
+        assert {:error, :not_found} =
+                 Checks.delete_checks_schedule(:host, target_id, DateService.Mock)
       end
+    end
+
+    test "should store the own schedule, and delete it to follow the global settings" do
+      %{id: host_id} = insert(:host)
+
+      assert {:ok, %{enabled: true, frequency: %Frequency{value: 6, unit: :hour}, global: false}} =
+               Checks.put_checks_schedule(
+                 :host,
+                 host_id,
+                 %{enabled: true, frequency: %{value: 6, unit: :hour}},
+                 DateService.Mock
+               )
+
+      for _ <- 1..2 do
+        assert {:ok,
+                %{enabled: true, frequency: %Frequency{value: 5, unit: :minute}, global: true}} =
+                 Checks.delete_checks_schedule(:host, host_id, DateService.Mock)
+      end
+    end
+
+    test "should refuse an own schedule with a frequency that is not allowed" do
+      %{id: host_id} = insert(:host)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Checks.put_checks_schedule(
+                 :host,
+                 host_id,
+                 %{enabled: true, frequency: %{value: 2, unit: :hour}},
+                 DateService.Mock
+               )
+    end
+
+    test "should store the own schedule of a cluster of a type that is not checkable" do
+      %{id: cluster_id} = insert_target(:cluster, type: ClusterType.unknown())
+
+      assert {:ok, %{global: false, next_execution_at: nil}} =
+               Checks.put_checks_schedule(
+                 :cluster,
+                 cluster_id,
+                 %{enabled: true, frequency: %{value: 1, unit: :hour}},
+                 DateService.Mock
+               )
     end
   end
 

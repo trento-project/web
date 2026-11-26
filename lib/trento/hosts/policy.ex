@@ -28,6 +28,12 @@ defmodule Trento.Hosts.Policy do
       has_global_ability?(user) or
         user_has_ability?(user, %{name: "all", resource: "host_checks_execution"})
 
+  def authorize(action, %User{} = user, HostReadModel)
+      when action in [:update_checks_schedule, :delete_checks_schedule],
+      do:
+        has_global_ability?(user) or
+          user_has_ability?(user, %{name: "all", resource: "host_checks_frequency"})
+
   def authorize(:delete, %User{} = user, HostReadModel),
     do: has_global_ability?(user) or user_has_ability?(user, %{name: "cleanup", resource: "host"})
 

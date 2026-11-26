@@ -136,6 +136,37 @@ defmodule Trento.Checks do
   end
 
   @doc """
+  Stores the own checks schedule of a registered host or cluster, replacing the previous
+  one, and returns its checks schedule.
+  """
+  @spec put_checks_schedule(:host | :cluster, String.t(), map(), module()) ::
+          {:ok, checks_schedule()} | {:error, :not_found} | {:error, Ecto.Changeset.t()}
+  def put_checks_schedule(target_type, target_id, attrs, date_service \\ DateService) do
+    if registered?(target_type, target_id) do
+      with {:ok, _} <- put_target_settings(target_type, target_id, attrs),
+           do: {:ok, checks_schedule(target_type, target_id, date_service)}
+    else
+      {:error, :not_found}
+    end
+  end
+
+  @doc """
+  Deletes the own checks schedule of a registered host or cluster, so that it follows the
+  global settings, and returns its checks schedule.
+  """
+  @spec delete_checks_schedule(:host | :cluster, String.t(), module()) ::
+          {:ok, checks_schedule()} | {:error, :not_found}
+  def delete_checks_schedule(target_type, target_id, date_service \\ DateService) do
+    if registered?(target_type, target_id) do
+      :ok = delete_target_settings(target_id)
+
+      {:ok, checks_schedule(target_type, target_id, date_service)}
+    else
+      {:error, :not_found}
+    end
+  end
+
+  @doc """
   When the checks of a target are due, given its effective settings and the time of its
   last periodic request: nil when they do not run periodically, :now when the target was
   never requested.

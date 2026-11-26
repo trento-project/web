@@ -1030,6 +1030,97 @@ defmodule TrentoWeb.V1.HostControllerTest do
              } = resp
     end
 
+    test "should store the own checks schedule", %{conn: conn, api_spec: api_spec} do
+      %{id: target_id} = insert(:host)
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put("/api/v1/hosts/#{target_id}/checks/schedule", %{
+          enabled: true,
+          frequency: %{value: 6, unit: "hour"}
+        })
+        |> json_response(:ok)
+
+      assert_schema(resp, "ChecksScheduleV1", api_spec)
+
+      assert %{
+               "enabled" => true,
+               "frequency" => %{"value" => 6, "unit" => "hour"},
+               "global" => false
+             } = resp
+    end
+
+    test "should delete the own checks schedule, also when there is none", %{conn: conn} do
+      %{id: target_id} = insert(:host)
+      insert(:checks_target_settings, target_type: :host, target_id: target_id)
+
+      for _ <- 1..2 do
+        conn
+        |> delete("/api/v1/hosts/#{target_id}/checks/schedule")
+        |> response(:no_content)
+      end
+
+      assert %{"global" => true} =
+               conn
+               |> get("/api/v1/hosts/#{target_id}/checks/schedule")
+               |> json_response(:ok)
+    end
+
+    test "should refuse a frequency that is not allowed", %{conn: conn, api_spec: api_spec} do
+      %{id: target_id} = insert(:host)
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put("/api/v1/hosts/#{target_id}/checks/schedule", %{
+          enabled: true,
+          frequency: %{value: 2, unit: "hour"}
+        })
+        |> json_response(:unprocessable_entity)
+
+      assert_response_schema(resp, "UnprocessableEntityV1", api_spec)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "source" => %{"pointer" => "/frequency/value"},
+                   "detail" => "must be one of 1, 6, 12, 24 when the unit is hour"
+                 }
+               ]
+             } = resp
+    end
+
+    for {name, body} <- [
+          {"an empty body", %{}},
+          {"no frequency", %{enabled: true}},
+          {"no enabled", %{frequency: %{value: 1, unit: "hour"}}},
+          {"a null frequency", %{enabled: true, frequency: nil}},
+          {"an unknown unit", %{enabled: true, frequency: %{value: 1, unit: "HOUR"}}},
+          {"an extra field", %{enabled: true, frequency: %{value: 1, unit: "hour"}, extra: 1}},
+          {"an extra frequency field",
+           %{enabled: true, frequency: %{value: 1, unit: "hour", extra: 1}}}
+        ] do
+      @body body
+
+      test "should refuse a schedule with #{name}", %{conn: conn} do
+        %{id: target_id} = insert(:host)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put("/api/v1/hosts/#{target_id}/checks/schedule", @body)
+        |> json_response(:unprocessable_entity)
+      end
+    end
+
+    test "should refuse a change without a body", %{conn: conn} do
+      %{id: target_id} = insert(:host)
+
+      conn
+      |> put("/api/v1/hosts/#{target_id}/checks/schedule")
+      |> json_response(:unprocessable_entity)
+    end
+
     test "should refuse an identifier that is not a UUID", %{conn: conn} do
       conn
       |> get("/api/v1/hosts/not-a-uuid/checks/schedule")
@@ -1041,6 +1132,18 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       conn
       |> get("/api/v1/hosts/#{target_id}/checks/schedule")
+      |> json_response(:not_found)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/hosts/#{target_id}/checks/schedule", %{
+        enabled: true,
+        frequency: %{value: 1, unit: "hour"}
+      })
+      |> json_response(:not_found)
+
+      conn
+      |> delete("/api/v1/hosts/#{target_id}/checks/schedule")
       |> json_response(:not_found)
     end
   end
@@ -1060,6 +1163,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
         [
           post(conn, "/api/v1/hosts/#{host_id}/checks", %{}),
           post(conn, "/api/v1/hosts/#{host_id}/checks/request_execution", %{}),
+          put(conn, "/api/v1/hosts/#{host_id}/checks/schedule", %{
+            enabled: true,
+            frequency: %{value: 1, unit: "hour"}
+          }),
+          delete(conn, "/api/v1/hosts/#{host_id}/checks/schedule"),
           delete(conn, "/api/v1/hosts/#{host_id}"),
           post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{}),
           post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_change", %{}),
