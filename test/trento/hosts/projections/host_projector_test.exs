@@ -919,12 +919,15 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
         %{health_details: health_details} = Repo.get!(HostReadModel, host_id)
 
         expected_health_details =
-          %HostHealthDetails{
-            checks_health: %HealthValueDetails{value: :unknown, reason: ""},
-            saptune_health: %HealthValueDetails{value: :unknown, reason: ""},
-            software_updates_discovery_health: %HealthValueDetails{value: :unknown, reason: ""}
-          }
-          |> Map.put(characteristic_field, %HealthValueDetails{value: :passing, reason: ""})
+          Map.put(
+            %HostHealthDetails{
+              checks_health: %HealthValueDetails{value: :unknown, reason: ""},
+              saptune_health: %HealthValueDetails{value: :unknown, reason: ""},
+              software_updates_discovery_health: %HealthValueDetails{value: :unknown, reason: ""}
+            },
+            characteristic_field,
+            %HealthValueDetails{value: :passing, reason: ""}
+          )
 
         assert expected_health_details == health_details
       end
