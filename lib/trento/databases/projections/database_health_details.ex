@@ -5,7 +5,7 @@ defmodule Trento.Databases.Projections.DatabaseHealthDetails do
   @moduledoc """
   Health details for Databases in read model format.
   """
-  @required_fields [:instances_health]
+  @required_fields []
 
   use Trento.Support.Type
 

@@ -449,32 +449,26 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       end
     end
 
-    @scenarios [
-      %{
-        name: "ClusterChecksHealthChanged",
-        event: ClusterChecksHealthChanged,
-        event_factory: :cluster_checks_health_changed_event,
-        characteristic_field: :checks_health
-      },
-      %{
-        name: "ClusterSbdHealthChanged",
-        event: ClusterSbdHealthChanged,
-        event_factory: :cluster_sbd_health_changed_event,
-        characteristic_field: :sbd_health
-      }
-    ]
     for scenario <- @scenarios do
       @scenario scenario
 
       test "#{scenario.name} broadcast its change to phoenix channel" do
-        %{characteristic_field: characteristic_field} = @scenario
+        health_key = @scenario.health_key
 
-        %{id: cluster_id} = insert(:cluster)
+        %{id: cluster_id, health_details: health_details} =
+          :cluster
+          |> build()
+          |> @scenario.cluster_type_fn.()
+          |> insert()
+
+        current_health = Map.get(health_details, health_key).value
+        new_health = Enum.random(Health.values() -- [current_health])
 
         event =
-          build(@scenario.event_factory,
-            cluster_id: cluster_id
-          )
+          build(@scenario.event_factory, [
+            {:cluster_id, cluster_id},
+            {health_key, new_health}
+          ])
 
         ProjectorTestHelper.project(
           ClusterProjector,
@@ -484,7 +478,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
 
         assert_broadcast(
           "cluster_health_details_changed",
-          %{cluster_id: ^cluster_id, health_details: %{^characteristic_field => _}} = message,
+          %{cluster_id: ^cluster_id, health_details: %{^health_key => _}} = message,
           1000
         )
 
@@ -501,48 +495,108 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       end
     end
 
-    @scenarios [
+    @nil_health_details_scenarios [
       %{
-        name: "ClusterReplicationHealthChanged",
-        event: ClusterReplicationHealthChanged,
-        cluster_type_fn: &cluster_make_hana/1,
-        event_factory: :cluster_replication_health_changed_event,
-        characteristic_field: :replication_health
+        name: "ClusterChecksHealthChanged for HANA cluster",
+        event_factory: :cluster_checks_health_changed_event,
+        health_key: :checks_health,
+        cluster_type: :hana_scale_up,
+        expected_struct: HanaClusterHealthDetails
       },
       %{
-        name: "ClusterDistributedHealthChanged",
-        event: ClusterDistributedHealthChanged,
-        cluster_type_fn: &cluster_make_ascs_ers/1,
+        name: "ClusterChecksHealthChanged for ASCS/ERS cluster",
+        event_factory: :cluster_checks_health_changed_event,
+        health_key: :checks_health,
+        cluster_type: :ascs_ers,
+        expected_struct: AscsErsClusterHealthDetails
+      },
+      %{
+        name: "ClusterSbdHealthChanged for HANA cluster",
+        event_factory: :cluster_sbd_health_changed_event,
+        health_key: :sbd_health,
+        cluster_type: :hana_scale_up,
+        expected_struct: HanaClusterHealthDetails
+      },
+      %{
+        name: "ClusterSbdHealthChanged for ASCS/ERS cluster",
+        event_factory: :cluster_sbd_health_changed_event,
+        health_key: :sbd_health,
+        cluster_type: :ascs_ers,
+        expected_struct: AscsErsClusterHealthDetails
+      },
+      %{
+        name: "ClusterReplicationHealthChanged for HANA cluster",
+        event_factory: :cluster_replication_health_changed_event,
+        health_key: :replication_health,
+        cluster_type: :hana_scale_up,
+        expected_struct: HanaClusterHealthDetails
+      },
+      %{
+        name: "ClusterDistributedHealthChanged for ASCS/ERS cluster",
         event_factory: :cluster_distributed_health_changed_event,
-        characteristic_field: :distributed_health
+        health_key: :distributed_health,
+        cluster_type: :ascs_ers,
+        expected_struct: AscsErsClusterHealthDetails
       }
     ]
-    for scenario <- @scenarios do
+
+    for scenario <- @nil_health_details_scenarios do
       @scenario scenario
 
-      test "#{scenario.name} broadcast its change to phoenix channel" do
-        %{characteristic_field: characteristic_field} = @scenario
+      test "#{scenario.name} projects its change into the read model when health_details is nil" do
+        health_key = @scenario.health_key
 
         %{id: cluster_id} =
-          :cluster
-          |> build()
-          |> @scenario.cluster_type_fn.()
-          |> insert()
-
-        event =
-          build(@scenario.event_factory,
-            cluster_id: cluster_id
+          insert(:cluster,
+            type: @scenario.cluster_type,
+            health_details: nil
           )
 
-        ProjectorTestHelper.project(
-          ClusterProjector,
-          event,
-          "cluster_projector"
-        )
+        event =
+          build(@scenario.event_factory, [
+            {:cluster_id, cluster_id},
+            {health_key, :passing}
+          ])
+
+        ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+
+        %{health_details: health_details} = Repo.get!(ClusterReadModel, cluster_id)
+
+        expected_health_details =
+          struct!(@scenario.expected_struct, [
+            {health_key, %HealthValueDetails{value: :passing, reason: ""}}
+          ])
+
+        assert expected_health_details == health_details
+      end
+    end
+
+    for scenario <- @nil_health_details_scenarios do
+      @scenario scenario
+
+      test "#{scenario.name} broadcast its change to phoenix channel when health_details is nil" do
+        health_key = @scenario.health_key
+
+        %{id: cluster_id} =
+          insert(:cluster,
+            type: @scenario.cluster_type,
+            health_details: nil
+          )
+
+        event =
+          build(@scenario.event_factory, [
+            {:cluster_id, cluster_id},
+            {health_key, :passing}
+          ])
+
+        ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
 
         assert_broadcast(
           "cluster_health_details_changed",
-          %{cluster_id: ^cluster_id, health_details: %{^characteristic_field => _}} = message,
+          %{
+            cluster_id: ^cluster_id,
+            health_details: %{^health_key => _}
+          } = message,
           1000
         )
 

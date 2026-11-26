@@ -66,9 +66,10 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
   end
 
   setup do
-    %HostReadModel{id: host_id, hostname: hostname} = insert(:host)
+    %HostReadModel{id: host_id, hostname: hostname, health_details: health_details} =
+      insert(:host)
 
-    %{host_id: host_id, hostname: hostname}
+    %{host_id: host_id, hostname: hostname, health_details: health_details}
   end
 
   test "should project a new host when HostRegistered event is received" do
@@ -816,21 +817,19 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
       %{
         name: "HostChecksHealthChanged",
         event_factory: :host_checks_health_changed,
+        event_health_field: :checks_health,
         characteristic_field: :checks_health
       },
       %{
         name: "HostSaptuneHealthChanged",
         event_factory: :host_saptune_health_changed_event,
+        event_health_field: :saptune_health,
         characteristic_field: :saptune_health
       },
       %{
         name: "SoftwareUpdatesHealthChanged",
         event_factory: :software_updates_discovery_health_changed_event,
-        characteristic_field: :software_updates_discovery_health
-      },
-      %{
-        name: "SoftwareUpdatesDiscoveryCleared",
-        event_factory: :software_updates_discovery_cleared_event,
+        event_health_field: :health,
         characteristic_field: :software_updates_discovery_health
       }
     ]
@@ -838,10 +837,113 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     for scenario <- @broadcast_scenarios do
       @scenario scenario
 
-      test "#{scenario.name} broadcast its change to phoenix channel", %{host_id: host_id} do
+      test "#{scenario.name} broadcast its change to phoenix channel", %{
+        host_id: host_id,
+        health_details: health_details
+      } do
         characteristic_field = @scenario.characteristic_field
+        event_health_field = @scenario.event_health_field
 
-        event = build(@scenario.event_factory, host_id: host_id)
+        current_health = Map.get(health_details, characteristic_field).value
+        new_health = Enum.random(Health.values() -- [current_health])
+
+        event =
+          build(@scenario.event_factory, [
+            {:host_id, host_id},
+            {event_health_field, new_health}
+          ])
+
+        ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+        assert_broadcast(
+          "host_health_details_changed",
+          %{id: ^host_id, health_details: %{^characteristic_field => _}} = message,
+          1000
+        )
+
+        expected_keys =
+          MapSet.new([
+            :id,
+            :health_details
+          ])
+
+        assert expected_keys == MapSet.new(Map.keys(message))
+
+        # Check message can be properly encoded to JSON
+        assert {:ok, _} = Jason.encode(message)
+      end
+    end
+
+    test "SoftwareUpdatesDiscoveryCleared broadcast its change to phoenix channel", %{
+      host_id: host_id
+    } do
+      event = build(:software_updates_discovery_cleared_event, host_id: host_id)
+
+      ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+      assert_broadcast(
+        "host_health_details_changed",
+        %{id: ^host_id, health_details: %{software_updates_discovery_health: _}} = message,
+        1000
+      )
+
+      expected_keys =
+        MapSet.new([
+          :id,
+          :health_details
+        ])
+
+      assert expected_keys == MapSet.new(Map.keys(message))
+
+      # Check message can be properly encoded to JSON
+      assert {:ok, _} = Jason.encode(message)
+    end
+
+    for scenario <- @broadcast_scenarios do
+      @scenario scenario
+
+      test "#{scenario.name} projects its change into the read model when health_details is nil" do
+        characteristic_field = @scenario.characteristic_field
+        event_health_field = @scenario.event_health_field
+
+        %{id: host_id} = insert(:host, health_details: nil)
+
+        event =
+          build(@scenario.event_factory, [
+            {:host_id, host_id},
+            {event_health_field, :passing}
+          ])
+
+        ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+        %{health_details: health_details} = Repo.get!(HostReadModel, host_id)
+
+        expected_health_details =
+          %HostHealthDetails{
+            checks_health: %HealthValueDetails{value: :unknown, reason: ""},
+            saptune_health: %HealthValueDetails{value: :unknown, reason: ""},
+            software_updates_discovery_health: %HealthValueDetails{value: :unknown, reason: ""}
+          }
+          |> Map.put(characteristic_field, %HealthValueDetails{value: :passing, reason: ""})
+
+        assert expected_health_details == health_details
+      end
+    end
+
+    for scenario <- @broadcast_scenarios do
+      @scenario scenario
+
+      test "#{scenario.name} broadcast its change to phoenix channel when health_details is nil" do
+        characteristic_field = @scenario.characteristic_field
+        event_health_field = @scenario.event_health_field
+
+        %{id: host_id} = insert(:host, health_details: nil)
+
+        event =
+          build(@scenario.event_factory, [
+            {:host_id, host_id},
+            {event_health_field, :passing}
+          ])
 
         ProjectorTestHelper.project(HostProjector, event, "host_projector")
 
