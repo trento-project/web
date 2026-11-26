@@ -8,7 +8,7 @@ defmodule Trento.Checks do
 
   import Ecto.Query, only: [from: 2, select: 3, where: 3]
 
-  alias Trento.Checks.{ChecksExecutionRequest, Frequency}
+  alias Trento.Checks.{ChecksExecutionRequest, Frequency, TargetSettings}
   alias Trento.Clusters
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Hosts
@@ -60,6 +60,50 @@ defmodule Trento.Checks do
 
     deleted
   end
+
+  @doc """
+  Returns the checks frequency settings of a host or cluster, or nil when it uses the global ones.
+  """
+  @spec get_target_settings(String.t()) :: TargetSettings.t() | nil
+  def get_target_settings(target_id), do: Repo.get(TargetSettings, target_id)
+
+  @doc """
+  Stores the checks frequency settings of a host or cluster, replacing the previous ones.
+  """
+  @spec put_target_settings(:host | :cluster, String.t(), map()) ::
+          {:ok, TargetSettings.t()} | {:error, Ecto.Changeset.t()}
+  def put_target_settings(target_type, target_id, attrs) do
+    %TargetSettings{target_id: target_id, target_type: target_type}
+    |> TargetSettings.changeset(attrs)
+    |> Repo.insert(
+      on_conflict: {:replace, [:enabled, :frequency, :updated_at]},
+      conflict_target: :target_id,
+      returning: true
+    )
+  end
+
+  @doc """
+  Deletes the checks frequency settings of a host or cluster, so that it uses the global ones.
+  """
+  @spec delete_target_settings(String.t()) :: :ok
+  def delete_target_settings(target_id) do
+    Repo.delete_all(from s in TargetSettings, where: s.target_id == ^target_id)
+
+    :ok
+  end
+
+  @doc """
+  The settings in use for a target: its own, or else the global ones.
+  """
+  @spec effective_settings(TargetSettings.t() | nil, ChecksFrequencySettings.t()) :: %{
+          enabled: boolean(),
+          frequency: Frequency.t() | nil
+        }
+  def effective_settings(%TargetSettings{enabled: enabled, frequency: frequency}, _global),
+    do: %{enabled: enabled, frequency: frequency}
+
+  def effective_settings(nil, %ChecksFrequencySettings{enabled: enabled, frequency: frequency}),
+    do: %{enabled: enabled, frequency: frequency}
 
   defp request_due_executions(_target_type, %ChecksFrequencySettings{enabled: false}, _),
     do: :ok

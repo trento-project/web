@@ -14,9 +14,11 @@ defmodule Trento.ChecksTest do
   alias Trento.Checks
   alias Trento.Checks.ChecksExecutionRequest
   alias Trento.Checks.Frequency
+  alias Trento.Checks.TargetSettings
   alias Trento.Checks.V1.ExecutionRequested
   alias Trento.Infrastructure.Checks.AMQP.Publisher
   alias Trento.Infrastructure.Messaging.Adapter.Mock, as: Messaging
+  alias Trento.Settings.ChecksFrequencySettings
   alias Trento.Support.DateService
 
   @now ~U[2026-03-02 10:00:00.000000Z]
@@ -250,6 +252,56 @@ defmodule Trento.ChecksTest do
 
       assert 0 == Checks.delete_stale_execution_requests(DateService.Mock)
       assert [%ChecksExecutionRequest{target_id: ^host_id}] = Repo.all(ChecksExecutionRequest)
+    end
+  end
+
+  describe "target settings" do
+    test "should store, replace and delete the settings of a target" do
+      target_id = Faker.UUID.v4()
+
+      assert {:ok, %TargetSettings{enabled: true, frequency: %Frequency{value: 1, unit: :hour}}} =
+               Checks.put_target_settings(:host, target_id, %{
+                 enabled: true,
+                 frequency: %{value: 1, unit: :hour}
+               })
+
+      assert {:ok, %TargetSettings{enabled: false, frequency: %Frequency{value: 6, unit: :hour}}} =
+               Checks.put_target_settings(:host, target_id, %{
+                 enabled: false,
+                 frequency: %{value: 6, unit: :hour}
+               })
+
+      assert %TargetSettings{
+               target_type: :host,
+               enabled: false,
+               frequency: %Frequency{value: 6, unit: :hour}
+             } = Checks.get_target_settings(target_id)
+
+      assert :ok = Checks.delete_target_settings(target_id)
+      assert nil == Checks.get_target_settings(target_id)
+    end
+
+    test "should refuse a frequency that is not allowed" do
+      assert {:error, %Ecto.Changeset{}} =
+               Checks.put_target_settings(:host, Faker.UUID.v4(), %{
+                 enabled: true,
+                 frequency: %{value: 2, unit: :hour}
+               })
+    end
+
+    test "should use the settings of the target, or else the global ones" do
+      global = %ChecksFrequencySettings{enabled: false, frequency: nil, enforced_from_env: true}
+
+      own =
+        build(:checks_target_settings,
+          enabled: true,
+          frequency: %Frequency{value: 6, unit: :hour}
+        )
+
+      assert %{enabled: true, frequency: %Frequency{value: 6, unit: :hour}} =
+               Checks.effective_settings(own, global)
+
+      assert %{enabled: false, frequency: nil} = Checks.effective_settings(nil, global)
     end
   end
 
