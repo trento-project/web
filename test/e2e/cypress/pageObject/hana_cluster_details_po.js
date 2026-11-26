@@ -82,7 +82,7 @@ const criticalChecksValue =
 const actionNotAuthorizedTooltip =
   'span:contains("You are not authorized for this action")';
 
-const checkSelectionButton = 'button:contains("Check Selection")';
+const checkSelectionButton = 'button:contains("Check Settings")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 const checkCategorySwitch = 'button[class*="check-switch"]';
