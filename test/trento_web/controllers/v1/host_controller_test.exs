@@ -1192,6 +1192,7 @@ defmodule TrentoWeb.V1.HostControllerSequentialTest do
   use TrentoWeb.ConnCase
 
   import OpenApiSpex.TestAssertions
+  import Phoenix.ChannelTest
   import Trento.Factory
   import Trento.Support.Helpers.AbilitiesTestHelper
 
@@ -1240,6 +1241,60 @@ defmodule TrentoWeb.V1.HostControllerSequentialTest do
                "global" => true,
                "next_execution_at" => nil
              } = global
+    end
+  end
+
+  describe "checks frequency broadcast" do
+    test "should broadcast the stored schedule of a host", %{conn: conn} do
+      %{id: target_id} = insert(:host)
+      TrentoWeb.Endpoint.subscribe("monitoring:hosts")
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/hosts/#{target_id}/checks/schedule", %{
+        enabled: true,
+        frequency: %{value: 6, unit: "hour"}
+      })
+      |> json_response(:ok)
+
+      assert_broadcast "host_checks_frequency_updated", %{
+        id: ^target_id,
+        enabled: true,
+        frequency: %{value: 6, unit: :hour},
+        global: false
+      }
+    end
+
+    test "should broadcast the global schedule of a host after a deletion", %{conn: conn} do
+      %{id: target_id} = insert(:host)
+      insert(:checks_target_settings, target_type: :host, target_id: target_id)
+      TrentoWeb.Endpoint.subscribe("monitoring:hosts")
+
+      conn
+      |> delete("/api/v1/hosts/#{target_id}/checks/schedule")
+      |> response(:no_content)
+
+      assert_broadcast "host_checks_frequency_updated", %{
+        id: ^target_id,
+        enabled: true,
+        frequency: %{value: 5, unit: :minute},
+        global: true
+      }
+    end
+
+    test "should not broadcast a refused change of a host", %{conn: conn} do
+      %{id: target_id} = insert(:host)
+      TrentoWeb.Endpoint.subscribe("monitoring:hosts")
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/hosts/#{target_id}/checks/schedule", %{
+        enabled: true,
+        frequency: %{value: 2, unit: "hour"}
+      })
+      |> json_response(:unprocessable_entity)
+
+      refute_broadcast "host_checks_frequency_updated", %{id: ^target_id}
     end
   end
 end

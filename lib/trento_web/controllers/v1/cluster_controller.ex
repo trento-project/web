@@ -185,7 +185,8 @@ defmodule TrentoWeb.V1.ClusterController do
 
   def update_checks_schedule(conn, %{cluster_id: target_id}) do
     with {:ok, schedule} <-
-           Trento.Checks.put_checks_schedule(:cluster, target_id, OpenApiSpex.body_params(conn)) do
+           Trento.Checks.put_checks_schedule(:cluster, target_id, OpenApiSpex.body_params(conn)),
+         :ok <- broadcast_checks_frequency_updated(target_id, schedule) do
       conn
       |> put_view(json: ChecksScheduleJSON)
       |> render(:checks_schedule, schedule: schedule)
@@ -217,10 +218,19 @@ defmodule TrentoWeb.V1.ClusterController do
     ]
 
   def delete_checks_schedule(conn, %{cluster_id: target_id}) do
-    with {:ok, _} <- Trento.Checks.delete_checks_schedule(:cluster, target_id) do
+    with {:ok, schedule} <- Trento.Checks.delete_checks_schedule(:cluster, target_id),
+         :ok <- broadcast_checks_frequency_updated(target_id, schedule) do
       send_resp(conn, :no_content, "")
     end
   end
+
+  defp broadcast_checks_frequency_updated(target_id, schedule),
+    do:
+      TrentoWeb.Endpoint.broadcast(
+        "monitoring:clusters",
+        "cluster_checks_frequency_updated",
+        ChecksScheduleJSON.checks_frequency_updated(%{id: target_id, schedule: schedule})
+      )
 
   operation :select_checks,
     summary: "Select Checks for a Cluster.",
