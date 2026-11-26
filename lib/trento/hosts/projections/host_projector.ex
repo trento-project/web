@@ -41,7 +41,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
     SoftwareUpdatesHealthChanged
   }
 
-  alias Trento.Hosts.Projections.HostReadModel
+  alias Trento.Hosts.Projections.{HostHealthDetails, HostReadModel}
 
   @hosts_topic "monitoring:hosts"
 
@@ -318,24 +318,22 @@ defmodule Trento.Hosts.Projections.HostProjector do
   project(
     %HostChecksHealthChanged{host_id: host_id, checks_health: checks_health},
     fn multi ->
-      Ecto.Multi.update_all(
-        multi,
-        :health_details,
-        health_details_update_query(host_id, "checks_health", checks_health),
-        []
-      )
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, host_id, %{
+          checks_health: %{value: checks_health}
+        })
+      end)
     end
   )
 
   project(
     %HostSaptuneHealthChanged{host_id: host_id, saptune_health: saptune_health},
     fn multi ->
-      Ecto.Multi.update_all(
-        multi,
-        :health_details,
-        health_details_update_query(host_id, "saptune_health", saptune_health),
-        []
-      )
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, host_id, %{
+          saptune_health: %{value: saptune_health}
+        })
+      end)
     end
   )
 
@@ -348,29 +346,22 @@ defmodule Trento.Hosts.Projections.HostProjector do
           value -> {value, ""}
         end
 
-      Ecto.Multi.update_all(
-        multi,
-        :health_details,
-        health_details_update_query(host_id, "software_updates_discovery_health", value, reason),
-        []
-      )
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, host_id, %{
+          software_updates_discovery_health: %{value: value, reason: reason}
+        })
+      end)
     end
   )
 
   project(
     %SoftwareUpdatesDiscoveryCleared{host_id: host_id},
     fn multi ->
-      Ecto.Multi.update_all(
-        multi,
-        :health_details,
-        health_details_update_query(
-          host_id,
-          "software_updates_discovery_health",
-          Health.unknown(),
-          "not_set"
-        ),
-        []
-      )
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, host_id, %{
+          software_updates_discovery_health: %{value: Health.unknown(), reason: "not_set"}
+        })
+      end)
     end
   )
 
@@ -552,7 +543,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
   end
 
   def after_update(%event_module{host_id: host_id}, _metadata, %{
-        health_details: {1, [health_details]}
+        health_details: %HostHealthDetails{} = health_details
       })
       when event_module in @health_details_changed_events do
     message =
@@ -574,31 +565,24 @@ defmodule Trento.Hosts.Projections.HostProjector do
     }
   end
 
-  defp health_details_update_query(host_id, value_path, value, reason \\ "") do
-    details_map = %{value: value, reason: reason}
+  defp update_health_details(repo, host_id, health_details_attrs) do
+    case repo.get(HostReadModel, host_id) do
+      nil ->
+        {:ok, nil}
 
-    # Add extra security that the jsonb_set below would succeed every
-    # time. In normal circumstances, we shouldn't end up here.
-    default_details = default_health_details()
+      %HostReadModel{} = host ->
+        changeset =
+          HostReadModel.changeset(host, %{
+            health_details: health_details_attrs
+          })
 
-    from(
-      h in HostReadModel,
-      where: h.id == ^host_id,
-      update: [
-        set: [
-          health_details:
-            fragment(
-              "jsonb_set(COALESCE(?, ?::jsonb), ARRAY[?::text], ?::jsonb, false)",
-              h.health_details,
-              ^default_details,
-              ^value_path,
-              ^details_map
-            ),
-          updated_at: ^DateTime.utc_now()
-        ]
-      ],
-      select: h.health_details
-    )
+        if changeset.changes != %{} do
+          {:ok, updated_host} = repo.update(changeset)
+          {:ok, updated_host.health_details}
+        else
+          {:ok, nil}
+        end
+    end
   end
 
   defp map_list_from_struct_list(structs) when is_list(structs) do
