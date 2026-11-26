@@ -1,15 +1,15 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-defmodule Trento.Repo.Migrations.HealthDetailsInReadModel do
+defmodule Trento.Repo.Migrations.ReprojectForHealthDetails do
   use Ecto.Migration
 
   def up do
-    alter table("clusters") do
-      add :health_details, :map
-    end
-
+    # TODO: Verify names! Verify if truncation is needed on the Instances tables!
     execute "TRUNCATE TABLE clusters;"
+    execute "TRUNCATE TABLE hosts;"
+    execute "TRUNCATE TABLE sap_systems;"
+    execute "TRUNCATE TABLE databases;"
 
     # Mark cluster_projector for rebuild. This would be finalized in
     # Trento.Release.init() task named `repair_projections`.
@@ -21,11 +21,7 @@ defmodule Trento.Repo.Migrations.HealthDetailsInReadModel do
       SET last_seen_event_number = 0, updated_at = NOW()
       WHERE projection_name = 'cluster_projector';
     """)
-  end
 
-  def down do
-    alter table("clusters") do
-      remove :health_details
-    end
+    # TODO: Executes for the other projectors
   end
 end
