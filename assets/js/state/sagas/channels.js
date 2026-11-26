@@ -5,6 +5,7 @@ import { eventChannel, END } from 'redux-saga';
 import { all, call, fork, put, select, take } from 'redux-saga/effects';
 
 import { joinChannel } from '@lib/network/socket';
+import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
 import {
   hostRegistered,
@@ -68,6 +69,7 @@ import {
 
 import { operationCompleted } from '@state/runningOperations';
 import { checksFrequencySettingsUpdated } from '@state/checksFrequencySettings';
+import { refreshChecksSchedules } from '@state/checksSchedules';
 
 import { userUpdated, userLocked, userDeleted } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
@@ -77,6 +79,16 @@ import { getUserProfile } from '@state/selectors/user';
 const CLOSE_CHANNEL_EVENT = 'close';
 
 const hostEvents = [
+  {
+    name: 'host_checks_frequency_updated',
+    action: refreshChecksSchedules,
+    transform: ({ id }) => ({ targetType: TARGET_HOST, targetID: id }),
+  },
+  {
+    name: 'host_checks_execution_requested',
+    action: refreshChecksSchedules,
+    transform: ({ id }) => ({ targetType: TARGET_HOST, targetID: id }),
+  },
   {
     name: 'host_registered',
     action: hostRegistered,
@@ -120,6 +132,16 @@ const hostEvents = [
 ];
 
 const clusterEvents = [
+  {
+    name: 'cluster_checks_frequency_updated',
+    action: refreshChecksSchedules,
+    transform: ({ id }) => ({ targetType: TARGET_CLUSTER, targetID: id }),
+  },
+  {
+    name: 'cluster_checks_execution_requested',
+    action: refreshChecksSchedules,
+    transform: ({ id }) => ({ targetType: TARGET_CLUSTER, targetID: id }),
+  },
   {
     name: 'cluster_registered',
     action: clusterRegistered,

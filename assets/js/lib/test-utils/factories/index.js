@@ -18,6 +18,7 @@ export * from './alertingSettings';
 export * from './activityLog';
 export * from './activityLogsSettings';
 export * from './checksFrequencySettings';
+export * from './checksSchedules';
 export * from './charts';
 export * from './operations';
 export * from './settings';

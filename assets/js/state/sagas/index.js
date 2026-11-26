@@ -82,6 +82,7 @@ import {
 import { watchChecksSelectionEvents } from '@state/sagas/checksSelection';
 import { watchActivityLogsSettings } from '@state/sagas/activityLogsSettings';
 import { watchChecksFrequencySettings } from '@state/sagas/checksFrequencySettings';
+import { watchChecksSchedules } from '@state/sagas/checksSchedules';
 import { watchSoftwareUpdates } from '@state/sagas/softwareUpdates';
 
 import { watchSocketEvents } from '@state/sagas/channels';
@@ -195,6 +196,7 @@ export default function* rootSaga() {
     watchUserLoggedIn(),
     watchActivityLogsSettings(),
     watchChecksFrequencySettings(),
+    watchChecksSchedules(),
     watchSoftwareUpdates(),
     watchActivityLogActions(),
     watchOperationEvents(),
