@@ -5,5 +5,5 @@ defmodule Trento.Operations.Enums.HostBulkOperations do
   @moduledoc """
   Host operations that can be requested on multiple hosts at once
   """
-  use Trento.Support.Enum, values: [:reboot]
+  use Trento.Support.Enum, values: [:reboot, :saptune_solution]
 end
