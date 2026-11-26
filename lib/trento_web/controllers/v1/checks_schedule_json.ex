@@ -17,6 +17,12 @@ defmodule TrentoWeb.V1.ChecksScheduleJSON do
         next_execution_at: next_execution_at
       }
 
+  def checks_frequency_updated(%{
+        id: target_id,
+        schedule: %{enabled: enabled, frequency: frequency, global: global}
+      }),
+      do: %{id: target_id, enabled: enabled, frequency: frequency(frequency), global: global}
+
   defp frequency(nil), do: nil
   defp frequency(frequency), do: Map.take(frequency, [:value, :unit])
 end

@@ -1354,3 +1354,73 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     end
   end
 end
+
+defmodule TrentoWeb.V1.ClusterControllerSequentialTest do
+  @moduledoc """
+  Tests of the cluster controller that use global state, the PubSub or the application
+  environment, and thus are not safe for async execution.
+  """
+
+  use TrentoWeb.ConnCase
+
+  import Phoenix.ChannelTest
+  import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesTestHelper
+
+  setup_all :setup_api_spec_v1
+  setup :setup_user
+
+  describe "checks frequency broadcast" do
+    test "should broadcast the stored schedule of a cluster", %{conn: conn} do
+      %{id: target_id} = insert(:cluster)
+      TrentoWeb.Endpoint.subscribe("monitoring:clusters")
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/clusters/#{target_id}/checks/schedule", %{
+        enabled: true,
+        frequency: %{value: 6, unit: "hour"}
+      })
+      |> json_response(:ok)
+
+      assert_broadcast "cluster_checks_frequency_updated", %{
+        id: ^target_id,
+        enabled: true,
+        frequency: %{value: 6, unit: :hour},
+        global: false
+      }
+    end
+
+    test "should broadcast the global schedule of a cluster after a deletion", %{conn: conn} do
+      %{id: target_id} = insert(:cluster)
+      insert(:checks_target_settings, target_type: :cluster, target_id: target_id)
+      TrentoWeb.Endpoint.subscribe("monitoring:clusters")
+
+      conn
+      |> delete("/api/v1/clusters/#{target_id}/checks/schedule")
+      |> response(:no_content)
+
+      assert_broadcast "cluster_checks_frequency_updated", %{
+        id: ^target_id,
+        enabled: true,
+        frequency: %{value: 5, unit: :minute},
+        global: true
+      }
+    end
+
+    test "should not broadcast a refused change of a cluster", %{conn: conn} do
+      %{id: target_id} = insert(:cluster)
+      TrentoWeb.Endpoint.subscribe("monitoring:clusters")
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/clusters/#{target_id}/checks/schedule", %{
+        enabled: true,
+        frequency: %{value: 2, unit: "hour"}
+      })
+      |> json_response(:unprocessable_entity)
+
+      refute_broadcast "cluster_checks_frequency_updated", %{id: ^target_id}
+    end
+  end
+end
