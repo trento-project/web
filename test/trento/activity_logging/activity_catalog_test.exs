@@ -41,6 +41,8 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :database_cleanup_requested,
         :activity_log_settings_update,
         :changing_checks_frequency_settings,
+        :host_checks_frequency_changed,
+        :cluster_checks_frequency_changed,
         :host_operation_requested,
         :host_bulk_operation_requested,
         :cluster_operation_requested,
@@ -308,6 +310,30 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         connection_info: {TrentoWeb.V1.SettingsController, :update_checks_frequency_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 409, 422, 500]
+      },
+      %{
+        activity: :host_checks_frequency_changed,
+        connection_info: {TrentoWeb.V1.HostController, :update_checks_schedule},
+        interesting_statuses: 200,
+        not_interesting_statuses: [400, 401, 403, 404, 422, 500]
+      },
+      %{
+        activity: :host_checks_frequency_changed,
+        connection_info: {TrentoWeb.V1.HostController, :delete_checks_schedule},
+        interesting_statuses: 204,
+        not_interesting_statuses: [400, 401, 403, 404, 422, 500]
+      },
+      %{
+        activity: :cluster_checks_frequency_changed,
+        connection_info: {TrentoWeb.V1.ClusterController, :update_checks_schedule},
+        interesting_statuses: 200,
+        not_interesting_statuses: [400, 401, 403, 404, 422, 500]
+      },
+      %{
+        activity: :cluster_checks_frequency_changed,
+        connection_info: {TrentoWeb.V1.ClusterController, :delete_checks_schedule},
+        interesting_statuses: 204,
+        not_interesting_statuses: [400, 401, 403, 404, 422, 500]
       },
       %{
         activity: :user_creation,

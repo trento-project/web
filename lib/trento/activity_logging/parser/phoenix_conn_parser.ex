@@ -128,6 +128,12 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     |> Map.take(["enabled", "frequency"])
   end
 
+  def get_activity_metadata(:host_checks_frequency_changed, %Plug.Conn{params: params} = conn),
+    do: Map.put(checks_schedule_change(conn), :host_id, Map.get(params, :id))
+
+  def get_activity_metadata(:cluster_checks_frequency_changed, %Plug.Conn{params: params} = conn),
+    do: Map.put(checks_schedule_change(conn), :cluster_id, Map.get(params, :cluster_id))
+
   def get_activity_metadata(
         action,
         %Plug.Conn{
@@ -337,6 +343,17 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(_, _), do: %{}
+
+  # A deleted schedule makes the target follow the global settings, a stored one is in the
+  # response
+  defp checks_schedule_change(%Plug.Conn{private: %{phoenix_action: :delete_checks_schedule}}),
+    do: %{global: true}
+
+  defp checks_schedule_change(%Plug.Conn{resp_body: resp_body}) do
+    resp_body
+    |> Jason.decode!()
+    |> Map.take(["enabled", "frequency", "global"])
+  end
 
   defp redact(request_body, key) do
     case Map.has_key?(request_body, key) && Map.fetch!(request_body, key) != nil do

@@ -243,9 +243,17 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {TrentoWeb.V1.ClusterController, :request_checks_execution} =>
           {:cluster_checks_execution_request, 202},
         {TrentoWeb.V1.ClusterController, :select_checks} => {:cluster_checks_selected, 202},
+        {TrentoWeb.V1.ClusterController, :update_checks_schedule} =>
+          {:cluster_checks_frequency_changed, 200},
+        {TrentoWeb.V1.ClusterController, :delete_checks_schedule} =>
+          {:cluster_checks_frequency_changed, 204},
         {TrentoWeb.V1.HostController, :request_checks_execution} =>
           {:host_checks_execution_request, 202},
         {TrentoWeb.V1.HostController, :select_checks} => {:host_checks_selected, 202},
+        {TrentoWeb.V1.HostController, :update_checks_schedule} =>
+          {:host_checks_frequency_changed, 200},
+        {TrentoWeb.V1.HostController, :delete_checks_schedule} =>
+          {:host_checks_frequency_changed, 204},
         {TrentoWeb.V1.HostController, :delete} => {:host_cleanup_requested, 204},
         {TrentoWeb.V1.SapSystemController, :delete_application_instance} =>
           {:sap_system_cleanup_requested, 204},

@@ -304,6 +304,75 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     end
   end
 
+  describe "changing the checks frequency of a target detection" do
+    test "should log a stored schedule of a host",
+         %{conn: conn, user: %{id: user_id, username: username}} do
+      %{id: host_id, hostname: hostname} = insert(:host)
+
+      conn
+      |> with_token(user_id)
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/hosts/#{host_id}/checks/schedule", %{
+        enabled: true,
+        frequency: %{value: 6, unit: "hour"}
+      })
+      |> json_response(200)
+
+      wait_for_tasks_completion()
+
+      assert [
+               %ActivityLog{
+                 type: "host_checks_frequency_changed",
+                 actor: ^username,
+                 metadata: %{
+                   "host_id" => ^host_id,
+                   "hostname" => ^hostname,
+                   "enabled" => true,
+                   "frequency" => %{"value" => 6, "unit" => "hour"},
+                   "global" => false
+                 }
+               }
+             ] = Trento.Repo.all(ActivityLog)
+    end
+
+    test "should log the deletion of the schedule of a cluster",
+         %{conn: conn, user: %{id: user_id}} do
+      %{id: cluster_id, name: name} = insert(:cluster)
+      insert(:checks_target_settings, target_type: :cluster, target_id: cluster_id)
+
+      conn
+      |> with_token(user_id)
+      |> delete("/api/v1/clusters/#{cluster_id}/checks/schedule")
+      |> response(204)
+
+      wait_for_tasks_completion()
+
+      assert [
+               %ActivityLog{
+                 type: "cluster_checks_frequency_changed",
+                 metadata: %{"cluster_id" => ^cluster_id, "name" => ^name, "global" => true}
+               }
+             ] = Trento.Repo.all(ActivityLog)
+    end
+
+    test "should not log a refused schedule of a host", %{conn: conn, user: %{id: user_id}} do
+      %{id: host_id} = insert(:host)
+
+      conn
+      |> with_token(user_id)
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/hosts/#{host_id}/checks/schedule", %{
+        enabled: true,
+        frequency: %{value: 2, unit: "hour"}
+      })
+      |> json_response(422)
+
+      wait_for_tasks_completion()
+
+      assert [] = Trento.Repo.all(ActivityLog)
+    end
+  end
+
   describe "changing checks frequency detection" do
     defp change_checks_frequency(conn, checks_frequency) do
       conn
