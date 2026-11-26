@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-30T22:11:50Z",
-    "commit": "56dcbcf53e237ff0a274e9e5d0458c81f5816ad8",
-    "run_id": "36779975111",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-30T22:12:53Z",
     "commit": "56dcbcf53e237ff0a274e9e5d0458c81f5816ad8",
     "run_id": "36779975111",
@@ -4998,5 +4987,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-26T02:12:40Z",
+    "commit": "7b653f63d8a453d11b3266071f8f6e27f30b8780",
+    "run_id": "45740881010",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.06672
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      }
+    ]
   }
 ]
