@@ -148,7 +148,11 @@ defmodule TrentoWeb.Router do
            :request_checks_execution
 
       get "/clusters/:cluster_id/checks/schedule", ClusterController, :get_checks_schedule
+      put "/clusters/:cluster_id/checks/schedule", ClusterController, :update_checks_schedule
+      delete "/clusters/:cluster_id/checks/schedule", ClusterController, :delete_checks_schedule
       get "/hosts/:id/checks/schedule", HostController, :get_checks_schedule
+      put "/hosts/:id/checks/schedule", HostController, :update_checks_schedule
+      delete "/hosts/:id/checks/schedule", HostController, :delete_checks_schedule
 
       delete "/hosts/:id", HostController, :delete
 

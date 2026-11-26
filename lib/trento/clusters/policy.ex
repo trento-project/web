@@ -20,6 +20,12 @@ defmodule Trento.Clusters.Policy do
   def authorize(:request_checks_execution, %User{} = user, ClusterReadModel),
     do: has_global_ability?(user) or has_checks_execution_ability?(user)
 
+  def authorize(action, %User{} = user, ClusterReadModel)
+      when action in [:update_checks_schedule, :delete_checks_schedule],
+      do:
+        has_global_ability?(user) or
+          user_has_ability?(user, %{name: "all", resource: "cluster_checks_frequency"})
+
   def authorize(operation, %User{} = user, ClusterReadModel)
       when operation in ClusterOperations.values() or
              operation in ClusterHostOperations.values(),

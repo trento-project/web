@@ -52,3 +52,30 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Checks.ChecksSchedule do
     struct?: false
   )
 end
+
+defmodule TrentoWeb.OpenApi.V1.Schema.Checks.ChecksScheduleRequest do
+  @moduledoc false
+  require OpenApiSpex
+  alias OpenApiSpex.Schema
+  alias TrentoWeb.OpenApi.V1.Schema.Platform.ChecksFrequency
+
+  OpenApiSpex.schema(
+    %{
+      title: "ChecksScheduleRequestV1",
+      description: "The own checks schedule of a host or cluster.",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        enabled: %Schema{
+          type: :boolean,
+          description: "Whether the checks of the target run periodically.",
+          example: true
+        },
+        frequency: ChecksFrequency
+      },
+      required: [:enabled, :frequency],
+      example: %{enabled: true, frequency: %{value: 6, unit: "hour"}}
+    },
+    struct?: false
+  )
+end
