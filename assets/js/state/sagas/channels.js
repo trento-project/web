@@ -51,6 +51,7 @@ import {
   databaseDeregistered,
   databaseRestored,
   databaseHealthChanged,
+  databaseHealthDetailsChanged,
   databaseStaleChanged,
   databaseInstanceRegistered,
   databaseInstanceAbsentAtChanged,
@@ -223,6 +224,10 @@ const databaseEvents = [
   {
     name: 'database_health_changed',
     action: databaseHealthChanged,
+  },
+  {
+    name: 'database_health_details_changed',
+    action: databaseHealthDetailsChanged,
   },
   {
     name: 'database_stale_changed',

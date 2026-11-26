@@ -3,6 +3,7 @@
 
 defmodule TrentoWeb.V1.DatabaseJSON do
   alias Trento.Services.HealthService
+  alias Trento.Support.StructHelper
 
   def databases(%{databases: databases}), do: Enum.map(databases, &database(%{database: &1}))
 
@@ -14,8 +15,7 @@ defmodule TrentoWeb.V1.DatabaseJSON do
       }),
       do:
         database
-        |> Map.from_struct()
-        |> Map.delete(:__meta__)
+        |> StructHelper.to_atomized_map()
         |> Map.delete(:deregistered_at)
         |> Map.delete(:sap_systems)
         |> Map.delete(:tenants)
@@ -23,6 +23,7 @@ defmodule TrentoWeb.V1.DatabaseJSON do
           :database_instances,
           Enum.map(database_instances, &database_instance(%{instance: &1}))
         )
+        |> Map.update(:health_details, nil, &render_health_details/1)
 
   def database_instance(%{instance: %{database_id: database_id} = instance}),
     do:
@@ -39,11 +40,11 @@ defmodule TrentoWeb.V1.DatabaseJSON do
 
   def database_registered(%{database: database}) do
     database
-    |> Map.from_struct()
-    |> Map.delete(:__meta__)
+    |> StructHelper.to_atomized_map()
     |> Map.delete(:tags)
     |> Map.delete(:database_instances)
     |> Map.delete(:sap_systems)
+    |> Map.update(:health_details, nil, &render_health_details/1)
   end
 
   def database_tenant(%{tenant: tenant}) do
@@ -57,6 +58,13 @@ defmodule TrentoWeb.V1.DatabaseJSON do
   end
 
   def database_health_changed(%{health: health}), do: health
+
+  def database_health_details_changed(data) do
+    data
+    |> StructHelper.to_atomized_map()
+    |> Map.update!(:health_details, &render_health_details/1)
+    |> Map.take([:id, :health_details])
+  end
 
   def database_instance_status_changed(%{
         instance: %{
@@ -162,5 +170,13 @@ defmodule TrentoWeb.V1.DatabaseJSON do
       tenants: rendered_tenants,
       database_id: database_id
     }
+  end
+
+  defp render_health_details(nil), do: nil
+
+  defp render_health_details(health_details) do
+    health_details
+    |> Enum.map(fn {key, details} -> {key, Map.delete(details, :reason)} end)
+    |> Map.new()
   end
 end

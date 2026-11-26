@@ -77,6 +77,7 @@ defmodule Trento.Factory do
     DatabaseInstanceDeregistered,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceRegistered,
+    DatabaseInstanceStatusChanged,
     DatabaseRegistered,
     DatabaseRestored,
     DatabaseTenantsUpdated,
@@ -155,6 +156,9 @@ defmodule Trento.Factory do
     DatabaseInstanceReadModel,
     DatabaseReadModel
   }
+
+  alias Trento.Databases.Projections.DatabaseHealthDetails,
+    as: DatabaseHealthDetailsProjection
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
@@ -746,6 +750,12 @@ defmodule Trento.Factory do
     }
   end
 
+  def database_health_details_projection_factory do
+    %DatabaseHealthDetailsProjection{
+      instances_health: %HealthValueDetails{value: Enum.random(Health.values())}
+    }
+  end
+
   def health_value_details_factory do
     %HealthValueDetails{
       value: Enum.random(Health.values()),
@@ -798,6 +808,15 @@ defmodule Trento.Factory do
       system_replication_tier: nil,
       status: Status.green()
     }
+  end
+
+  def database_instance_status_changed_event_factory do
+    DatabaseInstanceStatusChanged.new!(%{
+      database_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4(),
+      instance_number: "00",
+      status: Enum.random(Status.values())
+    })
   end
 
   def database_instance_marked_absent_event_factory do
@@ -1222,6 +1241,7 @@ defmodule Trento.Factory do
       id: Faker.UUID.v4(),
       sid: Faker.StarWars.planet(),
       health: Health.unknown(),
+      health_details: build(:database_health_details_projection),
       stale_at: nil
     }
   end
