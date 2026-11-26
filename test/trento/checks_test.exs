@@ -70,6 +70,29 @@ defmodule Trento.ChecksTest do
                  Repo.get!(ChecksExecutionRequest, recent_id)
       end
 
+      test "should publish the periodic request of a #{target_type}" do
+        :ok = Checks.subscribe_to_events()
+        %{id: target_id} = insert_target(@target_type)
+
+        assert_requested(@target_type, [target_id])
+
+        assert_receive {:checks_execution_requested, @target_type, ^target_id,
+                        ~U[2026-03-02 10:00:00.000000Z]}
+      end
+
+      test "should not publish a failed request of a #{target_type}" do
+        :ok = Checks.subscribe_to_events()
+        %{id: target_id} = insert_target(@target_type)
+
+        expect(Messaging, :publish, fn _, _, _ -> {:error, :boom} end)
+
+        capture_log(fn ->
+          assert :ok = Checks.request_due_executions(@target_type, DateService.Mock)
+        end)
+
+        refute_receive {:checks_execution_requested, _, ^target_id, _}
+      end
+
       test "should request the #{target_type}s with an own frequency at that frequency" do
         insert(:checks_frequency_settings,
           enabled: true,

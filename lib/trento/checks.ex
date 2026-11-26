@@ -8,7 +8,7 @@ defmodule Trento.Checks do
 
   import Ecto.Query, only: [from: 2]
 
-  alias Trento.Checks.{ChecksExecutionRequest, Frequency, TargetSettings}
+  alias Trento.Checks.{ChecksExecutionRequest, Events, Frequency, TargetSettings}
   alias Trento.Clusters
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Hosts
@@ -61,6 +61,13 @@ defmodule Trento.Checks do
 
     deleted
   end
+
+  @doc """
+  Subscribes the calling process to the events of the periodic checks executions, see
+  `Trento.Checks.Events`.
+  """
+  @spec subscribe_to_events() :: :ok | {:error, term()}
+  defdelegate subscribe_to_events, to: Events, as: :subscribe
 
   @doc """
   Returns the checks frequency settings of a host or cluster, or nil when it uses the global ones.
@@ -200,15 +207,19 @@ defmodule Trento.Checks do
   defp request_execution(target_type, target_id, date_service) do
     case request_checks_execution(target_type, target_id) do
       :ok ->
+        requested_at = date_service.utc_now()
+
         Repo.insert!(
           %ChecksExecutionRequest{
             target_id: target_id,
             target_type: target_type,
-            last_requested_at: date_service.utc_now()
+            last_requested_at: requested_at
           },
           on_conflict: {:replace, [:last_requested_at, :updated_at]},
           conflict_target: :target_id
         )
+
+        Events.broadcast_execution_requested(target_type, target_id, requested_at)
 
       {:error, reason} ->
         Logger.error(
