@@ -105,6 +105,52 @@ defmodule Trento.Checks do
   def effective_settings(nil, %ChecksFrequencySettings{enabled: enabled, frequency: frequency}),
     do: %{enabled: enabled, frequency: frequency}
 
+  @doc """
+  When the checks of a target are due, given its effective settings and the time of its
+  last periodic request: nil when they do not run periodically, :now when the target was
+  never requested.
+  """
+  @spec due_at(%{enabled: boolean(), frequency: Frequency.t() | nil}, DateTime.t() | nil) ::
+          DateTime.t() | :now | nil
+  def due_at(%{enabled: false}, _last_requested_at), do: nil
+  def due_at(%{frequency: nil}, _last_requested_at), do: nil
+  def due_at(_effective, nil), do: :now
+
+  def due_at(%{frequency: frequency}, last_requested_at),
+    do:
+      DateTime.add(
+        last_requested_at,
+        Frequency.to_minutes(frequency) * 60 - @due_tolerance_seconds
+      )
+
+  @doc """
+  Whether the checks are due at the given time.
+  """
+  @spec due?(DateTime.t() | :now | nil, DateTime.t()) :: boolean()
+  def due?(nil, _now), do: false
+  def due?(:now, _now), do: true
+  def due?(due_at, now), do: DateTime.compare(due_at, now) != :gt
+
+  @doc """
+  The next periodic execution: the first full minute, when the jobs run, at or after the
+  due time, or nil when the checks do not run periodically.
+  """
+  @spec next_execution_at(DateTime.t() | :now | nil, DateTime.t()) :: DateTime.t() | nil
+  def next_execution_at(nil, _now), do: nil
+  def next_execution_at(:now, now), do: next_full_minute(now)
+
+  def next_execution_at(due_at, now) do
+    case DateTime.compare(due_at, now) do
+      :gt -> next_full_minute(due_at)
+      _ -> next_full_minute(now)
+    end
+  end
+
+  defp next_full_minute(%DateTime{second: 0, microsecond: {0, _}} = time), do: time
+
+  defp next_full_minute(%DateTime{microsecond: {_, precision}} = time),
+    do: DateTime.add(%DateTime{time | second: 0, microsecond: {0, precision}}, 60)
+
   defp request_due_executions(_target_type, %ChecksFrequencySettings{enabled: false}, _),
     do: :ok
 

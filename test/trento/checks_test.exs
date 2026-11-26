@@ -255,6 +255,42 @@ defmodule Trento.ChecksTest do
     end
   end
 
+  describe "the due rule" do
+    @five_minutes %{enabled: true, frequency: %Frequency{value: 5, unit: :minute}}
+
+    for {name, effective, last_requested_at, now, due, next} <- [
+          {"disabled settings", %{enabled: false, frequency: %Frequency{value: 5, unit: :minute}},
+           ~U[2026-03-02 09:00:00.000000Z], ~U[2026-03-02 10:00:00.000000Z], false, nil},
+          {"no frequency, global disabled from the environment", %{enabled: true, frequency: nil},
+           nil, ~U[2026-03-02 10:00:00.000000Z], false, nil},
+          {"never requested", @five_minutes, nil, ~U[2026-03-02 10:00:20.000000Z], true,
+           ~U[2026-03-02 10:01:00.000000Z]},
+          {"299.993 seconds elapsed, due thanks to the tolerance", @five_minutes,
+           ~U[2026-03-02 10:00:00.312000Z], ~U[2026-03-02 10:05:00.305000Z], true,
+           ~U[2026-03-02 10:06:00.000000Z]},
+          {"not yet due", @five_minutes, ~U[2026-03-02 10:00:00.312000Z],
+           ~U[2026-03-02 10:03:00.000000Z], false, ~U[2026-03-02 10:05:00.000000Z]},
+          {"a run late in the minute", @five_minutes, ~U[2026-03-02 10:00:20.000000Z],
+           ~U[2026-03-02 10:05:40.000000Z], true, ~U[2026-03-02 10:06:00.000000Z]},
+          {"weeks", %{enabled: true, frequency: %Frequency{value: 1, unit: :week}},
+           ~U[2026-03-02 10:00:00.000000Z], ~U[2026-03-05 10:00:00.000000Z], false,
+           ~U[2026-03-09 10:00:00.000000Z]}
+        ] do
+      @effective effective
+      @last_requested_at last_requested_at
+      @now_of_row now
+      @due due
+      @next next
+
+      test "should decide and plan the execution with #{name}" do
+        due_at = Checks.due_at(@effective, @last_requested_at)
+
+        assert @due == Checks.due?(due_at, @now_of_row)
+        assert @next == Checks.next_execution_at(due_at, @now_of_row)
+      end
+    end
+  end
+
   describe "target settings" do
     test "should store, replace and delete the settings of a target" do
       target_id = Faker.UUID.v4()
