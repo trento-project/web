@@ -186,24 +186,22 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   project(
     %ClusterChecksHealthChanged{cluster_id: cluster_id, checks_health: checks_health},
     fn multi ->
-      Ecto.Multi.update_all(
-        multi,
-        :health_details,
-        health_details_update_query(cluster_id, "checks_health", checks_health),
-        []
-      )
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, cluster_id, %{
+          checks_health: %{value: checks_health}
+        })
+      end)
     end
   )
 
   project(
     %ClusterSbdHealthChanged{cluster_id: cluster_id, sbd_health: sbd_health},
     fn multi ->
-      Ecto.Multi.update_all(
-        multi,
-        :health_details,
-        health_details_update_query(cluster_id, "sbd_health", sbd_health),
-        []
-      )
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, cluster_id, %{
+          sbd_health: %{value: sbd_health}
+        })
+      end)
     end
   )
 
@@ -213,12 +211,11 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       distributed_health: distributed_health
     },
     fn multi ->
-      Ecto.Multi.update_all(
-        multi,
-        :health_details,
-        health_details_update_query(cluster_id, "distributed_health", distributed_health),
-        []
-      )
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, cluster_id, %{
+          distributed_health: %{value: distributed_health}
+        })
+      end)
     end
   )
 
@@ -228,12 +225,11 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       replication_health: replication_health
     },
     fn multi ->
-      Ecto.Multi.update_all(
-        multi,
-        :health_details,
-        health_details_update_query(cluster_id, "replication_health", replication_health),
-        []
-      )
+      Ecto.Multi.run(multi, :health_details, fn repo, _changes ->
+        update_health_details(repo, cluster_id, %{
+          replication_health: %{value: replication_health}
+        })
+      end)
     end
   )
 
@@ -309,9 +305,9 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   @impl true
   def after_update(%event_module{cluster_id: cluster_id}, _metadata, %{
-        health_details: {1, [health_details]}
+        health_details: health_details
       })
-      when event_module in @health_details_changed_events do
+      when event_module in @health_details_changed_events and not is_nil(health_details) do
     message =
       ClusterJSON.cluster_health_details_changed(%{
         cluster_id: cluster_id,
@@ -387,23 +383,26 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   defp maybe_get_default_health_details(_new_type, previous_health_details),
     do: previous_health_details
 
-  defp health_details_update_query(cluster_id, value_path, value) do
-    from(
-      c in ClusterReadModel,
-      where: c.id == ^cluster_id,
-      update: [
-        set: [
-          health_details:
-            fragment(
-              "jsonb_set(?, ARRAY[?::text, 'value'], to_jsonb(?::text), false)",
-              c.health_details,
-              ^value_path,
-              ^to_string(value)
-            ),
-          updated_at: ^DateTime.utc_now()
-        ]
-      ],
-      select: c.health_details
-    )
+  defp update_health_details(repo, cluster_id, health_details_attrs) do
+    case repo.get(ClusterReadModel, cluster_id) do
+      nil ->
+        {:ok, nil}
+
+      %ClusterReadModel{type: :unknown} ->
+        {:ok, nil}
+
+      %ClusterReadModel{} = cluster ->
+        changeset =
+          ClusterReadModel.changeset(cluster, %{
+            health_details: health_details_attrs
+          })
+
+        if changeset.changes != %{} do
+          {:ok, updated_cluster} = repo.update(changeset)
+          {:ok, updated_cluster.health_details}
+        else
+          {:ok, nil}
+        end
+    end
   end
 end
