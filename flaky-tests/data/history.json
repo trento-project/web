@@ -1,105 +1,5 @@
 [
   {
-    "timestamp": "2026-09-30T01:24:15Z",
-    "commit": "fd8b9f0dd3026c77bc06de47190ce3aa9cc7fe2f",
-    "run_id": "36638507681",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 41
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should create a new personal access token and grant access to guarded resources::Users Profile personal access tokens should create a new personal access token and grant access to guarded resources",
-        "score": 0.2828
-      },
-      {
-        "name": "should mark the application cluster health as stale when a clustered application instance agent stops reporting::Homepage Stale data should mark the application cluster health as stale when a clustered application instance agent stops reporting",
-        "score": 0.25
-      },
-      {
-        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
-        "score": 0.2020
-      },
-      {
-        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
-        "score": 0.1930
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
-        "score": 0.1930
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
-        "score": 0.1930
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
-        "score": 0.1930
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.1625
-      },
-      {
-        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
-        "score": 0.1625
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.1538
-      },
-      {
-        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
-        "score": 0.1093
-      },
-      {
-        "name": "should preserve filters when the activity log sidebar entry is clicked from the activity log view::Activity Log page Filtering should preserve filters when the activity log sidebar entry is clicked from the activity log view",
-        "score": 0.08328
-      },
-      {
-        "name": "should have SBD with unhealthy status after change::HANA cluster details Cluster SBD should have the expected devices with the correct status should have SBD with unhealthy status after change",
-        "score": 0.05001
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.05001
-      },
-      {
-        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
-        "score": 0.05001
-      },
-      {
-        "name": "should preserve filters in the upgradable packages view::SUSE Multi-Linux Manager overviews Persistent filters should preserve filters in the upgradable packages view",
-        "score": 0.05001
-      },
-      {
-        "name": "should start autorefresh ticker::Activity Log page Autorefresh should start autorefresh ticker",
-        "score": 0.05001
-      },
-      {
-        "name": "should not deregister database instances if the SAP system using the database is deregistered::Databases Overview Deregistration should not deregister database instances if the SAP system using the database is deregistered",
-        "score": 0.02501
-      },
-      {
-        "name": "should not display DB HDQ after deregistering the primary instance::Databases Overview Deregistration should not display DB HDQ after deregistering the primary instance",
-        "score": 0.02501
-      },
-      {
-        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-09-30T21:57:26Z",
     "commit": "56dcbcf53e237ff0a274e9e5d0458c81f5816ad8",
     "run_id": "36779045691",
@@ -5092,5 +4992,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-11-26T01:44:06Z",
+    "commit": "7b653f63d8a453d11b3266071f8f6e27f30b8780",
+    "run_id": "45737739196",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
