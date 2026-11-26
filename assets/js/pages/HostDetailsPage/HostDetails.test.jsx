@@ -140,7 +140,7 @@ describe('HostDetails component', () => {
       );
 
       expect(
-        screen.getByRole('button', { name: 'Check Selection' })
+        screen.getByRole('button', { name: 'Check Settings' })
       ).toBeVisible();
       expect(
         screen.getByRole('button', { name: 'Show Results' })
