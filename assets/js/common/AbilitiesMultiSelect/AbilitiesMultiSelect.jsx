@@ -25,6 +25,14 @@ const groupedAbilities = [
     ],
   },
   {
+    ability: 'all:checks_frequency',
+    tooltip: 'Permits changing the checks frequency of hosts and clusters',
+    groupAbilities: [
+      'all:host_checks_frequency',
+      'all:cluster_checks_frequency',
+    ],
+  },
+  {
     ability: 'cleanup:all',
     tooltip: 'Permits cleanup of resources',
     groupAbilities: [

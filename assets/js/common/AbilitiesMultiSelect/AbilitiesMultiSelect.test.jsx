@@ -17,6 +17,7 @@ describe('AbilitiesMultiSelect Component', () => {
     const groups = [
       'all:checks_selection',
       'all:checks_execution',
+      'all:checks_frequency',
       'cleanup:all',
       'operation:cluster',
       'operation:database',
@@ -51,6 +52,8 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 25, name: 'stop', resource: 'database' },
       { id: 26, name: 'resource_refresh', resource: 'cluster' },
       { id: 27, name: 'all', resource: 'checks_frequency_settings' },
+      { id: 28, name: 'all', resource: 'host_checks_frequency' },
+      { id: 29, name: 'all', resource: 'cluster_checks_frequency' },
     ];
 
     render(
@@ -74,6 +77,8 @@ describe('AbilitiesMultiSelect Component', () => {
     await user.click(screen.getByText('all:checks_selection'));
     await user.click(screen.getByLabelText('permissions'));
     await user.click(screen.getByText('all:checks_execution'));
+    await user.click(screen.getByLabelText('permissions'));
+    await user.click(screen.getByText('all:checks_frequency'));
     await user.click(screen.getByLabelText('permissions'));
     await user.click(screen.getByText('cleanup:all'));
     await user.click(screen.getByLabelText('permissions'));
