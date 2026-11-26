@@ -206,6 +206,7 @@ defmodule Trento.Factory do
   alias Trento.ActivityLog.SeverityLevel
   alias Trento.Checks.ChecksExecutionRequest
   alias Trento.Checks.Frequency
+  alias Trento.Checks.TargetSettings
 
   alias Trento.Abilities.{
     Ability,
@@ -1785,6 +1786,15 @@ defmodule Trento.Factory do
       target_id: Faker.UUID.v4(),
       target_type: :host,
       last_requested_at: DateTime.utc_now()
+    }
+  end
+
+  def checks_target_settings_factory do
+    %TargetSettings{
+      target_id: Faker.UUID.v4(),
+      target_type: :host,
+      enabled: true,
+      frequency: %Frequency{value: 1, unit: :hour}
     }
   end
 
