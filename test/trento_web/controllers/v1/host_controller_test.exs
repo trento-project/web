@@ -13,6 +13,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
   import Trento.Support.Helpers.AbilitiesTestHelper
 
   alias Trento.ActivityLog
+  alias Trento.Checks.Frequency
   alias Trento.Hosts.Commands.RequestHostDeregistration
   alias Trento.Hosts.ValueObjects.GcpProvider
 
@@ -1005,6 +1006,45 @@ defmodule TrentoWeb.V1.HostControllerTest do
     end
   end
 
+  describe "checks schedule" do
+    test "should return the own checks schedule", %{conn: conn, api_spec: api_spec} do
+      %{id: target_id} = insert(:host)
+
+      insert(:checks_target_settings,
+        target_type: :host,
+        target_id: target_id,
+        frequency: %Frequency{value: 6, unit: :hour}
+      )
+
+      resp =
+        conn
+        |> get("/api/v1/hosts/#{target_id}/checks/schedule")
+        |> json_response(:ok)
+
+      assert_schema(resp, "ChecksScheduleV1", api_spec)
+
+      assert %{
+               "enabled" => true,
+               "frequency" => %{"value" => 6, "unit" => "hour"},
+               "global" => false
+             } = resp
+    end
+
+    test "should refuse an identifier that is not a UUID", %{conn: conn} do
+      conn
+      |> get("/api/v1/hosts/not-a-uuid/checks/schedule")
+      |> json_response(:unprocessable_entity)
+    end
+
+    test "should not find a deregistered target", %{conn: conn} do
+      %{id: target_id} = insert(:host, deregistered_at: DateTime.utc_now())
+
+      conn
+      |> get("/api/v1/hosts/#{target_id}/checks/schedule")
+      |> json_response(:not_found)
+    end
+  end
+
   describe "forbidden response" do
     test "should return forbidden on any controller action if the user does not have the right permission",
          %{conn: conn, api_spec: api_spec} do
@@ -1031,6 +1071,67 @@ defmodule TrentoWeb.V1.HostControllerTest do
           |> assert_schema("ForbiddenV1", api_spec)
         end
       )
+    end
+  end
+end
+
+defmodule TrentoWeb.V1.HostControllerSequentialTest do
+  @moduledoc """
+  Tests of the host controller that use global state, the PubSub or the application
+  environment, and thus are not safe for async execution.
+  """
+
+  use TrentoWeb.ConnCase
+
+  import OpenApiSpex.TestAssertions
+  import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesTestHelper
+
+  setup_all :setup_api_spec_v1
+  setup :setup_user
+
+  describe "checks schedule with the global settings disabled from the environment" do
+    setup do
+      previous = Application.get_env(:trento, :checks_frequency)
+      Application.put_env(:trento, :checks_frequency, :disabled)
+      on_exit(fn -> Application.put_env(:trento, :checks_frequency, previous) end)
+    end
+
+    test "should return the schedule of a host with and without its own",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: own_id} = insert(:host)
+      insert(:checks_target_settings, target_type: :host, target_id: own_id, enabled: true)
+      %{id: global_id} = insert(:host)
+
+      own =
+        conn
+        |> get("/api/v1/hosts/#{own_id}/checks/schedule")
+        |> json_response(:ok)
+
+      assert_schema(own, "ChecksScheduleV1", api_spec)
+
+      assert %{
+               "enabled" => true,
+               "frequency" => %{"value" => 1, "unit" => "hour"},
+               "global" => false,
+               "next_execution_at" => next_execution_at
+             } = own
+
+      assert is_binary(next_execution_at)
+
+      global =
+        conn
+        |> get("/api/v1/hosts/#{global_id}/checks/schedule")
+        |> json_response(:ok)
+
+      assert_schema(global, "ChecksScheduleV1", api_spec)
+
+      assert %{
+               "enabled" => false,
+               "frequency" => nil,
+               "global" => true,
+               "next_execution_at" => nil
+             } = global
     end
   end
 end

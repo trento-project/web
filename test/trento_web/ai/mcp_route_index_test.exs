@@ -52,6 +52,13 @@ defmodule TrentoWeb.AI.McpRouteIndexTest do
 
     test "spot-check explicit ai_tool tool_names from controllers" do
       assert find_entry(V1.HostController, :list).tool_name == "host_list"
+
+      assert find_entry(V1.HostController, :get_checks_schedule).tool_name ==
+               "host_checks_schedule"
+
+      assert find_entry(V1.ClusterController, :get_checks_schedule).tool_name ==
+               "cluster_checks_schedule"
+
       assert find_entry(V1.SapSystemController, :list).tool_name == "sap_system_list"
       assert find_entry(TrentoWeb.V2.ClusterController, :list).tool_name == "cluster_list"
       assert find_entry(V1.DatabaseController, :list_databases).tool_name == "database_list"

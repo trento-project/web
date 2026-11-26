@@ -23,6 +23,7 @@ defmodule TrentoWeb.V1.HostController do
   alias Trento.Hosts.Projections.HostReadModel
 
   alias TrentoWeb.OpenApi.V1.Schema
+  alias TrentoWeb.V1.ChecksScheduleJSON
 
   alias TrentoWeb.OpenApi.V1.Schema.{
     BadRequest,
@@ -220,6 +221,40 @@ defmodule TrentoWeb.V1.HostController do
       conn
       |> put_status(:accepted)
       |> json(%{})
+    end
+  end
+
+  operation :get_checks_schedule,
+    summary: "Get the checks schedule of a host.",
+    tags: ["Checks", "MCP"],
+    description:
+      "Returns the checks frequency settings in use for a host, whether they are the global ones, and when its checks run next.",
+    parameters: [
+      id: [
+        in: :path,
+        description: "Unique identifier of the host. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ]
+    ],
+    responses: [
+      ok: {"The checks schedule of the host.", "application/json", Schema.Checks.ChecksSchedule},
+      not_found: NotFound.response(),
+      unprocessable_entity: UnprocessableEntity.response()
+    ]
+
+  ai_tool :host_checks_schedule,
+    display_text: "Get the checks schedule of a host"
+
+  def get_checks_schedule(conn, %{id: target_id}) do
+    with {:ok, schedule} <- Trento.Checks.get_checks_schedule(:host, target_id) do
+      conn
+      |> put_view(json: ChecksScheduleJSON)
+      |> render(:checks_schedule, schedule: schedule)
     end
   end
 
