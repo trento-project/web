@@ -118,4 +118,8 @@ defmodule Trento.Clusters.PolicyTest do
       assert Policy.authorize(action, user, ClusterReadModel)
     end)
   end
+
+  test "should allow get_checks_schedule action without abilities" do
+    assert Policy.authorize(:get_checks_schedule, %User{abilities: []}, ClusterReadModel)
+  end
 end

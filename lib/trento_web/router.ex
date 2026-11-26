@@ -147,6 +147,9 @@ defmodule TrentoWeb.Router do
            HostController,
            :request_checks_execution
 
+      get "/clusters/:cluster_id/checks/schedule", ClusterController, :get_checks_schedule
+      get "/hosts/:id/checks/schedule", HostController, :get_checks_schedule
+
       delete "/hosts/:id", HostController, :delete
 
       post "/hosts/:id/tags", TagsController, :add_tag_to_host,

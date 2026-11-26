@@ -433,6 +433,90 @@ defmodule Trento.ChecksTest do
     end
   end
 
+  describe "the checks schedule of a target" do
+    test "should return the global schedule of a host never requested" do
+      %{id: host_id} = insert(:host)
+
+      assert {:ok,
+              %{
+                enabled: true,
+                frequency: %Frequency{value: 5, unit: :minute},
+                global: true,
+                next_execution_at: @now
+              }} == Checks.get_checks_schedule(:host, host_id, DateService.Mock)
+    end
+
+    test "should return the own schedule of a cluster" do
+      %{id: cluster_id} = insert_target(:cluster)
+
+      insert(:checks_target_settings,
+        target_type: :cluster,
+        target_id: cluster_id,
+        frequency: %Frequency{value: 6, unit: :hour}
+      )
+
+      insert(:checks_execution_request,
+        target_type: :cluster,
+        target_id: cluster_id,
+        last_requested_at: ~U[2026-03-02 09:00:00.000000Z]
+      )
+
+      assert {:ok,
+              %{
+                enabled: true,
+                frequency: %Frequency{value: 6, unit: :hour},
+                global: false,
+                next_execution_at: ~U[2026-03-02 15:00:00.000000Z]
+              }} == Checks.get_checks_schedule(:cluster, cluster_id, DateService.Mock)
+    end
+
+    test "should plan no execution for a target without selected checks" do
+      %{id: host_id} = insert(:host, selected_checks: [])
+
+      assert {:ok, %{next_execution_at: nil}} =
+               Checks.get_checks_schedule(:host, host_id, DateService.Mock)
+    end
+
+    test "should plan no execution for a cluster of a type that is not checkable" do
+      %{id: cluster_id} = insert_target(:cluster, type: ClusterType.unknown())
+
+      assert {:ok, %{next_execution_at: nil}} =
+               Checks.get_checks_schedule(:cluster, cluster_id, DateService.Mock)
+    end
+
+    test "should plan no execution for a cluster without registered hosts" do
+      %{id: cluster_id} = insert(:cluster)
+
+      assert {:ok, %{next_execution_at: nil}} =
+               Checks.get_checks_schedule(:cluster, cluster_id, DateService.Mock)
+    end
+
+    test "should follow the global settings disabled from the environment, unless the target has its own" do
+      previous = Application.get_env(:trento, :checks_frequency)
+      Application.put_env(:trento, :checks_frequency, :disabled)
+      on_exit(fn -> Application.put_env(:trento, :checks_frequency, previous) end)
+
+      %{id: own_id} = insert(:host)
+      insert(:checks_target_settings, target_type: :host, target_id: own_id, enabled: true)
+      %{id: global_id} = insert(:host)
+
+      assert {:ok, %{enabled: true, global: false, next_execution_at: @now}} =
+               Checks.get_checks_schedule(:host, own_id, DateService.Mock)
+
+      assert {:ok, %{enabled: false, frequency: nil, global: true, next_execution_at: nil}} ==
+               Checks.get_checks_schedule(:host, global_id, DateService.Mock)
+    end
+
+    test "should not find a deregistered or unknown target" do
+      %{id: deregistered_id} = insert(:host, deregistered_at: @now)
+
+      for target_id <- [deregistered_id, Faker.UUID.v4()] do
+        assert {:error, :not_found} =
+                 Checks.get_checks_schedule(:host, target_id, DateService.Mock)
+      end
+    end
+  end
+
   describe "target settings" do
     test "should store, replace and delete the settings of a target" do
       target_id = Faker.UUID.v4()

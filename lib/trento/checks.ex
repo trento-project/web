@@ -113,6 +113,28 @@ defmodule Trento.Checks do
   def effective_settings(nil, %ChecksFrequencySettings{enabled: enabled, frequency: frequency}),
     do: %{enabled: enabled, frequency: frequency}
 
+  @type checks_schedule :: %{
+          enabled: boolean(),
+          frequency: Frequency.t() | nil,
+          global: boolean(),
+          next_execution_at: DateTime.t() | nil
+        }
+
+  @doc """
+  The checks schedule of a registered host or cluster: the settings in use, whether they
+  are the global ones, and its next execution. The next execution is nil when the target
+  is not checked periodically.
+  """
+  @spec get_checks_schedule(:host | :cluster, String.t(), module()) ::
+          {:ok, checks_schedule()} | {:error, :not_found}
+  def get_checks_schedule(target_type, target_id, date_service \\ DateService) do
+    if registered?(target_type, target_id) do
+      {:ok, checks_schedule(target_type, target_id, date_service)}
+    else
+      {:error, :not_found}
+    end
+  end
+
   @doc """
   When the checks of a target are due, given its effective settings and the time of its
   last periodic request: nil when they do not run periodically, :now when the target was
@@ -199,6 +221,49 @@ defmodule Trento.Checks do
         is_nil(c.deregistered_at) and c.selected_checks != ^[] and
           c.type in ^Clusters.checkable_cluster_types() and
           c.id in subquery(clusters_with_registered_hosts())
+  end
+
+  defp checks_schedule(target_type, target_id, date_service) do
+    {:ok, global} = Settings.get_checks_frequency_settings()
+    override = get_target_settings(target_id)
+    effective = effective_settings(override, global)
+    last_requested_at = last_requested_at(target_id)
+
+    next_execution_at =
+      if eligible?(target_type, target_id) do
+        effective
+        |> due_at(last_requested_at)
+        |> next_execution_at(date_service.utc_now())
+      end
+
+    %{
+      enabled: effective.enabled,
+      frequency: effective.frequency,
+      global: is_nil(override),
+      next_execution_at: next_execution_at
+    }
+  end
+
+  defp registered?(:host, target_id),
+    do:
+      Repo.exists?(
+        from h in HostReadModel, where: h.id == ^target_id and is_nil(h.deregistered_at)
+      )
+
+  defp registered?(:cluster, target_id),
+    do:
+      Repo.exists?(
+        from c in ClusterReadModel, where: c.id == ^target_id and is_nil(c.deregistered_at)
+      )
+
+  defp eligible?(target_type, target_id),
+    do: Repo.exists?(from t in eligible_targets(target_type), where: t.id == ^target_id)
+
+  defp last_requested_at(target_id) do
+    case Repo.get(ChecksExecutionRequest, target_id) do
+      %ChecksExecutionRequest{last_requested_at: last_requested_at} -> last_requested_at
+      nil -> nil
+    end
   end
 
   defp clusters_with_registered_hosts,

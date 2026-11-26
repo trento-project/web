@@ -9,6 +9,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   import Trento.Factory
   import Trento.Support.Helpers.AbilitiesTestHelper
 
+  alias Trento.Checks.Frequency
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
@@ -1151,6 +1152,45 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       )
       |> json_response(:accepted)
       |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+  end
+
+  describe "checks schedule" do
+    test "should return the own checks schedule", %{conn: conn, api_spec: api_spec} do
+      %{id: target_id} = insert(:cluster)
+
+      insert(:checks_target_settings,
+        target_type: :cluster,
+        target_id: target_id,
+        frequency: %Frequency{value: 6, unit: :hour}
+      )
+
+      resp =
+        conn
+        |> get("/api/v1/clusters/#{target_id}/checks/schedule")
+        |> json_response(:ok)
+
+      assert_schema(resp, "ChecksScheduleV1", api_spec)
+
+      assert %{
+               "enabled" => true,
+               "frequency" => %{"value" => 6, "unit" => "hour"},
+               "global" => false
+             } = resp
+    end
+
+    test "should refuse an identifier that is not a UUID", %{conn: conn} do
+      conn
+      |> get("/api/v1/clusters/not-a-uuid/checks/schedule")
+      |> json_response(:unprocessable_entity)
+    end
+
+    test "should not find a deregistered target", %{conn: conn} do
+      %{id: target_id} = insert(:cluster, deregistered_at: DateTime.utc_now())
+
+      conn
+      |> get("/api/v1/clusters/#{target_id}/checks/schedule")
+      |> json_response(:not_found)
     end
   end
 

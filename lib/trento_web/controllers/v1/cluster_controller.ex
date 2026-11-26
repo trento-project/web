@@ -35,6 +35,7 @@ defmodule TrentoWeb.V1.ClusterController do
   require Trento.Operations.Enums.ClusterBulkOperations, as: ClusterBulkOperations
 
   alias Trento.Support.OperationsHelper
+  alias TrentoWeb.V1.ChecksScheduleJSON
 
   @bulk_actions Map.new(
                   ClusterBulkOperations.values(),
@@ -118,6 +119,40 @@ defmodule TrentoWeb.V1.ClusterController do
       conn
       |> put_status(:accepted)
       |> json(%{})
+    end
+  end
+
+  operation :get_checks_schedule,
+    summary: "Get the checks schedule of a cluster.",
+    tags: ["Checks", "MCP"],
+    description:
+      "Returns the checks frequency settings in use for a cluster, whether they are the global ones, and when its checks run next.",
+    parameters: [
+      cluster_id: [
+        in: :path,
+        description: "Unique identifier of the cluster. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ]
+    ],
+    responses: [
+      ok: {"The checks schedule of the cluster.", "application/json", Checks.ChecksSchedule},
+      not_found: NotFound.response(),
+      unprocessable_entity: UnprocessableEntity.response()
+    ]
+
+  ai_tool :cluster_checks_schedule,
+    display_text: "Get the checks schedule of a cluster"
+
+  def get_checks_schedule(conn, %{cluster_id: target_id}) do
+    with {:ok, schedule} <- Trento.Checks.get_checks_schedule(:cluster, target_id) do
+      conn
+      |> put_view(json: ChecksScheduleJSON)
+      |> render(:checks_schedule, schedule: schedule)
     end
   end
 
