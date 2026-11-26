@@ -328,4 +328,299 @@ describe('ChecksFrequencySettingsModal component', () => {
       )
     ).toBeVisible();
   });
+
+  describe('with the system setting of a target', () => {
+    const systemSettings = {
+      enabled: true,
+      frequency: { value: 5, unit: 'minute' },
+    };
+
+    it('should not offer the system setting without system settings', async () => {
+      await renderModal({ initialFrequency: { value: 6, unit: 'hour' } });
+
+      expect(
+        screen.queryByRole('switch', { name: 'Use system setting' })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should show the system setting read only', async () => {
+      await renderModal({
+        systemSettings: {
+          enabled: true,
+          frequency: { value: 1, unit: 'hour' },
+        },
+        initialUseSystemSetting: true,
+        initialEnabled: true,
+        initialFrequency: { value: 1, unit: 'hour' },
+      });
+
+      expect(
+        screen.getByRole('switch', { name: 'Use system setting' })
+      ).toBeChecked();
+      expect(
+        screen.getByRole('switch', { name: 'Run Checks Periodically' })
+      ).toBeDisabled();
+      expect(screen.getByText('1')).toBeVisible();
+      expect(screen.getByText('Hours')).toBeVisible();
+      expect(screen.getByLabelText('checks-frequency-value')).toBeDisabled();
+      expect(screen.getByLabelText('checks-frequency-unit')).toBeDisabled();
+    });
+
+    it('should save the system setting', async () => {
+      const user = userEvent.setup();
+      const onSave = jest.fn();
+
+      await renderModal({
+        systemSettings,
+        initialUseSystemSetting: true,
+        initialEnabled: true,
+        initialFrequency: { value: 5, unit: 'minute' },
+        onSave,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Save Settings' }));
+
+      expect(onSave).toHaveBeenCalledWith(null);
+    });
+
+    it('should save the own settings of a target', async () => {
+      const user = userEvent.setup();
+      const onSave = jest.fn();
+
+      await renderModal({
+        systemSettings,
+        initialUseSystemSetting: true,
+        initialEnabled: true,
+        initialFrequency: { value: 5, unit: 'minute' },
+        onSave,
+      });
+
+      await user.click(
+        screen.getByRole('switch', { name: 'Use system setting' })
+      );
+
+      expect(screen.getByLabelText('checks-frequency-value')).toBeEnabled();
+
+      await selectUnit(user, 'Hours');
+      await selectValue(user, '6');
+      await user.click(screen.getByRole('button', { name: 'Save Settings' }));
+
+      expect(onSave).toHaveBeenCalledWith({
+        enabled: true,
+        frequency: { value: 6, unit: 'hour' },
+      });
+    });
+
+    it('should edit the own settings of a target that has them', async () => {
+      await renderModal({
+        systemSettings,
+        initialUseSystemSetting: false,
+        initialEnabled: false,
+        initialFrequency: { value: 2, unit: 'week' },
+      });
+
+      expect(
+        screen.getByRole('switch', { name: 'Use system setting' })
+      ).not.toBeChecked();
+      expect(
+        screen.getByRole('switch', { name: 'Run Checks Periodically' })
+      ).toBeEnabled();
+      expect(screen.getByText('2')).toBeVisible();
+      expect(screen.getByText('Weeks')).toBeVisible();
+    });
+
+    it('should go back to the system setting from own settings', async () => {
+      const user = userEvent.setup();
+      const onSave = jest.fn();
+
+      await renderModal({
+        systemSettings: {
+          enabled: true,
+          frequency: { value: 1, unit: 'hour' },
+        },
+        initialUseSystemSetting: false,
+        initialEnabled: false,
+        initialFrequency: { value: 2, unit: 'week' },
+        onSave,
+      });
+
+      await user.click(
+        screen.getByRole('switch', { name: 'Use system setting' })
+      );
+
+      expect(
+        screen.getByRole('switch', { name: 'Run Checks Periodically' })
+      ).toBeChecked();
+      expect(screen.getByText('1')).toBeVisible();
+      expect(screen.getByText('Hours')).toBeVisible();
+      expect(screen.getByLabelText('checks-frequency-value')).toBeDisabled();
+
+      await user.click(screen.getByRole('button', { name: 'Save Settings' }));
+
+      expect(onSave).toHaveBeenCalledWith(null);
+    });
+
+    it('should show no frequency for a system setting without one', async () => {
+      await renderModal({
+        systemSettings: { enabled: false, frequency: null },
+        initialUseSystemSetting: true,
+        initialEnabled: false,
+        initialFrequency: null,
+      });
+
+      expect(
+        screen.getByRole('switch', { name: 'Run Checks Periodically' })
+      ).not.toBeChecked();
+      expect(screen.queryByText('5')).not.toBeInTheDocument();
+      expect(screen.queryByText('Minutes')).not.toBeInTheDocument();
+    });
+
+    it('should follow the system setting given after the modal opened', async () => {
+      const props = {
+        open: true,
+        initialUseSystemSetting: true,
+        initialEnabled: true,
+        initialFrequency: { value: 6, unit: 'hour' },
+      };
+      let view;
+      await act(() => {
+        view = render(<ChecksFrequencySettingsModal {...props} />);
+      });
+
+      await act(() =>
+        view.rerender(
+          <ChecksFrequencySettingsModal
+            {...props}
+            systemSettings={systemSettings}
+          />
+        )
+      );
+
+      expect(
+        screen.getByRole('switch', { name: 'Use system setting' })
+      ).toBeChecked();
+      expect(screen.getByText('5')).toBeVisible();
+      expect(screen.getByText('Minutes')).toBeVisible();
+    });
+
+    it('should edit the own settings when the system setting goes away', async () => {
+      const user = userEvent.setup();
+      const onSave = jest.fn();
+      const props = {
+        open: true,
+        initialUseSystemSetting: true,
+        initialEnabled: true,
+        initialFrequency: { value: 6, unit: 'hour' },
+        onSave,
+      };
+      let view;
+      await act(() => {
+        view = render(
+          <ChecksFrequencySettingsModal
+            {...props}
+            systemSettings={systemSettings}
+          />
+        );
+      });
+
+      await act(() =>
+        view.rerender(<ChecksFrequencySettingsModal {...props} />)
+      );
+
+      expect(
+        screen.queryByRole('switch', { name: 'Use system setting' })
+      ).not.toBeInTheDocument();
+      expect(screen.getByText('6')).toBeVisible();
+      expect(screen.getByText('Hours')).toBeVisible();
+
+      await user.click(screen.getByRole('button', { name: 'Save Settings' }));
+
+      expect(onSave).toHaveBeenCalledWith({
+        enabled: true,
+        frequency: { value: 6, unit: 'hour' },
+      });
+    });
+
+    it('should not allow changing the system setting while saving', async () => {
+      await renderModal({
+        systemSettings,
+        initialUseSystemSetting: true,
+        initialFrequency: { value: 5, unit: 'minute' },
+        loading: true,
+      });
+
+      expect(
+        screen.getByRole('switch', { name: 'Use system setting' })
+      ).toBeDisabled();
+    });
+
+    it('should clear the errors when switching the system setting', async () => {
+      const user = userEvent.setup();
+      const onClearErrors = jest.fn();
+
+      await renderModal({
+        systemSettings,
+        initialUseSystemSetting: true,
+        initialFrequency: { value: 5, unit: 'minute' },
+        onClearErrors,
+      });
+
+      await user.click(
+        screen.getByRole('switch', { name: 'Use system setting' })
+      );
+
+      expect(onClearErrors).toHaveBeenCalledTimes(1);
+    });
+
+    it('should keep the own settings while the system setting is switched on and off', async () => {
+      const user = userEvent.setup();
+      const onSave = jest.fn();
+
+      await renderModal({
+        systemSettings: {
+          enabled: true,
+          frequency: { value: 1, unit: 'hour' },
+        },
+        initialUseSystemSetting: false,
+        initialEnabled: true,
+        initialFrequency: { value: 2, unit: 'week' },
+        onSave,
+      });
+
+      const systemSettingSwitch = screen.getByRole('switch', {
+        name: 'Use system setting',
+      });
+      await user.click(systemSettingSwitch);
+      expect(screen.getByText('Hours')).toBeVisible();
+
+      await user.click(systemSettingSwitch);
+      expect(screen.getByText('2')).toBeVisible();
+      expect(screen.getByText('Weeks')).toBeVisible();
+
+      await user.click(screen.getByRole('button', { name: 'Save Settings' }));
+
+      expect(onSave).toHaveBeenCalledWith({
+        enabled: true,
+        frequency: { value: 2, unit: 'week' },
+      });
+    });
+
+    it('should start from 5 minutes without a global frequency', async () => {
+      const user = userEvent.setup();
+
+      await renderModal({
+        systemSettings: { enabled: false, frequency: null },
+        initialUseSystemSetting: true,
+        initialEnabled: false,
+        initialFrequency: null,
+      });
+
+      await user.click(
+        screen.getByRole('switch', { name: 'Use system setting' })
+      );
+
+      expect(screen.getByText('5')).toBeVisible();
+      expect(screen.getByText('Minutes')).toBeVisible();
+    });
+  });
 });

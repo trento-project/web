@@ -87,22 +87,39 @@ function Error({ text }) {
   );
 }
 
+const defaultFrequency = { value: 5, unit: 'minute' };
+
 /**
- * Modal to edit the global checks frequency settings. Switching the periodic
- * checks off keeps the frequency, which is saved as well
+ * Modal to edit checks frequency settings. Switching the periodic checks off
+ * keeps the frequency, which is saved as well.
+ *
+ * With systemSettings, it edits the settings of a target: a "Use system
+ * setting" switch shows the system settings read only and saves null, else
+ * the own settings of the target are saved
  */
 function ChecksFrequencySettingsModal({
   open = false,
   loading = false,
   initialEnabled = true,
   initialFrequency,
+  systemSettings,
+  initialUseSystemSetting = false,
   errors = defaultErrors,
   onSave = noop,
   onCancel = noop,
   onClearErrors = noop,
 }) {
   const [enabled, setEnabled] = useState(initialEnabled);
-  const [frequency, setFrequency] = useState(initialFrequency);
+  const [frequency, setFrequency] = useState(
+    initialFrequency ?? defaultFrequency
+  );
+  const [useSystemSetting, setUseSystemSetting] = useState(
+    initialUseSystemSetting
+  );
+
+  const followsSystem = Boolean(systemSettings) && useSystemSetting;
+  const shownEnabled = followsSystem ? systemSettings.enabled : enabled;
+  const shownFrequency = followsSystem ? systemSettings.frequency : frequency;
 
   const frequencyError = toFrequencyErrorMessage(errors);
   const genericError = toGlobalErrorMessage(errors);
@@ -116,6 +133,28 @@ function ChecksFrequencySettingsModal({
     >
       <div className="text-gray-500">Configure when the checks are run.</div>
       <div className="grid grid-cols-6 my-5 gap-6">
+        {systemSettings && (
+          <>
+            <Label
+              className="col-span-2"
+              htmlFor="checks-frequency-system-setting-input"
+            >
+              Use system setting
+            </Label>
+            <div className="col-span-4">
+              <Switch
+                id="checks-frequency-system-setting-input"
+                name="checks-frequency-system-setting-input"
+                selected={followsSystem}
+                disabled={loading}
+                onChange={(newUseSystemSetting) => {
+                  setUseSystemSetting(newUseSystemSetting);
+                  onClearErrors();
+                }}
+              />
+            </div>
+          </>
+        )}
         <Label className="col-span-2" htmlFor="checks-frequency-enabled-input">
           Run Checks Periodically
         </Label>
@@ -123,8 +162,8 @@ function ChecksFrequencySettingsModal({
           <Switch
             id="checks-frequency-enabled-input"
             name="checks-frequency-enabled-input"
-            selected={enabled}
-            disabled={loading}
+            selected={shownEnabled}
+            disabled={loading || followsSystem}
             onChange={(newEnabled) => {
               setEnabled(newEnabled);
               onClearErrors();
@@ -134,8 +173,8 @@ function ChecksFrequencySettingsModal({
         <Label className="col-span-2">Frequency</Label>
         <div className="col-span-4">
           <FrequencySpan
-            frequency={frequency}
-            disabled={!enabled || loading}
+            frequency={shownFrequency}
+            disabled={!shownEnabled || loading || followsSystem}
             onChange={(newFrequency) => {
               setFrequency(newFrequency);
               onClearErrors();
@@ -147,7 +186,7 @@ function ChecksFrequencySettingsModal({
       <div className="flex flex-row w-80 space-x-2">
         <Button
           disabled={loading}
-          onClick={() => onSave({ enabled, frequency })}
+          onClick={() => onSave(followsSystem ? null : { enabled, frequency })}
         >
           Save Settings
         </Button>
