@@ -30,7 +30,7 @@ const CriticalIconLink = StaleIconWrapper(EOS_ERROR_FILLED);
 const UnknownIcon = StaleIconWrapper(EOS_LENS_FILLED);
 
 const HEALTH_DETAILS_LABELS = {
-  // Common
+  // Common (Cluster and Host)
   checks_health: 'Overall Checks Results',
 
   // Cluster
@@ -41,6 +41,10 @@ const HEALTH_DETAILS_LABELS = {
   // Host
   saptune_health: 'Saptune Tuning Status',
   software_updates_discovery_health: 'Relevant Patches',
+
+  // SAP System
+  instances_health: 'Overall Instance Status',
+  database_health: 'Database Health',
 };
 
 const formatHealthDetails = (healthDetails) =>

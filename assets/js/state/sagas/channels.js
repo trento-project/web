@@ -33,6 +33,7 @@ import {
 import {
   sapSystemRegistered,
   sapSystemHealthChanged,
+  sapSystemHealthDetailsChanged,
   sapSystemStaleChanged,
   applicationInstanceRegistered,
   applicationInstanceMoved,
@@ -159,6 +160,10 @@ const sapSystemEvents = [
   {
     name: 'sap_system_health_changed',
     action: sapSystemHealthChanged,
+  },
+  {
+    name: 'sap_system_health_details_changed',
+    action: sapSystemHealthDetailsChanged,
   },
   {
     name: 'sap_system_stale_changed',
