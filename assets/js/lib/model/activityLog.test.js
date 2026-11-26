@@ -24,13 +24,17 @@ import {
   SAP_SYSTEM_BULK_OPERATION_REQUESTED,
   TESTING_ALERTING_SETTINGS,
   CHANGING_CHECKS_FREQUENCY_SETTINGS,
+  HOST_CHECKS_FREQUENCY_CHANGED,
+  CLUSTER_CHECKS_FREQUENCY_CHANGED,
   availableResourceNameKeys,
   resourceNameFromMetadata,
   resourceTypes,
   taggingResourceType,
   operationResourceType,
   checkCustomizationResourceType,
+  toLabel,
   toMessage,
+  toResource,
 } from './activityLog';
 import {
   CLUSTER_MAINTENANCE_CHANGE,
@@ -463,6 +467,47 @@ describe('activityLog', () => {
         const entry = { type: CHANGING_CHECKS_FREQUENCY_SETTINGS, metadata };
 
         expect(toMessage(entry)).toBe(expectedMessage);
+      }
+    );
+
+    it.each`
+      type                                | targetType   | label                                 | resource
+      ${HOST_CHECKS_FREQUENCY_CHANGED}    | ${'host'}    | ${'Host Check Executions Changed'}    | ${'Host'}
+      ${CLUSTER_CHECKS_FREQUENCY_CHANGED} | ${'cluster'} | ${'Cluster Check Executions Changed'} | ${'Cluster'}
+    `(
+      'should resolve the checks frequency change of a $targetType',
+      ({ type, targetType, label, resource }) => {
+        const toEntry = (metadata) => ({ type, metadata });
+
+        expect(toLabel(toEntry({ global: true }))).toBe(label);
+        expect(toResource(toEntry({ global: true }))).toBe(resource);
+
+        expect(toMessage(toEntry({ global: true }))).toBe(
+          `Check execution frequency of the ${targetType} set back to the system setting`
+        );
+        expect(
+          toMessage(
+            toEntry({
+              enabled: true,
+              frequency: { value: 6, unit: 'hour' },
+              global: false,
+            })
+          )
+        ).toBe(
+          `Check execution frequency of the ${targetType} set to every 6 hours`
+        );
+        expect(
+          toMessage(
+            toEntry({
+              enabled: false,
+              frequency: { value: 6, unit: 'hour' },
+              global: false,
+            })
+          )
+        ).toBe(`Check execution frequency of the ${targetType} disabled`);
+        expect(toMessage(toEntry({}))).toBe(
+          `Check execution frequency of the ${targetType} changed`
+        );
       }
     );
   });

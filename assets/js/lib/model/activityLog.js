@@ -48,6 +48,9 @@ export const DATABASE_CLEANUP_REQUESTED = 'database_cleanup_requested';
 export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
 export const CHANGING_CHECKS_FREQUENCY_SETTINGS =
   'changing_checks_frequency_settings';
+export const HOST_CHECKS_FREQUENCY_CHANGED = 'host_checks_frequency_changed';
+export const CLUSTER_CHECKS_FREQUENCY_CHANGED =
+  'cluster_checks_frequency_changed';
 
 export const AI_CONFIGURATION_CREATION = 'ai_configuration_creation';
 export const AI_CONFIGURATION_MODIFICATION = 'ai_configuration_modification';
@@ -276,6 +279,26 @@ const checksFrequencyChangeMessage = ({ metadata }) => {
     : 'Check Executions Settings were changed';
 };
 
+const targetChecksFrequencyChangeMessage =
+  (targetType) =>
+  ({ metadata }) => {
+    const subject = `Check execution frequency of the ${targetType}`;
+
+    if (metadata?.global) {
+      return `${subject} set back to the system setting`;
+    }
+
+    if (metadata?.enabled === false) {
+      return `${subject} disabled`;
+    }
+
+    const frequency = describeChecksFrequency(metadata?.frequency);
+
+    return frequency
+      ? `${subject} set to ${lowerFirst(frequency)}`
+      : `${subject} changed`;
+  };
+
 const userManagement = ['all:all', 'all:users'];
 
 export const ACTIVITY_TYPES_CONFIG = {
@@ -431,6 +454,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Check Executions Settings Changed',
     message: checksFrequencyChangeMessage,
     resource: (_entry) => 'Check Executions Settings',
+  },
+  [HOST_CHECKS_FREQUENCY_CHANGED]: {
+    label: 'Host Check Executions Changed',
+    message: targetChecksFrequencyChangeMessage('host'),
+    resource: hostResourceType,
+  },
+  [CLUSTER_CHECKS_FREQUENCY_CHANGED]: {
+    label: 'Cluster Check Executions Changed',
+    message: targetChecksFrequencyChangeMessage('cluster'),
+    resource: clusterResourceType,
   },
   // Host events
   [HEARTBEAT_FAILED]: {
