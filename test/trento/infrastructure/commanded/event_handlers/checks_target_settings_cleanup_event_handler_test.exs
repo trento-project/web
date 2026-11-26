@@ -8,8 +8,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.ChecksTargetSettingsClea
   import Trento.Factory
 
   alias Trento.Checks
-  alias Trento.Clusters.Events.ClusterDeregistered
-  alias Trento.Hosts.Events.HostDeregistered
+  alias Trento.Clusters.Events.{ClusterDeregistered, ClusterRestored}
+  alias Trento.Hosts.Events.{HostDeregistered, HostRestored}
   alias Trento.Infrastructure.Commanded.EventHandlers.ChecksTargetSettingsCleanupEventHandler
 
   test "should delete the settings of a deregistered host" do
@@ -32,6 +32,27 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.ChecksTargetSettingsClea
     assert :ok =
              ChecksTargetSettingsCleanupEventHandler.handle(
                %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: DateTime.utc_now()},
+               %{}
+             )
+
+    assert nil == Checks.get_target_settings(cluster_id)
+  end
+
+  test "should delete the settings left on a restored host" do
+    %{target_id: host_id} = insert(:checks_target_settings, target_type: :host)
+
+    assert :ok =
+             ChecksTargetSettingsCleanupEventHandler.handle(%HostRestored{host_id: host_id}, %{})
+
+    assert nil == Checks.get_target_settings(host_id)
+  end
+
+  test "should delete the settings left on a restored cluster" do
+    %{target_id: cluster_id} = insert(:checks_target_settings, target_type: :cluster)
+
+    assert :ok =
+             ChecksTargetSettingsCleanupEventHandler.handle(
+               %ClusterRestored{cluster_id: cluster_id},
                %{}
              )
 
