@@ -12,6 +12,7 @@ import { userUpdated } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
 import { operationCompleted } from '@state/runningOperations';
 import { checksFrequencySettingsUpdated } from '@state/checksFrequencySettings';
+import { refreshChecksSchedules } from '@state/checksSchedules';
 
 import { watchSocketEvents } from './channels';
 
@@ -140,6 +141,27 @@ describe('Channels saga', () => {
 
     expect(dispatched).toEqual([checksFrequencySettingsUpdated(settings)]);
   });
+
+  it.each([
+    ['monitoring:hosts', 'host_checks_frequency_updated', 'host'],
+    ['monitoring:hosts', 'host_checks_execution_requested', 'host'],
+    ['monitoring:clusters', 'cluster_checks_frequency_updated', 'cluster'],
+    ['monitoring:clusters', 'cluster_checks_execution_requested', 'cluster'],
+  ])(
+    'should refresh the checks schedule on %s %s',
+    async (topic, event, targetType) => {
+      const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
+
+      channels[topic].emit(event, { id: 'target-1' });
+
+      closeSocket();
+      await saga;
+
+      expect(dispatched).toEqual([
+        refreshChecksSchedules({ targetType, targetID: 'target-1' }),
+      ]);
+    }
+  );
 
   it('should listen to a specific user events', async () => {
     const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
