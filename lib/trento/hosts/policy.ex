@@ -35,5 +35,19 @@ defmodule Trento.Hosts.Policy do
       when operation in HostOperations.values(),
       do: has_operation_ability?(user, Atom.to_string(operation), "host")
 
+  # saptune_solution operation requires apply and change abilities
+  def authorize(:saptune_solution, %User{} = user, HostReadModel),
+    do:
+      has_operation_ability?(
+        user,
+        Atom.to_string(HostOperations.saptune_solution_apply()),
+        "host"
+      ) and
+        has_operation_ability?(
+          user,
+          Atom.to_string(HostOperations.saptune_solution_change()),
+          "host"
+        )
+
   def authorize(_, _, _), do: true
 end

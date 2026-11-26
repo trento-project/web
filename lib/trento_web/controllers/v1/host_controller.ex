@@ -35,7 +35,8 @@ defmodule TrentoWeb.V1.HostController do
 
   alias TrentoWeb.OpenApi.V1.Schema.Operations.{
     HostBulkRebootParams,
-    SaptuneSolutionApplyParams
+    SaptuneSolutionApplyParams,
+    SaptuneSolutionBulkParams
   }
 
   require Logger
@@ -294,6 +295,13 @@ defmodule TrentoWeb.V1.HostController do
       description:
         "Request reboot operation to reboot multiple hosts at once. The request is forbidden if any of the hosts is not authorized to run the operation. Otherwise, an individual operation is requested for every host.",
       request_body: HostBulkRebootParams
+    },
+    %{
+      operation: HostBulkOperations.saptune_solution(),
+      summary: "Request apply/change saptune solution bulk operation",
+      description:
+        "Request saptune solution operation to apply or change the saptune solution of multiple hosts at once. The solution is chosen per host based on its SAP workload and the requested solution family. A saptune solution apply operation is requested for hosts without an applied solution, and a change operation otherwise. The request is forbidden if any of the hosts is not authorized to run the operation, for example if it has no SAP workload.",
+      request_body: SaptuneSolutionBulkParams
     }
   ]
 
@@ -452,10 +460,11 @@ defmodule TrentoWeb.V1.HostController do
   end
 
   defp request_bulk_operation(%{assigns: %{operation: operation}} = conn, _) do
-    %{host_ids: host_ids} = OpenApiSpex.body_params(conn)
+    %{host_ids: host_ids} = body_params = OpenApiSpex.body_params(conn)
+    params = Map.get(body_params, :params, %{})
 
     with {:ok, bulk_operation_id, operations, failed_requests} <-
-           Hosts.request_bulk_operation(operation, host_ids, %{}) do
+           Hosts.request_bulk_operation(operation, host_ids, params) do
       conn
       |> put_status(:accepted)
       |> put_view(json: TrentoWeb.V1.OperationJSON)

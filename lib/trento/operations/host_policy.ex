@@ -30,6 +30,19 @@ defmodule Trento.Operations.HostPolicy do
            OperationsHelper.build_error("Trento agent is not currently running in the host")
          ]}
 
+  # saptune_solution_apply and saptune_solution_change are forbidden if there is no SAP
+  # workload running in the host
+  def authorize_operation(
+        operation,
+        %HostReadModel{
+          application_instances: [],
+          database_instances: []
+        },
+        _
+      )
+      when operation in [:saptune_solution_apply, :saptune_solution_change],
+      do: {:error, [OperationsHelper.build_error("The host does not have any SAP workload")]}
+
   # saptune_solution_apply and saptune_solution_change operation authorized when:
   # - the sap workload is not running
   def authorize_operation(
@@ -52,6 +65,21 @@ defmodule Trento.Operations.HostPolicy do
     ]
     |> List.flatten()
     |> OperationsHelper.reduce_operation_authorizations()
+  end
+
+  # saptune_solution operation is authorized as saptune_solution_apply or
+  # saptune_solution_change depending on the currently applied solution
+  def authorize_operation(
+        :saptune_solution,
+        %HostReadModel{saptune_status: saptune_status} = host,
+        params
+      ) do
+    operation =
+      if can_apply_solution?(saptune_status),
+        do: :saptune_solution_apply,
+        else: :saptune_solution_change
+
+    authorize_operation(operation, host, params)
   end
 
   # based on the maintenance procedures for HANA clusters:

@@ -528,6 +528,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
              conn: conn
            } do
         %{id: host_id} = insert(@host, heartbeat: :passing)
+        insert_list(2, :database_instance, host_id: host_id)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -560,6 +561,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
              conn: conn
            } do
         %{id: host_id} = insert(@host, heartbeat: :passing)
+        insert_list(2, :database_instance, host_id: host_id)
 
         %{id: user_id} = insert(:user)
 
@@ -588,6 +590,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         api_spec: api_spec
       } do
         %{id: host_id} = insert(@host, heartbeat: :passing)
+        insert_list(2, :database_instance, host_id: host_id)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -711,15 +714,20 @@ defmodule TrentoWeb.V1.HostControllerTest do
       %{
         operation: "reboot",
         arguments: %{},
-        ability: "reboot"
+        abilities: ["reboot"]
+      },
+      %{
+        operation: "saptune_solution",
+        arguments: %{"params" => %{"solution_family" => "s4hana"}},
+        abilities: ["saptune_solution_apply", "saptune_solution_change"]
       }
     ]
 
-    for %{operation: operation, arguments: arguments, ability: ability} <-
+    for %{operation: operation, arguments: arguments, abilities: abilities} <-
           bulk_operation_scenarios do
       @operation operation
       @arguments arguments
-      @ability ability
+      @abilities abilities
 
       test "should respond with 422 if the host ids are missing or empty for #{@operation}", %{
         conn: conn
@@ -793,6 +801,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         api_spec: api_spec
       } do
         %{id: authorized_host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)
+        insert_list(2, :database_instance, host_id: authorized_host_id)
 
         %{id: unauthorized_host_id, hostname: unauthorized_hostname} =
           insert(:host, heartbeat: :critical, cluster_id: nil)
@@ -824,6 +833,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       test "should respond with 500 on messaging error for #{@operation}", %{conn: conn} do
         %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: nil)
+        insert_list(2, :database_instance, host_id: host_id)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -852,18 +862,22 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } = resp
       end
 
-      test "should perform bulk #{@operation} operation when the user has #{@ability}:host ability",
+      test "should perform bulk #{@operation} operation when the user has expected ability",
            %{
              conn: conn,
              api_spec: api_spec
            } do
         %{id: host_id_1} = insert(:host, heartbeat: :passing, cluster_id: nil)
         %{id: host_id_2} = insert(:host, heartbeat: :passing, cluster_id: nil)
+        insert_list(2, :database_instance, host_id: host_id_1)
+        insert_list(2, :database_instance, host_id: host_id_2)
 
         %{id: user_id} = insert(:user)
 
-        %{id: ability_id} = insert(:ability, name: @ability, resource: "host")
-        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+        for ability <- @abilities do
+          %{id: ability_id} = insert(:ability, name: ability, resource: "host")
+          insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+        end
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -896,6 +910,22 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } = resp
 
         assert %{assigns: %{host: [%{id: ^host_id_1}, %{id: ^host_id_2}]}} = posted_conn
+      end
+    end
+
+    test "should respond with 422 for saptune_solution if the solution family is missing or invalid",
+         %{conn: conn} do
+      %{id: host_id} = insert(:host, heartbeat: :passing)
+
+      for body <- [
+            %{"host_ids" => [host_id]},
+            %{"host_ids" => [host_id], "params" => %{}},
+            %{"host_ids" => [host_id], "params" => %{"solution_family" => "unknown"}}
+          ] do
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/operations/saptune_solution/bulk", body)
+        |> json_response(:unprocessable_entity)
       end
     end
   end
@@ -1023,7 +1053,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
           delete(conn, "/api/v1/hosts/#{host_id}"),
           post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{}),
           post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_change", %{}),
-          post(conn, "/api/v1/hosts/operations/reboot/bulk", %{"host_ids" => [host_id]})
+          post(conn, "/api/v1/hosts/operations/reboot/bulk", %{"host_ids" => [host_id]}),
+          post(conn, "/api/v1/hosts/operations/saptune_solution/bulk", %{
+            "host_ids" => [host_id],
+            "solution_family" => "s4hana"
+          })
         ],
         fn conn ->
           conn

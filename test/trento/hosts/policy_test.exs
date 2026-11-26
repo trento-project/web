@@ -85,6 +85,31 @@ defmodule Trento.Hosts.PolicyTest do
         refute Policy.authorize(@operation, user, HostReadModel)
       end
     end
+
+    test "should allow saptune_solution operation if the user has both saptune_solution_apply:host and saptune_solution_change:host abilities" do
+      user = %User{
+        abilities: [
+          %Ability{name: "saptune_solution_apply", resource: "host"},
+          %Ability{name: "saptune_solution_change", resource: "host"}
+        ]
+      }
+
+      assert Policy.authorize(:saptune_solution, user, HostReadModel)
+    end
+
+    test "should allow saptune_solution operation if the user has operation:all ability" do
+      user = %User{abilities: [%Ability{name: "operation", resource: "all"}]}
+
+      assert Policy.authorize(:saptune_solution, user, HostReadModel)
+    end
+
+    test "should disallow saptune_solution operation if the user is missing one of the abilities" do
+      for ability <- ["saptune_solution_apply", "saptune_solution_change"] do
+        user = %User{abilities: [%Ability{name: ability, resource: "host"}]}
+
+        refute Policy.authorize(:saptune_solution, user, HostReadModel)
+      end
+    end
   end
 
   test "should allow unguarded actions" do
