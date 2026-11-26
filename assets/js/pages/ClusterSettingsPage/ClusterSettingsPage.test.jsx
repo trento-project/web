@@ -21,7 +21,10 @@ import {
   selectableCheckFactory,
 } from '@lib/test-utils/factories';
 
+import { checksScheduleFactory } from '@lib/test-utils/factories/checksSchedules';
+
 import { UNKNOWN_PROVIDER } from '@lib/model';
+import { fetchChecksSchedule } from '@state/checksSchedules';
 
 import ClusterSettingsPage from '.';
 
@@ -59,6 +62,59 @@ describe('ClusterDetails ClusterSettings component', () => {
     expect(screen.getByText('Azure')).toBeVisible();
     expect(screen.getByText(group)).toBeVisible();
     expect(screen.getByText('Save Checks Selection')).toBeVisible();
+  });
+
+  it('should render the check executions of the cluster', async () => {
+    const clusters = clusterFactory.buildList(2);
+    const { id: clusterID, name: clusterName } = clusters[1];
+    const state = {
+      ...defaultInitialState,
+      clustersList: { clusters },
+      user: {
+        abilities: [{ name: 'all', resource: 'cluster_checks_frequency' }],
+      },
+      checksSchedules: {
+        host: {},
+        cluster: {
+          [clusterID]: {
+            loading: false,
+            data: checksScheduleFactory.build({
+              enabled: false,
+              global: false,
+            }),
+            networkError: false,
+            editing: false,
+            errors: [],
+          },
+        },
+      },
+    };
+
+    const [StatefulClusterSettings, store] = withState(
+      <ClusterSettingsPage />,
+      state
+    );
+
+    await act(async () => {
+      renderWithRouterMatch(StatefulClusterSettings, {
+        path: 'clusters/:clusterID/settings',
+        route: `/clusters/${clusterID}/settings`,
+      });
+    });
+
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      `Check Settings for ${clusterName}`
+    );
+    expect(
+      screen.getByRole('heading', { name: 'Cluster Check Executions' })
+    ).toBeVisible();
+    expect(screen.getByLabelText('checks-frequency')).toHaveTextContent(
+      'Disabled'
+    );
+    expect(screen.getByRole('button', { name: 'Edit Settings' })).toBeEnabled();
+    expect(store.getActions()).toContainEqual(
+      fetchChecksSchedule({ targetType: 'cluster', targetID: clusterID })
+    );
   });
 
   it('given unknown provider, should render the warning banner', async () => {

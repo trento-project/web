@@ -30,6 +30,7 @@ import Banner from '@common/Banners';
 
 import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
+import TargetChecksFrequency from '@pages/ChecksSelection/TargetChecksFrequency';
 
 const catalogBanner = {
   [UNKNOWN_PROVIDER]: (
@@ -126,8 +127,7 @@ function ClusterSettingsPage() {
         }
         pageHeader={
           <PageHeader>
-            Cluster Settings for{' '}
-            <span className="font-bold">{clusterName}</span>
+            Check Settings for <span className="font-bold">{clusterName}</span>
           </PageHeader>
         }
         isSavingSelection={saving}
@@ -145,6 +145,11 @@ function ClusterSettingsPage() {
         scaleUpScenario={hanaScenario}
         provider={provider}
         architectureType={architectureType}
+      />
+      <TargetChecksFrequency
+        targetType={TARGET_CLUSTER}
+        targetID={clusterID}
+        userAbilities={abilities}
       />
       <ChecksSelection
         groupID={clusterID}

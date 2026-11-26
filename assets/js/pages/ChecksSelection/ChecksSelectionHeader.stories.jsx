@@ -113,7 +113,7 @@ export const ClusterChecksSelection = {
     ),
     pageHeader: (
       <PageHeader>
-        Cluster Settings for <span className="font-bold">{targetName}</span>
+        Check Settings for <span className="font-bold">{targetName}</span>
       </PageHeader>
     ),
   },
