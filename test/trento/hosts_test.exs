@@ -381,5 +381,203 @@ defmodule Trento.HostsTest do
                  Hosts.request_bulk_operation(operation, [UUID.uuid4()], %{})
       end
     end
+
+    solution_scenarios = [
+      %{
+        family: :netweaver,
+        db_instances: build_list(2, :database_instance),
+        app_instances: [],
+        solution: "HANA",
+        saptune_status: nil,
+        operation: "saptuneapplysolution@v1"
+      },
+      %{
+        family: :netweaver,
+        db_instances: [],
+        app_instances: build_list(2, :application_instance),
+        solution: "NETWEAVER",
+        saptune_status: nil,
+        operation: "saptuneapplysolution@v1"
+      },
+      %{
+        family: :netweaver,
+        db_instances: build_list(2, :database_instance),
+        app_instances: build_list(2, :application_instance),
+        solution: "NETWEAVER+HANA",
+        saptune_status: nil,
+        operation: "saptuneapplysolution@v1"
+      },
+      %{
+        family: :s4hana,
+        db_instances: build_list(2, :database_instance),
+        app_instances: [],
+        solution: "S4HANA-DBSERVER",
+        saptune_status: nil,
+        operation: "saptuneapplysolution@v1"
+      },
+      %{
+        family: :s4hana,
+        db_instances: [],
+        app_instances: build_list(2, :application_instance),
+        solution: "S4HANA-APPSERVER",
+        saptune_status: nil,
+        operation: "saptuneapplysolution@v1"
+      },
+      %{
+        family: :s4hana,
+        db_instances: build_list(2, :database_instance),
+        app_instances: build_list(2, :application_instance),
+        solution: "S4HANA-APP+DB",
+        saptune_status: nil,
+        operation: "saptuneapplysolution@v1"
+      },
+      %{
+        family: :netweaver,
+        db_instances: build_list(2, :database_instance),
+        app_instances: [],
+        solution: "HANA",
+        saptune_status: build(:saptune_status),
+        operation: "saptunechangesolution@v1"
+      },
+      %{
+        family: :netweaver,
+        db_instances: [],
+        app_instances: build_list(2, :application_instance),
+        solution: "NETWEAVER",
+        saptune_status: build(:saptune_status),
+        operation: "saptunechangesolution@v1"
+      },
+      %{
+        family: :netweaver,
+        db_instances: build_list(2, :database_instance),
+        app_instances: build_list(2, :application_instance),
+        solution: "NETWEAVER+HANA",
+        saptune_status: build(:saptune_status),
+        operation: "saptunechangesolution@v1"
+      },
+      %{
+        family: :s4hana,
+        db_instances: build_list(2, :database_instance),
+        app_instances: [],
+        solution: "S4HANA-DBSERVER",
+        saptune_status: build(:saptune_status),
+        operation: "saptunechangesolution@v1"
+      },
+      %{
+        family: :s4hana,
+        db_instances: [],
+        app_instances: build_list(2, :application_instance),
+        solution: "S4HANA-APPSERVER",
+        saptune_status: build(:saptune_status),
+        operation: "saptunechangesolution@v1"
+      },
+      %{
+        family: :s4hana,
+        db_instances: build_list(2, :database_instance),
+        app_instances: build_list(2, :application_instance),
+        solution: "S4HANA-APP+DB",
+        saptune_status: build(:saptune_status),
+        operation: "saptunechangesolution@v1"
+      }
+    ]
+
+    for %{
+          family: family,
+          db_instances: db_instances,
+          app_instances: app_instances,
+          solution: solution,
+          saptune_status: saptune_status,
+          operation: operation
+        } <- solution_scenarios do
+      @family family
+      @db_instances db_instances
+      @app_instances app_instances
+      @solution solution
+      @saptune_status saptune_status
+      @operation operation
+
+      test "should request the #{solution} solution and #{operation} operation for host with the #{family} family for saptune_solution" do
+        %{id: host_id} =
+          insert(:host,
+            saptune_status: @saptune_status,
+            database_instances: @db_instances,
+            application_instances: @app_instances
+          )
+
+        expected_solution = @solution
+        expected_operation = @operation
+
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn
+          OperationsPublisher,
+          "requests",
+          %OperationRequested{
+            group_id: ^host_id,
+            operation_type: ^expected_operation,
+            targets: [
+              %OperationTarget{
+                agent_id: ^host_id,
+                arguments: %{
+                  "solution" => %ProtobufValue{kind: {:string_value, ^expected_solution}}
+                }
+              }
+            ]
+          } ->
+            :ok
+        end)
+
+        assert {:ok, _, [%{resource_id: ^host_id}], []} =
+                 Hosts.request_bulk_operation(:saptune_solution, [host_id], %{
+                   solution_family: @family
+                 })
+      end
+    end
+
+    test "should report request error as failed requests for saptune_solution if the host is not found or SAP workload is not present" do
+      %{id: host_id} =
+        insert(:host,
+          saptune_status: nil,
+          database_instances: build_list(2, :database_instance),
+          application_instances: []
+        )
+
+      %{id: sap_not_present_host_id} =
+        insert(:host,
+          saptune_status: nil,
+          database_instances: [],
+          application_instances: []
+        )
+
+      missing_host_id = UUID.uuid4()
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn
+        OperationsPublisher, "requests", %OperationRequested{} -> :ok
+      end)
+
+      assert {:ok, _, [%{resource_id: ^host_id}],
+              [
+                %{resource_id: ^sap_not_present_host_id, reason: :sap_workload_not_present},
+                %{resource_id: ^missing_host_id, reason: :not_found}
+              ]} =
+               Hosts.request_bulk_operation(
+                 :saptune_solution,
+                 [host_id, sap_not_present_host_id, missing_host_id],
+                 %{
+                   solution_family: :s4hana
+                 }
+               )
+    end
+
+    test "should fail with invalid_params when saptune_solution is requested without proper solution_family" do
+      assert {:error, :invalid_params} = Hosts.request_bulk_operation(:saptune_solution, [], %{})
+
+      assert {:error, :invalid_params} =
+               Hosts.request_bulk_operation(
+                 :saptune_solution,
+                 [],
+                 %{
+                   solution_family: "foo"
+                 }
+               )
+    end
   end
 end

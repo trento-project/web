@@ -35,6 +35,7 @@ defmodule Trento.Hosts do
 
   require Trento.Operations.Enums.HostOperations, as: HostOperations
   require Trento.Operations.Enums.HostBulkOperations, as: HostBulkOperations
+  require Trento.Hosts.Enums.SaptuneSolutionFamily, as: SaptuneSolutionFamily
 
   require Logger
 
@@ -175,6 +176,43 @@ defmodule Trento.Hosts do
           {:ok, String.t(), [%{resource_id: String.t(), operation_id: String.t()}],
            [%{resource_id: String.t(), reason: any}]}
           | {:error, any}
+  def request_bulk_operation(
+        HostBulkOperations.saptune_solution(),
+        host_ids,
+        %{solution_family: solution_family}
+      )
+      when solution_family in SaptuneSolutionFamily.values() do
+    hosts =
+      host_ids
+      |> get_hosts_by_ids()
+      |> Repo.preload([:application_instances, :database_instances])
+      |> Map.new(&{&1.id, &1})
+
+    OperationsHelper.do_bulk_requests(host_ids, fn host_id ->
+      case Map.fetch(hosts, host_id) do
+        {:ok, %HostReadModel{database_instances: [], application_instances: []}} ->
+          {:error, :sap_workload_not_present}
+
+        {:ok, host} ->
+          request_operation(
+            get_saptune_solution_operation(host),
+            host_id,
+            %{solution: map_saptune_solution(host, solution_family)}
+          )
+
+        :error ->
+          {:error, :not_found}
+      end
+    end)
+  end
+
+  def request_bulk_operation(
+        HostBulkOperations.saptune_solution(),
+        _,
+        _
+      ),
+      do: {:error, :invalid_params}
+
   def request_bulk_operation(operation, host_ids, params)
       when operation in HostBulkOperations.values() do
     OperationsHelper.do_bulk_requests(
@@ -209,4 +247,39 @@ defmodule Trento.Hosts do
       :host
     )
   end
+
+  # get_saptune_solution_operation/2 returns the operation to request between
+  # saptune_solution_apply and saptune_solution_change based on if a Saptune solution
+  # is already applied or not.
+  @spec get_saptune_solution_operation(HostReadModel.t()) :: atom()
+  defp get_saptune_solution_operation(%HostReadModel{
+         saptune_status: %{applied_solution: applied_solution}
+       })
+       when not is_nil(applied_solution),
+       do: HostOperations.saptune_solution_change()
+
+  defp get_saptune_solution_operation(_), do: HostOperations.saptune_solution_apply()
+
+  # The 2nd and 3rd elements of the key tell whether the host has database and application
+  # instances respectively.
+  @saptune_solutions %{
+    {SaptuneSolutionFamily.netweaver(), true, false} => "HANA",
+    {SaptuneSolutionFamily.netweaver(), false, true} => "NETWEAVER",
+    {SaptuneSolutionFamily.netweaver(), true, true} => "NETWEAVER+HANA",
+    {SaptuneSolutionFamily.s4hana(), true, false} => "S4HANA-DBSERVER",
+    {SaptuneSolutionFamily.s4hana(), false, true} => "S4HANA-APPSERVER",
+    {SaptuneSolutionFamily.s4hana(), true, true} => "S4HANA-APP+DB"
+  }
+
+  # map_saptune_solution/2 maps the Saptune solution to apply/change based on the requested Saptune
+  # family and the number of database and application instances running in the host.
+  @spec map_saptune_solution(HostReadModel.t(), SaptuneSolutionFamily.t()) :: String.t()
+  defp map_saptune_solution(
+         %HostReadModel{
+           database_instances: db_instances,
+           application_instances: app_instances
+         },
+         family
+       ),
+       do: Map.fetch!(@saptune_solutions, {family, db_instances != [], app_instances != []})
 end
