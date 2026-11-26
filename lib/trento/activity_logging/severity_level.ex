@@ -62,6 +62,8 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "cluster_checks_execution_request" => :info,
     "activity_log_settings_update" => :debug,
     "changing_checks_frequency_settings" => :info,
+    "host_checks_frequency_changed" => :info,
+    "cluster_checks_frequency_changed" => :info,
     "heartbeat_succeeded" => :debug,
     "heartbeat_failed" => :warning,
     "host_checks_health_changed" => @health_condition_warn_if_unknown,
