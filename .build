@@ -144,6 +144,7 @@ Trento.Databases.Events.DatabaseTombstoned.html
 Trento.Databases.Events.Upcaster.UpcastHelper.html
 Trento.Databases.Lifespan.html
 Trento.Databases.Policy.html
+Trento.Databases.Projections.DatabaseHealthDetails.html
 Trento.Databases.Projections.DatabaseInstanceReadModel.html
 Trento.Databases.Projections.DatabaseProjector.html
 Trento.Databases.Projections.DatabaseReadModel.html
@@ -635,7 +636,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-AF264E46.js
-dist/sidebar_items-50EFC6B5.js
+dist/search_data-711BAF95.js
+dist/sidebar_items-CCABB991.js
 index.html
 search.html

@@ -168,6 +168,8 @@ It is used to trigger the stream archiving process and it contains the snapshot 
 
 - [Trento.Databases.Lifespan](Trento.Databases.Lifespan.md): Database aggregate lifespan.
 - [Trento.Databases.Policy](Trento.Databases.Policy.md): Policy for the Database resource
+- [Trento.Databases.Projections.DatabaseHealthDetails](Trento.Databases.Projections.DatabaseHealthDetails.md): Health details for Databases in read model format.
+
 - [Trento.Databases.Projections.DatabaseInstanceReadModel](Trento.Databases.Projections.DatabaseInstanceReadModel.md): Database instance read model
 
 - [Trento.Databases.Projections.DatabaseProjector](Trento.Databases.Projections.DatabaseProjector.md): Database projector

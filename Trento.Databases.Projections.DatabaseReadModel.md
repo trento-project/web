@@ -11,6 +11,7 @@ Database read model
   database_instances: term(),
   deregistered_at: term(),
   health: term(),
+  health_details: term(),
   id: term(),
   inserted_at: term(),
   sap_systems: term(),

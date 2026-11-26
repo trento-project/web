@@ -143,6 +143,7 @@ Trento.Databases.Events.DatabaseTombstoned.md
 Trento.Databases.Events.Upcaster.UpcastHelper.md
 Trento.Databases.Lifespan.md
 Trento.Databases.Policy.md
+Trento.Databases.Projections.DatabaseHealthDetails.md
 Trento.Databases.Projections.DatabaseInstanceReadModel.md
 Trento.Databases.Projections.DatabaseProjector.md
 Trento.Databases.Projections.DatabaseReadModel.md

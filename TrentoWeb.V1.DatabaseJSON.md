@@ -7,6 +7,8 @@
 
 # `database_health_changed`
 
+# `database_health_details_changed`
+
 # `database_instance`
 
 # `database_instance_absent_at_changed`
