@@ -56,6 +56,8 @@ config :trento, :alerting,
 # When set, it wins over the saved setting, which can not be changed.
 config :trento, :checks_frequency, nil
 
+config :trento, Trento.Checks, events_adapter: Trento.Infrastructure.Checks.PubSubEvents
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.12.18",

@@ -69,6 +69,142 @@ defmodule Trento.ChecksTest do
         assert %ChecksExecutionRequest{last_requested_at: ~U[2026-03-02 09:58:00.000000Z]} =
                  Repo.get!(ChecksExecutionRequest, recent_id)
       end
+
+      test "should publish the periodic request of a #{target_type}" do
+        :ok = Checks.subscribe_to_events()
+        %{id: target_id} = insert_target(@target_type)
+
+        assert_requested(@target_type, [target_id])
+
+        assert_receive {:checks_execution_requested, @target_type, ^target_id,
+                        ~U[2026-03-02 10:00:00.000000Z]}
+      end
+
+      test "should not publish a failed request of a #{target_type}" do
+        :ok = Checks.subscribe_to_events()
+        %{id: target_id} = insert_target(@target_type)
+
+        expect(Messaging, :publish, fn _, _, _ -> {:error, :boom} end)
+
+        capture_log(fn ->
+          assert :ok = Checks.request_due_executions(@target_type, DateService.Mock)
+        end)
+
+        refute_receive {:checks_execution_requested, _, ^target_id, _}
+      end
+
+      test "should request the #{target_type}s with an own frequency at that frequency" do
+        insert(:checks_frequency_settings,
+          enabled: true,
+          frequency: %Frequency{value: 5, unit: :minute}
+        )
+
+        %{id: hourly_id} = insert_target(@target_type)
+
+        insert(:checks_target_settings,
+          target_type: @target_type,
+          target_id: hourly_id,
+          frequency: %Frequency{value: 1, unit: :hour}
+        )
+
+        insert(:checks_execution_request,
+          target_type: @target_type,
+          target_id: hourly_id,
+          last_requested_at: ~U[2026-03-02 09:30:00.000000Z]
+        )
+
+        %{id: due_id} = insert_target(@target_type)
+
+        insert(:checks_execution_request,
+          target_type: @target_type,
+          target_id: due_id,
+          last_requested_at: ~U[2026-03-02 09:30:00.000000Z]
+        )
+
+        assert_requested(@target_type, [due_id])
+      end
+
+      test "should request the enabled #{target_type}s while the global settings are disabled" do
+        insert(:checks_frequency_settings,
+          enabled: false,
+          frequency: %Frequency{value: 5, unit: :minute}
+        )
+
+        %{id: own_id} = insert_target(@target_type)
+
+        insert(:checks_target_settings,
+          target_type: @target_type,
+          target_id: own_id,
+          enabled: true
+        )
+
+        insert_target(@target_type)
+
+        assert_requested(@target_type, [own_id])
+      end
+
+      test "should request the enabled #{target_type}s while the global settings are disabled from the environment" do
+        previous = Application.get_env(:trento, :checks_frequency)
+        Application.put_env(:trento, :checks_frequency, :disabled)
+        on_exit(fn -> Application.put_env(:trento, :checks_frequency, previous) end)
+
+        %{id: own_id} = insert_target(@target_type)
+
+        insert(:checks_target_settings,
+          target_type: @target_type,
+          target_id: own_id,
+          enabled: true
+        )
+
+        insert_target(@target_type)
+
+        assert_requested(@target_type, [own_id])
+      end
+
+      test "should request the #{target_type}s with an own frequency more frequent than the global one" do
+        insert(:checks_frequency_settings,
+          enabled: true,
+          frequency: %Frequency{value: 1, unit: :hour}
+        )
+
+        %{id: frequent_id} = insert_target(@target_type)
+
+        insert(:checks_target_settings,
+          target_type: @target_type,
+          target_id: frequent_id,
+          frequency: %Frequency{value: 5, unit: :minute}
+        )
+
+        insert(:checks_execution_request,
+          target_type: @target_type,
+          target_id: frequent_id,
+          last_requested_at: ~U[2026-03-02 09:50:00.000000Z]
+        )
+
+        %{id: global_id} = insert_target(@target_type)
+
+        insert(:checks_execution_request,
+          target_type: @target_type,
+          target_id: global_id,
+          last_requested_at: ~U[2026-03-02 09:50:00.000000Z]
+        )
+
+        assert_requested(@target_type, [frequent_id])
+      end
+
+      test "should skip the #{target_type}s with disabled settings while the global ones are enabled" do
+        %{id: off_id} = insert_target(@target_type)
+
+        insert(:checks_target_settings,
+          target_type: @target_type,
+          target_id: off_id,
+          enabled: false
+        )
+
+        %{id: on_id} = insert_target(@target_type)
+
+        assert_requested(@target_type, [on_id])
+      end
     end
 
     test "should store the time of each request, not the start of the run" do
@@ -252,6 +388,48 @@ defmodule Trento.ChecksTest do
 
       assert 0 == Checks.delete_stale_execution_requests(DateService.Mock)
       assert [%ChecksExecutionRequest{target_id: ^host_id}] = Repo.all(ChecksExecutionRequest)
+    end
+  end
+
+  describe "the due rule" do
+    @five_minutes %{enabled: true, frequency: %Frequency{value: 5, unit: :minute}}
+
+    for {name, effective, last_requested_at, now, due, next} <- [
+          {"disabled settings", %{enabled: false, frequency: %Frequency{value: 5, unit: :minute}},
+           ~U[2026-03-02 09:00:00.000000Z], ~U[2026-03-02 10:00:00.000000Z], false, nil},
+          {"global settings disabled from the environment", %{enabled: false, frequency: nil},
+           nil, ~U[2026-03-02 10:00:00.000000Z], false, nil},
+          {"never requested", @five_minutes, nil, ~U[2026-03-02 10:00:20.000000Z], true,
+           ~U[2026-03-02 10:01:00.000000Z]},
+          {"299.993 seconds elapsed, due thanks to the tolerance", @five_minutes,
+           ~U[2026-03-02 10:00:00.312000Z], ~U[2026-03-02 10:05:00.305000Z], true,
+           ~U[2026-03-02 10:06:00.000000Z]},
+          {"not yet due", @five_minutes, ~U[2026-03-02 10:00:00.312000Z],
+           ~U[2026-03-02 10:03:00.000000Z], false, ~U[2026-03-02 10:05:00.000000Z]},
+          {"a run late in the minute, due earlier in that minute", @five_minutes,
+           ~U[2026-03-02 10:00:40.000000Z], ~U[2026-03-02 10:05:40.000000Z], true,
+           ~U[2026-03-02 10:06:00.000000Z]},
+          {"never requested, now on a full minute", @five_minutes, nil,
+           ~U[2026-03-02 10:00:00.000000Z], true, ~U[2026-03-02 10:00:00.000000Z]},
+          {"hours", %{enabled: true, frequency: %Frequency{value: 6, unit: :hour}},
+           ~U[2026-03-02 05:00:00.000000Z], ~U[2026-03-02 10:00:00.000000Z], false,
+           ~U[2026-03-02 11:00:00.000000Z]},
+          {"weeks", %{enabled: true, frequency: %Frequency{value: 1, unit: :week}},
+           ~U[2026-03-02 10:00:00.000000Z], ~U[2026-03-05 10:00:00.000000Z], false,
+           ~U[2026-03-09 10:00:00.000000Z]}
+        ] do
+      @effective effective
+      @last_requested_at last_requested_at
+      @now_of_row now
+      @due due
+      @next next
+
+      test "should decide and plan the execution with #{name}" do
+        due_at = Checks.due_at(@effective, @last_requested_at)
+
+        assert @due == Checks.due?(due_at, @now_of_row)
+        assert @next == Checks.next_execution_at(due_at, @now_of_row)
+      end
     end
   end
 
