@@ -17,6 +17,9 @@ import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 import { hostFactory, selectableCheckFactory } from '@lib/test-utils/factories';
+import { checksScheduleFactory } from '@lib/test-utils/factories/checksSchedules';
+
+import { fetchChecksSchedule } from '@state/checksSchedules';
 
 import HostSettingsPage from './HostSettingsPage';
 
@@ -90,6 +93,55 @@ describe('HostSettingsPage component', () => {
     expect(screen.getByText(group2)).toBeVisible();
 
     expect(screen.getByText('Save Checks Selection')).toBeVisible();
+  });
+
+  it('should render the check executions of the host', async () => {
+    const hosts = hostFactory.buildList(2, { provider: 'azure' });
+    const { id: hostID } = hosts[1];
+    const state = {
+      ...defaultInitialState,
+      hostsList: { hosts },
+      user: { abilities: [{ name: 'all', resource: 'host_checks_frequency' }] },
+      checksSchedules: {
+        host: {
+          [hostID]: {
+            loading: false,
+            data: checksScheduleFactory.build({
+              enabled: true,
+              frequency: { value: 6, unit: 'hour' },
+              global: false,
+            }),
+            networkError: false,
+            editing: false,
+            errors: [],
+          },
+        },
+        cluster: {},
+      },
+    };
+
+    const [StatefulHostSettingsPage, store] = withState(
+      <HostSettingsPage />,
+      state
+    );
+
+    await act(async () => {
+      renderWithRouterMatch(StatefulHostSettingsPage, {
+        path: 'hosts/:hostID/settings',
+        route: `/hosts/${hostID}/settings`,
+      });
+    });
+
+    expect(
+      screen.getByRole('heading', { name: 'Host Check Executions' })
+    ).toBeVisible();
+    expect(screen.getByLabelText('checks-frequency')).toHaveTextContent(
+      'Every 6 hours'
+    );
+    expect(screen.getByRole('button', { name: 'Edit Settings' })).toBeEnabled();
+    expect(store.getActions()).toContainEqual(
+      fetchChecksSchedule({ targetType: 'host', targetID: hostID })
+    );
   });
 
   it('should render HostSettingsPage with a disabled start execution button, as no checks are selected', async () => {

@@ -15,7 +15,7 @@ const checksFrequencySettingsPermittedFor = ['all:checks_frequency_settings'];
 export const ENFORCED_FROM_ENV_MESSAGE =
   'Check executions settings are enforced by environment variables';
 
-function FrequencyLabel({ enabled, frequency }) {
+export function FrequencyLabel({ enabled, frequency }) {
   if (!enabled) {
     return 'Disabled';
   }

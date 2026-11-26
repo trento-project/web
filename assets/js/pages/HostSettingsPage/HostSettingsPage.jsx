@@ -21,6 +21,7 @@ import PageHeader from '@common/PageHeader';
 
 import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
+import TargetChecksFrequency from '@pages/ChecksSelection/TargetChecksFrequency';
 
 function HostSettingsPage() {
   const dispatch = useDispatch();
@@ -106,6 +107,11 @@ function HostSettingsPage() {
         arch={arch}
         provider={provider}
         agentVersion={agentVersion}
+      />
+      <TargetChecksFrequency
+        targetType={TARGET_HOST}
+        targetID={hostID}
+        userAbilities={abilities}
       />
       <ChecksSelection
         groupID={hostID}

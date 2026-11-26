@@ -22,6 +22,44 @@ const checksSelectionSlice = createSlice({
   reducers: {},
 });
 
+const checksSchedulesSlice = createSlice({
+  name: 'checksSchedules',
+  initialState: {
+    host: {
+      [host.id]: {
+        loading: false,
+        data: {
+          enabled: true,
+          frequency: { value: 6, unit: 'hour' },
+          global: false,
+          next_execution_at: null,
+        },
+        networkError: false,
+        editing: false,
+        errors: [],
+      },
+    },
+    cluster: {},
+  },
+  reducers: {},
+});
+
+const checksFrequencySettingsSlice = createSlice({
+  name: 'checksFrequencySettings',
+  initialState: {
+    loading: false,
+    settings: {
+      enabled: true,
+      frequency: { value: 5, unit: 'minute' },
+      enforced_from_env: false,
+    },
+    networkError: false,
+    editing: false,
+    errors: [],
+  },
+  reducers: {},
+});
+
 const lastExecutionsSlice = createSlice({
   name: 'lastExecutions',
   initialState: {
@@ -57,6 +95,8 @@ export default {
         reducer: {
           hostsList: hostListSlice.reducer,
           checksSelection: checksSelectionSlice.reducer,
+          checksSchedules: checksSchedulesSlice.reducer,
+          checksFrequencySettings: checksFrequencySettingsSlice.reducer,
           lastExecutions: lastExecutionsSlice.reducer,
           user: userSlice.reducer,
         },

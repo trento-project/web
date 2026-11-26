@@ -42,6 +42,18 @@ export const defaultInitialState = {
     ),
   },
   checksSelection: { host: {}, cluster: {} },
+  checksSchedules: { host: {}, cluster: {} },
+  checksFrequencySettings: {
+    loading: false,
+    settings: {
+      enabled: true,
+      frequency: { value: 5, unit: 'minute' },
+      enforced_from_env: false,
+    },
+    networkError: false,
+    editing: false,
+    errors: [],
+  },
   catalog: { loading: false, data: [], error: null },
 };
 
