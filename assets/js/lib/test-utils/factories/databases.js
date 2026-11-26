@@ -34,6 +34,10 @@ export const databaseInstanceFactory = Factory.define(() => ({
   stale_at: null,
 }));
 
+export const databaseHealthDetailsFactory = Factory.define(() => ({
+  instances_health: { value: healthEnum() },
+}));
+
 export const databaseFactory = Factory.define(({ params }) => {
   const id = params.id || faker.string.uuid();
   const sid = generateSid();
@@ -42,6 +46,7 @@ export const databaseFactory = Factory.define(({ params }) => {
     id,
     sid,
     health: healthEnum(),
+    health_details: databaseHealthDetailsFactory.build(params.health_details),
     database_instances: databaseInstanceFactory.buildList(2, {
       database_id: id,
       sid,

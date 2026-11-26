@@ -13,10 +13,13 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
   require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Databases.Projections.{
+    DatabaseHealthDetails,
     DatabaseInstanceReadModel,
     DatabaseProjector,
     DatabaseReadModel
   }
+
+  alias Trento.Support.HealthValueDetails
 
   alias Trento.Databases.Events.{
     DatabaseDataMarkedInSync,
@@ -55,16 +58,23 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
-    %{sid: sid, health: health} =
+    %{sid: sid, health: health, health_details: health_details} =
       database_projection = Repo.get!(DatabaseReadModel, event.database_id)
 
     assert event.database_id == database_projection.id
     assert event.sid == database_projection.sid
     assert event.health == database_projection.health
 
+    assert %DatabaseHealthDetails{
+             instances_health: %HealthValueDetails{value: :unknown, reason: ""}
+           } = health_details
+
     assert_broadcast "database_registered",
                      %{
                        health: ^health,
+                       health_details: %{
+                         instances_health: %{value: :unknown}
+                       },
                        id: ^database_id,
                        sid: ^sid
                      },
@@ -466,7 +476,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
   end
 
   test "should restore a deregistered database when DatabaseRestored is received" do
-    %{id: database_id} =
+    %{id: database_id, health_details: health_details} =
       insert(:database,
         sid: "NWD",
         deregistered_at: DateTime.utc_now(),
@@ -496,19 +506,32 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert nil == projection.deregistered_at
     assert :passing == projection.health
+    assert health_details == projection.health_details
 
     adapted_database_instances =
       database_instances
       |> Map.put(:sap_system_id, database_id)
       |> Map.put(:health, :unknown)
 
+    adapted_tags =
+      Enum.map(tags, fn tag ->
+        tag
+        |> Map.from_struct()
+        |> Map.delete(:__meta__)
+      end)
+
+    expected_health_details = %{
+      instances_health: %{value: health_details.instances_health.value}
+    }
+
     assert_broadcast "database_restored",
                      %{
                        health: :passing,
+                       health_details: ^expected_health_details,
                        id: ^database_id,
                        sid: "NWD",
                        database_instances: [^adapted_database_instances],
-                       tags: ^tags
+                       tags: ^adapted_tags
                      },
                      1000
   end
@@ -666,5 +689,244 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       },
       1000
     )
+  end
+
+  describe "health details" do
+    @instance_registered_scenarios [
+      %{
+        name:
+          "should update instances_health and broadcast when DatabaseInstanceRegistered event changes instances_health",
+        initial_health: :unknown,
+        existing_statuses: [],
+        new_status: Status.green(),
+        expected_health: :passing,
+        broadcast_assertion: &__MODULE__.assert_health_details_broadcast/2
+      },
+      %{
+        name:
+          "should not broadcast database_health_details_changed when DatabaseInstanceRegistered event does not change instances_health",
+        initial_health: :critical,
+        existing_statuses: [Status.red()],
+        new_status: Status.green(),
+        expected_health: :critical,
+        broadcast_assertion: &__MODULE__.refute_health_details_broadcast/2
+      }
+    ]
+
+    for scenario <- @instance_registered_scenarios do
+      @scenario scenario
+
+      test @scenario.name do
+        %{id: database_id} =
+          insert(:database,
+            health_details:
+              build(:database_health_details_projection,
+                instances_health: build(:health_value_details, value: @scenario.initial_health)
+              )
+          )
+
+        Enum.each(@scenario.existing_statuses, fn status ->
+          insert(:database_instance, database_id: database_id, status: status)
+        end)
+
+        event =
+          build(:database_instance_registered_event,
+            database_id: database_id,
+            status: @scenario.new_status
+          )
+
+        ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+        %{health_details: health_details} = Repo.get!(DatabaseReadModel, database_id)
+
+        expected_health = @scenario.expected_health
+
+        assert %DatabaseHealthDetails{
+                 instances_health: %HealthValueDetails{value: ^expected_health, reason: ""}
+               } = health_details
+
+        @scenario.broadcast_assertion.(database_id, @scenario.expected_health)
+      end
+    end
+
+    @instance_status_changed_scenarios [
+      %{
+        name:
+          "should update instances_health and broadcast when DatabaseInstanceStatusChanged event changes instances_health",
+        initial_health: :unknown,
+        existing_statuses: [],
+        existing_target_status: Status.green(),
+        new_target_status: Status.red(),
+        expected_health: :critical,
+        broadcast_assertion: &__MODULE__.assert_health_details_broadcast/2
+      },
+      %{
+        name:
+          "should not broadcast database_health_details_changed when DatabaseInstanceStatusChanged event does not change instances_health",
+        initial_health: :critical,
+        existing_statuses: [Status.red()],
+        existing_target_status: Status.green(),
+        new_target_status: Status.yellow(),
+        expected_health: :critical,
+        broadcast_assertion: &__MODULE__.refute_health_details_broadcast/2
+      }
+    ]
+
+    for scenario <- @instance_status_changed_scenarios do
+      @scenario scenario
+
+      test @scenario.name do
+        %{id: database_id} =
+          insert(:database,
+            health_details:
+              build(:database_health_details_projection,
+                instances_health: build(:health_value_details, value: @scenario.initial_health)
+              )
+          )
+
+        Enum.each(@scenario.existing_statuses, fn status ->
+          insert(:database_instance, database_id: database_id, status: status)
+        end)
+
+        %{host_id: host_id, instance_number: instance_number} =
+          insert(:database_instance,
+            database_id: database_id,
+            status: @scenario.existing_target_status
+          )
+
+        status_event =
+          build(:database_instance_status_changed_event,
+            database_id: database_id,
+            host_id: host_id,
+            instance_number: instance_number,
+            status: @scenario.new_target_status
+          )
+
+        ProjectorTestHelper.project(DatabaseProjector, status_event, "database_projector")
+
+        %{health_details: health_details} = Repo.get!(DatabaseReadModel, database_id)
+
+        expected_health = @scenario.expected_health
+
+        assert %DatabaseHealthDetails{
+                 instances_health: %HealthValueDetails{value: ^expected_health, reason: ""}
+               } = health_details
+
+        @scenario.broadcast_assertion.(database_id, @scenario.expected_health)
+      end
+    end
+
+    @instance_deregistered_scenarios [
+      %{
+        name:
+          "should update instances_health and broadcast when DatabaseInstanceDeregistered event changes instances_health",
+        initial_health: :passing,
+        existing_statuses: [],
+        target_status: Status.green(),
+        expected_health: :unknown,
+        broadcast_assertion: &__MODULE__.assert_health_details_broadcast/2
+      },
+      %{
+        name:
+          "should not broadcast database_health_details_changed when DatabaseInstanceDeregistered event does not change instances_health",
+        initial_health: :critical,
+        existing_statuses: [Status.red()],
+        target_status: Status.green(),
+        expected_health: :critical,
+        broadcast_assertion: &__MODULE__.refute_health_details_broadcast/2
+      }
+    ]
+
+    for scenario <- @instance_deregistered_scenarios do
+      @scenario scenario
+
+      test @scenario.name do
+        %{id: database_id} =
+          insert(:database,
+            health_details:
+              build(:database_health_details_projection,
+                instances_health: build(:health_value_details, value: @scenario.initial_health)
+              )
+          )
+
+        Enum.each(@scenario.existing_statuses, fn status ->
+          insert(:database_instance, database_id: database_id, status: status)
+        end)
+
+        %{host_id: host_id, instance_number: instance_number} =
+          insert(:database_instance,
+            database_id: database_id,
+            status: @scenario.target_status
+          )
+
+        deregistered_event =
+          build(:database_instance_deregistered_event,
+            database_id: database_id,
+            host_id: host_id,
+            instance_number: instance_number
+          )
+
+        ProjectorTestHelper.project(DatabaseProjector, deregistered_event, "database_projector")
+
+        %{health_details: health_details} = Repo.get!(DatabaseReadModel, database_id)
+
+        expected_health = @scenario.expected_health
+
+        assert %DatabaseHealthDetails{
+                 instances_health: %HealthValueDetails{value: ^expected_health, reason: ""}
+               } = health_details
+
+        @scenario.broadcast_assertion.(database_id, @scenario.expected_health)
+      end
+    end
+
+    test "should safely update health_details when database read model initially has health_details as nil" do
+      %{id: database_id} =
+        insert(:database,
+          health_details: nil
+        )
+
+      event =
+        build(:database_instance_registered_event,
+          database_id: database_id,
+          status: Status.green()
+        )
+
+      ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+      %{health_details: health_details} = Repo.get!(DatabaseReadModel, database_id)
+
+      assert %DatabaseHealthDetails{
+               instances_health: %HealthValueDetails{value: :passing, reason: ""}
+             } = health_details
+
+      assert_broadcast(
+        "database_health_details_changed",
+        %{
+          id: ^database_id,
+          health_details: %{
+            instances_health: %{value: :passing}
+          }
+        },
+        1000
+      )
+    end
+
+    def assert_health_details_broadcast(database_id, expected_health) do
+      assert_broadcast(
+        "database_health_details_changed",
+        %{
+          id: ^database_id,
+          health_details: %{
+            instances_health: %{value: ^expected_health}
+          }
+        },
+        1000
+      )
+    end
+
+    def refute_health_details_broadcast(_database_id, _expected_health) do
+      refute_broadcast("database_health_details_changed", %{}, 500)
+    end
   end
 end

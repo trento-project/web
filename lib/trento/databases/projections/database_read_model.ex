@@ -12,7 +12,11 @@ defmodule Trento.Databases.Projections.DatabaseReadModel do
 
   require Trento.Enums.Health, as: Health
 
-  alias Trento.Databases.Projections.DatabaseInstanceReadModel
+  alias Trento.Databases.Projections.{
+    DatabaseHealthDetails,
+    DatabaseInstanceReadModel
+  }
+
   alias Trento.Databases.ValueObjects.Tenant
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
@@ -27,6 +31,10 @@ defmodule Trento.Databases.Projections.DatabaseReadModel do
   schema "databases" do
     field :sid, :string
     field :health, Ecto.Enum, values: Health.values()
+
+    embeds_one :health_details, DatabaseHealthDetails,
+      on_replace: :update,
+      defaults_to_struct: true
 
     embeds_many :tenants, Tenant, on_replace: :delete
 
@@ -48,7 +56,8 @@ defmodule Trento.Databases.Projections.DatabaseReadModel do
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(database, attrs) do
     database
-    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:tenants])
+    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:tenants, :health_details])
     |> cast_embed(:tenants)
+    |> cast_embed(:health_details)
   end
 end
