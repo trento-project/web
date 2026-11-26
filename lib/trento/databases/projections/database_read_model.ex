@@ -31,7 +31,7 @@ defmodule Trento.Databases.Projections.DatabaseReadModel do
   schema "databases" do
     field :sid, :string
     field :health, Ecto.Enum, values: Health.values()
-    embeds_one :health_details, DatabaseHealthDetails, on_replace: :update
+    embeds_one :health_details, DatabaseHealthDetails, on_replace: :update, defaults_to_struct: true
 
     embeds_many :tenants, Tenant, on_replace: :delete
 

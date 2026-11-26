@@ -476,7 +476,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
   end
 
   test "should restore a deregistered database when DatabaseRestored is received" do
-    %{id: database_id} =
+    %{id: database_id, health_details: health_details} =
       insert(:database,
         sid: "NWD",
         deregistered_at: DateTime.utc_now(),
@@ -506,10 +506,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert nil == projection.deregistered_at
     assert :passing == projection.health
-
-    assert %DatabaseHealthDetails{
-             instances_health: %HealthValueDetails{value: :unknown, reason: ""}
-           } = projection.health_details
+    assert health_details == projection.health_details
 
     adapted_database_instances =
       database_instances
@@ -523,12 +520,14 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
         |> Map.delete(:__meta__)
       end)
 
+    expected_health_details = %{
+      instances_health: %{value: health_details.instances_health.value}
+    }
+
     assert_broadcast "database_restored",
                      %{
                        health: :passing,
-                       health_details: %{
-                         instances_health: %{value: :unknown}
-                       },
+                       health_details: ^expected_health_details,
                        id: ^database_id,
                        sid: "NWD",
                        database_instances: [^adapted_database_instances],
@@ -693,23 +692,6 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
   end
 
   describe "health details" do
-    def assert_health_details_broadcast(database_id, expected_health) do
-      assert_broadcast(
-        "database_health_details_changed",
-        %{
-          id: ^database_id,
-          health_details: %{
-            instances_health: %{value: ^expected_health}
-          }
-        },
-        1000
-      )
-    end
-
-    def refute_health_details_broadcast(_database_id, _expected_health) do
-      refute_broadcast("database_health_details_changed", %{}, 500)
-    end
-
     @instance_registered_scenarios [
       %{
         name:
@@ -928,6 +910,23 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
         },
         1000
       )
+    end
+
+    def assert_health_details_broadcast(database_id, expected_health) do
+      assert_broadcast(
+        "database_health_details_changed",
+        %{
+          id: ^database_id,
+          health_details: %{
+            instances_health: %{value: ^expected_health}
+          }
+        },
+        1000
+      )
+    end
+
+    def refute_health_details_broadcast(_database_id, _expected_health) do
+      refute_broadcast("database_health_details_changed", %{}, 500)
     end
   end
 end

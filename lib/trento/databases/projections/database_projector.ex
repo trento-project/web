@@ -40,8 +40,6 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   alias Trento.Repo
   alias Trento.Services.HealthService
 
-  require Trento.Enums.Health, as: Health
-
   import Ecto.Query
 
   @databases_topic "monitoring:databases"
@@ -49,20 +47,14 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   project(
     %DatabaseRegistered{database_id: database_id, sid: sid, health: health},
     fn multi ->
-      multi
-      |> Ecto.Multi.run(:instances_health, fn repo, _changes ->
-        {:ok, compute_instances_health(repo, database_id)}
-      end)
-      |> Ecto.Multi.insert(:database, fn %{instances_health: instances_health} ->
+      changeset =
         DatabaseReadModel.changeset(%DatabaseReadModel{}, %{
           id: database_id,
           sid: sid,
-          health: health,
-          health_details: %{
-            instances_health: %{value: instances_health, reason: ""}
-          }
+          health: health
         })
-      end)
+
+      Ecto.Multi.insert(multi, :database, changeset)
     end
   )
 
@@ -351,21 +343,15 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       health: health
     },
     fn multi ->
-      multi
-      |> Ecto.Multi.run(:instances_health, fn repo, _changes ->
-        {:ok, compute_instances_health(repo, database_id)}
-      end)
-      |> Ecto.Multi.update(:database, fn %{instances_health: instances_health} ->
+      changeset =
         DatabaseReadModel
         |> Repo.get!(database_id)
         |> DatabaseReadModel.changeset(%{
           deregistered_at: nil,
-          health: health,
-          health_details: %{
-            instances_health: %{value: instances_health, reason: ""}
-          }
+          health: health
         })
-      end)
+
+      Ecto.Multi.update(multi, :database, changeset)
     end
   )
 
@@ -747,26 +733,6 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   @impl true
   def after_update(_, _, _), do: :ok
 
-  defp update_health_details(repo, database_id, health_details_attrs) do
-    case repo.get(DatabaseReadModel, database_id) do
-      nil ->
-        {:ok, nil}
-
-      %DatabaseReadModel{} = database ->
-        changeset =
-          DatabaseReadModel.changeset(database, %{
-            health_details: health_details_attrs
-          })
-
-        if changeset.changes != %{} do
-          {:ok, updated_database} = repo.update(changeset)
-          {:ok, updated_database.health_details}
-        else
-          {:ok, nil}
-        end
-    end
-  end
-
   defp compute_instances_health(repo, database_id) do
     instance_statuses =
       repo.all(
@@ -785,6 +751,26 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     update_health_details(repo, database_id, %{
       instances_health: %{value: instances_health}
     })
+  end
+
+  defp update_health_details(repo, database_id, health_details_attrs) do
+    case repo.get(DatabaseReadModel, database_id) do
+      nil ->
+        {:ok, nil}
+
+      %DatabaseReadModel{} = database ->
+        changeset =
+          DatabaseReadModel.changeset(database, %{
+            health_details: health_details_attrs
+          })
+
+        if changeset.changes != %{} do
+          {:ok, updated_database} = repo.update(changeset)
+          {:ok, updated_database.health_details}
+        else
+          {:ok, nil}
+        end
+    end
   end
 
   defp maybe_broadcast_health_details_changed(database_id, %{
