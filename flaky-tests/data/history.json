@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-10-01T22:14:14Z",
-    "commit": "7bd2b8395af495246a5cf86f1f7cf8be4b3a89a9",
-    "run_id": "36930706576",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 41,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-10-01T22:35:42Z",
     "commit": "7bd2b8395af495246a5cf86f1f7cf8be4b3a89a9",
     "run_id": "36932236307",
@@ -4930,5 +4910,37 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-27T02:10:13Z",
+    "commit": "4429e0ddb565e588f9214862bf8002868717ea74",
+    "run_id": "45926738740",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve the selected items per page when reloading clusters view::Clusters Overview Persistent filters should preserve the selected items per page when reloading clusters view",
+        "score": 0.05001
+      }
+    ]
   }
 ]
