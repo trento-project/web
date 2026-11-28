@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-10-02T21:43:23Z",
-    "commit": "ed099690ada0c153ea4fbcd5facf3488f93985e3",
-    "run_id": "37065793627",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 35,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-10-02T21:46:45Z",
     "commit": "ed099690ada0c153ea4fbcd5facf3488f93985e3",
     "run_id": "37065793627",
@@ -4862,5 +4851,29 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-11-28T01:59:27Z",
+    "commit": "4429e0ddb565e588f9214862bf8002868717ea74",
+    "run_id": "46095812674",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.06271
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.02501
+      }
+    ]
   }
 ]
