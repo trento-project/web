@@ -117,7 +117,8 @@ describe('exports the packages in CSV format', () => {
     }));
     const revokeObjectURL = jest.fn(() => noop());
 
-    window.URL = { createObjectURL, revokeObjectURL };
+    window.URL.createObjectURL = createObjectURL;
+    window.URL.revokeObjectURL = revokeObjectURL;
   });
 
   it('disables button if no packages are available', () => {

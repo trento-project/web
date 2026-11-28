@@ -57,10 +57,13 @@ module.exports = {
   setupFilesAfterEnv: ['./setupTests.js'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.[jt]sx?$': [
+    '^.+\\.m?[jt]sx?$': [
       'babel-jest',
       {
         presets: ['@babel/preset-env', '@babel/preset-react'],
+        plugins: [
+          require.resolve('./tools/babel-plugins/replaceImportMeta.js'),
+        ],
       },
     ],
   },
@@ -69,6 +72,7 @@ module.exports = {
       '|react-syntax-highlighter|refractor|hastscript|hast-util-parse-selector|property-information' +
       '|space-separated-tokens|comma-separated-tokens|decode-named-character-reference|parse-entities' +
       '|character-entities|character-entities-legacy|character-reference-invalid' +
+      '|react-router|@remix-run/route-pattern|cookie-es' +
       '|is-alphabetical|is-alphanumerical|is-decimal|is-hexadecimal|micromark-util-html-tag-name|uuid)/)',
   ],
 };
