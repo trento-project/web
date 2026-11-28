@@ -136,7 +136,7 @@ defmodule Trento.MixProject do
       {:phoenix_html_helpers, "~> 1.0"},
       {:pow_assent, "~> 0.4.18"},
       # pow_assent 0.4.18 still requires assent ~> 0.2.8
-      {:assent, "~> 0.3.2", override: true},
+      {:assent, "~> 0.4.0", override: true},
       {:samly, "~> 1.0"}
     ]
   end
