@@ -89,7 +89,7 @@ defmodule Trento.MixProject do
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:flop, "~> 0.29.0"},
       {:floki, ">= 0.36.2", only: :test},
-      {:gettext, "~> 0.26"},
+      {:gettext, "~> 1.0"},
       {:gen_smtp, "~> 1.3.0"},
       {:gen_rmq, github: "trento-project/trnt_gen_rmq", ref: "v5.0.1"},
       {:hackney, "~> 4.0", override: true},
